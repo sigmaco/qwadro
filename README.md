@@ -1,6 +1,4 @@
 # The Qwadro Execution Ecosystem
-The SIGMA autonomous execution platform.
-
 Qwadro is an autonomous execution ecosystem, level-3 system infrastructure, data-oriented virtual platform that offers a set of common building blocks to build systems analogous to game engines. It is a coalition of middlewares and engines.
 
 ```
