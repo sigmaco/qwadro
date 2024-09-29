@@ -1,5 +1,5 @@
 # The Qwadro Execution Ecosystem
-Qwadro is an autonomous execution ecosystem, level-3 system infrastructure, data-oriented virtual platform that offers a set of common building blocks to build systems analogous to game engines. It is a coalition of middlewares and engines.
+Qwadro is an level-3 open standard system infrastructure, data-oriented execution ecosystem that offers a set of common building blocks to build systems analogous to multimedia user experience engines and applications. It is a coalition of middlewares, libraries, drivers and engines which is released as open source under the Qwadro License.
 
 ```
 /*
