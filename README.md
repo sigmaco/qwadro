@@ -18,11 +18,10 @@ Qwadro is an autonomous execution ecosystem, level-3 system infrastructure, data
  *                             <https://sigmaco.org/qwadro/>
  */
 ```
-## Acknowledgments
+
 The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's experimental technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by Republica SIGMA, SIGMA Technology Group, Scitech, Engitech, SIGMA FEDERATION, and Criterion Software, EA Technology and free game developers with battle-tested experiences working with RenderWare, OpenGL and Vulkan graphics hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts. Just to quote some of them.
 
-## Disclaimer
-The SIGMA and all members shall not be held liable to any person or entity for any reason related to the adoption or implementation of, nor adherence to the recommendations in, nor any other use of this project nor any accompanying software.
+The SIGMA FEDERATION and all members shall not be held liable to any person or entity for any reason related to the adoption or implementation of, nor adherence to the recommendations in, nor any other use of this project nor any accompanying software.
 
 ## Introduction
 This project represents the work of a group of 3D hardware and software vendors and application developers meeting as the Qwadro Working Group (4DWG) of the SIGMA Technology Group of the SIGMA FEDERATION, the federation of independent cyber science, technology and engineering, cybercultist and technocratic societies from Latin America. The goal of the group is to influence, foster, viabilize and improve the genuine development of multimedia user experience applications, hardware-accelerated high-performance optimal softwares and optimal entertainment softwares in the areas of 2D, 3D and 4D simulations and its renderization for the Latin American audience.
