@@ -1,6 +1,3 @@
-# The Qwadro Execution Ecosystem
-Qwadro is an open standard level-3 system infrastructure, ISO C17 data-oriented low-level execution ecosystem that offers a set of acceleration building blocks to build system softwares that targets computer simulations and multimedia user experiences. It is a coalition of middlewares, libraries, drivers and engines which are released as open source under the Qwadro License.
-
 ```
 
           ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
@@ -18,6 +15,9 @@ Qwadro is an open standard level-3 system infrastructure, ISO C17 data-oriented 
                              <https://sigmaco.org/qwadro/>
 
 ```
+
+# The Qwadro Execution Ecosystem
+Qwadro is an open standard level-3 system infrastructure, ISO C17 data-oriented low-level execution ecosystem that offers a set of acceleration building blocks to build system softwares that targets computer simulations and multimedia user experiences. It is a coalition of middlewares, libraries, drivers and engines which are released as open source under the Qwadro License.
 
 The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's experimental technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by software developers with battle-tested experiences working with RenderWare, OpenGL and Vulkan graphics hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts, come from backgrounds like Republica SIGMA, SIGMA Technology Group, SIGMA FEDERATION, Scitech, Engitech, NVIDIA, TVE, Bellas Arts, Criterion Software, EA Technology, Ensemble Studios, Telekinesys and Intel. Just to quote some of them.
 
@@ -116,5 +116,6 @@ This project is published under [Qwadro License][license].
 
 Qwadro is, and its portions are, (c) 2017 SIGMA FEDERATION. All rights reserved; to its elaborators and collaborators.
 
-[license]: https://github.com/sigmaco/sigmaco.github.io/blob/master/LICENSE
-[contributors]: https://github.com/sigmaco/sigmaco.github.io/graphs/contributors
+[license]: https://github.com/sigmaco/qwadro/blob/master/LICENSE
+[contributors]: https://github.com/sigmaco/qwadro/graphs/contributors
+[contribute-guide]: https://github.com/sigmaco/qwadro/blob/master/docs/CONTRIBUTING.md
