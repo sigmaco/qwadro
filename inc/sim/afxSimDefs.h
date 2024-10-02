@@ -71,7 +71,7 @@ AFX_DEFINE_HANDLE(afxMotor);
 AFX_DEFINE_HANDLE(afxMotion);
 AFX_DEFINE_HANDLE(afxAnimation);
 
-AFX_DEFINE_HANDLE(akxTerrain);
+AFX_DEFINE_HANDLE(afxTerrain);
 
 AFX_DEFINE_STRUCT(akxTrackMask)
 {

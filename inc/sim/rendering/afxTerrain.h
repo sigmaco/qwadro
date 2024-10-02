@@ -21,7 +21,7 @@
 #include "qwadro/inc/sim/rendering/akxLighting.h"
 
 #ifdef _AMX_TERRAIN_C
-AFX_OBJECT(akxTerrain)
+AFX_OBJECT(afxTerrain)
 {
     afxBuffer   vbo[2];
     afxNat      vboBase[2];
@@ -45,13 +45,24 @@ AFX_OBJECT(akxTerrain)
     afxNat      rez;
     afxNat      numStrips;
     afxNat      numTrisPerStrip;
+
+    afxNat      secCnt;
+    struct
+    {
+        afxMesh msh;
+    }           *sectors;
 };
 #endif//_AMX_TERRAIN_C
 
-AMX afxError    AkxDrawTerrain(akxTerrain ter, akxRenderer scn, avxCmdb cmdb);
+AMX afxError    AkxDrawTerrain(afxTerrain ter, akxRenderer scn, avxCmdb cmdb);
+AMX afxError    AkxDrawTerrainSector(afxTerrain ter, afxNat secIdx, akxRenderer scn, avxCmdb cmdb);
+
+AMX afxError    AfxResetTerrainSector(afxTerrain ter, afxNat secIdx, afxMesh msh);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AMX afxError    AfxAcquireTerrain(afxSimulation sim, akxTerrain* terrain);
+AMX afxError    AfxAcquireTerrain(afxSimulation sim, afxNat secCnt, afxTerrain* terrain);
+
+AMX afxError    AfxGenerateTerrain(afxSimulation sim, afxWhd const whd, afxTerrain* terrain);
 
 #endif//AMX_TERRAIN_H

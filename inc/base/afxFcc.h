@@ -310,7 +310,7 @@ typedef enum afxFcc
     afxFcc_CUR      = AFX_MAKE_FCC('c', 'u', 'r', '\0'), // afxCurve
     afxFcc_RND      = AFX_MAKE_FCC('r', 'n', 'd', '\0'), // akxRenderer
 
-    afxFcc_TER      = AFX_MAKE_FCC('t', 'e', 'r', '\0'), // akxTerrain
+    afxFcc_TER      = AFX_MAKE_FCC('t', 'e', 'r', '\0'), // afxTerrain
 
     afxFcc_MAX_     = 0x7FFFFFFF
 } afxFcc;

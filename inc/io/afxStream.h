@@ -71,9 +71,9 @@ AFX_DEFINE_STRUCT(afxStreamSeg)
     afxNat      stride;
 };
 
-AFX afxBool             AfxStreamIsWriteable(afxStream const iob);
-AFX afxBool             AfxStreamIsReadable(afxStream const iob);
-AFX afxBool             AfxStreamIsReadOnly(afxStream const iob);
+AFX afxBool             AfxIsStreamWriteable(afxStream const iob);
+AFX afxBool             AfxIsStreamReadable(afxStream const iob);
+AFX afxBool             AfxIsStreamReadOnly(afxStream const iob);
 AFX afxBool             AfxStreamIsSeekable(afxStream const iob);
 
 AFX afxNat              AfxGetStreamCapacity(afxStream const iob); // total of bytes of a stream.
@@ -98,6 +98,8 @@ AFX afxBool             AfxResetStream(afxStream iob);
 // Make a stream fork from another stream.
 AFX afxStream           AfxForkStream(afxStream iob); // em caso de erro, retorna o comprimento deixado de fora.
 AFX afxStream           AfxForkStreamRange(afxStream iob, afxSize offset, afxNat range); // em caso de erro, retorna o comprimento deixado de fora.
+
+AFX afxError            AfxMergeStream(afxStream out, afxStream in, afxSize base, afxNat range, afxNat rate);
 
 AFX afxError            AfxRead(afxStream in, afxNat cnt, afxNat siz, void* dst, afxNat dstStride);
 AFX afxError            AfxReadReversed(afxStream in, afxNat cnt, afxNat siz, void* dst, afxNat dstStride);

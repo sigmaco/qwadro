@@ -43,6 +43,7 @@
 /// Vertex elements, the smallest unit of a vertex, represent entities such as position, normal, or color.
 /// Vertex components are one or more vertex elements stored contiguously (interleaved per vertex) in a single memory buffer.
 
+#if 0
 typedef enum afxVertexUsage
 {
     afxVertexUsage_POS          = AFX_BIT(0),
@@ -60,8 +61,10 @@ typedef enum afxVertexUsage
     afxVertexUsage_SPATIAL      = afxVertexUsage_POSITIONAL | afxVertexUsage_TANGENT,
 
     afxVertexUsage_UV           = AFX_BIT(6),
-    afxVertexUsage_VISUAL       = afxVertexUsage_UV,
+    afxVertexUsage_PRELIT       = AFX_BIT(7),
+    afxVertexUsage_VISUAL       = afxVertexUsage_UV | afxVertexUsage_PRELIT,
 } afxVertexUsage;
+#endif
 
 typedef enum afxVertexFlag
 {
@@ -121,12 +124,9 @@ AFX_DEFINE_STRUCT(afxGeometrySpec)
 
 AFX_DEFINE_STRUCT(akxVertexAttrSpec)
 {
-    afxChar const*      id;
     afxVertexFormat     fmt;
-    afxVertexUsage      usage;
     afxVertexFlags      flags;
-    void const*         src;
-    afxNat              srcStride;
+    afxChar const*      usage;
 };
 
 AVX afxNat              AfxCountVertices(afxGeometry geo);
@@ -134,10 +134,10 @@ AVX afxNat              AkxCountVertexAttributes(afxGeometry geo);
 
 AVX afxNat              AkxFindVertexAttributes(afxGeometry geo, afxNat cnt, afxString const id[], afxNat attrIdx[]);
 
-AVX afxError            AkxGetVertexAttributeInfo(afxGeometry geo, afxNat attrIdx, afxVertexFormat* fmt, afxVertexUsage* usage, afxVertexFlags* flags);
+AVX afxError            AkxGetVertexAttributeInfo(afxGeometry geo, afxNat attrIdx, afxVertexFormat* fmt, afxString* usage, afxVertexFlags* flags);
 
 AVX afxVertexFormat     AkxGetVertexAttributeFormat(afxGeometry geo, afxNat attrIdx);
-AVX afxVertexUsage      AkxGetVertexAttributeUsage(afxGeometry geo, afxNat attrIdx);
+AVX afxString           AkxGetVertexAttributeUsage(afxGeometry geo, afxNat attrIdx);
 AVX afxVertexFlags      AkxGetVertexAttributeFlags(afxGeometry geo, afxNat attrIdx);
 
 AVX void*               AfxExposeGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx);
@@ -146,6 +146,10 @@ AVX afxError            AfxFillGeometry(afxGeometry geo, afxNat attrIdx, afxNat 
 AVX afxError            AfxUpdateGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx, afxNat vtxCnt, void const* src, afxNat32 srcStride);
 AVX afxError            AfxNormalizeGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx, afxNat vtxCnt);
 AVX afxError            AfxInvertNormalizedGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx, afxNat vtxCnt);
+
+AVX afxError            AfxUploadGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx, afxNat vtxCnt, afxStream in, afxNat stride);
+AVX afxError            AfxDownloadGeometry(afxGeometry geo, afxNat attrIdx, afxNat baseVtx, afxNat vtxCnt, afxStream out, afxNat stride);
+
 
 AFX_DEFINE_STRUCT(afxGeometryRegion)
 {

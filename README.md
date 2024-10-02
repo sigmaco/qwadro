@@ -1,25 +1,25 @@
 # The Qwadro Execution Ecosystem
-Qwadro is an open standard level-3 system infrastructure, data-oriented execution ecosystem that offers a set of common building blocks to build system softwares that targets computer simulations and multimedia user experiences. It is a coalition of middlewares, libraries, drivers and engines which is released as open source under the Qwadro License.
+Qwadro is an open standard level-3 system infrastructure, ISO C17 data-oriented low-level execution ecosystem that offers a set of acceleration building blocks to build system softwares that targets computer simulations and multimedia user experiences. It is a coalition of middlewares, libraries, drivers and engines which are released as open source under the Qwadro License.
 
 ```
-/*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
- *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
- *
- *                                   Public Test Build
- *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
- */
+
+          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
+         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
+         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
+         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
+         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
+         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
+          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+
+                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+
+                                   Public Test Build
+                               (c) 2017 SIGMA FEDERATION
+                             <https://sigmaco.org/qwadro/>
+
 ```
 
-The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's experimental technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by Republica SIGMA, SIGMA Technology Group, Scitech, Engitech, SIGMA FEDERATION, and Criterion Software, EA Technology and free game developers with battle-tested experiences working with RenderWare, OpenGL and Vulkan graphics hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts. Just to quote some of them.
+The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's experimental technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by software developers with battle-tested experiences working with RenderWare, OpenGL and Vulkan graphics hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts, come from backgrounds like Republica SIGMA, SIGMA Technology Group, SIGMA FEDERATION, Scitech, Engitech, NVIDIA, TVE, Bellas Arts, Criterion Software, EA Technology, Ensemble Studios, Telekinesys and Intel. Just to quote some of them.
 
 The SIGMA FEDERATION and all members shall not be held liable to any person or entity for any reason related to the adoption or implementation of, nor adherence to the recommendations in, nor any other use of this project nor any accompanying software.
 
@@ -41,7 +41,7 @@ There is some RenderWare semantics heritage still present. For example, we have 
 
 Qwadro was firstly designed for POSIX/Unix/Linux systems. Due to complexities handling multiple OpenGL contexts in Windows, we were forced to move to Windows and stay there still now.
 
-About code generation, Qwadro codebase was written for compilation in LLVM/Clang. No other toolset was tested except MSVC (and worked when so), which is not officially supported due to it have never been a real C compiler but a C++ compiler. Qwadro also doesn't use CMake because the main developer had problems (and laziness) with Visual Studio 2017, the IDE used to code Qwadro.
+About code generation, Qwadro codebase was written for compilation in LLVM/Clang. No other toolset was tested except MSVC (and worked when so), which is not officially supported due to it have never been a real C compiler but a C++ compiler. Qwadro also doesn't use CMake because the main developer had problems (and laziness) with Visual Studio 2017, the IDE used to code the Qwadro.
 
 Game-related works featured in Qwadro are strongely inspired in notorious gaming works on Bang! Engine by Ensemble Studios and MaxFX by Remedy Entertainment.
 
@@ -98,4 +98,19 @@ A Qwadro Simulation works on the "bring your own driver" model. Driver? Yes. You
 It allow you to change physics engines and sample animations in GPU pipelines with OpenGL, Vulkan, OpenCL, CUDA, DSPs, SPUs or other coprocessors.
 This is why we don't have SIMD methods for math (at least yet); you can install a hardware-accelerated physics engine.
 
-(c) 2017 SIGMA FEDERATION. All rights reserved; to its elaborators and collaborators.
+## Contribution
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated. For details, see the "[Contributing Guidelines][contribute-guide]".
+
+You can also contribute or address to any doubt or difficult although by join the SIGMA FEDERATION's gathering point on Discord.
+[![SIGMA Discord Server](https://discord.com/api/guilds/349379672351571969/widget.png?style=banner2)](https://sigmaco.org/discord)
+
+The SIGMA Federation thanks [all the contributors][contributors] made by the individuals and collectives involved in the development of this project.
+
+[![all-contributors](https://contrib.rocks/image?repo=sigmaco/qwadro&columns=16)][contributors]
+
+## License
+
+This project is published under [Qwadro License][license].
+
+Qwadro is, and its portions are, (c) 2017 SIGMA FEDERATION. All rights reserved; to its elaborators and collaborators.

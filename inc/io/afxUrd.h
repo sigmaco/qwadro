@@ -72,7 +72,13 @@ typedef enum afxChunkId
     afxChunkId_RW_COLLTREE = 0x2C,
     afxChunkId_RW_ENVIRONMENT = 0x2D, // RpEnvironment chunk is used internally to convey art package background settings to the Visualizer.
     // reserved to RenderWare middlewares up to 0x50
-    afxChunkId_QW_SKELETON = 0x51, // like the afxChunkId_RW_FRAMELIST for Qwadro
+    afxChunkId_QW_SKL = 0x51, // like the afxChunkId_RW_FRAMELIST for Qwadro
+    afxChunkId_QW_GEO,
+    afxChunkId_QW_MSHT,
+    afxChunkId_QW_MSH,
+    afxChunkId_QW_MDL,
+    afxChunkId_QW_MOT,
+    afxChunkId_QW_ANI,
 } afxChunkId;
 
 #pragma pack(push, 1)
@@ -119,7 +125,13 @@ AFX_DEFINE_STRUCT(urdRoot)
     // .hdr.siz = must be exactly sizeof(urdRoot) due its usage as being a file footer hence not allowed to be extended.
     // .hdr.ver = still undefined (Qwadro has not versions)
     urdMark         hdr;
+    afxNat32        trunkFcc;
     afxNat32        trunkOff;
+    afxNat32        trunkSiz;
+    afxNat32        segBaseOff; // where is urdSegment[] inside trunk scope.
+    afxNat32        segCnt;
+    afxNat32        strBaseOff;
+    afxNat32        strLen;
 };
 
 #pragma pack(pop)

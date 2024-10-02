@@ -44,7 +44,6 @@
 #include "qwadro/inc/cad/afxCamera.h"
 #include "qwadro/inc/cad/afxGeometry.h"
 #include "qwadro/inc/cad/afxMesh.h"
-#include "qwadro/inc/cad/afxMeshTopology.h"
 #include "qwadro/inc/cad/afxTxd.h"
 
 #include "qwadro/inc/draw/io/afxVertexStream.h"

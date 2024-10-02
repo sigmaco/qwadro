@@ -207,6 +207,7 @@ typedef enum avxFormat
     avxFormat_D16 = avxFormat_D16un,
     avxFormat_X8D24un, // Dun --- pack 32
     avxFormat_X8D24 = avxFormat_X8D24un,
+    avxFormat_D24 = avxFormat_X8D24,
     avxFormat_D32f, // Df
     avxFormat_D32 = avxFormat_D32f,
     avxFormat_S8u, // Su
