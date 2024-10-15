@@ -1,0 +1,18 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/art/actor
+/art/scenario
+/art/skybox/red3
+/art/skybox/red2
+/art/skybox/red1
+/art/skybox/purple
+/art/skybox/lightblue
+/art/skybox/cloudy-day
+/art/skybox/blue
+/art/building/sponza
+/art/exp
+/art/fmv/ubi.bik
+/art/fmv/disco.bik
+/art/object/backpack
