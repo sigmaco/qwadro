@@ -87,19 +87,19 @@ AFXINL void     AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUni
 AFXINL void     AfxAssimilateTransforms(afxM3d const ltm, afxM3d const iltm, afxV4d const atv, afxUnit cnt, afxTransform const in[], afxTransform out[]);
 
 AFXINL void     AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m); // build composite transform 4x4
-AFXINL void     AfxComputeCompositeTransformM4dc(afxTransform const* t, afxAtm3d m); // build composite transform 4x3 (compact matrix)
+AFXINL void     AfxComputeCompositeTransformM4dc(afxTransform const* t, afxM4r m); // build composite transform 4x3 (compact matrix)
 
 AFXINL void BuildIdentityWorldPoseOnly_Generic(afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionWorldPoseOnly_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildFullWorldPoseOnly_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildSingleCompositeFromWorldPose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4d ResultComposite);
-AFXINL void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxAtm3d ResultComposite3x4);
+AFXINL void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4r ResultComposite3x4);
 AFXINL void BuildIdentityWorldPoseComposite_Generic(afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionWorldPoseComposite_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
 AFXINL void BuildFullWorldPoseComposite_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionOrientationWorldPoseOnly_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionOrientationWorldPoseComposite_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
-AFXINL void BWP_Dispatch(afxTransform* t, afxM4d const InverseWorld4x4, afxM4d Composite, afxM4d World, afxM4d const ParentWorld);
-AFXINL void BWPNC_Dispatch(afxTransform* t, afxM4d const ParentWorld, afxM4d World);
+AFXINL void BWP_Dispatch(afxTransform const* t, afxM4d const InverseWorld4x4, afxM4d Composite, afxM4d World, afxM4d const ParentWorld);
+AFXINL void BWPNC_Dispatch(afxTransform const* t, afxM4d const ParentWorld, afxM4d World);
 
 #endif//AFX_TRANSFORM_H

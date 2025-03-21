@@ -19,6 +19,47 @@
 # The Qwadro Execution Ecosystem
 The **Qwadro** is an ISO C17 open standard, low-level data-oriented, federated execution ecosystem that offers a set of acceleration building blocks to edify system softwares targeting firstly computer simulation, interactive entertainment and multimedia user experience. Qwadro constitutes a unified infrastructure of and for middlewares, libraries, drivers and engines, continuously integrated, providing resources, devices, services and abstracting operating systems and platforms in a straightforwared uniform way. It is released as open source under the Qwadro License.
 
+## Proposal
+
+Unifying the Future of Software Engineering: Another API.
+
+In the ever-evolving world of technology, multimedia experiences are becoming an integral part of our daily lives. From immersive gaming to high-definition video streaming, seamless interaction between hardware components and software systems is critical. Today, we stand at the threshold of a new era in multimedia development—an era where hardware-accelerated I/O, graphics, sound, audio, video, and user interactions are seamlessly integrated into a single, unified platform.
+
+### The Challenge: A Fragmented Multimedia Landscape
+
+Currently, developers face the challenge of managing multiple disparate APIs across different hardware components and platforms. From handling complex graphical rendering with GPU acceleration to synchronizing high-quality audio and video streams, the ecosystem is fragmented. This disjointed approach results in inefficiencies, increased development time, and a lack of cohesion between multimedia technologies.
+
+### The Vision: One Unified API for All Multimedia Needs
+
+We propose the creation of a Unified Multimedia API that will consolidate hardware-accelerated I/O, graphics, sound, audio, video, multimedia mixing, and user interactions into a single, streamlined interface. By unifying these critical components, this new API will empower developers to create more powerful, efficient, and immersive multimedia applications across all devices and platforms.
+
+### Key Features of the Unified API:
+
+* Hardware-Accelerated I/O: The API will leverage hardware acceleration for input and output, ensuring that data transfers and device communication are faster and more efficient. This will reduce latency, optimize performance, and deliver real-time processing for multimedia applications.
+
+* Graphics and Visuals: With native support for advanced graphics technologies like GPU acceleration, ray tracing, and high-performance rendering, the API will enable developers to create visually stunning applications with minimal overhead.
+
+* Sound and Audio Integration: By providing a unified framework for both 3D sound spatialization and high-fidelity audio playback, the API will simplify the development of immersive sound experiences—whether it's for video games, virtual reality, or media production.
+
+* Video and Multimedia Mixing: Seamlessly integrate video playback, live-streaming, and multimedia mixing. The API will allow real-time video encoding, decoding, and manipulation, making it perfect for everything from video conferencing to professional media editing.
+
+* Intuitive Shell and User Interface Experience: Simplifying the way users interact with multimedia applications, the unified API will provide streamlined interfaces and responsive feedback, whether through touch, voice, or traditional input methods.
+
+* Cross-Platform Support: The API will be designed to work across a wide variety of devices, operating systems, and hardware configurations, ensuring that developers can build for any platform without worrying about compatibility issues.
+
+* Efficient Development Tools and Documentation: We’ll provide comprehensive documentation and development tools that allow developers to quickly harness the power of this unified API. With detailed guides, sample projects, and community-driven support, developers can accelerate their productivity and innovation.
+
+### The Benefits:
+
+* Faster Development Cycles: By using a single, unified API, developers can focus on creating features rather than managing multiple, complex systems.
+* Improved Performance: With hardware acceleration for graphics, sound, video, and I/O, applications will run faster and more efficiently, providing a smoother experience for end-users.
+* Enhanced User Experience: Users will enjoy more seamless and immersive multimedia experiences, whether they’re gaming, watching videos, or interacting with multimedia applications.
+* Greater Accessibility: A unified approach makes advanced multimedia technology accessible to a wider range of developers, including those who may not have deep experience with specific hardware or multimedia platforms.
+
+Join us in building the future of multimedia development. This unified multimedia API will is designed to change how we make interactive software across all devices.
+
+Are you a developer, hardware manufacturer, or tech enthusiast? Let's work together to build an API that bridges the gap between hardware and software, enhancing multimedia experiences for all. Get involved, contribute ideas, and become part of this generation of multimedia experience.
+
 ## Introduction
 
 This project represents the work of a group of software engineers and application developers meeting as the **Qwadro Working Group** (**4DWG**) of the **SIGMA Technology Group**, a arm of the **SIGMA FEDERATION**, the federation of independent cyber science, technology and engineering societies from Latin America. The goal of this group is to influence, foster, viabilize and improve the genuine development of multimedia user experience applications, hardware-accelerated high-performance optimal softwares and optimal entertainment softwares in the areas of 2D, 3D and 4D simulations and its renderization for the Latin American audience.
@@ -34,6 +75,8 @@ The codebase prefix in early days was ***QW*** but actually, to reduce confusion
 The **Draw I/O System** (**DIOS**) is a data-oriented computer-generated imagery API specification designed to make common things (relatively) easy, while allowing optional super powerful low-level optimizations. This new API was firstly idealized to be easy as OpenGL but still trying to be powerful close to Vulkan, Direct3D e Metal. Unlike other low-level APIs, Draw I/O System follows a rapid application development (RAD) philosophy, where it delivers utilities to speed up and automate operations, still allowing the users to do it their own way if they want.
 
 Draw I/O System is composed of two parts. One of them is the Qwadro Video Graphics Infrastructure, which is part of the Qwadro Execution Ecosystem offering a unified and prompt way of the common API components, and another, which is part of the device driver interface offering the horsepowers and additional capabilities althrough extensions.
+
+The Draw I/O System was firstly designed to provide a decent API around OpenGL. It was based on Advanced OpenGL Core, Direct3D 12, Vulkan, Metal, Mantle, WebGPU, AMD Platform Abstraction Layer, NVIDIA Rendering Hardware Interface and Compute Unified Device Architecture.
 
 ## Qwadro Sound I/O System
 The **Qwadro Sound I/O System** (**SIOS**) is a data-oriented sound synthesis API specification designed to enables creation, processing, distribution, and playback of audio content generated by sound synthesis in Qwadro.

@@ -36,7 +36,7 @@ AFX_DEFINE_STRUCT(akxProto)
     afxUri128       andUri;
 
     afxModel        mdl;
-    afxRaster       ras;
+    avxRaster       ras;
     afxAnimation    ani;
 };
 
@@ -70,7 +70,7 @@ AFX_DEFINE_STRUCT(akxShaderConstants) // pass
 
 AFX_DEFINE_STRUCT(akxMaterialConstants)
 {
-    //afxColor    Ka; // ambient color
+    //avxColor    Ka; // ambient color
     afxV3d  Kd; // diffuse color
     afxV3d  Ks; // specular color
     afxReal Ns; // specular color is weighted by the specular exponent Ns. Ranges between [0...1000].
@@ -83,7 +83,7 @@ AFX_DEFINE_STRUCT(akxMaterialConstants)
 
 AFX_DEFINE_STRUCT(akxInstanceConstants)
 {
-    afxM4d  m[AVX_BUF_UPDATE_CAPACITY / sizeof(afxM4d)];
+    afxM4d  m[AVX_BUFFER_UPDATE_CAPACITY / sizeof(afxM4d)];
 };
 
 AFX_DEFINE_STRUCT(akxRendererConfig)
@@ -109,19 +109,19 @@ AFX_OBJECT(akxRenderer)
         akxShaderConstants  shaderConstants;
         akxMaterialConstants materialConstants;
         akxInstanceConstants  objConstants;
-        afxBuffer           viewUbo; // p, v
-        afxBuffer           shdUbo;
-        afxBuffer           mtlUbo;
+        avxBuffer           viewUbo; // p, v
+        avxBuffer           shdUbo;
+        avxBuffer           mtlUbo;
         afxUnit             mtlBufOffset;
-        afxBuffer           objUbo; // m
+        avxBuffer           objUbo; // m
         afxUnit             mtxBufOffset;
         afxUnit             mtxBufPop;
 
-        afxBuffer           biasMapUbo;
+        avxBuffer           biasMapUbo;
         afxUnit             biasMapOffset;
         afxUnit             biasMapPop;
 
-        afxBuffer           icbo; // indirect indexed draw buffer
+        avxBuffer           icbo; // indirect indexed draw buffer
         afxUnit             icbOffset;
         afxUnit             indDrawCnt;
 
@@ -144,8 +144,8 @@ AFX_OBJECT(akxRenderer)
     avxPipeline         wirePip;
     afxBool             drawVolumes;
 
-    afxBuffer  testIbo;
-    afxBuffer testVbo;
+    avxBuffer  testIbo;
+    avxBuffer testVbo;
 
     afxDrawTechnique    testDtec;
     afxDrawTechnique    bodyDtec;
@@ -153,17 +153,17 @@ AFX_OBJECT(akxRenderer)
     afxDrawTechnique    tutCamUtilDtec;
     afxDrawTechnique    lightingDtec;
 
-    avxVertexDecl      rigidVin;
-    avxVertexDecl   vin_p3n3t2_bi_mtl_mtx_jnt;
-    avxVertexDecl   vin_p3j1n3t2_bi_mtl_mtx_jnt;
-    avxVertexDecl   vin_p3j2n3t2_bi_mtl_mtx_jnt;
-    avxVertexDecl   vin_p3j3n3t2_bi_mtl_mtx_jnt;
-    avxVertexDecl   vin_p3j4n3t2_bi_mtl_mtx_jnt;
-    avxVertexDecl      skinnedVin;
-    avxVertexDecl      testVin;
+    avxVertexInput      rigidVin;
+    avxVertexInput   vin_p3n3t2_bi_mtl_mtx_jnt;
+    avxVertexInput   vin_p3j1n3t2_bi_mtl_mtx_jnt;
+    avxVertexInput   vin_p3j2n3t2_bi_mtl_mtx_jnt;
+    avxVertexInput   vin_p3j3n3t2_bi_mtl_mtx_jnt;
+    avxVertexInput   vin_p3j4n3t2_bi_mtl_mtx_jnt;
+    avxVertexInput      skinnedVin;
+    avxVertexInput      testVin;
 
     afxPose      lp;
-    afxPlacement wp;
+    afxPlacement wp[2];
 };
 
 #if 0
@@ -192,16 +192,16 @@ ASX afxError    AsxSpawnEntity(afxUnit protoId, afxTransform const* t);
 
 ASX afxError    AsxSpawnAnimatedEntity(afxUnit protoId, afxTransform const* t);
 
-ASX afxError    AsxBeginSceneRendering(afxDrawContext dctx, akxRenderer rnd, afxCamera cam, afxRect const* drawArea, avxCanvas canv);
-ASX afxError    AsxEndSceneRendering(afxDrawContext dctx, akxRenderer rnd);
+ASX afxError    AsxBeginSceneRendering(akxRenderer rnd, afxCamera cam, afxRect const* drawArea, avxCanvas canv, afxDrawContext dctx);
+ASX afxError    AsxEndSceneRendering(akxRenderer rnd, afxDrawContext dctx);
 
 ASX afxError    AfxRendererSetStar(akxRenderer rnd, afxV4d const pos, afxV3d const dir, afxV4d const Kd);
 
-ASX afxError    AsxCmdDrawBodies(afxDrawContext dctx, akxRenderer rnd, afxReal dt, afxUnit cnt, afxBody bodies[]);
+ASX afxError    AmxCmdDrawBodies(afxDrawContext dctx, akxRenderer rnd, afxReal dt, afxUnit cnt, afxBody bodies[]);
 
-ASX afxError    AsxCmdDrawTestIndexed(afxDrawContext dctx, akxRenderer rnd);
+ASX afxError    AkxTestDrawIndexed(akxRenderer rnd, afxDrawContext dctx);
 
-ASX afxError    AsxBeginSceneCapture(akxRenderer scn, afxCamera cam, afxSimulation sim, afxDrawContext dctx, afxContext mctx);
+ASX afxError    AsxBeginSceneCapture(akxRenderer scn, afxCamera cam, afxSimulation sim, afxDrawContext dctx, afxContext sctx);
 
 ////////////////////////////////////////////////////////////////////////////////
 // MASSIVE OPERATIONS                                                         //
@@ -210,6 +210,6 @@ ASX afxError    AsxBeginSceneCapture(akxRenderer scn, afxCamera cam, afxSimulati
 ASX afxError    AsxAcquireRenderers(afxSimulation sim, afxUnit cnt, akxRenderer rnd[], akxRendererConfig const config[]);
 
 
-ASX void        AsxCmdRequestModel(afxSimulation sim, afxUnit id);
+ASX void        AmxCmdRequestModel(afxSimulation sim, afxUnit id);
 
 #endif//RENDERER_H
