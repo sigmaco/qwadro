@@ -27,8 +27,8 @@
 #ifndef AVX_DRAW_TECHNIQUE_H
 #define AVX_DRAW_TECHNIQUE_H
 
-#include "qwadro/inc/draw/pipe/avxPipeline.h"
-#include "qwadro/inc/draw/op/avxRasterizationOps.h"
+#include "qwadro/inc/draw/op/avxPipeline.h"
+#include "qwadro/inc/draw/op/avxRasterization.h"
 
 AFX_DEFINE_STRUCT(afxDrawPass)
 {
@@ -68,7 +68,7 @@ AVX avxPipeline         AfxGetDrawPipeline(afxDrawTechnique dtec, afxUnit passId
 
 AVX afxError            AfxUpdateRasterizationPass(afxDrawTechnique dtec, afxUnit passIdx, avxPipelineBlueprint const* cfg);
 
-AVX afxCmdId            AvxCmdApplyDrawTechnique(afxDrawContext dctx, afxDrawTechnique dtec, afxUnit passIdx, avxVertexDecl vin, afxFlags dynamics);
+AVX afxCmdId            AvxCmdApplyDrawTechnique(afxDrawContext dctx, afxDrawTechnique dtec, afxUnit passIdx, avxVertexInput vin, afxFlags dynamics);
 
 ////////////////////////////////////////////////////////////////////////////////
 

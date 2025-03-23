@@ -1,0 +1,7 @@
+﻿..\src\Skybox.c(204): warning : unused variable 'SIZE' [-Wunused-variable]
+..\src\Skybox.c(299): warning : unused variable 'err' [-Wunused-variable]
+..\src\Skybox.c(359): warning : unused variable 'err' [-Wunused-variable]
+..\src\Skybox.c(510): warning : unused variable 'ct' [-Wunused-variable]
+..\src\Skybox.c(397): warning : unused parameter 'argc' [-Wunused-parameter]
+..\src\Skybox.c(397): warning : unused parameter 'argv' [-Wunused-parameter]
+  skybox.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w64\skybox.exe

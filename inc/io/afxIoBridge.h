@@ -87,20 +87,20 @@ AFX_DEFINE_STRUCT(afxTransference)
     {
         struct
         {
-            //afxRaster       ras;
-            //afxRasterIo     op;
+            //avxRaster       ras;
+            //avxRasterIo     op;
             union
             {
                 void*       dst;
                 void const* src;
-                //afxBuffer   buf;
+                //avxBuffer   buf;
                 afxStream   iob;
             };
         }                   img;
         struct
         {
-            //afxBuffer       buf;
-            //afxBufferIo     op;
+            //avxBuffer       buf;
+            //avxBufferIo     op;
             union
             {
                 void*       dst;

@@ -22,14 +22,14 @@
 #define AVX_MATRIX_H
 
 #include "qwadro/inc/math/afxMatrix.h"
-#include "qwadro/inc/draw/math/afxViewport.h"
+#include "qwadro/inc/draw/math/avxViewport.h"
 
 typedef enum avxClipSpaceDepth
 // The depth mapping used by projection to map depth values into the clip space.
 {
     avxClipSpaceDepth_ZERO_TO_ONE, // Qwadro/Vulkan/Direct3D
     avxClipSpaceDepth_NEG_ONE_TO_ONE, // OpenGL
-    avxClipSpaceDepth_NEG_ONE_TO_ZERO // Experimental
+    avxClipSpaceDepth_NEG_ONE_TO_ZERO // Qwadro Experimental Stuff
 } avxClipSpaceDepth;
 
 // Shadow
@@ -74,6 +74,6 @@ AVXINL void     AfxDecomposeOffcenterPerspectiveM4d(afxM4d m, afxReal* left, afx
 // RW
 
 AVXINL void     AfxComputeRenderWareViewM4d(afxM4d m, afxM4d const cam);
-AVXINL void     AfxComputeRenderWareProjectionM4d(afxM4d m, afxViewport const* vp, afxBool perspective);
+AVXINL void     AfxComputeRenderWareProjectionM4d(afxM4d m, avxViewport const* vp, afxBool perspective);
 
 #endif//AVX_MATRIX_H

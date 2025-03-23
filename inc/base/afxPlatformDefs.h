@@ -121,21 +121,16 @@
 #   endif
 #endif
 
-#ifndef thread_local
-#   ifndef _Thread_local
-#       if !(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201102L)) && !defined(_Thread_local)
-#           if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
-#               define _Thread_local __thread
-#           else
-#               define _Thread_local __declspec(thread)
-#           endif
-#       elif defined(__GNUC__) && defined(__GNUC_MINOR__) && (((__GNUC__ << 8) | __GNUC_MINOR__) < ((4 << 8) | 9))
-#           define _Thread_local __thread
-#       endif
-#   endif
-#   define thread_local _Thread_local
+#if !(defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201102L)) && !defined(_Thread_local)
+ #if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+  #define _Thread_local __thread
+ #else
+  #define _Thread_local __declspec(thread)
+ #endif
+#elif defined(__GNUC__) && defined(__GNUC_MINOR__) && (((__GNUC__ << 8) | __GNUC_MINOR__) < ((4 << 8) | 9))
+ #define _Thread_local __thread
 #endif
-#define AFX_TLS thread_local 
+#define AFX_TLS _Thread_local 
 #define AFX_THREAD_LOCAL AFX_TLS 
 
 #include <assert.h>
@@ -233,15 +228,15 @@ typedef afxChar32   afxC32;
 
 #define AFX_I8_MIN  ((afxInt8)INT8_MIN)
 #define AFX_I8_MAX  ((afxInt8)INT8_MAX)
-#define AFX_N8_MAX  ((afxUnit8)UINT8_MAX)
+#define AFX_U8_MAX  ((afxUnit8)UINT8_MAX)
 
 #define AFX_I16_MIN ((afxInt16)INT16_MIN)
 #define AFX_I16_MAX ((afxInt16)INT16_MAX)
-#define AFX_N16_MAX ((afxUnit16)UINT16_MAX)
+#define AFX_U16_MAX ((afxUnit16)UINT16_MAX)
 
 #define AFX_I32_MIN ((afxInt32)INT32_MIN)
 #define AFX_I32_MAX ((afxInt32)INT32_MAX)
-#define AFX_N32_MAX ((afxUnit32)UINT32_MAX)
+#define AFX_U32_MAX ((afxUnit32)UINT32_MAX)
 
 #define AFX_I64_MIN ((afxInt64)INT64_MIN)
 #define AFX_I64_MAX ((afxInt64)INT64_MAX)
@@ -255,19 +250,5 @@ typedef afxChar32   afxC32;
 
 #define AFX_ATOMIC_MIN SIG_ATOMIC_MIN
 #define AFX_ATOMIC_MAX SIG_ATOMIC_MAX
-
-////////////////////////////////////////////////////////////////////////////////
-
-#ifdef _DEBUG // after afxDebug!!!
-#   define VLD_FORCE_ENABLE
-#endif
-
-#if !0
-#if (defined(_WIN64) || defined(_WIN32))
-#   ifdef VLD_FORCE_ENABLE
-#       include <vld.h>
-#   endif
-#endif
-#endif
 
 #endif//AFX_PLATFORM_DEFS_H

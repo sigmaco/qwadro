@@ -36,8 +36,8 @@
 // Mixer
 // A mixer is a device for merging input signals to produce a combined output in the form of sound.
 
-#ifndef AMX_MIXER_H
-#define AMX_MIXER_H
+#ifndef AMX_MIX_CONTEXT_H
+#define AMX_MIX_CONTEXT_H
 
 #include "qwadro/inc/mix/io/afxAudio.h"
 
@@ -206,27 +206,51 @@ AMX afxUnit         AfxGetMixerPort(afxMixContext mix);
 AMX afxUnit         AfxGetMixerPool(afxMixContext mix);
 AMX amxMixState     AfxGetMixerState(afxMixContext mix);
 
-AMX afxCmdId        AsxCmdCommenceMixScope(afxMixContext mix, amxMixScope const* scope);
-AMX afxCmdId        AsxCmdConcludeMixScope(afxMixContext mix);
+AMX afxCmdId        AmxCmdCommenceMixScope(afxMixContext mix, amxMixScope const* scope);
+AMX afxCmdId        AmxCmdConcludeMixScope(afxMixContext mix);
 
-AMX afxCmdId        AsxCmdReverb(afxMixContext mix, afxReal wetMix, afxReal roomSiz, afxReal width, afxReal damp, afxReal dryMix);
-AMX afxCmdId        AsxCmdPhaser(afxMixContext mix, afxReal floor, afxReal ceil, afxReal rate, afxReal feedback, afxReal depth, afxReal phase, afxUnit stageCnt);
-AMX afxCmdId        AsxCmdGainer(afxMixContext mix, afxReal gain, afxReal pan, afxMask invChan);
-AMX afxCmdId        AsxCmdFlanger(afxMixContext mix, afxReal amount, afxReal rate, afxReal amplitude, afxReal feedback, afxReal delay, afxReal phase, afxUnit flt);
-AMX afxCmdId        AsxCmdAnalog(afxMixContext mix, afxUnit type, afxUnit flt, afxReal cutoff, afxReal resonance, afxReal inertia, afxReal drive, afxUnit oversamp, afxReal start, afxReal end);
-AMX afxCmdId        AsxCmdCompressor(afxMixContext mix, afxReal threshold, afxReal ratio, afxReal attack, afxReal release, afxReal makeup);
+AMX afxCmdId        AmxCmdReverb(afxMixContext mix, afxReal wetMix, afxReal roomSiz, afxReal width, afxReal damp, afxReal dryMix);
+AMX afxCmdId        AmxCmdPhaser(afxMixContext mix, afxReal floor, afxReal ceil, afxReal rate, afxReal feedback, afxReal depth, afxReal phase, afxUnit stageCnt);
+AMX afxCmdId        AmxCmdGainer(afxMixContext mix, afxReal gain, afxReal pan, afxMask invChan);
+AMX afxCmdId        AmxCmdFlanger(afxMixContext mix, afxReal amount, afxReal rate, afxReal amplitude, afxReal feedback, afxReal delay, afxReal phase, afxUnit flt);
+AMX afxCmdId        AmxCmdAnalog(afxMixContext mix, afxUnit type, afxUnit flt, afxReal cutoff, afxReal resonance, afxReal inertia, afxReal drive, afxUnit oversamp, afxReal start, afxReal end);
+AMX afxCmdId        AmxCmdCompressor(afxMixContext mix, afxReal threshold, afxReal ratio, afxReal attack, afxReal release, afxReal makeup);
 
-AMX afxCmdId        AsxCmdLineIn(afxMixContext mix, afxUnit line, afxMask chanMask, afxUnit latency, afxReal pan, afxReal vol);
-AMX afxCmdId        AsxCmdRemoteIn(afxMixContext mix, afxUnit src, afxMask chanMask, afxReal pan, afxReal vol);
+AMX afxCmdId        AmxCmdLineIn(afxMixContext mix, afxUnit line, afxMask chanMask, afxUnit latency, afxReal pan, afxReal vol);
+AMX afxCmdId        AmxCmdRemoteIn(afxMixContext mix, afxUnit src, afxMask chanMask, afxReal pan, afxReal vol);
 
-AMX afxCmdId        AsxCmdSend(afxMixContext mix, afxBool muteSrc, afxReal amount, afxReal pan, afxUnit receiverSubmix);
+AMX afxCmdId        AmxCmdSend(afxMixContext mix, afxBool muteSrc, afxReal amount, afxReal pan, afxUnit receiverSubmix);
 
-AMX afxCmdId        AsxCmdResampleAudio(afxMixContext mix, afxAudio src, afxAudio dst, afxWaveInterval const* srci, afxWaveInterval const* dsti);
+AMX afxCmdId        AmxCmdResampleAudio(afxMixContext mix, afxAudio src, afxAudio dst, afxWaveInterval const* srci, afxWaveInterval const* dsti);
 
-AMX afxCmdId        AsxCmdFetchAudition(afxMixContext mix, afxUnit headIdx);
+AMX afxCmdId        AmxCmdFetchAudition(afxMixContext mix, afxUnit headIdx);
+
+AFX_DEFINE_STRUCT(amxVideoPicture)
+{
+    // the offset in texels of the image subregion to use.
+    avxOrigin       codedOrigin; // D is the base layer.
+    // the size in pixels of the coded image data.
+    avxRange2      codedExtent;
+    // the video picture resource.
+    avxRaster       rasBinding;
+};
+
+AFX_DEFINE_STRUCT(amxVideoDecode)
+{
+    afxFlags            flags;
+    avxBuffer           srcBuf;
+    afxSize             srcOffset;
+    afxUnit             srcRange;
+    amxVideoPicture     dstPicRsrc;
+    //const VkVideoReferenceSlotInfoKHR*    pSetupReferenceSlot;
+    uint32_t                              referenceSlotCount;
+    //const VkVideoReferenceSlotInfoKHR*    pReferenceSlots;
+};
+
+AMX afxCmdId        AmxCmdDecodeVideo(afxMixContext mix, amxVideoDecode const* param);
 
 ////////////////////////////////////////////////////////////////////////////////
 
 AMX afxError        AfxAcquireMixContext(afxMixSystem msys, afxUnit exuIdx, afxUnit poolIdx, afxMixContext* mixer);
 
-#endif//AMX_MIXER_H
+#endif//AMX_MIX_CONTEXT_H

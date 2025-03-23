@@ -1,0 +1,5 @@
+﻿..\src\multipleWindows.c(97): warning : unused variable 'ct' [-Wunused-variable]
+..\src\multipleWindows.c(98): warning : unused variable 'dt' [-Wunused-variable]
+..\src\multipleWindows.c(36): warning : unused parameter 'argc' [-Wunused-parameter]
+..\src\multipleWindows.c(36): warning : unused parameter 'argv' [-Wunused-parameter]
+  multipleWindows.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w32\multipleWindows.exe
