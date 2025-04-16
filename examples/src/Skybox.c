@@ -72,11 +72,11 @@ void StepSky(Sky* sky, afxReal dt)
     AfxM4dRotationFromQuat(sky->rotMtx, sky->rotQuat);
 }
 
-afxError DrawSky(Sky* sky, avxViewport const* vp, afxCamera cam, afxUnit frameIdx, afxDrawOutput dout, afxDrawContext dctx)
+afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameIdx, afxDrawOutput dout, afxDrawContext dctx)
 {
     afxError err = AFX_ERR_NONE;
 
-    AvxCmdApplyDrawTechnique(dctx, sky->skyDtec, 0, sky->skyVin, NIL);
+    AvxCmdUseDrawTechniqueSIGMA(dctx, sky->skyDtec, 0, sky->skyVin, NIL);
 
     akxViewConstants *viewConstants = &gFramesets[frameIdx].viewConstants;
 
@@ -87,20 +87,19 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, afxCamera cam, afxUnit frameId
         avxRange screenRes;
         afxReal64 wpOverHp;
         AvxQueryDrawOutputResolution(dout, &wpOverHp, NIL, &screenRes, NIL);
-        AfxSetCameraAspectRatios(cam, wpOverHp, AFX_V2D(screenRes.w, screenRes.h), vp->extent);
+        AvxSetCameraAspectRatios(cam, wpOverHp, AFX_V2D(screenRes.w, screenRes.h), vp->extent);
 
         viewConstants->viewExtent[0] = vp->extent[0];
         viewConstants->viewExtent[1] = vp->extent[1];
 
         afxV4d viewPos;
-        AfxGetCameraPosition(cam, viewPos);
+        AvxGetCameraPosition(cam, viewPos);
         AfxV4dCopyAtv3d(viewConstants->viewPos, viewPos);
 
         afxM4d v, iv, p, ip;
-        AfxRecomputeCameraMatrices(cam);
-        AfxGetCameraMatrices(cam, v, iv);
-        AfxGetCameraProjectiveMatrices(cam, p, ip);
-
+        AvxRecomputeCameraMatrices(cam);
+        AvxGetCameraMatrices(cam, p, NIL, v, ip, NIL, iv);
+        
         AfxM4dCopy(viewConstants->p, p);
         AfxM4dCopy(viewConstants->ip, ip);
         AfxM4dCopyAtm(viewConstants->v, v);
@@ -251,7 +250,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
     //    skyboxVertices[i] *= 100;
 
     avxBufferInfo vboSpec = { 0 };
-    vboSpec.cap = sizeof(skyboxVertices);
+    vboSpec.size = sizeof(skyboxVertices);
     vboSpec.usage = avxBufferUsage_VERTEX;
     AvxAcquireBuffers(dsys, 1, &vboSpec, &sky->cube);
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &sky->cube);
@@ -259,8 +258,8 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
     avxBufferIo vboIop = { 0 };
     vboIop.srcStride = 1;
     vboIop.dstStride = 1;
-    vboIop.rowCnt = vboSpec.cap;
-    AvxUpdateBuffer(sky->cube, 1, &vboIop, 0, skyboxVertices);
+    vboIop.rowCnt = vboSpec.size;
+    AvxUpdateBuffer(sky->cube, skyboxVertices, 1, &vboIop, 0);
 
     afxUri uri;
     AfxMakeUri(&uri, 0, "//./d/gfx/skybox/skybox.xsh.xml", 0);
@@ -297,7 +296,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
 afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
 {
     afxError err = AFX_ERR_NONE;
-    afxCamera cam = (void*)obj;
+    avxCamera cam = (void*)obj;
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     (void)watched;
     (void)ev;
@@ -316,11 +315,12 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
             afxV2d delta;
             afxV3d deltaEar;
             AfxGetMouseMotion(0, delta);
-            deltaEar[1] = -((afxReal)(delta[0] * AFX_PI / 180.f));
-            deltaEar[0] = -((afxReal)(delta[1] * AFX_PI / 180.f));
+            deltaEar[1] = -AfxRadf(delta[0]);
+            deltaEar[0] = -AfxRadf(delta[1]);
             deltaEar[2] = 0.f;
-
-            AfxApplyCameraOrientation(cam, deltaEar);
+            afxV3d v;
+            AvxConsultCameraOrientation(cam, deltaEar, avxBlendOp_ADD, v);
+            AvxResetCameraOrientation(cam, v);
         }
 
         if (AfxIsRmbPressed(0))
@@ -328,11 +328,12 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
             afxV2d delta;
             afxV3d off;
             AfxGetMouseMotion(0, delta);
-            off[0] = -((afxReal)(delta[0] * AFX_PI / 180.f));
-            off[1] = -((afxReal)(delta[1] * AFX_PI / 180.f));
+            off[0] = -AfxRadf(delta[0]);
+            off[1] = -AfxRadf(delta[1]);
             off[2] = 0.f;
-
-            AfxApplyCameraDisplacement(cam, off);
+            afxV3d v;
+            AvxConsultCameraDisplacement(cam, off, avxBlendOp_ADD, v);
+            AvxResetCameraDisplacement(cam, v);
         }
         break;
     }
@@ -340,7 +341,7 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
     {
         afxReal w = AfxGetMouseWheelDelta(0);
         w = w / 120.f; // WHEEL_DELTA
-        AfxApplyCameraDistance(cam, w);
+        AvxApplyCameraDistance(cam, w);
         break;
     }
     case auxEventId_KEY:
@@ -354,7 +355,7 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
     return FALSE;
 }
 
-void UpdateFrameMovement(afxCamera cam, afxReal64 DeltaTime)
+void UpdateFrameMovement(avxCamera cam, afxReal64 DeltaTime)
 {
     afxError err = AFX_ERR_NONE;
     
@@ -374,7 +375,7 @@ void UpdateFrameMovement(afxCamera cam, afxReal64 DeltaTime)
         MovementThisFrame * UpSpeed,
         MovementThisFrame * ForwardSpeed
     };
-    AfxTranslateCamera(cam, v);
+    AvxTranslateCamera(cam, v);
 
 
 }
@@ -465,8 +466,8 @@ int main(int argc, char const* argv[])
     // Acquire a view point
     // Handle mouse-camera interaction
 
-    afxCamera cam;
-    AfxAcquireCameras(din, 1, &cam);
+    avxCamera cam;
+    AvxAcquireCameras(dsys, 1, &cam);
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AfxConnectObjects(cam, 1, (afxObject[]) { wnd }, (void*)CamEventFilter);
 
@@ -474,10 +475,10 @@ int main(int argc, char const* argv[])
 
     avxBufferInfo bufSpec[] =
     {
-        {.cap = sizeof(akxViewConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
-        {.cap = sizeof(akxShaderConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
-        {.cap = sizeof(akxMaterialConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
-        {.cap = sizeof(akxInstanceConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM }
+        {.size = sizeof(akxViewConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
+        {.size = sizeof(akxShaderConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
+        {.size = sizeof(akxMaterialConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM },
+        {.size = sizeof(akxInstanceConstants), .flags = avxBufferFlag_W,.usage = avxBufferUsage_UNIFORM }
     };
 
     for (afxUnit i = 0; i < gFrameCnt; i++)
@@ -507,8 +508,8 @@ int main(int argc, char const* argv[])
 
         afxClock currClock;
         AfxGetClock(&currClock);
-        afxReal64 ct = AfxGetSecondsElapsed(&startClock, &currClock);
-        afxReal64 dt = AfxGetSecondsElapsed(&lastClock, &currClock);
+        afxReal64 ct = AfxGetClockSecondsElapsed(&startClock, &currClock);
+        afxReal64 dt = AfxGetClockSecondsElapsed(&lastClock, &currClock);
         lastClock = currClock;
 
         UpdateFrameMovement(cam, dt);
@@ -532,7 +533,7 @@ int main(int argc, char const* argv[])
             avxCanvas canv;
             AvxGetDrawOutputCanvas(dout, outBufIdx, &canv);
             AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-            avxRange canvWhd = AvxGetCanvasExtent(canv);
+            avxRange canvWhd = AvxGetCanvasArea(canv, AVX_ORIGIN_ZERO);
 
             avxDrawScope dps = { 0 };
             dps.canv = canv;

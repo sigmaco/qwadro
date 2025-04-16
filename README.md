@@ -17,11 +17,11 @@
 ```
 
 # The Qwadro Execution Ecosystem
-The **Qwadro** is an ISO C17 open standard, low-level data-oriented, federated execution ecosystem that offers a set of acceleration building blocks to edify system softwares targeting firstly computer simulation, interactive entertainment and multimedia user experience. Qwadro constitutes a unified infrastructure of and for middlewares, libraries, drivers and engines, continuously integrated, providing resources, devices, services and abstracting operating systems and platforms in a straightforwared uniform way. It is released as open source under the Qwadro License.
+The **Qwadro** is a free and open-source software (FOSS), ISO C17 open standard, low-level data-oriented, federated execution ecosystem that offers a set of acceleration building blocks to edify system softwares targeting firstly computer simulation, interactive entertainment and multimedia user experience. Qwadro constitutes a unified infrastructure of and for middlewares, libraries, drivers and engines, continuously integrated, providing resources, devices, services and abstracting operating systems and platforms in a straightforwared uniform way. It is released as open source under the Qwadro License.
 
 ## Proposal
 
-Unifying the Future of Software Engineering: Another API.
+Unifying the future of software engineering (and/or just another API).
 
 In the ever-evolving world of technology, multimedia experiences are becoming an integral part of our daily lives. From immersive gaming to high-definition video streaming, seamless interaction between hardware components and software systems is critical. Today, we stand at the threshold of a new era in multimedia development—an era where hardware-accelerated I/O, graphics, sound, audio, video, and user interactions are seamlessly integrated into a single, unified platform.
 
@@ -29,7 +29,7 @@ In the ever-evolving world of technology, multimedia experiences are becoming an
 
 Currently, developers face the challenge of managing multiple disparate APIs across different hardware components and platforms. From handling complex graphical rendering with GPU acceleration to synchronizing high-quality audio and video streams, the ecosystem is fragmented. This disjointed approach results in inefficiencies, increased development time, and a lack of cohesion between multimedia technologies.
 
-### The Vision: One Unified API for All Multimedia Needs
+### The Vision: One Unified API for All Basic Multimedia Needs
 
 We propose the creation of a Unified Multimedia API that will consolidate hardware-accelerated I/O, graphics, sound, audio, video, multimedia mixing, and user interactions into a single, streamlined interface. By unifying these critical components, this new API will empower developers to create more powerful, efficient, and immersive multimedia applications across all devices and platforms.
 
@@ -56,7 +56,7 @@ We propose the creation of a Unified Multimedia API that will consolidate hardwa
 * Enhanced User Experience: Users will enjoy more seamless and immersive multimedia experiences, whether they’re gaming, watching videos, or interacting with multimedia applications.
 * Greater Accessibility: A unified approach makes advanced multimedia technology accessible to a wider range of developers, including those who may not have deep experience with specific hardware or multimedia platforms.
 
-Join us in building the future of multimedia development. This unified multimedia API will is designed to change how we make interactive software across all devices.
+Join us in building a future of computer-centric user experience. This unified API will is designed to change how we make interactive software across the PC realm.
 
 Are you a developer, hardware manufacturer, or tech enthusiast? Let's work together to build an API that bridges the gap between hardware and software, enhancing multimedia experiences for all. Get involved, contribute ideas, and become part of this generation of multimedia experience.
 
@@ -65,7 +65,7 @@ Are you a developer, hardware manufacturer, or tech enthusiast? Let's work toget
 This project represents the work of a group of software engineers and application developers meeting as the **Qwadro Working Group** (**4DWG**) of the **SIGMA Technology Group**, a arm of the **SIGMA FEDERATION**, the federation of independent cyber science, technology and engineering societies from Latin America. The goal of this group is to influence, foster, viabilize and improve the genuine development of multimedia user experience applications, hardware-accelerated high-performance optimal softwares and optimal entertainment softwares in the areas of 2D, 3D and 4D simulations and its renderization for the Latin American audience.
 This project defines the expectations of the group with regards to current acceptable 4D simulation and rendering functionality, and is an extension to the work done by Veryzon known as **Quadridimensional World Approximation**.
 
-The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's essays around experimental 4D technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by software developers with battle-tested experiences working with RenderWare, OpenGL and Vulkan graphics hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts, come from backgrounds like Republica SIGMA, SIGMA Technology Group, SIGMA FEDERATION, Scitech, Remedy Entertainment, Engitech, NVIDIA, Crytek, id Software, TVE, Bellas Arts, Criterion Software, EA Technology, Ensemble Studios, Telekinesys and Intel. Just to quote some of them.
+The API concept and specification proposed in this project were primarily contributed by Veryzon. They were drafted in large part by Veryzon and owe much in their form and format to Veryzon's essays around experimental 4D technologies. The Working Group process provided advice, comments, guidance and suggestions for additions to these guidelines, which were contributed by software developers with battle-tested experiences working with hardware and software vendors and application developers and enthusiasts, indie game developers and enthusiasts, game modding communities and enthusiasts.
 
 The **SIGMA FEDERATION** and all members shall not be held liable to any person or entity for any reason related to the adoption or implementation of, nor adherence to the recommendations in, nor any other use of this project nor any accompanying software.
 
@@ -115,3 +115,55 @@ Qwadro is, and its portions are, (c) 2017 SIGMA FEDERATION. All rights reserved;
 [license]: https://github.com/sigmaco/qwadro/blob/master/LICENSE.txt
 [contributors]: https://github.com/sigmaco/afx/graphs/contributors
 [contribute-guide]: https://github.com/sigmaco/afx/blob/master/docs/CONTRIBUTING.md
+
+## Techdemo Media
+
+![Image 1](doc/img/ScreenShot_20200401222851.png)
+![Image 1](doc/img/ScreenShot_20200322030852.png)
+![Image 1](doc/img/ScreenShot_20200314032422.png)
+![Image 1](doc/img/ScreenShot_20200314032338.png)
+![Image 1](doc/img/ScreenShot_20200314032134.png)
+![Image 1](doc/img/ScreenShot_20200314032048.png)
+![Image 1](doc/img/ScreenShot_20200228000223.png)
+![Image 1](doc/img/ScreenShot_20191117124129.png)
+![Image 1](doc/img/ScreenShot_20191014011409.png)
+![Image 1](doc/img/ScreenShot_20191005214808.png)
+![Image 1](doc/img/ScreenShot_20191003014004.png)
+![Image 1](doc/img/ScreenShot_20191003013922.png)
+![Image 1](doc/img/ScreenShot_20191003013841.png)
+![Image 1](doc/img/ScreenShot_20191003013830.png)
+![Image 1](doc/img/ScreenShot_20190912204603.png)
+![Image 1](doc/img/ScreenShot_20190912204537.png)
+![Image 1](doc/img/ScreenShot_20190912204452.png)
+![Image 1](doc/img/ScreenShot_20190912204331.png)
+![Image 1](doc/img/ScreenShot_20190912204311.png)
+![Image 1](doc/img/unknown (32).png)
+![Image 1](doc/img/unknown (31).png)
+![Image 1](doc/img/unknown (29).png)
+![Image 1](doc/img/unknown (28).png)
+![Image 1](doc/img/unknown (27).png)
+![Image 1](doc/img/unknown (26).png)
+![Image 1](doc/img/unknown (25).png)
+![Image 1](doc/img/unknown (24).png)
+![Image 1](doc/img/unknown (23).png)
+![Image 1](doc/img/unknown (22).png)
+![Image 1](doc/img/unknown (21).png)
+![Image 1](doc/img/unknown (20).png)
+![Image 1](doc/img/unknown (19).png)
+![Image 1](doc/img/unknown (18).png)
+![Image 1](doc/img/unknown (17).png)
+![Image 1](doc/img/unknown (16).png)
+![Image 1](doc/img/unknown (15).png)
+![Image 1](doc/img/unknown (14).png)
+![Image 1](doc/img/unknown (13).png)
+![Image 1](doc/img/unknown (12).png)
+![Image 1](doc/img/unknown (11).png)
+![Image 1](doc/img/unknown (10).png)
+![Image 1](doc/img/unknown (9).png)
+![Image 1](doc/img/unknown (8).png)
+![Image 1](doc/img/unknown (7).png)
+![Image 1](doc/img/unknown (6).png)
+![Image 1](doc/img/unknown (5).png)
+![Image 1](doc/img/unknown (4).png)
+![Image 1](doc/img/unknown (3).png)
+![Image 1](doc/img/unknown (2).png)
