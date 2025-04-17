@@ -93,8 +93,8 @@ int main(int argc, char const* argv[])
 
         afxClock currClock;
         AfxGetClock(&currClock);
-        afxReal64 ct = AfxGetSecondsElapsed(&startClock, &currClock);
-        afxReal64 dt = AfxGetSecondsElapsed(&lastClock, &currClock);
+        afxReal64 ct = AfxGetClockSecondsElapsed(&startClock, &currClock);
+        afxReal64 dt = AfxGetClockSecondsElapsed(&lastClock, &currClock);
         lastClock = currClock;
 
         if (!readyToRender)
@@ -118,7 +118,7 @@ int main(int argc, char const* argv[])
         avxRange canvWhd;
         AvxGetDrawOutputCanvas(dout, outBufIdx, &canv);
         AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-        canvWhd = AvxGetCanvasExtent(canv);
+        canvWhd = AvxGetCanvasArea(canv, AVX_ORIGIN_ZERO);
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
