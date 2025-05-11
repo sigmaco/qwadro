@@ -1,20 +1,4 @@
-```
-
-          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
-         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
-         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
-         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
-         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
-         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
-          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
-
-                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
-
-                                   Public Test Build
-                               (c) 2017 SIGMA FEDERATION
-                             <https://sigmaco.org/qwadro/>
-
-```
+![Logo](doc/qwadro-banner-2048x520-bg-t.png)
 
 # The Qwadro Execution Ecosystem
 The **Qwadro** is a free and open-source software (FOSS), ISO C17 open standard, low-level data-oriented, federated execution ecosystem that offers a set of acceleration building blocks to edify system softwares targeting firstly computer simulation, interactive entertainment and multimedia user experience. Qwadro constitutes a unified infrastructure of and for middlewares, libraries, drivers and engines, continuously integrated, providing resources, devices, services and abstracting operating systems and platforms in a straightforwared uniform way. It is released as open source under the Qwadro License.
@@ -137,33 +121,33 @@ Qwadro is, and its portions are, (c) 2017 SIGMA FEDERATION. All rights reserved;
 ![Image 1](doc/img/ScreenShot_20190912204452.png)
 ![Image 1](doc/img/ScreenShot_20190912204331.png)
 ![Image 1](doc/img/ScreenShot_20190912204311.png)
-![Image 1](doc/img/unknown (32).png)
-![Image 1](doc/img/unknown (31).png)
-![Image 1](doc/img/unknown (29).png)
-![Image 1](doc/img/unknown (28).png)
-![Image 1](doc/img/unknown (27).png)
-![Image 1](doc/img/unknown (26).png)
-![Image 1](doc/img/unknown (25).png)
-![Image 1](doc/img/unknown (24).png)
-![Image 1](doc/img/unknown (23).png)
-![Image 1](doc/img/unknown (22).png)
-![Image 1](doc/img/unknown (21).png)
-![Image 1](doc/img/unknown (20).png)
-![Image 1](doc/img/unknown (19).png)
-![Image 1](doc/img/unknown (18).png)
-![Image 1](doc/img/unknown (17).png)
-![Image 1](doc/img/unknown (16).png)
-![Image 1](doc/img/unknown (15).png)
-![Image 1](doc/img/unknown (14).png)
-![Image 1](doc/img/unknown (13).png)
-![Image 1](doc/img/unknown (12).png)
-![Image 1](doc/img/unknown (11).png)
-![Image 1](doc/img/unknown (10).png)
-![Image 1](doc/img/unknown (9).png)
-![Image 1](doc/img/unknown (8).png)
-![Image 1](doc/img/unknown (7).png)
-![Image 1](doc/img/unknown (6).png)
-![Image 1](doc/img/unknown (5).png)
-![Image 1](doc/img/unknown (4).png)
-![Image 1](doc/img/unknown (3).png)
-![Image 1](doc/img/unknown (2).png)
+![Image 1]("doc/img/unknown%20(32).png")
+![Image 1]("doc/img/unknown (31).png")
+![Image 1]("doc/img/unknown (29).png")
+![Image 1]("doc/img/unknown (28).png")
+![Image 1]("doc/img/unknown (27).png")
+![Image 1]("doc/img/unknown (26).png")
+![Image 1]("doc/img/unknown (25).png")
+![Image 1]("doc/img/unknown (24).png")
+![Image 1]("doc/img/unknown (23).png")
+![Image 1]("doc/img/unknown (22).png")
+![Image 1]("doc/img/unknown (21).png")
+![Image 1]("doc/img/unknown (20).png")
+![Image 1]("doc/img/unknown (19).png")
+![Image 1]("doc/img/unknown (18).png")
+![Image 1]("doc/img/unknown (17).png")
+![Image 1]("doc/img/unknown (16).png")
+![Image 1]("doc/img/unknown (15).png")
+![Image 1]("doc/img/unknown (14).png")
+![Image 1]("doc/img/unknown (13).png")
+![Image 1]("doc/img/unknown (12).png")
+![Image 1]("doc/img/unknown (11).png")
+![Image 1]("doc/img/unknown (10).png")
+![Image 1]("doc/img/unknown (9).png")
+![Image 1]("doc/img/unknown (8).png")
+![Image 1]("doc/img/unknown (7).png")
+![Image 1]("doc/img/unknown (6).png")
+![Image 1]("doc/img/unknown (5).png")
+![Image 1]("doc/img/unknown (4).png")
+![Image 1]("doc/img/unknown (3).png")
+![Image 1]("doc/img/unknown (2).png")
