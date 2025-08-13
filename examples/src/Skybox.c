@@ -72,7 +72,7 @@ void StepSky(Sky* sky, afxReal dt)
     AfxM4dRotationFromQuat(sky->rotMtx, sky->rotQuat);
 }
 
-afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameIdx, afxDrawOutput dout, afxDrawContext dctx)
+afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameIdx, afxSurface dout, afxDrawContext dctx)
 {
     afxError err = AFX_ERR_NONE;
 
@@ -191,7 +191,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
     AfxMakeUri(&cubeDir, 0, "//./d/art/skybox/purple", 0);
 
     avxRasterInfo rasi = { 0 };
-    rasi.usage |= avxRasterUsage_RESAMPLE;
+    rasi.usage |= avxRasterUsage_TEXTURE;
     rasi.flags |= avxRasterFlag_CUBEMAP;
     
     sky->cubemap = AvxLoadCubemapRaster(dsys, &rasi, &cubeDir, facesUri);
@@ -267,14 +267,13 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
     sky->type = avxSkyType_BOX;
 
     avxVertexLayout vtxl = { 0 };
-    vtxl.attrCnt = 1;
     vtxl.attrs[0].location = 0;
-    vtxl.attrs[0].srcIdx = 0;
     vtxl.attrs[0].offset = 0;
     vtxl.attrs[0].fmt = avxFormat_RGB32f;
     vtxl.srcCnt = 1;
-    vtxl.srcs[0].instanceRate = 0;
-    vtxl.srcs[0].srcIdx = 0;
+    vtxl.srcs[0].instRate = 0;
+    vtxl.srcs[0].pin = 0;
+    vtxl.srcs[0].attrCnt = 1;
 
     AvxDeclareVertexInputs(dsys, 1, &vtxl, &sky->skyVin);
     AFX_ASSERT_OBJECTS(afxFcc_VIN, 1, &sky->skyVin);
@@ -380,12 +379,12 @@ void UpdateFrameMovement(avxCamera cam, afxReal64 DeltaTime)
 
 }
 
-afxBool AskNextFrame(afxDrawOutput dout, afxUnit* outBufIdx, afxUnit* frameIdxHolder)
+afxBool AskNextFrame(afxSurface dout, afxUnit* outBufIdx, afxUnit* frameIdxHolder)
 {
     afxBool rslt = FALSE;
 
     afxUnit outBufIdx2 = AFX_INVALID_INDEX;
-    if (!AvxRequestDrawOutputBuffer(dout, 0, &outBufIdx2))
+    if (!AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IMMEDIATE, NIL, &outBufIdx2, NIL, NIL))
     {
         gFrameIdx = (gFrameIdx + 1) % gFrameCnt;
         *frameIdxHolder = gFrameIdx;
@@ -414,7 +413,7 @@ int main(int argc, char const* argv[])
     afxUnit ddevId = 0;
     afxDrawSystem dsys;
     afxDrawSystemConfig dsyc;
-    AvxConfigureDrawSystem(ddevId, &dsyc);
+    AvxConfigureDrawSystem(ddevId, afxDrawCaps_DRAW, afxAcceleration_DPU, &dsyc);
     dsyc.exuCnt = 1;
     AvxEstablishDrawSystem(ddevId, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -438,7 +437,7 @@ int main(int argc, char const* argv[])
     AfxAcquireWindow(&wrc, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
-    afxDrawOutput dout;
+    afxSurface dout;
     AfxGetWindowDrawOutput(wnd, FALSE, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
@@ -508,8 +507,8 @@ int main(int argc, char const* argv[])
 
         afxClock currClock;
         AfxGetClock(&currClock);
-        afxReal64 ct = AfxGetClockSecondsElapsed(&startClock, &currClock);
-        afxReal64 dt = AfxGetClockSecondsElapsed(&lastClock, &currClock);
+        afxReal64 ct = AfxGetSecondsElapsed(&startClock, &currClock);
+        afxReal64 dt = AfxGetSecondsElapsed(&lastClock, &currClock);
         lastClock = currClock;
 
         UpdateFrameMovement(cam, dt);
@@ -523,36 +522,33 @@ int main(int argc, char const* argv[])
         {
             afxUnit portId = 0;
             afxDrawContext dctx;
-            if (AvxAcquireDrawContexts(dsys, portId, 0, 1, &dctx))
+            if (AvxAcquireDrawContexts(dsys, afxDrawCaps_DRAW, portId, TRUE, FALSE, 1, &dctx))
             {
                 AfxThrowError();
-                AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+                AvxUnlockSurfaceBuffer(dout, outBufIdx);
                 break;
             }
 
             avxCanvas canv;
-            AvxGetDrawOutputCanvas(dout, outBufIdx, &canv);
+            afxRect crc;
+            AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &crc);
             AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-            avxRange canvWhd = AvxGetCanvasArea(canv, AVX_ORIGIN_ZERO);
 
             avxDrawScope dps = { 0 };
             dps.canv = canv;
-            dps.area = AVX_RECT(0, 0, canvWhd.w, canvWhd.h);
+            dps.area = crc;
             dps.layerCnt = 1;
             dps.targetCnt = 1;
-            dps.targets[0].clearValue.rgba[0] = 0.3f;
-            dps.targets[0].clearValue.rgba[1] = 0.1f;
-            dps.targets[0].clearValue.rgba[2] = 0.3f;
-            dps.targets[0].clearValue.rgba[3] = 1;
+            dps.targets[0].clearVal = AVX_COLOR_VALUE(0.3f, 0.1f, 0.3f, 1);
             dps.targets[0].loadOp = avxLoadOp_CLEAR;
             dps.targets[0].storeOp = avxStoreOp_STORE;
-            dps.depth.clearValue.depth = 1.0;
-            dps.depth.clearValue.stencil = 0;
+            dps.depth.clearVal.depth = 1.0;
+            dps.depth.clearVal.stencil = 0;
             dps.depth.loadOp = avxLoadOp_CLEAR;
             dps.depth.storeOp = avxStoreOp_STORE;
             AvxCmdCommenceDrawScope(dctx, &dps);
 
-            avxViewport vp = AVX_VIEWPORT(0, 0, canvWhd.w, canvWhd.h, 0, 1);
+            avxViewport vp = AVX_VIEWPORT(0, 0, crc.w, crc.h, 0, 1);
             AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
             DrawSky(&skybox, &vp, cam, frameIdx, dout, dctx);
@@ -562,7 +558,7 @@ int main(int argc, char const* argv[])
             if (AvxCompileDrawCommands(dctx))
             {
                 AfxThrowError();
-                AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+                AvxUnlockSurfaceBuffer(dout, outBufIdx);
                 AfxDisposeObjects(1, &dctx);
                 break;
             }
@@ -572,7 +568,7 @@ int main(int argc, char const* argv[])
             if (AvxExecuteDrawCommands(dsys, &subm, 1, &dctx, dscrCompleteFence))
             {
                 AfxThrowError();
-                AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+                AvxUnlockSurfaceBuffer(dout, outBufIdx);
                 AfxDisposeObjects(1, &dctx);
                 break;
             }
@@ -580,10 +576,10 @@ int main(int argc, char const* argv[])
             //AfxWaitForDrawQueue(dsys, subm.exuIdx, subm.baseQueIdx, 0);
 
             avxPresentation pres = { 0 };
-            if (AvxPresentDrawOutputs(dsys, &pres, NIL, 1, &dout, &outBufIdx, NIL))
+            if (AvxPresentSurfaces(dsys, &pres, NIL, 1, &dout, &outBufIdx, NIL))
             {
                 AfxThrowError();
-                AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+                AvxUnlockSurfaceBuffer(dout, outBufIdx);
             }
             AfxDisposeObjects(1, &dctx);
             break;

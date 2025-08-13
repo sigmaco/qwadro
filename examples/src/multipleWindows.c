@@ -48,7 +48,7 @@ int main(int argc, char const* argv[])
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
     afxDrawSystemConfig dsyc = { 0 };
-    AvxConfigureDrawSystem(drawIcd, &dsyc);
+    AvxConfigureDrawSystem(drawIcd, afxDrawCaps_DRAW, afxAcceleration_DPU, &dsyc);
     dsyc.exuCnt = 1;
     AvxEstablishDrawSystem(drawIcd, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -73,7 +73,7 @@ int main(int argc, char const* argv[])
     AfxAcquireWindow(&wrc, &wnd);
     //AfxAdjustWindowFromNdc(wnd, NIL, AFX_V3D(0.5, 0.5, 1));
 
-    afxDrawOutput dout;
+    afxSurface dout;
     AfxGetWindowDrawOutput(wnd, FALSE, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
@@ -87,60 +87,56 @@ int main(int argc, char const* argv[])
 
     while (1)
     {
-        AfxPollInput(0, AFX_TIME_INFINITE);
+        AfxPollInput(0, AFX_TIMEOUT_INFINITE);
 
         if (!AfxSystemIsExecuting())
             break;
 
         afxClock currClock;
         AfxGetClock(&currClock);
-        afxReal64 ct = AfxGetClockSecondsElapsed(&startClock, &currClock);
-        afxReal64 dt = AfxGetClockSecondsElapsed(&lastClock, &currClock);
+        afxReal64 ct = AfxGetSecondsElapsed(&startClock, &currClock);
+        afxReal64 dt = AfxGetSecondsElapsed(&lastClock, &currClock);
         lastClock = currClock;
 
         if (!readyToRender)
             continue;
 
         afxUnit outBufIdx = 0;
-        if (AvxRequestDrawOutputBuffer(dout, 0, &outBufIdx))
+        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IMMEDIATE, NIL, &outBufIdx, NIL, NIL))
             continue;
         
         afxUnit portId = 0;
         afxUnit queIdx = 0;
         afxDrawContext dctx;
-        if (AvxAcquireDrawContexts(dsys, portId, queIdx, 1, &dctx))
+        if (AvxAcquireDrawContexts(dsys, afxDrawCaps_DRAW, portId, TRUE, FALSE, 1, &dctx))
         {
             AfxThrowError();
-            AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+            AvxUnlockSurfaceBuffer(dout, outBufIdx);
             continue;
         }
 
         avxCanvas canv;
-        avxRange canvWhd;
-        AvxGetDrawOutputCanvas(dout, outBufIdx, &canv);
+        afxRect crc;
+        AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &crc);
         AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-        canvWhd = AvxGetCanvasArea(canv, AVX_ORIGIN_ZERO);
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
+        dps.area = crc;
         dps.layerCnt = 1;
         dps.targetCnt = 1;
-        dps.targets[0].clearValue.rgba[0] = AfxRandomReal2(0, 1);
-        dps.targets[0].clearValue.rgba[1] = AfxRandomReal2(0, 1);
-        dps.targets[0].clearValue.rgba[2] = AfxRandomReal2(0, 1);
-        dps.targets[0].clearValue.rgba[3] = 1;
+        dps.targets[0].clearVal = AVX_COLOR_VALUE(AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), 1);
         dps.targets[0].loadOp = avxLoadOp_CLEAR;
         dps.targets[0].storeOp = avxStoreOp_STORE;
-        dps.depth.clearValue.depth = 1.0;
-        dps.depth.clearValue.stencil = 0;
+        dps.depth.clearVal.depth = 1.0;
+        dps.depth.clearVal.stencil = 0;
         dps.depth.loadOp = avxLoadOp_CLEAR;
         dps.depth.storeOp = avxStoreOp_STORE;
         //dps.stencil = &ddt;
 
-        dps.area = AVX_RECT(0, 0, canvWhd.w, canvWhd.h);
         AvxCmdCommenceDrawScope(dctx, &dps);
 
-        avxViewport vp = AVX_VIEWPORT(0, 0, canvWhd.w, canvWhd.h, 0, 1);
+        avxViewport vp = AVX_VIEWPORT(0, 0, crc.w, crc.h, 0, 1);
         AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
         AvxCmdConcludeDrawScope(dctx);
@@ -148,7 +144,7 @@ int main(int argc, char const* argv[])
         if (AvxCompileDrawCommands(dctx))
         {
             AfxThrowError();
-            AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+            AvxUnlockSurfaceBuffer(dout, outBufIdx);
             AfxDisposeObjects(1, &dctx);
             continue;
         }
@@ -158,7 +154,7 @@ int main(int argc, char const* argv[])
         if (AvxExecuteDrawCommands(dsys, &subm, 1, &dctx, drawCompletedFence))
         {
             AfxThrowError();
-            AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+            AvxUnlockSurfaceBuffer(dout, outBufIdx);
             AfxDisposeObjects(1, &dctx);
             continue;
         }
@@ -166,10 +162,10 @@ int main(int argc, char const* argv[])
         //AfxWaitForDrawQueue(dsys, subm.exuIdx, subm.baseQueIdx, 0);
 
         avxPresentation pres = { 0 };
-        if (AvxPresentDrawOutputs(dsys, &pres, NIL, 1, &dout, &outBufIdx, NIL))
+        if (AvxPresentSurfaces(dsys, &pres, NIL, 1, &dout, &outBufIdx, NIL))
         {
             AfxThrowError();
-            AvxRecycleDrawOutputBuffer(dout, outBufIdx);
+            AvxUnlockSurfaceBuffer(dout, outBufIdx);
         }
         AfxDisposeObjects(1, &dctx);
     }
