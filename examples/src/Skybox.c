@@ -3,7 +3,7 @@
 #include <Windows.h>
 
 #include "qwadro/inc/afxQwadro.h"
-#include "qwadro/inc/sim/akxRenderer.h"
+#include "qwadro/inc/render/arxRenderware.h"
 
 #ifdef AFX_OS_WIN
 #ifdef AFX_OS_WIN64
@@ -55,12 +55,12 @@ typedef struct
     avxRaster cubemap;
     avxBuffer cube;
     avxVertexInput skyVin;
-    afxDrawTechnique skyDtec;
+    arxTechnique skyDtec;
     afxReal cubemapColorIntensity;
 
     avxColor ambientColor;
     avxColor emissiveColor;
-    avxSkyType type;
+    arxSkyType type;
 } Sky;
 
 Sky skybox;
@@ -72,7 +72,7 @@ void StepSky(Sky* sky, afxReal dt)
     AfxM4dRotationFromQuat(sky->rotMtx, sky->rotQuat);
 }
 
-afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameIdx, afxSurface dout, afxDrawContext dctx)
+afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameIdx, afxSurface dout, afxDrawContext dctx)
 {
     afxError err = AFX_ERR_NONE;
 
@@ -84,21 +84,20 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameId
     {
         //cam = rnd->activeCamera;
 
-        avxRange screenRes;
-        afxReal64 wpOverHp;
-        AvxQueryDrawOutputResolution(dout, &wpOverHp, NIL, &screenRes, NIL);
-        AvxSetCameraAspectRatios(cam, wpOverHp, AFX_V2D(screenRes.w, screenRes.h), vp->extent);
+        avxModeSetting sms = { 0 };
+        AvxQuerySurfaceSettings(dout, &sms);
+        ArxSetCameraAspectRatios(cam, sms.wpOverHp, AFX_V2D(sms.resolution.w, sms.resolution.h), vp->extent);
 
         viewConstants->viewExtent[0] = vp->extent[0];
         viewConstants->viewExtent[1] = vp->extent[1];
 
         afxV4d viewPos;
-        AvxGetCameraPosition(cam, viewPos);
+        ArxGetCameraPosition(cam, viewPos);
         AfxV4dCopyAtv3d(viewConstants->viewPos, viewPos);
 
         afxM4d v, iv, p, ip;
-        AvxRecomputeCameraMatrices(cam);
-        AvxGetCameraMatrices(cam, p, NIL, v, ip, NIL, iv);
+        ArxRecomputeCameraMatrices(cam);
+        ArxGetCameraMatrices(cam, p, NIL, v, ip, NIL, iv);
         
         AfxM4dCopy(viewConstants->p, p);
         AfxM4dCopy(viewConstants->ip, ip);
@@ -142,7 +141,7 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, avxCamera cam, afxUnit frameId
     return err;
 }
 
-afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
+afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, arxRenderware din)
 {
     afxError err = NIL;
 
@@ -264,7 +263,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
     afxUri uri;
     AfxMakeUri(&uri, 0, "//./d/gfx/skybox/skybox.xsh.xml", 0);
     AfxLoadDrawTechnique(din, &uri, &sky->skyDtec);
-    sky->type = avxSkyType_BOX;
+    sky->type = arxSkyType_BOX;
 
     avxVertexLayout vtxl = { 0 };
     vtxl.attrs[0].location = 0;
@@ -295,7 +294,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, afxDrawInput din)
 afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
 {
     afxError err = AFX_ERR_NONE;
-    avxCamera cam = (void*)obj;
+    arxCamera cam = (void*)obj;
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     (void)watched;
     (void)ev;
@@ -313,26 +312,26 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
         {
             afxV2d delta;
             afxV3d deltaEar;
-            AfxGetMouseMotion(0, delta);
+            AfxGetMouseMotion(0, delta, NIL, NIL);
             deltaEar[1] = -AfxRadf(delta[0]);
             deltaEar[0] = -AfxRadf(delta[1]);
             deltaEar[2] = 0.f;
             afxV3d v;
-            AvxConsultCameraOrientation(cam, deltaEar, avxBlendOp_ADD, v);
-            AvxResetCameraOrientation(cam, v);
+            ArxConsultCameraOrientation(cam, deltaEar, avxBlendOp_ADD, v);
+            ArxResetCameraOrientation(cam, v);
         }
 
         if (AfxIsRmbPressed(0))
         {
             afxV2d delta;
             afxV3d off;
-            AfxGetMouseMotion(0, delta);
+            AfxGetMouseMotion(0, delta, NIL, NIL);
             off[0] = -AfxRadf(delta[0]);
             off[1] = -AfxRadf(delta[1]);
             off[2] = 0.f;
             afxV3d v;
-            AvxConsultCameraDisplacement(cam, off, avxBlendOp_ADD, v);
-            AvxResetCameraDisplacement(cam, v);
+            ArxConsultCameraDisplacement(cam, off, avxBlendOp_ADD, v);
+            ArxResetCameraDisplacement(cam, v);
         }
         break;
     }
@@ -340,7 +339,7 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
     {
         afxReal w = AfxGetMouseWheelDelta(0);
         w = w / 120.f; // WHEEL_DELTA
-        AvxApplyCameraDistance(cam, w);
+        ArxApplyCameraDistance(cam, w);
         break;
     }
     case auxEventId_KEY:
@@ -354,7 +353,7 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
     return FALSE;
 }
 
-void UpdateFrameMovement(avxCamera cam, afxReal64 DeltaTime)
+void UpdateFrameMovement(arxCamera cam, afxReal64 DeltaTime)
 {
     afxError err = AFX_ERR_NONE;
     
@@ -374,7 +373,7 @@ void UpdateFrameMovement(avxCamera cam, afxReal64 DeltaTime)
         MovementThisFrame * UpSpeed,
         MovementThisFrame * ForwardSpeed
     };
-    AvxTranslateCamera(cam, v);
+    ArxTranslateCamera(cam, v);
 
 
 }
@@ -438,18 +437,18 @@ int main(int argc, char const* argv[])
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
     afxSurface dout;
-    AfxGetWindowDrawOutput(wnd, FALSE, &dout);
+    AfxGetWindowSurface(wnd, FALSE, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
     // Open a draw input mechanism
 
-    afxDrawInput din;
-    afxDrawInputConfig dinc = { 0 };
+    arxRenderware din;
+    arxRenderwareConfig dinc = { 0 };
     dinc.proc = NIL;
     dinc.udd = NIL;
     dinc.cmdPoolMemStock = 4096;
     dinc.estimatedSubmissionCnt = 3;
-    AvxOpenDrawInput(dsys, &dinc, &din);
+    ArxOpenRenderware(dsys, &dinc, &din);
     AFX_ASSERT_OBJECTS(afxFcc_DIN, 1, &din);
 
     // Build the skybox
@@ -465,8 +464,8 @@ int main(int argc, char const* argv[])
     // Acquire a view point
     // Handle mouse-camera interaction
 
-    avxCamera cam;
-    AvxAcquireCameras(dsys, 1, &cam);
+    arxCamera cam;
+    ArxAcquireCameras(dsys, 1, &cam);
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AfxConnectObjects(cam, 1, (afxObject[]) { wnd }, (void*)CamEventFilter);
 
@@ -536,16 +535,16 @@ int main(int argc, char const* argv[])
 
             avxDrawScope dps = { 0 };
             dps.canv = canv;
-            dps.area = crc;
-            dps.layerCnt = 1;
+            dps.area.area = crc;
+            dps.area.layerCnt = 1;
             dps.targetCnt = 1;
             dps.targets[0].clearVal = AVX_COLOR_VALUE(0.3f, 0.1f, 0.3f, 1);
             dps.targets[0].loadOp = avxLoadOp_CLEAR;
             dps.targets[0].storeOp = avxStoreOp_STORE;
-            dps.depth.clearVal.depth = 1.0;
-            dps.depth.clearVal.stencil = 0;
-            dps.depth.loadOp = avxLoadOp_CLEAR;
-            dps.depth.storeOp = avxStoreOp_STORE;
+            dps.ds[0].clearVal.depth = 1.0;
+            dps.ds[0].clearVal.stencil = 0;
+            dps.ds[0].loadOp = avxLoadOp_CLEAR;
+            dps.ds[0].storeOp = avxStoreOp_STORE;
             AvxCmdCommenceDrawScope(dctx, &dps);
 
             avxViewport vp = AVX_VIEWPORT(0, 0, crc.w, crc.h, 0, 1);
