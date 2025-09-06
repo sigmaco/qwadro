@@ -1,14 +1,6 @@
-﻿..\src\helloWindow.c(76): error : call to undeclared function 'AfxGetWindowDrawOutput'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-..\src\helloWindow.c(124): error : assigning to 'afxLayeredRect' (aka 'struct afxLayeredRect') from incompatible type 'afxRect' (aka 'struct afxRect')
-..\src\helloWindow.c(125): error : no member named 'layerCnt' in 'struct avxDrawScope'
-..\src\helloWindow.c(130): error : no member named 'depth' in 'struct avxDrawScope'
-..\src\helloWindow.c(131): error : no member named 'depth' in 'struct avxDrawScope'
-..\src\helloWindow.c(132): error : no member named 'depth' in 'struct avxDrawScope'
-..\src\helloWindow.c(142): error : too few arguments to function call, expected 2, have 1
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawContext.h(89): note: 'AvxCompileDrawCommands' declared here
-..\src\helloWindow.c(152): error : too many arguments to function call, expected 3, have 5
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawContext.h(159): note: 'AvxExecuteDrawCommands' declared here
-..\src\helloWindow.c(163): error : too many arguments to function call, expected 3, have 7
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/video/afxSurface.h(620): note: 'AvxPresentSurfaces' declared here
+﻿..\src\helloWindow.c(107): warning : unused variable 'ct' [-Wunused-variable]
+..\src\helloWindow.c(108): warning : unused variable 'dt' [-Wunused-variable]
 ..\src\helloWindow.c(35): warning : unused parameter 'argc' [-Wunused-parameter]
 ..\src\helloWindow.c(35): warning : unused parameter 'argv' [-Wunused-parameter]
+lld-link : warning : /debug:fastlink unsupported; using /debug:full
+  helloWindow.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w32d\helloWindow.exe

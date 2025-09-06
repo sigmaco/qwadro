@@ -47,8 +47,10 @@ int main(int argc, char const* argv[])
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
     afxDrawSystemConfig dsyc = { 0 };
-    AvxConfigureDrawSystem(drawIcd, afxDrawCaps_DRAW, afxAcceleration_DPU, &dsyc);
+    dsyc.caps = afxDrawFn_DRAW;
+    dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
+    AvxConfigureDrawSystem(drawIcd, &dsyc);
     AvxEstablishDrawSystem(drawIcd, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
@@ -65,16 +67,25 @@ int main(int argc, char const* argv[])
     // Acquire a drawable surface
 
     afxWindow wnd;
-    afxWindowConfig wrc = { 0 };
-    wrc.dsys = dsys;
-    AfxConfigureWindow(&wrc, NIL, AFX_V3D(0.5, 0.5, 1));
-    //wrc.surface.bufFmt[0] = avxFormat_BGRA4un;
-    AfxAcquireWindow(&wrc, &wnd);
-    //AfxAdjustWindowFromNdc(wnd, NIL, AFX_V3D(0.5, 0.5, 1));
-
     afxSurface dout;
-    AfxGetWindowDrawOutput(wnd, FALSE, &dout);
+    afxWindowConfig wcfg = { 0 };
+    wcfg.dsys = dsys;
+    //wcfg.dout.bins[0].fmt = avxFormat_BGRA4un;
+    AfxConfigureWindow(&wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
+    AfxAcquireWindow(&wcfg, &wnd);
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+    AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+
+    // Operation contexts
+
+    afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, 3);
+
+    afxDrawContext drawContexts[3];
+    avxContextInfo ctxi = { 0 };
+    ctxi.caps = afxDrawFn_DRAW;
+    AvxAcquireDrawContexts(dsys, &ctxi, frameCap, drawContexts);
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
     // Run
 
@@ -101,71 +112,76 @@ int main(int argc, char const* argv[])
             continue;
 
         afxUnit outBufIdx = 0;
-        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IMMEDIATE, NIL, &outBufIdx, NIL, NIL))
+        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_NONE, NIL, &outBufIdx, NIL))
+        {
             continue;
-        
-        afxUnit portId = 0;
-        afxUnit queIdx = 0;
-        afxDrawContext dctx;
-        if (AvxAcquireDrawContexts(dsys, afxDrawCaps_DRAW, portId, TRUE, FALSE, 1, &dctx))
+        }
+
+        afxDrawContext dctx = drawContexts[outBufIdx];
+
+        afxUnit batchId;
+        if (AvxRecordDrawCommands(dctx, TRUE, FALSE, &batchId))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
             continue;
         }
 
+        afxRect area;
         avxCanvas canv;
-        afxRect crc;
-        AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &crc);
+        AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &area);
         AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
-        dps.area = crc;
-        dps.layerCnt = 1;
+        dps.area.area = area;
         dps.targetCnt = 1;
         dps.targets[0].clearVal = AVX_COLOR_VALUE(AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), 1);
         dps.targets[0].loadOp = avxLoadOp_CLEAR;
         dps.targets[0].storeOp = avxStoreOp_STORE;
-        dps.depth.clearVal = AVX_DEPTH_VALUE(1.0, 0);
-        dps.depth.loadOp = avxLoadOp_CLEAR;
-        dps.depth.storeOp = avxStoreOp_STORE;
-        //dps.stencil = &ddt;
+        dps.ds[0].clearVal = AVX_DEPTH_VALUE(1.0, 0);
+        dps.ds[0].loadOp = avxLoadOp_CLEAR;
+        dps.ds[0].storeOp = avxStoreOp_STORE;
 
         AvxCmdCommenceDrawScope(dctx, &dps);
 
-        avxViewport vp = AVX_VIEWPORT(0, 0, crc.w, crc.h, 0, 1);
+        avxViewport vp = AVX_VIEWPORT(0, 0, area.w, area.h, 0, 1);
         AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
         AvxCmdConcludeDrawScope(dctx);
 
-        if (AvxCompileDrawCommands(dctx))
+        if (AvxCompileDrawCommands(dctx, batchId))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
-            AfxDisposeObjects(1, &dctx);
             continue;
         }
 
-        avxSubmission subm = { 0 };
         avxFence drawCompletedFence = NIL;
-        if (AvxExecuteDrawCommands(dsys, &subm, 1, &dctx, drawCompletedFence))
+        avxSubmission subm = { 0 };
+        subm.fence = drawCompletedFence;
+        subm.dctx = dctx;
+        subm.batchId = batchId;
+
+        if (AvxExecuteDrawCommands(dsys, 1, &subm))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
-            AfxDisposeObjects(1, &dctx);
             continue;
         }
 
-        //AfxWaitForDrawQueue(dsys, subm.exuIdx, subm.baseQueIdx, 0);
+        //AfxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuIdx);
 
         avxPresentation pres = { 0 };
-        if (AvxPresentSurfaces(dsys, &pres, NIL, 1, &dout, &outBufIdx, NIL))
+        pres.dout = dout;
+        pres.bufIdx = outBufIdx;
+        //pres.waitOnDpu = drawCompletedFence;
+
+        if (AvxPresentSurfaces(dsys, 1, &pres))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
         }
-        AfxDisposeObjects(1, &dctx);
     }
 
     AfxDisposeObjects(1, &wnd);
