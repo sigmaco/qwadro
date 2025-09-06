@@ -1,13 +1,7 @@
-﻿..\src\Skybox.c(203): warning : unused variable 'SIZE' [-Wunused-variable]
-..\src\Skybox.c(360): warning : unused variable 'err' [-Wunused-variable]
-..\src\Skybox.c(388): error : too few arguments to function call, expected 6, have 3
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawOutput.h(395): note: 'AvxRequestDrawOutputBuffer' declared here
-..\src\Skybox.c(511): error : call to undeclared function 'AfxGetClockSecondsElapsed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-..\src\Skybox.c(526): error : too many arguments to function call, expected 4, have 5
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawContext.h(131): note: 'AvxAcquireDrawContexts' declared here
-..\src\Skybox.c(562): error : too few arguments to function call, expected 2, have 1
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawContext.h(89): note: 'AvxCompileDrawCommands' declared here
-..\src\Skybox.c(572): warning : incompatible pointer types passing 'avxFence' (aka 'struct avxFence_T *') to parameter of type 'const afxUnit *' (aka 'const unsigned int *') [-Wincompatible-pointer-types]
-  E:\qwadro\repo\afx\_vs17\..\..\qwadro/inc/draw/afxDrawContext.h(171): note: passing argument to parameter 'batches' here
-..\src\Skybox.c(398): warning : unused parameter 'argc' [-Wunused-parameter]
-..\src\Skybox.c(398): warning : unused parameter 'argv' [-Wunused-parameter]
+﻿..\src\Skybox.c(191): warning : unused variable 'SIZE' [-Wunused-variable]
+..\src\Skybox.c(348): warning : unused variable 'err' [-Wunused-variable]
+..\src\Skybox.c(510): warning : unused variable 'ct' [-Wunused-variable]
+..\src\Skybox.c(386): warning : unused parameter 'argc' [-Wunused-parameter]
+..\src\Skybox.c(386): warning : unused parameter 'argv' [-Wunused-parameter]
+lld-link : warning : /debug:fastlink unsupported; using /debug:full
+  skybox.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w32d\skybox.exe
