@@ -2,8 +2,9 @@
 #define WIN32_LEAN_AND_MEAN 1
 #include <Windows.h>
 
-#include "qwadro/inc/afxQwadro.h"
-#include "qwadro/inc/render/arxRenderware.h"
+#include "qwadro/afxQwadro.h"
+#include "qwadro/render/arxRenderContext.h"
+#include "qwadro/sim/arxSimulation.h"
 
 #ifdef AFX_OS_WIN
 #ifdef AFX_OS_WIN64
@@ -86,7 +87,7 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameId
 
         avxModeSetting sms = { 0 };
         AvxQuerySurfaceSettings(dout, &sms);
-        ArxSetCameraAspectRatios(cam, sms.wpOverHp, AFX_V2D(sms.resolution.w, sms.resolution.h), vp->extent);
+        ArxAdjustCameraAspectRatio(cam, sms.wpOverHp, AFX_V2D(sms.resolution.w, sms.resolution.h), vp->extent);
 
         viewConstants->viewExtent[0] = vp->extent[0];
         viewConstants->viewExtent[1] = vp->extent[1];
@@ -96,8 +97,8 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameId
         AfxV4dCopyAtv3d(viewConstants->viewPos, viewPos);
 
         afxM4d v, iv, p, ip;
-        ArxRecomputeCameraMatrices(cam);
-        ArxGetCameraMatrices(cam, p, NIL, v, ip, NIL, iv);
+        ArxGetCameraMatrices(cam, v, iv);
+        ArxGetProjectionMatrices(cam, p, ip, NIL, NIL);
         
         AfxM4dCopy(viewConstants->p, p);
         AfxM4dCopy(viewConstants->ip, ip);
@@ -109,7 +110,7 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameId
 
     AvxCmdUpdateBuffer(dctx, gFramesets[frameIdx].viewConstantsBuffer, 0, sizeof(*viewConstants), viewConstants);
 
-    AvxCmdBindBuffers(dctx, avxBus_DRAW, 0, 0, 1, &AVX_BUFFERED_MAP(gFramesets[frameIdx].viewConstantsBuffer, 0, 0, 0));
+    AvxCmdBindBuffers(dctx, avxBus_GFX, 0, 0, 1, &AVX_BUFFERED_MAP(gFramesets[frameIdx].viewConstantsBuffer, 0, 0, 0));
 
     struct
     {
@@ -119,8 +120,8 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameId
     AfxM4dCopy(pushes.v, viewConstants->v);
     AvxCmdPushConstants(dctx, 0, sizeof(pushes), &pushes);
 
-    AvxCmdBindSamplers(dctx, avxBus_DRAW, 0, 1, 1, &sky->smp);
-    AvxCmdBindRasters(dctx, avxBus_DRAW, 0, 1, 1, &sky->cubemap);
+    AvxCmdBindSamplers(dctx, avxBus_GFX, 0, 1, 1, &sky->smp);
+    AvxCmdBindRasters(dctx, avxBus_GFX, 0, 1, 1, &sky->cubemap);
 
     AvxCmdBindVertexBuffers(dctx, 0, 1, &AVX_BUFFERED_STREAM(sky->cube, 0, 0, sizeof(afxV3d)));
     //AvxCmdResetVertexStreams(dctx, 1, NIL, (afxUnit32[]) { sizeof(afxV3d) }, NIL);
@@ -129,7 +130,7 @@ afxError DrawSky(Sky* sky, avxViewport const* vp, arxCamera cam, afxUnit frameId
     return err;
 }
 
-afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, arxRenderware rwe)
+afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, arxRenderContext rctx)
 {
     afxError err = NIL;
 
@@ -182,7 +183,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, arxRenderware rwe)
     rasi.usage |= avxRasterUsage_TEXTURE;
     rasi.flags |= avxRasterFlag_CUBEMAP;
     
-    sky->cubemap = AvxLoadSegmentedRaster(dsys, &rasi, &cubeDir, facesUri);
+    AvxLoadSegmentedRaster(dsys, &rasi, &cubeDir, facesUri, &sky->cubemap);
     //AfxFlipRaster(sky->cubemap, FALSE, TRUE);
 
     AvxMakeColor(sky->ambientColor, 0.1, 0.1, 0.1, 1);
@@ -252,7 +253,7 @@ afxError BuildSkybox(Sky* sky, afxDrawSystem dsys, arxRenderware rwe)
 
     afxUri uri;
     AfxMakeUri(&uri, 0, "//./d/gfx/skybox/skybox.xsh.xml", 0);
-    ArxLoadDrawTechnique(rwe, &uri, &sky->skyDtec);
+    ArxLoadDrawTechnique(rctx, &uri, &sky->skyDtec);
     sky->type = arxSkyType_BOX;
 
     avxVertexLayout vtxl = { 0 };
@@ -307,8 +308,9 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
             deltaEar[0] = -AfxRadf(delta[1]);
             deltaEar[2] = 0.f;
             afxV3d v;
-            ArxConsultCameraOrientation(cam, deltaEar, avxBlendOp_ADD, v);
-            ArxResetCameraOrientation(cam, v);
+            ArxGetCameraOrbit(cam, v);
+            AfxV3dAdd(v, v, deltaEar);
+            ArxSetCameraOrbit(cam, v);
         }
 
         if (AfxIsMousePressed(0, AFX_RMB))
@@ -320,8 +322,9 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
             off[1] = -AfxRadf(delta[1]);
             off[2] = 0.f;
             afxV3d v;
-            ArxConsultCameraDisplacement(cam, off, avxBlendOp_ADD, v);
-            ArxResetCameraDisplacement(cam, v);
+            ArxGetCameraDisplacement(cam, v);
+            AfxV3dAdd(v, v, off);
+            ArxSetCameraDisplacement(cam, v);
         }
         break;
     }
@@ -329,7 +332,7 @@ afxBool CamEventFilter(afxObject *obj, afxObject *watched, auxEvent *ev)
     {
         afxReal w = AfxGetMouseWheelDelta(0);
         w = w / 120.f; // WHEEL_DELTA
-        ArxApplyCameraDistance(cam, w);
+        ArxSetCameraDistance(cam, ArxGetCameraDistance(cam) + w);
         break;
     }
     case auxEventId_KEY:
@@ -402,7 +405,7 @@ int main(int argc, char const* argv[])
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
     afxDrawSystemConfig dsyc = { 0 };
-    dsyc.caps = afxDrawFn_DRAW;
+    dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
     AvxConfigureDrawSystem(drawIcd, &dsyc);
@@ -424,28 +427,28 @@ int main(int argc, char const* argv[])
     afxSurface dout;
     afxWindowConfig wcfg = { 0 };
     wcfg.dsys = dsys;
-    AfxConfigureWindow(&wcfg, NIL, AFX_V2D(0.5, 0.5));
-    AfxAcquireWindow(&wcfg, &wnd);
+    AfxConfigureWindow(ses, &wcfg, NIL, AFX_V2D(0.5, 0.5));
+    AfxAcquireWindow(ses, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
     // Open a draw input mechanism
 
-    arxRenderware rwe;
+    arxRenderContext rctx;
     arxRenderwareConfig rwec = { 0 };
     rwec.dsys = dsys;
     rwec.proc = NIL;
     rwec.udd = NIL;
     rwec.cmdPoolMemStock = 4096;
     rwec.estimatedSubmissionCnt = 3;
-    ArxOpenRenderware(0, &rwec, &rwe);
-    AFX_ASSERT_OBJECTS(afxFcc_RWE, 1, &rwe);
+    ArxAcquireRenderContext(0, &rwec, &rctx);
+    AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
 
     // Build the skybox
     
     AfxZero(&skybox, sizeof(skybox));
-    BuildSkybox(&skybox, dsys, rwe);
+    BuildSkybox(&skybox, dsys, rctx);
 
     //afxTxd txd;
     //afxUri uri;
@@ -456,7 +459,7 @@ int main(int argc, char const* argv[])
     // Handle mouse-camera interaction
 
     arxCamera cam;
-    ArxAcquireCameras(rwe, 1, &cam);
+    ArxAcquireCameras(rctx, 1, &cam);
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AfxConnectObjects(cam, 1, (afxObject[]) { wnd }, (void*)CamEventFilter);
 
@@ -486,7 +489,7 @@ int main(int argc, char const* argv[])
 
     afxDrawContext drawContexts[3];
     avxContextInfo ctxi = { 0 };
-    ctxi.caps = afxDrawFn_DRAW;
+    ctxi.caps = avxAptitude_GFX;
     AvxAcquireDrawContexts(dsys, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
@@ -538,7 +541,7 @@ int main(int argc, char const* argv[])
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
-        dps.area.area = area;
+        dps.rgn.area = area;
         dps.targetCnt = 1;
         dps.targets[0].clearVal = AVX_COLOR_VALUE(0.3f, 0.1f, 0.3f, 1);
         dps.targets[0].loadOp = avxLoadOp_CLEAR;

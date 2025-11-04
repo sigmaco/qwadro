@@ -14,7 +14,7 @@
  *                      Open sourced under the Qwadro License.
  */
 
-#include "qwadro/inc/afxQwadro.h"
+#include "qwadro/afxQwadro.h"
 
 #ifdef AFX_OS_WIN
 #ifdef AFX_OS_WIN64
@@ -48,7 +48,7 @@ int main(int argc, char const* argv[])
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
     afxDrawSystemConfig dsyc = { 0 };
-    dsyc.caps = afxDrawFn_DRAW;
+    dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
     AvxConfigureDrawSystem(drawIcd, &dsyc);
@@ -58,12 +58,13 @@ int main(int argc, char const* argv[])
     // Open a session
 
     afxUnit shIcd = 0;
-    afxSession ses;
-    afxSessionConfig scfg = { 0 };
-    scfg.dsys = dsys; // integrate our draw system
-    AfxAcquireSession(shIcd, &scfg, &ses);
-    AFX_ASSERT_OBJECTS(afxFcc_SES, 1, &ses);
-    AfxOpenSession(ses, NIL, NIL, NIL);
+    afxEnvironment env;
+    afxEnvironmentConfig ecfg = { 0 };
+    ecfg.dsys = dsys; // integrate our draw system
+    AfxConfigureEnvironment(shIcd, &ecfg);
+    AfxAcquireEnvironment(shIcd, &ecfg, &env);
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    AfxOpenEnvironment(env, NIL, NIL, NIL);
 
     // Acquire a drawable surface
 
@@ -72,8 +73,8 @@ int main(int argc, char const* argv[])
     afxWindowConfig wcfg = { 0 };
     wcfg.dsys = dsys;
     //wcfg.dout.ccfg.bins[0].fmt = avxFormat_BGRA4un;
-    AfxConfigureWindow(&wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
-    AfxAcquireWindow(&wcfg, &wnd);
+    AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
+    AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
@@ -84,7 +85,7 @@ int main(int argc, char const* argv[])
 
     afxDrawContext drawContexts[3];
     avxContextInfo ctxi = { 0 };
-    ctxi.caps = afxDrawFn_DRAW;
+    ctxi.caps = avxAptitude_GFX;
     AvxAcquireDrawContexts(dsys, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
@@ -98,7 +99,7 @@ int main(int argc, char const* argv[])
 
     while (1)
     {
-        AfxPollInput(0, AFX_TIMEOUT_INFINITE);
+        AfxDoUx(0, AFX_TIMEOUT_INFINITE);
 
         if (!AfxSystemIsExecuting())
             break;
@@ -113,7 +114,7 @@ int main(int argc, char const* argv[])
             continue;
 
         afxUnit outBufIdx = 0;
-        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_NONE, NIL, &outBufIdx, NIL))
+        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_NONE, NIL, NIL, &outBufIdx))
         {
             continue;
         }
@@ -128,14 +129,14 @@ int main(int argc, char const* argv[])
             continue;
         }
 
-        afxRect area;
+        afxLayeredRect area;
         avxCanvas canv;
         AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &area);
         AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
-        dps.area.area = area;
+        dps.bounds = area;
         dps.targetCnt = 1;
         dps.targets[0].clearVal = AVX_COLOR_VALUE(AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), 1);
         dps.targets[0].loadOp = avxLoadOp_CLEAR;
@@ -147,7 +148,7 @@ int main(int argc, char const* argv[])
 
         AvxCmdCommenceDrawScope(dctx, &dps);
 
-        avxViewport vp = AVX_VIEWPORT(0, 0, area.w, area.h, 0, 1);
+        avxViewport vp = AVX_VIEWPORT(0, 0, area.area.w, area.area.h, 0, 1);
         AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
         AvxCmdConcludeDrawScope(dctx);
@@ -187,7 +188,7 @@ int main(int argc, char const* argv[])
     }
 
     AfxDisposeObjects(1, &wnd);
-    AfxDisposeObjects(1, &ses);
+    AfxDisposeObjects(1, &env);
     AfxDisposeObjects(1, &dsys);
 
     AfxDoSystemShutdown(0);

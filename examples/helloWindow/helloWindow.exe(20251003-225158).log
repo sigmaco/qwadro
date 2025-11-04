@@ -1,0 +1,19 @@
+Booting...Mounting... <//./z/>(''),5Mounting... <//./z/>('E:\qwadro\repo\qwadro_afx\qwd\'),5Mounting... <//./z/>('E:\qwadro\repo\qwadro_afx\qwd\w64'),7Mounting... <//./z/>('E:\qwadro\repo\qwadro_afx\qwd\w64d'),7Mounting... <//./c/>('C:\Windows\System32'),5Loading... <e2coree.dll>Memory page Size: 4096HW threading: 2Loading... <e2iridee.dll>Loading... <amiga.dll>Loading... <catalyst.dll>Loading... <tarzgl4.dll>afxSystem.c:480?_AfxLoadAndAttachIcd
+Loading... <wshell7.dll>afxSystem.c:480?_AfxLoadAndAttachIcd
+afxDrawSystem.c:1057?AvxConfigureDrawSystem
+afxDrawSystem.c:1163?AvxEstablishDrawSystem
+afxClass.c:1314?_AfxAssertObjects
+afxClass.c:1314?_AfxAssertObjects
+(hdr->fcc == afxFcc_OBJ)
+afxClass.c:1323?_AfxAssertObjects
+afxClass.c:1323?_AfxAssertObjects
+(cls->fcc == afxFcc_CLS)
+afxClass.c:114?AfxGetSubclass
+afxClass.c:114?AfxGetSubclass
+(cls->fcc == afxFcc_CLS)
+afxDebug_w32.c:1029?AfxCatchError_
+helloWindow.c:55?main
+helloWindow.c:55?main
+((!1) || ((&dsys) && !(_AfxAssertObjects((1), (afxObject const*)(&dsys),(afxFcc_DSYS)))))
+afxEnvironment.c:577?AfxConfigureEnvironment
+afxEnvironment.c:613?AfxAcquireEnvironment

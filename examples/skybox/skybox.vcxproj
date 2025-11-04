@@ -86,7 +86,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
@@ -101,7 +101,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
     <Link>
@@ -140,7 +140,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
     </ClCompile>
     <Link />
@@ -149,7 +149,7 @@
     <ProjectReference Include="..\..\..\afx\_vs17\e2coree\e2coree.vcxproj">
       <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\afx\_vs17\e2synerg\e2synerg.vcxproj">
+    <ProjectReference Include="..\..\..\arx\_vs17\e2kinee\e2kinee.vcxproj">
       <Project>{0f78f3c8-d287-4a15-a69b-208b85c038f4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\icd_amiga\_vs17\amiga\amiga.vcxproj">
@@ -161,7 +161,7 @@
     <ProjectReference Include="..\..\..\icd_tarzgl4\_vs17\tarzgl4\tarzgl4.vcxproj">
       <Project>{1bafd2ad-9548-4fa9-b268-6afe5087845d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\icd_wshell4d\_vs17\wshell4d\wshell4d.vcxproj">
+    <ProjectReference Include="..\..\..\icd_wshell7\_vs17\wshell7\wshell7.vcxproj">
       <Project>{de71d516-d811-49f6-8c15-d99975c40801}</Project>
     </ProjectReference>
   </ItemGroup>

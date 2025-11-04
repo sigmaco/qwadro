@@ -2,6 +2,7 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+/**/*.dmp
 
 /_vs17/.vs
 /_vs17/**/.vs
@@ -24,3 +25,8 @@
 /art/fmv/ubi.bik
 /art/fmv/disco.bik
 /art/object/backpack
+
+
+/dep/vld/
+/qwd/w32d/vld*
+/qwd/w64d/vld*
