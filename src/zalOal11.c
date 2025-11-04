@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -170,7 +170,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
     audi.fmt = amxFormat_S16i; // asi->m.fmt;
     audi.freq = asi->m.freq;
     audi.sampCnt = asi->m.samplesPerFrame;
-    afxMixSystem ssys = AfxGetProvider(asi);
+    afxMixSystem ssys = AfxGetHost(asi);
     AmxAcquireAudios(ssys, 1, &audi, &idd->frames[0]);
     AmxAcquireAudios(ssys, 1, &audi, &idd->frames[1]);
     //AmxAcquireAudios(ssys, 1, &audi, &idd->frames[2]);
@@ -197,7 +197,7 @@ _ZAL afxError _ZalAsioDtorCb(afxSink asi)
     afxError err = AFX_ERR_NONE;
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
-    afxMixDevice sdev = AfxGetProvider(asi);
+    afxMixDevice sdev = AfxGetHost(asi);
 
     return err;
 }

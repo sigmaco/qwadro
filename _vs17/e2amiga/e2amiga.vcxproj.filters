@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="_nfo">
+      <UniqueIdentifier>{c79ae1af-0897-4fa1-8f80-e7146f627a17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2amiga">
+      <UniqueIdentifier>{e6b49fb1-a25f-42db-ba50-4d4e4bda384e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>_nfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zalInteropWasapi.h">
+      <Filter>e2amiga</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zalInteropOal.h">
+      <Filter>e2amiga</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zalBase.h">
+      <Filter>e2amiga</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zalObjects.h">
+      <Filter>e2amiga</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="e2amiga.rc">
+      <Filter>_nfo</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\zalMiniaudio_W32.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalOal11.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalSystem.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalDevice_W32.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalInteropOal.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalInteropWasapi.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalSession.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

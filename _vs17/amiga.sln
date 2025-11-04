@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.33423.255
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "amiga", "amiga\amiga.vcxproj", "{8DB6B4EB-2027-4AA2-90C4-1C5937167746}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2amiga", "e2amiga\e2amiga.vcxproj", "{8DB6B4EB-2027-4AA2-90C4-1C5937167746}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2coree", "..\..\afx\_vs17\e2coree\e2coree.vcxproj", "{973A60FF-EA6C-4D62-A302-BF610CABAB8C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2coree", "..\..\qwadro_afx\_vs17\e2coree\e2coree.vcxproj", "{973A60FF-EA6C-4D62-A302-BF610CABAB8C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "qwadro", "qwadro", "{AAD70EDB-06F8-4682-B433-8B4D0B97FC05}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2mixva", "..\..\afx\_vs17\e2mixva\e2mixva.vcxproj", "{1685D511-3934-4F31-B8A3-AFA740F612B3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "waudses", "waudses\waudses.vcxproj", "{49293D9C-51E5-4EEF-9C0E-686185074569}"
 EndProject
