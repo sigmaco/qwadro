@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -119,7 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -136,7 +136,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -149,14 +149,14 @@
     <ClCompile Include="..\src\multipleWindows.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\afx\_vs17\e2coree\e2coree.vcxproj">
-      <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\icd_tarzgl4\_vs17\tarzgl4\tarzgl4.vcxproj">
+    <ProjectReference Include="..\..\..\icd_tarzgl4\_vs17\e2tarzgl4\e2tarzgl4.vcxproj">
       <Project>{1bafd2ad-9548-4fa9-b268-6afe5087845d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\icd_wshell4d\_vs17\wshell4d\wshell4d.vcxproj">
+    <ProjectReference Include="..\..\..\icd_wshell7\_vs17\e2wshell7\e2wshell7.vcxproj">
       <Project>{de71d516-d811-49f6-8c15-d99975c40801}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\qwadro_afx\_vs17\e2coree\e2coree.vcxproj">
+      <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

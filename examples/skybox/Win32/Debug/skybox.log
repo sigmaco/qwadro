@@ -1,7 +1,3 @@
-﻿..\src\Skybox.c(191): warning : unused variable 'SIZE' [-Wunused-variable]
-..\src\Skybox.c(348): warning : unused variable 'err' [-Wunused-variable]
-..\src\Skybox.c(510): warning : unused variable 'ct' [-Wunused-variable]
-..\src\Skybox.c(386): warning : unused parameter 'argc' [-Wunused-parameter]
-..\src\Skybox.c(386): warning : unused parameter 'argv' [-Wunused-parameter]
-lld-link : warning : /debug:fastlink unsupported; using /debug:full
-  skybox.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w32d\skybox.exe
+﻿lld-link : warning : /debug:fastlink unsupported; using /debug:full
+lld-link : error : could not open 'E:\qwadro\repo\arx\qwd\w32d\wshell4d.lib': no such file or directory
+lld-link : error : could not open 'E:\qwadro\repo\arx\qwd\w32d\amiga.lib': no such file or directory
