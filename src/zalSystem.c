@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -21,9 +21,6 @@ _ZAL afxError _ZalMsysDtorCb(afxMixSystem msys)
 {
     afxError err = AFX_ERR_NONE;
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
-
-    if (_ZalWasapiDestroy(&msys->wasapi))
-        AfxThrowError();
 
     _AMX_MSYS_CLASS_CONFIG.dtor(msys);
 
@@ -41,19 +38,18 @@ _ZAL afxError _ZalMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     _amxMexuAcquisition* bridgeCfgs = AFX_CAST(_amxMexuAcquisition*, args[2]) + invokeNo;
 
     _amxMsysAcquisition cfg2 = *cfg;
-
+#if 0
     afxClassConfig asioClsCfg = _AMX_ASIO_CLASS_CONFIG;
     asioClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSink));
     asioClsCfg.ctor = (void*)_ZalAsioCtorCb;
     asioClsCfg.dtor = (void*)_ZalAsioDtorCb;
 
     cfg2.sinkClsCfg = &asioClsCfg;
-    
+#endif
     if (_AMX_MSYS_CLASS_CONFIG.ctor(msys, (void*[]) { icd, &cfg2, bridgeCfgs }, 0)) AfxThrowError();
     else
     {
-        if (_ZalWasapiCreate(&msys->wasapi))
-            AfxThrowError();
+
     }
     return err;
 }

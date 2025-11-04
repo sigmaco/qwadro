@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -66,7 +66,6 @@ AFX_OBJECT(afxMixDevice)
 AFX_OBJECT(afxMixSystem)
 {
     AFX_OBJECT(_amxMixSystem) m;
-    zalWasapi wasapi;
 };
 
 AFX_OBJECT(afxMixBridge)
@@ -83,21 +82,6 @@ AFX_OBJECT(afxMixBridge)
     afxInterlockedQueue     deletionQueue;
 };
 
-AFX_OBJECT(afxSink)
-{
-    AFX_OBJECT(_amxSink) m;
-    union
-    {
-        zalWasapi wasapi;
-        struct
-        {
-            ma_device_config deviceConfig;
-            ma_device device;
-            ma_pcm_rb rb;
-        } miniaud;
-    } idd;
-};
-
 AFX_OBJECT(afxSemaphore)
 {
     AFX_OBJECT(_afxSemaphore) m;
@@ -111,7 +95,7 @@ AFX_OBJECT(amxSound)
 
 AFX_OBJECT(amxSoundscape)
 {
-    AFX_OBJECT(_amxAudient) m;
+    AFX_OBJECT(_amxSoundscape) m;
 
 };
 

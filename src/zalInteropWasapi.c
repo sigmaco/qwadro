@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -22,6 +22,10 @@
 //#include <comdef.h>
 #include <audioclient.h>
 #include <functiondiscoverykeys_devpkey.h>
+#include <mmreg.h>         // Defines WAVEFORMATEX and extended formats
+#include <ks.h>            // Core streaming types
+#include <ksmedia.h>       // Audio subformat GUIDs (like KSDATAFORMAT_SUBTYPE_PCM)
+
 //#include "AuxOverWin32.h"
 #pragma comment(lib, "mmdevapi")
 
@@ -69,6 +73,24 @@ __DEFINE_GUID(pa_KSDATAFORMAT_SUBTYPE_ADPCM, 0x00000002, 0x0000, 0x0010, 0x80, 0
 __DEFINE_GUID(pa_KSDATAFORMAT_SUBTYPE_IEEE_FLOAT, 0x00000003, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
 __DEFINE_GUID(pa_KSDATAFORMAT_SUBTYPE_IEC61937_PCM, 0x00000000, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
 #endif
+
+// PCM (16-bit integer)
+// {00000001-0000-0010-8000-00AA00389B71}
+static const GUID KSDATAFORMAT_SUBTYPE_PCM = {
+    0x00000001,
+    0x0000,
+    0x0010,
+    { 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 }
+};
+
+// IEEE Float (32-bit float)
+// {00000003-0000-0010-8000-00AA00389B71}
+static const GUID KSDATAFORMAT_SUBTYPE_IEEE_FLOAT = {
+    0x00000003,
+    0x0000,
+    0x0010,
+    { 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71 }
+};
 
 // Convert PCM 16-bit to float [-1.0, 1.0]
 float pcm16_to_float(int16_t pcm_value) {
@@ -192,18 +214,167 @@ void resample_44100_to_48000_interleaved(const int16_t* input, size_t input_len,
     }
 }
 
-_ZAL afxUnit _ZalWasapiGetWriteRoom(zalWasapi* idd)
+_ZAL afxUnit wasapiOutputGetRoom(zalWasapi* idd, afxUnit* paddingFrameCnt, afxUnit* availFrameCnt)
 {
     afxError err = AFX_ERR_NONE;
     AFX_ASSERT(idd);
     
     UINT32 numFramesPadding;
     // See how much buffer space is available.
+    // Query how many frames are already queued (padding)
     HRESULT hr = idd->pAudioClient->lpVtbl->GetCurrentPadding(idd->pAudioClient, &numFramesPadding);
     //AFX_ASSERT(!hr);
     UINT32 bufferFrameCount = idd->bufferFrameCount;
+    // Calculate how many frames we can write.
     UINT32 numFramesAvailable = bufferFrameCount - numFramesPadding;
-    return numFramesAvailable;
+    if (paddingFrameCnt) *paddingFrameCnt = numFramesPadding;
+    if (availFrameCnt) *availFrameCnt = numFramesAvailable;
+    return bufferFrameCount;
+}
+
+_ZAL afxError wasapiOutputUnlock(zalWasapi* idd, afxUnit frameCnt, afxFlags flags)
+{
+    afxError err = AFX_ERR_NONE;
+    AFX_ASSERT(frameCnt);
+    AFX_ASSERT(idd);
+    HRESULT hr;
+    DWORD dwFlags = flags;
+    AFX_ASSERT(idd->lockedOutFrameCnt == frameCnt);
+    hr = idd->pRenderClient->lpVtbl->ReleaseBuffer(idd->pRenderClient, frameCnt, dwFlags);
+    AFX_ASSERT(hr == S_OK);
+    idd->lockedOutBaseFrame += idd->lockedOutFrameCnt;
+    idd->lockedOutFrameCnt = 0;
+    idd->lockedOutPtr = NIL;
+    return err;
+}
+
+_ZAL afxError wasapiOutputLock(zalWasapi* idd, afxUnit frameCnt, void** pMap)
+{
+    afxError err = AFX_ERR_NONE;
+    AFX_ASSERT(frameCnt);
+    AFX_ASSERT(idd);
+
+    afxUnit padFrameCnt, availFrameCnt;
+    afxUnit totalBufCap = wasapiOutputGetRoom(idd, &padFrameCnt, &availFrameCnt);
+    AFX_ASSERT(totalBufCap >= frameCnt);
+
+    if (!(availFrameCnt >= frameCnt))
+    {
+        *pMap = NIL;
+        return afxError_INSUFFICIENT;
+    }
+    AFX_ASSERT(availFrameCnt >= frameCnt);
+    
+    HRESULT hr;
+    BYTE* pRenderData = NIL;
+    hr = idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, frameCnt, &pRenderData);
+    AFX_ASSERT(hr == S_OK);
+
+    AFX_ASSERT(hr != AUDCLNT_E_OUT_OF_ORDER);
+    AFX_ASSERT(hr != AUDCLNT_E_BUFFER_TOO_LARGE);
+    AFX_ASSERT(hr != AUDCLNT_E_BUFFER_ERROR);
+    AFX_ASSERT(hr != AUDCLNT_E_BUFFER_SIZE_ERROR);
+    AFX_ASSERT(hr != AUDCLNT_E_DEVICE_INVALIDATED);
+    AFX_ASSERT(hr != AUDCLNT_E_BUFFER_OPERATION_PENDING);
+    AFX_ASSERT(hr != AUDCLNT_E_SERVICE_NOT_RUNNING);
+
+    if (!pRenderData)
+    {
+        AfxThrowError();
+    }
+    else
+    {
+        idd->lockedOutPtr = pRenderData;
+        idd->lockedOutBaseFrame = padFrameCnt;
+        idd->lockedOutFrameCnt = frameCnt;
+    }
+    *pMap = pRenderData;
+    return err;
+}
+
+_ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb)
+{
+    afxError err = NIL;
+
+    while (1/*running*/)
+    {
+        DWORD waitResult = WaitForSingleObject(idd->bufferReady, 0);
+        if (waitResult != WAIT_OBJECT_0) {
+            break;
+            //continue; // timeout or error
+        }
+
+        UINT32 padding = 0;
+        idd->pAudioClient->lpVtbl->GetCurrentPadding(idd->pAudioClient, &padding);
+
+        UINT32 availableFrames = idd->bufferFrameCount - padding;
+        if (availableFrames == 0)
+        {
+            break;
+            //continue;
+        }
+
+        afxReal* data = NULL;
+        idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, availableFrames, &data);
+
+        // Fill from ring buffer
+        size_t framesAvailable = audio_ringbuffer_available(rb);
+        size_t framesToCopy = framesAvailable < availableFrames ? framesAvailable : availableFrames;
+
+        // Copy available frames
+        audio_ringbuffer_read(rb, (float*)data, sizeof(float), framesToCopy);
+
+        // Fill remainder with silence if underflow
+        if (framesToCopy < availableFrames) {
+            size_t silenceFrames = availableFrames - framesToCopy;
+            memset(((float*)data) + framesToCopy * idd->pwfx->Format.nChannels, 0,
+                sizeof(float) * silenceFrames * idd->pwfx->Format.nChannels);
+        }
+
+        idd->pRenderClient->lpVtbl->ReleaseBuffer(idd->pRenderClient, availableFrames, 0);
+        break;
+    }
+    return err;
+}
+
+_ZAL afxError wasapiInputRb(zalWasapi* idd, AudioRingBuffer* rb)
+{
+    afxError err = 0;
+
+    while (1/*running*/) {
+        DWORD waitResult = WaitForSingleObject(idd->bufferReady, 0);
+        if (waitResult != WAIT_OBJECT_0) {
+            // Timeout or error
+            break;
+            //continue;
+        }
+
+        UINT32 packetLength = 0;
+        idd->pCaptureClient->lpVtbl->GetNextPacketSize(idd->pCaptureClient, &packetLength);
+
+        while (packetLength > 0) {
+            BYTE* data;
+            UINT32 numFrames;
+            DWORD flags;
+
+            idd->pCaptureClient->lpVtbl->GetBuffer(idd->pCaptureClient, &data, &numFrames, &flags, NULL, NULL);
+
+            if (flags & AUDCLNT_BUFFERFLAGS_SILENT) {
+                // If silent, fill with zeros
+                memset(data, 0, numFrames * idd->pwfx->Format.nBlockAlign);
+            }
+
+            // Write to ring buffer
+            audio_ringbuffer_write(&rb, (float*)data, sizeof(float), numFrames);
+
+            idd->pCaptureClient->lpVtbl->ReleaseBuffer(idd->pCaptureClient, numFrames);
+            idd->pCaptureClient->lpVtbl->GetNextPacketSize(idd->pCaptureClient, &packetLength);
+        }
+
+        // Your app can now read from the ring buffer
+        break;
+    }
+    return err;
 }
 
 _ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void const* src)
@@ -221,7 +392,7 @@ _ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void cons
         //hr = asi->pRenderClient->lpVtbl->GetBuffer(asi->pRenderClient, bufferFrameCount, &pData);
 
         // Calculate the actual duration of the allocated buffer.
-        REFERENCE_TIME hnsActualDuration = (double)10000000 * bufferFrameCount / idd->pwfx->nSamplesPerSec;
+        REFERENCE_TIME hnsActualDuration = (double)10000000 * bufferFrameCount / idd->pwfx->Format.nSamplesPerSec;
 
         UINT32 numFramesPadding;
         // See how much buffer space is available.
@@ -229,30 +400,34 @@ _ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void cons
         //AFX_ASSERT(!hr);
 
         UINT32 numFramesAvailable = bufferFrameCount - numFramesPadding;
-
+        AFX_ASSERT(numFramesAvailable >= frameCnt);
+        frameCnt = AFX_MIN(frameCnt, numFramesAvailable);
 
         BYTE* pRenderData;
-        hr = idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, bufferFrameCount, &pRenderData);
+        hr = idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, frameCnt, &pRenderData);
         //AFX_ASSERT(!hr);
 
         if (!pRenderData)
             continue;
         
-        afxUnit outLen;
-        //resample_44100_to_48000_float2(src, frameCnt, pRenderData, &outLen, asi->bufferFrameCount, frameCnt);
-        //resample_44100_to_48000_float(src, frameCnt, pRenderData, &outLen);
-        resample_44100_to_48000_interleaved(src, frameCnt, pRenderData, &outLen);
+        if (src)
+        {
+            afxUnit outLen;
+            //resample_44100_to_48000_float2(src, frameCnt, pRenderData, &outLen, asi->bufferFrameCount, frameCnt);
+            //resample_44100_to_48000_float(src, frameCnt, pRenderData, &outLen);
+            resample_44100_to_48000_interleaved(src, frameCnt, pRenderData, &outLen);
+        }
 
         //AfxCopy(pRenderData, src, bufferFrameCount * asi->pwfx->nBlockAlign);  // Copy captured data to render buffer
 
-        hr = idd->pRenderClient->lpVtbl->ReleaseBuffer(idd->pRenderClient, bufferFrameCount, 0);
+        hr = idd->pRenderClient->lpVtbl->ReleaseBuffer(idd->pRenderClient, frameCnt, 0);
         //AFX_ASSERT(!hr);
         break;
     }
     return err;
 }
 
-_ZAL afxUnit _ZalWasapiGetReadLength(zalWasapi* idd)
+_ZAL afxUnit wasapiInputGetLength(zalWasapi* idd)
 {
     afxError err = AFX_ERR_NONE;
     AFX_ASSERT(idd);
@@ -260,6 +435,43 @@ _ZAL afxUnit _ZalWasapiGetReadLength(zalWasapi* idd)
     UINT32 bufferFrameCount = 0;
     HRESULT hr = idd->pCaptureClient->lpVtbl->GetNextPacketSize(idd->pCaptureClient, &bufferFrameCount);
     return bufferFrameCount;
+}
+
+_ZAL afxError wasapiInputLock(zalWasapi* idd, void** pDst, afxUnit* frameCnt)
+{
+    afxError err = AFX_ERR_NONE;
+    AFX_ASSERT(idd);
+
+    BYTE* pCaptureData = NIL;
+    UINT32 bufferFrameCount = 0;
+    HRESULT hr = idd->pCaptureClient->lpVtbl->GetBuffer(idd->pCaptureClient, &pCaptureData, &bufferFrameCount, NULL, NULL, NULL);
+    AFX_ASSERT(hr == S_OK);
+    if (!pCaptureData)
+    {
+        AfxThrowError();
+    }
+    else
+    {
+        idd->lockedInFrameCnt = bufferFrameCount;
+        idd->lockedInPtr = pCaptureData;
+    }
+    *pDst = pCaptureData;
+    *frameCnt = bufferFrameCount;
+    return err;
+}
+
+_ZAL afxError wasapiInputUnlock(zalWasapi* idd, afxUnit frameCnt)
+{
+    afxError err = AFX_ERR_NONE;
+    AFX_ASSERT(idd);
+    AFX_ASSERT(frameCnt);
+    AFX_ASSERT(idd->lockedInFrameCnt == frameCnt);
+    UINT32 bufferFrameCount = frameCnt;
+    HRESULT hr = idd->pCaptureClient->lpVtbl->ReleaseBuffer(idd->pCaptureClient, bufferFrameCount);
+    AFX_ASSERT(hr == S_OK);
+    idd->lockedInFrameCnt = 0;
+    idd->lockedInPtr = NIL;
+    return err;
 }
 
 _ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst, afxUnit* frameCnt)
@@ -278,7 +490,7 @@ _ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst,
         hr = idd->pCaptureClient->lpVtbl->GetBuffer(idd->pCaptureClient, &pCaptureData, &bufferFrameCount, NULL, NULL, NULL);
         AFX_ASSERT(!hr);
 
-        AfxCopy(dst, pCaptureData, bufferFrameCount * idd->pwfx->nBlockAlign);  // Copy captured data to render buffer
+        AfxCopy(dst, pCaptureData, bufferFrameCount * idd->pwfx->Format.nBlockAlign);  // Copy captured data to render buffer
 
         hr = idd->pCaptureClient->lpVtbl->ReleaseBuffer(idd->pCaptureClient, bufferFrameCount);
         AFX_ASSERT(!hr);
@@ -339,7 +551,7 @@ _ZAL afxError _ZalWasapiDestroy(zalWasapi* idd)
     return err;
 }
 
-_ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
+_ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afxUnit sampRate)
 {
     afxResult err = NIL;
     AFX_ASSERT(idd);
@@ -354,7 +566,7 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
     UINT32 bufferFrameCount;
     BYTE* pRenderData = NULL;
     BYTE* pCaptureData = NULL;
-    WAVEFORMATEX* pwfx = NULL;
+    WAVEFORMATEXTENSIBLE* pwfx = NULL;
 #if 0
     if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), 0, CLSCTX_ALL,
         __uuidof(IMMDeviceEnumerator),(void**)(&pEnumerator))))
@@ -377,6 +589,9 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
     DWORD dwClsCtx = CLSCTX_INPROC_SERVER;// CLSCTX_ALL;
     afxBool record = FALSE;
 
+    fmt = amxFormat_S16i;
+    sampRate = 11025;
+
     // Step 1: Get the device enumerator
     hr = CoCreateInstance(&CLSID_MMDeviceEnumerator, NULL, dwClsCtx, &IID_IMMDeviceEnumerator, (void**)&pEnumerator);
     AFX_ASSERT(!hr);
@@ -392,15 +607,71 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
     hr = pAudioClient->lpVtbl->GetMixFormat(pAudioClient, &pwfx);
     AFX_ASSERT(!hr);
 
-    REFERENCE_TIME defaultPeriod;
-    REFERENCE_TIME minimumPeriod;
-    pAudioClient->lpVtbl->GetDevicePeriod(pAudioClient, &defaultPeriod, &minimumPeriod);
+    afxUnit bps = 0;
+    GUID fmtWin = KSDATAFORMAT_SUBTYPE_PCM;
+    switch (fmt)
+    {
+    case amxFormat_M32f: bps = 32; fmtWin = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT; break;
+    case amxFormat_S32f: bps = 32; fmtWin = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT; break;
+    case amxFormat_M32i: bps = 32; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_S32i: bps = 32; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_M24i: bps = 24; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_S24i: bps = 24; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_M16i: bps = 16; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_S16i: bps = 16; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_M8i: bps = 8; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    case amxFormat_S8i: bps = 8; fmtWin = KSDATAFORMAT_SUBTYPE_PCM; break;
+    default: AfxThrowError();  break;
+    }
+    afxUnit fmtBps = bps;
+#if 0
+    // Some drivers only accept WAVEFORMATEXTENSIBLE for anything outside the default configuration.
+    // WASAPI is only accepting WAVEFORMATEXTENSIBLE, and rejecting WAVEFORMATEX formats like WAVE_FORMAT_PCM and 
+    // WAVE_FORMAT_IEEE_FLOAT, even if the underlying format is the same (e.g., 48kHz 16-bit stereo). 
+    // This is normal behavior on modern audio drivers (especially in shared mode).
+    // Modern WASAPI drivers (especially for high-definition audio) require that all formats be described using WAVEFORMATEXTENSIBLE, 
+    // even for basic PCM or float formats.
+    // This doesn’t mean PCM or float aren’t supported; it just means you need to specify them within WAVEFORMATEXTENSIBLE, 
+    // using the correct fields and subformat GUIDs
 
-    DWORD dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
-    AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED;
+    WAVEFORMATEXTENSIBLE wfex = {0};
+    wfex.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+    wfex.Format.nChannels = chCnt;                 // Mono (set to 2 for stereo)
+    wfex.Format.nSamplesPerSec = sampRate;        // Sample rate
+    wfex.Format.wBitsPerSample = fmtBps;           // Bit depth
+    wfex.Format.nBlockAlign = (wfex.Format.nChannels * wfex.Format.wBitsPerSample) / 8;
+    wfex.Format.nAvgBytesPerSec = wfex.Format.nSamplesPerSec * wfex.Format.nBlockAlign;
+    wfex.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+    wfex.SubFormat = fmtWin;
+    wfex.Samples.wValidBitsPerSample = fmtBps;
+    wfex.dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+
+    WAVEFORMATEXTENSIBLE* pClosestMatch = NIL;
+    hr = pAudioClient->lpVtbl->IsFormatSupported(pAudioClient,
+        AUDCLNT_SHAREMODE_EXCLUSIVE,  // or AUDCLNT_SHAREMODE_EXCLUSIVE
+        &wfex,
+        &pClosestMatch
+    );
+    AFX_ASSERT(!hr);
+#endif
+
+    // This is crucial in exclusive (and shared) mode to understand the hardware's timing constraints.
+    // defaultPeriod --- The engine's default scheduling interval (used in shared mode)
+    // minimumPeriod --- The lowest possible interval the hardware supports(important in exclusive mode)
+    // Both values are in 100-nanosecond units (REFERENCE_TIME), so: 10000 = 1 ms, 100000 = 10 ms, 1000000 = 100 ms.
+    REFERENCE_TIME defaultPeriod, minimumPeriod;
+    pAudioClient->lpVtbl->GetDevicePeriod(pAudioClient, &defaultPeriod, &minimumPeriod);
+    afxUnit64 defPeriodNs = defaultPeriod * 100; // REFERENCE_TIME 1 unit = 100 nanoseconds.
+    afxUnit64 minPeriodNs = minimumPeriod * 100; // REFERENCE_TIME 1 unit = 100 nanoseconds.
+
+    // When initializing in exclusive mode, you're required to pass the buffer duration to IAudioClient::Initialize(). 
+    // You should choose a duration that matches or exceeds the hardware's minimum period --- or risk AUDCLNT_E_INVALID_DEVICE_PERIOD.
+
+    DWORD dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST;
+    AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED; // ; AUDCLNT_SHAREMODE_EXCLUSIVE;
 
     // Step 5: Initialize the render audio client
-    hr = pAudioClient->lpVtbl->Initialize(pAudioClient, shareMode, dwStreamFlags, minimumPeriod, 0, pwfx, NULL);
+    hr = pAudioClient->lpVtbl->Initialize(pAudioClient, shareMode, dwStreamFlags, /*minimumPeriod*/defaultPeriod, 0, pwfx, NULL);
     AFX_ASSERT(!hr);
 
     // Step 7: Get buffer size for both devices
@@ -431,6 +702,7 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
         idd->bufferReady = bufferReady;
         idd->minimumPeriod = minimumPeriod;
         idd->defaultPeriod = defaultPeriod;
+        idd->exclusive = (shareMode == AUDCLNT_SHAREMODE_EXCLUSIVE);
         idd->dwClsCtx = dwClsCtx;
         idd->bufferFrameCount = bufferFrameCount;
         idd->pwfx = pwfx;
@@ -439,6 +711,8 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd)
         idd->pAudioClient = pAudioClient;
         idd->pCaptureClient = pCaptureClient;
         idd->pRenderClient = pRenderClient;
+        idd->defPeriodNs = defPeriodNs;
+        idd->minPeriodNs = minPeriodNs;
     }
     else
     {

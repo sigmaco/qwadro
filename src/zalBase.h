@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -28,6 +28,8 @@
 #define _AFX_SEMAPHORE_C
 #define _AFX_SEMAPHORE_IMPL
 
+// Mixound
+
 #define _AMX_MIX_C
 #define _AMX_MIX_SYSTEM_C
 #define _AMX_MIX_DEVICE_C
@@ -42,6 +44,7 @@
 #define _AMX_SINK_IMPL
 #define _AMX_SOUND_BUFFER_C
 #define _AMX_SOUND_BUFFER_IMPL
+#define _AMX_SOUND_C
 #define _AMX_SOUND_IMPL
 #define _AMX_AUDIO_C
 #define _AMX_WAVEFORM_IMPL
@@ -51,13 +54,13 @@
 #define _AMX_MIX_CONTEXT_IMPL
 #define _AMX_BROKER_C
 #define _AMX_BROKER_IMPL
-#define _AMX_AUDIENT_C
-#define _AMX_AUDIENT_IMPL
+#define _AMX_SOUNDSCAPE_C
+#define _AMX_SOUNDSCAPE_IMPL
 
 
-#include "qwadro/inc/mix/afxMixSystem.h"
-#include "qwadro/inc/exec/afxSystem.h"
-#include "afx/src/mix/impl/amxImplementation.h"
+#include "qwadro/mix/afxMixSystem.h"
+#include "qwadro/exec/afxSystem.h"
+#include "../qwadro_afx/src/mix/ddi/amxImplementation.h"
 
 #ifndef AMX_DRV_SRC
 #   ifdef _DEBUG

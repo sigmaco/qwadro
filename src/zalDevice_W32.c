@@ -1,13 +1,13 @@
 /*
- *          ::::::::  :::       :::     :::     :::::::::  :::::::::   ::::::::
- *         :+:    :+: :+:       :+:   :+: :+:   :+:    :+: :+:    :+: :+:    :+:
- *         +:+    +:+ +:+       +:+  +:+   +:+  +:+    +:+ +:+    +:+ +:+    +:+
- *         +#+    +:+ +#+  +:+  +#+ +#++:++#++: +#+    +:+ +#++:++#:  +#+    +:+
- *         +#+  # +#+ +#+ +#+#+ +#+ +#+     +#+ +#+    +#+ +#+    +#+ +#+    +#+
- *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
- *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
@@ -148,7 +148,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
                 do
                 {
                     AfxRequestThreadInterruption(sexu->m.worker);
-                    AmxWaitForIdleMixBridge(sexu, AFX_TIME_INFINITE);
+                    AmxWaitForIdleMixBridge(sexu, AFX_TIMEOUT_INFINITE);
                 } while (!AfxWaitForThreadExit(sexu->m.worker, &exitCode));
             }
         }
@@ -190,10 +190,10 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
     _amxMixDeviceRegistration const* info = (_amxMixDeviceRegistration const *)(args[1]) + invokeNo;
     AFX_ASSERT(info);
 
-    static afxMixCapabilities const portCaps[] =
+    static afxMixPortInfo const portCaps[] =
     {
         {
-            .capabilities = afxMixPortFlag_MIX | afxMixPortFlag_SIM,
+            .capabilities = amxAptitude_SFX | amxAptitude_DMA,
             .minQueCnt = 2,
             .maxQueCnt = 16,
             .acceleration = afxAcceleration_CPU
@@ -247,51 +247,85 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     msysClsCfg.ctor = (void*)_ZalMsysCtorCb;
     msysClsCfg.dtor = (void*)_ZalMsysDtorCb;
 
-    if (_AmxImplementMixSystem(icd, &mdevClsCfg, &msysClsCfg))
+    _amxMixSystemImplementation impl = { 0 };
+    impl.mcdcCls = _AMX_MCDC_CLASS_CONFIG;
+    impl.mdevCls = mdevClsCfg;
+    impl.msysCls = msysClsCfg;
+
+    if (_AmxImplementMixSystem(icd, &impl))
     {
         AfxThrowError();
         return err;
     }
+
+    static afxMixFeatures features = { 0 };
+
+    _amxMixDeviceRegistration mdevInfos[] =
+    {
+        {
+            .dev.urn = AFX_STRING("amiga-hwm"),
+            .dev.type = afxDeviceType_SOUND,
+
+            .features = features,
+            .capabilities = amxAptitude_SFX | amxAptitude_DMA | amxAptitude_COMPUTE | amxAptitude_SINK,
+            .acceleration = afxAcceleration_MPU,
+            .minQueCnt = 2,
+            .maxQueCnt = 16,
+
+            .dev.ioctl = (void*)_ZalSdevIoctrlCb,
+            //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
+
+        },
+        {
+            .dev.urn = AFX_STRING("amiga-warp"),
+            .dev.type = afxDeviceType_SOUND,
+
+            .features = features,
+            .capabilities = amxAptitude_DMA | amxAptitude_COMPUTE,
+            .acceleration = afxAcceleration_MPU,
+            .minQueCnt = 2,
+            .maxQueCnt = 16,
+
+            .dev.ioctl = (void*)_ZalSdevIoctrlCb,
+            //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
+
+        },
+        {
+            .dev.urn = AFX_STRING("amiga-iommu"),
+            .dev.type = afxDeviceType_SOUND,
+
+            .features = features,
+            .capabilities = amxAptitude_DMA,
+            .acceleration = afxAcceleration_MPU,
+            .minQueCnt = 2,
+            .maxQueCnt = 16,
+
+            .dev.ioctl = (void*)_ZalSdevIoctrlCb,
+            //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
+
+        },
+        {
+            .dev.urn = AFX_STRING("amiga-sink"),
+            .dev.type = afxDeviceType_SOUND,
+
+            .features = features,
+            .capabilities = amxAptitude_SINK,
+            .acceleration = afxAcceleration_MPU,
+            .minQueCnt = 2,
+            .maxQueCnt = 16,
+
+            .dev.ioctl = (void*)_ZalSdevIoctrlCb,
+            //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
+
+        },
+    };
+
+    afxMixDevice mdevices[ARRAY_SIZE(mdevInfos)];
+
+    if (_AmxRegisterMixDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices)) AfxThrowError();
     else
     {
-        static afxMixFeatures features = { 0 };
 
-        static afxMixCapabilities const portCaps[] =
-        {
-            {
-                .capabilities = afxMixPortFlag_MIX | afxMixPortFlag_SIM,
-                .minQueCnt = 2,
-                .maxQueCnt = 16,
-            },
-            {
-                .capabilities = afxMixPortFlag_MIX | afxMixPortFlag_SIM,
-                .minQueCnt = 2,
-                .maxQueCnt = 16,
-            },
-        };
-
-        _amxMixDeviceRegistration mdevInfos[] =
-        {
-            {
-                .dev.urn = AFX_STRING("amiga"),
-                .dev.type = afxDeviceType_SOUND,
-
-                .features = features,
-                .portCnt = ARRAY_SIZE(portCaps),
-
-                .dev.ioctl = (void*)_ZalSdevIoctrlCb,
-                //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
-
-            },
-        };
-
-        afxMixDevice mdevices[ARRAY_SIZE(mdevInfos)];
-
-        if (_AmxRegisterMixDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices)) AfxThrowError();
-        else
-        {
-
-        }
     }
     return err;
 }
