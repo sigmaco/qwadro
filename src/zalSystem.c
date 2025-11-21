@@ -19,7 +19,7 @@
 
 _ZAL afxError _ZalMsysDtorCb(afxMixSystem msys)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
 
     _AMX_MSYS_CLASS_CONFIG.dtor(msys);
@@ -34,10 +34,10 @@ _ZAL afxError _ZalMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _amxMsysAcquisition const* cfg = AFX_CAST(_amxMsysAcquisition const*, args[1]) + invokeNo;
-    _amxMexuAcquisition* bridgeCfgs = AFX_CAST(_amxMexuAcquisition*, args[2]) + invokeNo;
+    __amxMsysAcq const* cfg = AFX_CAST(__amxMsysAcq const*, args[1]) + invokeNo;
+    _amxMexuAcq* bridgeCfgs = AFX_CAST(_amxMexuAcq*, args[2]) + invokeNo;
 
-    _amxMsysAcquisition cfg2 = *cfg;
+    __amxMsysAcq cfg2 = *cfg;
 #if 0
     afxClassConfig asioClsCfg = _AMX_ASIO_CLASS_CONFIG;
     asioClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSink));

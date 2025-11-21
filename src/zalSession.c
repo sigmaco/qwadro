@@ -24,7 +24,7 @@
 
 _ZAL afxError _ZalMsesDtorCb(amxTracker mses)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSES, 1, &mses);
 
     afxMixDevice sdev = AfxGetHost(mses);

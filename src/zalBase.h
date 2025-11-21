@@ -60,7 +60,7 @@
 
 #include "qwadro/mix/afxMixSystem.h"
 #include "qwadro/exec/afxSystem.h"
-#include "../qwadro_afx/src/mix/ddi/amxImplementation.h"
+#include "../qwadro_afx/src/mix/amxIcd.h"
 
 #ifndef AMX_DRV_SRC
 #   ifdef _DEBUG

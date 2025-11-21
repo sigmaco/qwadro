@@ -216,7 +216,7 @@ void resample_44100_to_48000_interleaved(const int16_t* input, size_t input_len,
 
 _ZAL afxUnit wasapiOutputGetRoom(zalWasapi* idd, afxUnit* paddingFrameCnt, afxUnit* availFrameCnt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
     
     UINT32 numFramesPadding;
@@ -234,7 +234,7 @@ _ZAL afxUnit wasapiOutputGetRoom(zalWasapi* idd, afxUnit* paddingFrameCnt, afxUn
 
 _ZAL afxError wasapiOutputUnlock(zalWasapi* idd, afxUnit frameCnt, afxFlags flags)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(frameCnt);
     AFX_ASSERT(idd);
     HRESULT hr;
@@ -250,7 +250,7 @@ _ZAL afxError wasapiOutputUnlock(zalWasapi* idd, afxUnit frameCnt, afxFlags flag
 
 _ZAL afxError wasapiOutputLock(zalWasapi* idd, afxUnit frameCnt, void** pMap)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(frameCnt);
     AFX_ASSERT(idd);
 
@@ -294,7 +294,7 @@ _ZAL afxError wasapiOutputLock(zalWasapi* idd, afxUnit frameCnt, void** pMap)
 
 _ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     while (1/*running*/)
     {
@@ -339,7 +339,7 @@ _ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb)
 
 _ZAL afxError wasapiInputRb(zalWasapi* idd, AudioRingBuffer* rb)
 {
-    afxError err = 0;
+    afxError err = { 0 };
 
     while (1/*running*/) {
         DWORD waitResult = WaitForSingleObject(idd->bufferReady, 0);
@@ -379,7 +379,7 @@ _ZAL afxError wasapiInputRb(zalWasapi* idd, AudioRingBuffer* rb)
 
 _ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void const* src)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
 
     while (1)
@@ -429,7 +429,7 @@ _ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void cons
 
 _ZAL afxUnit wasapiInputGetLength(zalWasapi* idd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
     // Capture audio
     UINT32 bufferFrameCount = 0;
@@ -439,7 +439,7 @@ _ZAL afxUnit wasapiInputGetLength(zalWasapi* idd)
 
 _ZAL afxError wasapiInputLock(zalWasapi* idd, void** pDst, afxUnit* frameCnt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
 
     BYTE* pCaptureData = NIL;
@@ -462,7 +462,7 @@ _ZAL afxError wasapiInputLock(zalWasapi* idd, void** pDst, afxUnit* frameCnt)
 
 _ZAL afxError wasapiInputUnlock(zalWasapi* idd, afxUnit frameCnt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
     AFX_ASSERT(frameCnt);
     AFX_ASSERT(idd->lockedInFrameCnt == frameCnt);
@@ -476,7 +476,7 @@ _ZAL afxError wasapiInputUnlock(zalWasapi* idd, afxUnit frameCnt)
 
 _ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst, afxUnit* frameCnt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
 
     // Capture audio
@@ -502,7 +502,7 @@ _ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst,
 
 _ZAL afxError _ZalWasapiStartStop(zalWasapi* idd, afxBool start)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
 
     if (idd->pAudioClient)
@@ -524,7 +524,7 @@ _ZAL afxError _ZalWasapiStartStop(zalWasapi* idd, afxBool start)
 
 _ZAL afxError _ZalWasapiDestroy(zalWasapi* idd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(idd);
 
     if (idd->pRenderClient)

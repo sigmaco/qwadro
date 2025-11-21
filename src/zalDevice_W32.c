@@ -18,7 +18,7 @@
 
 _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &sdev);
     afxResult rslt = 0;
 
@@ -166,7 +166,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
 
 _ZAL afxError _ZalMdevDtorCb(afxMixDevice mdev)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &mdev);
 
     AfxExhaustChainedClasses(&mdev->m.dev.classes);
@@ -182,12 +182,12 @@ _ZAL afxError _ZalMdevDtorCb(afxMixDevice mdev)
 
 _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &mdev);
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _amxMixDeviceRegistration const* info = (_amxMixDeviceRegistration const *)(args[1]) + invokeNo;
+    _amxMdevReg const* info = (_amxMdevReg const *)(args[1]) + invokeNo;
     AFX_ASSERT(info);
 
     static afxMixPortInfo const portCaps[] =
@@ -234,7 +234,7 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
 
 _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
     afxClassConfig mdevClsCfg = _AMX_MDEV_CLASS_CONFIG;
@@ -247,7 +247,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     msysClsCfg.ctor = (void*)_ZalMsysCtorCb;
     msysClsCfg.dtor = (void*)_ZalMsysDtorCb;
 
-    _amxMixSystemImplementation impl = { 0 };
+    _amxMsysImpl impl = { 0 };
     impl.mcdcCls = _AMX_MCDC_CLASS_CONFIG;
     impl.mdevCls = mdevClsCfg;
     impl.msysCls = msysClsCfg;
@@ -260,7 +260,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
     static afxMixFeatures features = { 0 };
 
-    _amxMixDeviceRegistration mdevInfos[] =
+    _amxMdevReg mdevInfos[] =
     {
         {
             .dev.urn = AFX_STRING("amiga-hwm"),

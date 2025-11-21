@@ -29,14 +29,14 @@
 
 _ZAL afxUnit _ZalAsioGetAvailableFrames_Parture(afxSink asi)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
     return 0;
 }
 
 _ZAL afxError _ZalPushAsioDataWasapiCb(afxSink asi, afxUnit frameCnt, void const* src)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
     ma_result result;
     ma_uint32 framesWritten;
@@ -72,7 +72,7 @@ _ZAL afxError _ZalPushAsioDataWasapiCb(afxSink asi, afxUnit frameCnt, void const
 
 _ZAL afxError _ZalRelinkAsioWasapiCb(afxMixDevice sdev, afxMixSystem ssys, afxUnit cnt, afxSink asios[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &sdev);
     AFX_TRY_ASSERT_OBJECTS(afxFcc_MSYS, 1, &ssys);
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, cnt, asios);
@@ -106,7 +106,7 @@ _ZAL afxError _ZalRelinkAsioWasapiCb(afxMixDevice sdev, afxMixSystem ssys, afxUn
 
 _ZAL afxError _ZalAsioDtorCb(afxSink asi)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
     afxMixDevice sdev = AfxGetHost(asi);

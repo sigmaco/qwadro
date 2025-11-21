@@ -38,14 +38,14 @@ AFX_DEFINE_STRUCT(zalOalSinkIdd)
 
 _ZAL afxUnit _ZalAsioGetAvailableFrames_Parture(afxSink asi)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
     return 0;
 }
 
 _ZAL afxError _ZalPushAsioDataCb(afxSink asi, amxAudio buf, amxAudioPeriod const* seg)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
     zalOalSinkIdd* idd = asi->m.idd;
@@ -77,7 +77,7 @@ _ZAL afxError _ZalPushAsioDataCb(afxSink asi, amxAudio buf, amxAudioPeriod const
 
 _ZAL void _ZalOalSinkFlush(afxSink asi)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     zalOalSinkIdd* idd = asi->m.idd;
 
     if (!idd)
@@ -120,7 +120,7 @@ _ZAL void _ZalOalSinkFlush(afxSink asi)
 
 _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
     afxUri uri;
@@ -194,7 +194,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
 
 _ZAL afxError _ZalAsioDtorCb(afxSink asi)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
     afxMixDevice sdev = AfxGetHost(asi);

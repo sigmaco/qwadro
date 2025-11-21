@@ -159,7 +159,7 @@ _ZAL HMODULE hOpenal32Dll = NIL;
 
 _ZAL afxError _ZalLoadOpenAl(HMODULE openal32, afxUnit* verMajor, afxUnit* verMinor, afxUnit* verPatch)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     static afxBool loaded = FALSE;
     static afxUnit loadedVerMajor = 0;
     static afxUnit loadedVerMinor = 0;
@@ -216,7 +216,7 @@ _ZAL afxError _ZalLoadOpenAl(HMODULE openal32, afxUnit* verMajor, afxUnit* verMi
 
 _ZAL afxError _ZalLoadOalVmt(HMODULE openal32, afxUnit base, afxUnit cnt, char const *names[], void* vmt[], afxBool echo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     AFX_ASSERT(names);
     AFX_ASSERT(vmt);
