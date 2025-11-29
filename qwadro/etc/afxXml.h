@@ -88,7 +88,7 @@
 #ifndef AFX_XML_H
 #define AFX_XML_H
 
-#include "qwadro/io/afxUri.h"
+#include "qwadro/base/afxUri.h"
 #include "qwadro/mem/afxArray.h"
 
 // XML --- UNIFORM RESOURCE DICTIONARY

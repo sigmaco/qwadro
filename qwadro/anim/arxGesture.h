@@ -17,26 +17,26 @@
 
 // This file is part of Advanced Renderware Extensions & Experiments for Qwadro.
 
-#ifndef ARX_MOTION_H
-#define ARX_MOTION_H
+#ifndef ARX_GESTURE_H
+#define ARX_GESTURE_H
 
 #include "qwadro/anim/arxCurve.h"
 #include "qwadro/math/afxTransform.h"
 #include "qwadro/base/afxFixedString.h"
 
-typedef enum arxMotionFlag
+typedef enum arxGestureFlag
 {
-    arxMotionFlag_NONE
-} arxMotionFlags;
+    arxGestureFlag_NONE
+} arxGestureFlags;
 
-AFX_DEFINE_STRUCT(arxVectorialMotion)
+AFX_DEFINE_STRUCT(arxVectorialGesture)
 {
     afxUnit             seqKey;
     afxInt              dimension;
     arxCurve            value;
 };
 
-AFX_DEFINE_STRUCT(arxPivotalMotion)
+AFX_DEFINE_STRUCT(arxPivotalGesture)
 {
     afxMask             flags;
     arxCurve            transmission;
@@ -44,7 +44,7 @@ AFX_DEFINE_STRUCT(arxPivotalMotion)
     arxCurve            transmutation;
 };
 
-AFX_DEFINE_STRUCT(arxMotionBlueprint)
+AFX_DEFINE_STRUCT(arxGestureBlueprint)
 {
     afxString32         id;
     afxUnit             vecCnt;
@@ -56,20 +56,20 @@ AFX_DEFINE_STRUCT(arxMotionBlueprint)
     afxTransform        displacement;
 };
 
-ARX afxMask     ArxGetMotionFlags(arxMotion mot);
+ARX afxMask     ArxGetGestureFlags(arxGesture ges);
 
-ARX afxBool     ArxGetMotionId(arxMotion mot, afxString* id);
+ARX afxBool     ArxGetGestureId(arxGesture ges, afxString* id);
 
-ARX void        ArxComputeMotionDisplacement(arxMotion mot, afxM4d m);
+ARX void        ArxComputeGestureDisplacement(arxGesture ges, afxM4d m);
 
-ARX afxBool     ArxFindMotionVector(arxMotion mot, afxString const* seqId, afxUnit *seqIdx);
-ARX afxBool     ArxFindMotionTransform(arxMotion mot, afxString const* seqId, afxUnit *seqIdx);
+ARX afxBool     ArxFindGestureVector(arxGesture ges, afxString const* seqId, afxUnit *seqIdx);
+ARX afxBool     ArxFindGestureTransform(arxGesture ges, afxString const* seqId, afxUnit *seqIdx);
 
-ARX void        ArxUpdateMotionVectors(arxMotion mot, afxUnit baseSeqIdx, afxUnit seqCnt, arxVectorialMotion const vectors[], afxUnit fetchRate);
-ARX void        ArxUpdateMotionTransforms(arxMotion mot, afxUnit baseSeqIdx, afxUnit seqCnt, arxPivotalMotion const transforms[], afxUnit fetchRate);
+ARX void        ArxUpdateGestureVectors(arxGesture ges, afxUnit baseSeqIdx, afxUnit seqCnt, arxVectorialGesture const vectors[], afxUnit fetchRate);
+ARX void        ArxUpdateGestureTransforms(arxGesture ges, afxUnit baseSeqIdx, afxUnit seqCnt, arxPivotalGesture const transforms[], afxUnit fetchRate);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError    ArxAssembleMotions(arxScenario scio, afxUnit cnt, arxMotionBlueprint const blueprints[], arxMotion motions[]);
+ARX afxError    ArxCompileGestures(arxScenario scio, afxUnit cnt, arxGestureBlueprint const blueprints[], arxGesture motions[]);
 
-#endif//ARX_MOTION_H
+#endif//ARX_GESTURE_H
