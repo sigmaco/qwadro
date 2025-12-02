@@ -22,7 +22,7 @@
 #define AFX_URD_H
 
 #include "qwadro/io/afxStream.h"
-#include "qwadro/io/afxResource.h"
+#include "qwadro/etc/afxResource.h"
 
 typedef enum afxChunkId
 {

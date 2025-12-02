@@ -25,7 +25,7 @@
 #include "qwadro/base/afxFcc.h"
 #include "qwadro/mem/afxMemory.h"
 #include "qwadro/mem/afxMappedString.h"
-#include "qwadro/io/afxUri.h"
+#include "qwadro/base/afxUri.h"
 
 AFX_DEFINE_STRUCT(afxManifest)
 {

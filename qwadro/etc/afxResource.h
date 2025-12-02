@@ -19,8 +19,8 @@
 #ifndef AFX_RESOURCE_H
 #define AFX_RESOURCE_H
 
-#include "qwadro/io/afxUri.h"
-#include "qwadro/io/afxXml.h"
+#include "qwadro/base/afxUri.h"
+#include "qwadro/etc/afxXml.h"
 #include "qwadro/exec/afxTime.h"
 #include "qwadro/exec/afxModule.h"
 
