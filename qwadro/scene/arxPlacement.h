@@ -23,11 +23,11 @@
 
 #include "qwadro/render/arxRenderable.h"
 
-ARX afxUnit     ArxGetPlacementCapacity(arxPlacement plce);
+ARX afxUnit ArxGetPlacementCapacity(arxPlacement plce);
 
-ARX afxM4d*     ArxGetPlacementMatrices(arxPlacement plce, afxUnit baseArtIdx);
+ARX afxM4d* ArxGetPlacementMatrices(arxPlacement plce, afxUnit baseArtIdx);
 
-ARX afxM4d*     ArxGetPlacementDeltas(arxPlacement plce, afxUnit baseArtIdx);
+ARX afxM4d* ArxGetPlacementDeltas(arxPlacement plce, afxUnit baseArtIdx);
 
 /// A afxM4d composta está no mesmo layout como aquela retornada de GetPosture4x4. 
 /// É igual ao "world space" --- afxM4d espacial para a articulação (como dada por GetPosture4x4) multiplicada pelo transforme inverso de repouso no world-space --- para a articulação (como alojada no arxSkeleton). 
@@ -37,16 +37,16 @@ ARX afxM4d*     ArxGetPlacementDeltas(arxPlacement plce, afxUnit baseArtIdx);
 
 // Pass NIL as @pose to ArxBuildPlacement() to compute the rest placement.
 // Pass TRUE as composite to ArxBuildPlacement() to compute the placement's composite buffer.
-ARX void        ArxBuildPlacement(arxPlacement plce, arxPose pose, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxUnit baseReqJnt, afxUnit reqJntCnt, afxM4d const displace, afxBool skipDeltas);
+ARX void ArxBuildPlacement(arxPlacement plce, arxPose pose, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxUnit baseReqJnt, afxUnit reqJntCnt, afxM4d const displace, afxBool skipDeltas);
 
 // extract the pose
-ARX void        ArxRebuildPose(arxPlacement plce, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxM4d const displace, afxBool rigid, arxPose pose);
+ARX void ArxRebuildPose(arxPlacement plce, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxM4d const displace, afxBool rigid, arxPose pose);
 
-ARX void        ArxBuildCompositeMatrices(arxPlacement plce, arxSkeleton skl, afxUnit baseJnt, afxUnit cnt, afxBool /*3x4*/transposed, afxM4d matrices[]);
-ARX void        ArxBuildIndexedCompositeMatrices(arxPlacement plce, arxSkeleton skl, afxUnit cnt, afxUnit const jntMap[], afxBool /*3x4*/transposed, afxM4d matrices[]);
+ARX void ArxBuildCompositeMatrices(arxPlacement plce, arxSkeleton skl, afxUnit baseJnt, afxUnit cnt, afxBool /*3x4*/transposed, afxM4d matrices[]);
+ARX void ArxBuildIndexedCompositeMatrices(arxPlacement plce, arxSkeleton skl, afxUnit cnt, afxUnit const jntMap[], afxBool /*3x4*/transposed, afxM4d matrices[]);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError    ArxAcquirePlacements(arxScenario scio, afxUnit cnt, afxUnit const artCnt[], afxBool const excludeDeltas[], arxPlacement placements[]);
+ARX afxError ArxAcquirePlacements(arxScenario scio, afxUnit cnt, afxUnit const artCnt[], afxBool const excludeDeltas[], arxPlacement placements[]);
 
 #endif//ARX_PLACEMENT_H

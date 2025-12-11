@@ -36,7 +36,7 @@
 #include "qwadro/exec/afxSystem.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-#ifndef __e2mix__
+#ifndef __e2mixva__
 #   ifdef _DEBUG
 #       define AMX DLLIMPORT extern 
 #       define AMXINL DLLIMPORT EMBED
@@ -56,7 +56,7 @@
 #       define _AMXINL DLLEXPORT INLINE
 #       define AMXINL DLLEXPORT EMBED
 #   endif
-#endif//__e2mix__
+#endif//__e2mixva__
 
 //AFX_DEFINE_HANDLE(afxMixSystem);
 AFX_DEFINE_HANDLE(afxMixDevice);
@@ -85,7 +85,7 @@ AFX_DEFINE_HANDLE(amxVideo);
 AFX_DEFINE_HANDLE(amxVideoDecoder);
 AFX_DEFINE_HANDLE(afxVideoEncoder);
 AFX_DEFINE_HANDLE(amxTracker);
-AFX_DEFINE_HANDLE(amxSource);
+AFX_DEFINE_HANDLE(amxPump);
 AFX_DEFINE_HANDLE(amxCodec);
 AFX_DEFINE_HANDLE(amxEncoder);
 AFX_DEFINE_HANDLE(amxDecoder);

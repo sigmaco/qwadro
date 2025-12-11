@@ -206,7 +206,9 @@ AFX_DEFINE_STRUCT(amxAudioPeriod)
 
     afxUnit         segCnt;
 
+    // Arbitrary origins.
     afxUnit x, y, z;
+    // Arbitrary ranges.
     afxUnit w, h, d;
 };
 

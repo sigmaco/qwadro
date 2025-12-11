@@ -38,8 +38,81 @@ AFX_DEFINE_STRUCT(avxBufferedRing)
     afxSize     currOffset;
 };
 
-AVX void    AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit blockSiz, afxUnit blockAlign, avxBuffer buf, afxSize bufCap, void* mapped);
-AVX afxSize AvxCycleBufferedRing(avxBufferedRing* rng);
-AVX void*   AvxAdvanceBufferedRing(avxBufferedRing* rng, afxUnit reqSiz, afxSize* pOffset, afxUnit* pRange);
+AVX void AvxMakeBufferedRing
+(
+    avxBufferedRing* rng, 
+    afxUnit rounds, 
+    afxUnit blockSiz, 
+    afxUnit blockAlign, 
+    avxBuffer buf, 
+    afxSize bufCap, 
+    void* mapped
+);
+
+AVX afxSize AvxCycleBufferedRing
+(
+    avxBufferedRing* rng
+);
+
+AVX void* AvxAdvanceBufferedRing
+(
+    avxBufferedRing* rng, 
+    afxUnit reqSiz, 
+    afxSize* pOffset, 
+    afxUnit* pRange
+);
+
+AFX_DEFINE_STRUCT(avxBufferedPumpStash)
+{
+    avxBuffer buffer;
+    void* mapped_ptr;
+    afxSize capacity;
+    afxSize used;
+    int frame_in_use; // When it was last used
+};
+
+AFX_DEFINE_STRUCT(avxBufferedPump)
+{
+    avxBufferedPumpStash* last;
+    avxBufferedPumpStash* chunks;
+    afxSize num_chunks;
+    afxSize capacity_chunks;
+    int current_frame;
+
+    afxUnit rounds;
+    afxUnit blockAlign;
+    afxUnit minChunkSiz;
+    avxBufferFlags bufFlags;
+    avxBufferUsage bufUsage;
+    afxDrawSystem dsys;
+};
+
+AVX void AvxDeployBufferedPump
+(
+    avxBufferedPump* pump, 
+    avxBufferUsage usage, 
+    avxBufferFlags flags, 
+    afxUnit minChunkSiz, 
+    afxUnit blockAlign, 
+    afxUnit rounds
+);
+
+AVX void* AvxRequestBufferedPump
+(
+    avxBufferedPump* pump,
+    afxSize size, 
+    avxBuffer* out_buffer, 
+    afxSize* out_offset
+);
+
+AVX void AvxAdvanceBufferedPump
+(
+    avxBufferedPump* pump
+);
+
+AVX void AvxDismantleBufferedPump
+(
+    avxBufferedPump* pump
+);
 
 #endif//AVX_BUFFERED_H

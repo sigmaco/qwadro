@@ -19,7 +19,7 @@
 #ifndef ARX_CURVE_H
 #define ARX_CURVE_H
 
-// Accelerated curve cosputation
+// Accelerated curve computation
 
 // A curve is a continuous and smooth mathematical object representing a set of points that form a shape or path in a given space.
 
@@ -125,50 +125,169 @@ AFX_DEFINE_STRUCT(arxSampleContext)
     afxInt frameIdx;
 };
 
-ARX void            ArxDescribeCurve(arxCurve cur, arxCurveInfo2* desc);
+ARX void ArxDescribeCurve
+(
+    arxCurve cur, 
+    arxCurveInfo2* desc
+);
 
-ARX afxInt          ArxGetCurveDegree(arxCurve c);
-ARX afxUnit         ArxGetCurveDimensionality(arxCurve c);
-ARX afxUnit         ArxGetCurveDimensionalityUnchecked(arxCurve c);
+ARX afxInt ArxGetCurveDegree
+(
+    arxCurve c
+);
 
-ARX arxCurveFlags   ArxGetCurveFlags(arxCurve c, arxCurveFlags mask);
+ARX afxUnit ArxGetCurveDimensionality
+(
+    arxCurve c
+);
 
-ARX afxBool         ArxTestCurveIdentity(arxCurve c);
-ARX afxBool         ArxTestCurveKeyframed(arxCurve c);
-ARX afxBool         ArxTestCurveConstantOrIdentity(arxCurve c);
-ARX afxBool         ArxTestCurveConstantNotIdentity(arxCurve c);
+ARX afxUnit ArxGetCurveDimensionalityUnchecked
+(
+    arxCurve c
+);
 
-ARX afxReal*        ArxGetCurveKnots(arxCurve c);
-ARX afxReal*        ArxGetCurveControls(arxCurve c);
+ARX arxCurveFlags ArxGetCurveFlags
+(
+    arxCurve c, 
+    arxCurveFlags mask
+);
 
-ARX afxUnit         ArxFindCurveKnot(arxCurve c, afxReal t);
+ARX afxBool ArxTestCurveIdentity
+(
+    arxCurve c
+);
 
-ARX afxUnit         ArxCountCurveKnots(arxCurve c);
+ARX afxBool ArxTestCurveKeyframed
+(
+    arxCurve c
+);
 
-ARX void            ArxUpdateCurveKnots(arxCurve c, afxUnit knotCnt, afxUnit dimension, afxReal const* knotSrc, afxReal const* ctrlSrc);
-ARX void            ArxExtractCurveKnotValues(arxCurve c, afxUnit knotIdx, afxUnit knotCnt, afxReal* knotResults, afxReal* ctrlResults, afxReal const* identivec);
-ARX afxReal         ArxExtractCurveKnotValue(arxCurve c, afxUnit knotIdx, afxReal* ctrlRslt, afxReal const* identity);
+ARX afxBool ArxTestCurveConstantOrIdentity
+(
+    arxCurve c
+);
 
-ARX void            ArxEvaluateCurveAtKnot(arxCurve c, afxUnit dimens, afxBool normalize, afxBool bwdsLoop, afxBool fwdsLoop, afxReal curveDur, afxUnit knotIdx, afxReal t, afxReal* rslt, afxReal const* identityVec);
-ARX void            ArxEvaluateCurveAt(arxCurve c, afxUnit dimens, afxBool normalize, afxBool bwdsLoop, afxBool fwdsLoop, afxReal curveDur, afxReal t, afxReal* rslt, afxReal const* identityVec);
+ARX afxBool ArxTestCurveConstantNotIdentity
+(
+    arxCurve c
+);
 
-ARX void            ArxCopyCurve(arxCurve c, arxCurve src);
+ARX afxReal* ArxGetCurveKnots
+(
+    arxCurve c
+);
 
-ARX void            ArxSetUpCurve(arxCurve c, arxCurveFormat fmt, afxUnit degree, afxUnit dim, afxUnit knotCnt);
-ARX void            ArxCleanUpCurve(arxCurve c);
+ARX afxReal* ArxGetCurveControls
+(
+    arxCurve c
+);
 
-ARX void            ArxMakeCurveDaKC32f(arxCurve c, afxUnit degree, afxUnit dim, afxUnit knotCnt, afxReal const knots[], afxReal const ctrls[]);
+ARX afxUnit ArxFindCurveKnot
+(
+    arxCurve c, 
+    afxReal t
+);
+
+ARX afxUnit ArxCountCurveKnots
+(
+    arxCurve c
+);
+
+ARX void ArxUpdateCurveKnots
+(
+    arxCurve c, 
+    afxUnit knotCnt, 
+    afxUnit dimension, 
+    afxReal const* knotSrc, 
+    afxReal const* ctrlSrc
+);
+
+ARX void ArxExtractCurveKnotValues
+(
+    arxCurve c, 
+    afxUnit knotIdx, 
+    afxUnit knotCnt, 
+    afxReal* knotResults, 
+    afxReal* ctrlResults, 
+    afxReal const* identivec
+);
+
+ARX afxReal ArxExtractCurveKnotValue
+(
+    arxCurve c, 
+    afxUnit knotIdx, 
+    afxReal* ctrlRslt, 
+    afxReal const* identity
+);
+
+ARX void ArxEvaluateCurveAtKnot
+(
+    arxCurve c, 
+    afxUnit dimens, 
+    afxBool normalize, 
+    afxBool bwdsLoop, 
+    afxBool fwdsLoop, 
+    afxReal curveDur, 
+    afxUnit knotIdx, 
+    afxReal t, 
+    afxReal* rslt, 
+    afxReal const* identityVec
+);
+
+ARX void ArxEvaluateCurveAt
+(
+    arxCurve c, 
+    afxUnit dimens, 
+    afxBool normalize, 
+    afxBool bwdsLoop, 
+    afxBool fwdsLoop, 
+    afxReal curveDur, 
+    afxReal t, 
+    afxReal* rslt, 
+    afxReal const* identityVec
+);
+
+ARX void ArxCopyCurve
+(
+    arxCurve c, 
+    arxCurve src
+);
+
+ARX void ArxSetUpCurve(arxCurve c, arxCurveFormat fmt, afxUnit degree, afxUnit dim, afxUnit knotCnt);
+ARX void ArxCleanUpCurve(arxCurve c);
+
+ARX void ArxMakeCurveDaKC32f(arxCurve c, afxUnit degree, afxUnit dim, afxUnit knotCnt, afxReal const knots[], afxReal const ctrls[]);
 
 
-ARX void            ArxBeginCurveCopy(arxCurveBlueprint* cb, arxCurve src);
-ARX void            ArxBeginCurve(arxCurveBlueprint* cb, arxCurveFormat fmt, afxUnit degree, afxUnit dimension, afxUnit knotCnt);
-ARX arxCurve        ArxEndCurve(arxCurveBlueprint* cb, arxScenario scio);
+ARX void ArxBeginCurveCopy(arxCurveBlueprint* cb, arxCurve src);
+ARX void ArxBeginCurve(arxCurveBlueprint* cb, arxCurveFormat fmt, afxUnit degree, afxUnit dimension, afxUnit knotCnt);
+ARX arxCurve ArxEndCurve(arxCurveBlueprint* cb, arxScenario scio);
 
-ARXINL void         ArxResetCurveInfo(arxCurveInfo* cb, arxCurveFormat fmt, afxUnit degree, afxUnit dimens, afxUnit knotCnt);
+ARXINL void ArxResetCurveInfo
+(
+    arxCurveInfo* cb, 
+    arxCurveFormat fmt, 
+    afxUnit degree, 
+    afxUnit dimens, 
+    afxUnit knotCnt
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError        ArxAcquireCurves(arxScenario scio, afxUnit cnt, arxCurveInfo const info[], arxCurve curves[]);
-ARX afxError        ArxAssembleCurves(arxScenario scio, afxUnit cnt, arxCurveBlueprint const blueprints[], arxCurve curves[]);
+ARX afxError ArxAcquireCurves
+(
+    arxScenario scio, 
+    afxUnit cnt, 
+    arxCurveInfo const info[], 
+    arxCurve curves[]
+);
+
+ARX afxError ArxAssembleCurves
+(
+    arxScenario scio, 
+    afxUnit cnt, 
+    arxCurveBlueprint const blueprints[], 
+    arxCurve curves[]
+);
 
 #endif//ARX_CURVE_H

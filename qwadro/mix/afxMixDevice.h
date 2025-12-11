@@ -52,30 +52,21 @@ AFX_DEFINE_STRUCT(amxLimits)
     afxUnit maxAmbisOrder; // 2 --- 9 channels
 };
 
-AFX_DEFINE_STRUCT(afxMixDeviceInfo)
+AFX_DEFINE_STRUCT(amxDeviceInfo)
 {
-    afxString32     urn;
-    afxString128    name;
-    afxDeviceType   type;
-    afxAcceleration accel;
-    afxDeviceStatus status;
-    afxUnit         hwVndId;
-    afxUnit         hwVndDevId;
-    afxUnit32       swVndId;
-    afxUnit32       swVndDrvId;
-    afxUnit         drvVer;
-    afxUnit         apiVer;
+    amxAptitude     capabilities;
+    afxAcceleration acceleration;
+    afxUnit         minQueCnt; // usually 3
+    afxUnit         maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
+    // User-defined data.
+    void*           udd;
+    // Debugging tag.
+    afxString       tag;
 };
 
   //////////////////////////////////////////////////////////////////////////////
- // MIX DEVICE HANDLING ///////////////////////////////////////////////////////
+ // DEVICE HANDLING                                                          //
 //////////////////////////////////////////////////////////////////////////////
-
-AMX afxError AmxDescribeMixDevice
-(
-    afxMixDevice mdev, 
-    afxMixDeviceInfo* desc
-);
 
 AMX afxBool AmxIsMixDevicePrompt
 (
@@ -146,11 +137,11 @@ AMX void AmxQueryMixCapabilities
     // The mixing device to query.
     afxMixDevice mdev, 
 
-    amxPortInfo* caps
+    amxDeviceInfo* caps
 );
 
   //////////////////////////////////////////////////////////////////////////////
- // IMPLEMENTATION DISCOVERY //////////////////////////////////////////////////
+ // IMPLEMENTATION DISCOVERY                                                 //
 //////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -249,14 +240,14 @@ AVX afxUnit AmxChooseMixDevices
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd,
 
+    // The operations or features that the device must supports.
+    amxDeviceInfo const* caps,
+
     // A structure that specifies the features that the mixing devices must support.
     amxFeatures const* features,
 
     // A structure that defines the limits that the mixing devices should meet.
     amxLimits const* limits,
-
-    // The operations or features that the device must supports.
-    amxPortInfo const* caps,
 
     // The maximum number of devices to be selected and returned in the @ddevIds array.
     afxUnit maxCnt,

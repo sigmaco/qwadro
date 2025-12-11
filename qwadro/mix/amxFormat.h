@@ -206,6 +206,6 @@ AFX_DEFINE_STRUCT(amxFormatDescription)
     afxString       tag;
 };
 
-AVX void AmxDescribeFormats(afxUnit cnt, amxFormat const formats[], amxFormatDescription pfd[]);
+AMX void AmxDescribeFormats(afxUnit cnt, amxFormat const formats[], amxFormatDescription pfd[]);
 
 #endif//AMX_FORMAT_H

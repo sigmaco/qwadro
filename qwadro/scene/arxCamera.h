@@ -363,8 +363,8 @@ ARX void ArxGetCameraDisplacement
 
 // TODO: Remove ArxGetCameraDistance, ArxSetCameraDistance, ArxApplyCameraDistance?
 /// These methods are useful to make a camera zoom in/out on a specific target. 
-ARX afxReal         ArxGetCameraDistance(arxCamera cam);
-ARX void            ArxSetCameraDistance(arxCamera cam, afxReal distance);
+ARX afxReal ArxGetCameraDistance(arxCamera cam);
+ARX void ArxSetCameraDistance(arxCamera cam, afxReal distance);
 
 /*
     The ArxOrbitCamera() method makes a camera orbit on a specific target. 

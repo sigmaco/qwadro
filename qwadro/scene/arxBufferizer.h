@@ -46,33 +46,4 @@ ARX afxUnit         ArxGetVertexBufferUsage(afxVertexBuffer vbuf);
 ARX avxVertexInput  ArxGetVertexBufferLayout(afxVertexBuffer vbuf);
 ARX afxUnit         ArxGetVertexBufferCapacity(afxVertexBuffer vbuf);
 
-typedef struct
-{
-    avxBuffer buffer;
-    void* mapped_ptr;
-    afxSize capacity;
-    afxSize used;
-    int frame_in_use; // When it was last used
-} _arxFrameBufferizerChunk;
-
-typedef struct {
-    _arxFrameBufferizerChunk* last;
-    _arxFrameBufferizerChunk* chunks;
-    afxSize num_chunks;
-    afxSize capacity_chunks;
-    int current_frame;
-    
-    afxUnit rounds;
-    afxUnit blockAlign;
-    afxUnit minChunkSiz;
-    avxBufferFlags bufFlags;
-    avxBufferUsage bufUsage;
-    afxDrawSystem dsys;
-} arxBufferedPump;
-
-ARX void ArxDeployBufferedPump(arxBufferedPump* alloc);
-ARX void* ArxRequestBufferedPump(arxBufferedPump* alloc, afxSize size, avxBuffer* out_buffer, afxSize* out_offset);
-ARX void ArxAdvanceBufferedPump(arxBufferedPump* alloc);
-ARX void ArxDismantleBufferedPump(arxBufferedPump* alloc);
-
 #endif//ARX_BUFFERIZER_H

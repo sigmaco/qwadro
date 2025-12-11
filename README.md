@@ -1,7 +1,7 @@
 ![Logo](doc/qwadro-banner-2048x520-bg-t.png)
 
 # The Qwadro Execution Ecosystem
-Qwadro is a name for a family of standards specifying ***software engineering infrastructures*** designed by the SIGMA Technology Group that defines the interface between an operating system and application software. The primary goal of Qwadro is to ensure that applications written for one Qwadro-compliant system can be easily ported to another, regardless of the underlying hardware or specific operating system implementation. This portability is achieved by standardizing the interfaces, utilities, and libraries that applications use to interact with the operating system. Qwadro provides a common ground, fostering interoperability and reducing the complexities associated with platform-specific development. Adherence to Qwadro standards simplifies software development, maintenance, and deployment across diverse platform environments.
+Qwadro is a name for a family of standards specifying ***software engineering infrastructures*** designed by the **SIGMA Technology Group** that defines the interface between an operating system and application software. The primary goal of Qwadro is to ensure that applications written for one Qwadro-compliant system can be easily ported to another, regardless of the underlying hardware or specific operating system implementation. This portability is achieved by standardizing the interfaces, utilities, and libraries that applications use to interact with the operating system. Qwadro provides a common ground, fostering interoperability and reducing the complexities associated with platform-specific development. Adherence to Qwadro standards simplifies software development, maintenance, and deployment across diverse platform environments.
 
 The main design force behind Qwadro is to fix the main problem with POSIX. While POSIX is intended to specify how operating system must be made, Qwadro aims to standardize middleware development and deployment by providing unified architectures for APIs, specifically bridging low-level C17 APIs and abstracting them across various platforms. This can make it easier to build and deploy software on different operating systems without worrying too much about platform-specific intricacies.
 
@@ -11,8 +11,12 @@ Middleware typically helps applications communicate and manage resources without
 
 Qwadro is not a single framework like Qt; it's an ecosystem of modular middleware components, each designed to handle specific platform aspects (e.g., graphics, shell, file systems). These middleware layers can be easily swapped or replaced after compilation, allowing for dynamic updates or customizations. So, by design, Qwadro Execution Ecosystem is a amalgamation of software infrastructures intended to offer a set of acceleration building blocks to edify system softwares targeting firstly computer simulation, interactive entertainment and multimedia user experience. Qwadro constitutes a unified infrastructure of and for middlewares, libraries, drivers and engines, continuously integrated, providing resources, devices, services and abstracting operating systems and platforms in a straightforwared uniform way. It is released as open source under the Qwadro License.
 
-## Acceleration Frameworks Extensions & Experiments (AFX)
-The **AFX**, alphabetism and initialism for **Acceleration Framework Experimental**, is the standard implementation for **Qwadro** execution ecosystem. Qwadro is a name for a familiy of standards specifying software engineering infrastructures designed by SIGMA Technology Group. 
+The "Public Test Build" featured everywhere is why Qwadro is primary a private project intented to unify most of codebase for SIGMA past, current and future projects, mainly some being desired to run on the operating systems being engineered by SIGMA for internal support and use, and to attend other divisons and entities partnered, also potentially benefiting the historical and regional audience of SIGMA efforts.
+
+Consequentially, an OpenGL-based Draw I/O System ICD is currently and will continue to be maintained, as well as an Windows 7-based User I/O System ICD.
+
+## Acceleration Framework Experimental (AFX)
+The **AFX**, alphabetism and initialism for **Acceleration Framework Experimental**, is the standard implementation for **Qwadro Execution Ecosystem**. Qwadro is a name for a familiy of standards specifying software engineering infrastructures designed by SIGMA Technology Group. 
 
 These standards are written in ISO C17 and specifies low-level, data-oriented components and its intercommunication protocols in an federated execution ecosystem; the Qwadro Execution Ecosystem. 
 
@@ -37,10 +41,10 @@ Later, it has been spun off to its own independent existence as it became more a
 This new, independent phase is called "Engineering Phase II". 
 Because of this initial entanglement, certain names are kept familiar to RenderWare, and a new project of ammendment to the Qwadro, called ARX, is being developed to fulfill the total decouplement of RenderWare from Qwadro ecosystem.
 
-## Advanced Video Graphics Extensions & Experiments (AVX)
+## Advanced Video Graphics Extensions (AVX)
 A modern, sanitized, redefined, orthogonal architectural Vulkan-flavored refactory of OpenGL Core.
 
-Advanced Video Graphics Experimental (AVX) is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a complete, scalable, hardware-accelerated video graphics foundation.
+Advanced Video Graphics Extensions (AVX) is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a complete, scalable, hardware-accelerated video graphics foundation.
 AVX is designed by SIGMA Technology Group to redefine and stabilize the OpenGL Core API. Part of this has been previously known as SIGMA GL/2.
 
 Instead of introducing an entirely new graphics API, AVX reorganizes, sanitizes, and future-proofs the existing GL model by providing:
@@ -85,20 +89,21 @@ It is a modernized, modular replacement for traditional GL "bootstrapping", resp
 Bridging the OpenGL Core-like front-end to the VGI DDI.
 
 Instead of deeply mixing state handling with driver logic, AVX isolates the GL runtime from the low-level backend.
-## Advanced Multimedia Synthesis Experimental (AMX)
+
+## Advanced Multimedia Synthesis Extensions (AMX)
 A unified, distributed, hardware-accelerated multimedia processing effort.
 
-The **AMX**, alphabetism and initialism for **Advanced Multimedia Synthesis Experimental**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a hardware-accelerated multimedia synthesis foundation.
+The **AMX**, alphabetism and initialism for **Advanced Multimedia Synthesis Extensions**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a hardware-accelerated multimedia synthesis foundation.
 AMX is designed by SIGMA Technology Group to drive the hardware media engines such as Intel Video Acceleration, DirectX Video Acceleration, Direct3D 12 Video and Vulkan Video, mainly motivated to find ways of feeding OpenGL with it.
 
 The Multimedia Synthesis Infrastructure that has been developed to encompasses functionality for device discovery, solicitation and enumeration, as well as equipments and technologies that support the creation, processing, distribution, and playback of audio content generated by sound synthesis that are needed by device driver interfaces (DDI) and implementations to the Mix I/O System. 
 It also defines a DDI that manages low-level shared tasks independently from the drawing mechanism runtime. 
 The tasks implemented with MSI will be handled by the MSI DDI.
 
-## Advanced Multimedia UX Experimental (AUX)
+## Advanced Multimedia UX Extensions (AUX)
 A portable, cross-platform windowing system intergration (WSI) inspired on Windows 7.
 
-The **AUX**, alphabetism and initialism for **Advanced Multimedia UX Experimental**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with the **Qwadro Multimedia UX Infrastructure** (**MMUX**).
+The **AUX**, alphabetism and initialism for **Advanced MMUX Extensions**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with the **Qwadro User Experience Infrastructure** (**MMUX**).
 **MMUX**, which is the foundation for the User I/O System, has been developed to enhance usability and the user experience in multimedia user interfaces (MMUIs) with shell environments. 
 MMUX manages how windows are opened, closed, resized, and arranged on the screen, contributing to a smooth and organized workflow. 
 It offers options for users to customize themes, layouts, and toolbars to suit their preferences, enhancing personal usability and facilitating user interactions, making complex tasks easier to perform through intuitive designs.

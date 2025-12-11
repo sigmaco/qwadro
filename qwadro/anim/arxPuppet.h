@@ -36,24 +36,62 @@
 #include "qwadro/anim/arxCapstan.h"
 #include "qwadro/scene/arxNode.h"
 
-ARX afxBool     ArxGetPuppetModel(arxPuppet pup, arxModel* model);
+ARX afxBool ArxGetPuppetModel
+(
+    arxPuppet pup, 
+    arxModel* model
+);
 
-ARX afxUnit     ArxCountPuppetMotives(arxPuppet pup);
+ARX afxUnit ArxCountPuppetMotives
+(
+    arxPuppet pup
+);
 
-ARX void        ArxResetBodyClock(arxPuppet pup);
-
-ARX void        ArxRecenterPuppetMotiveClocks(arxPuppet pup, afxReal currClock);
+ARX void ArxRecenterPuppetMotiveClocks
+(
+    arxPuppet pup, 
+    afxReal currClock
+);
 
 /// Update all the motors affecting a particular puppet.
-ARX void        ArxStepPuppetMotives(arxPuppet pup, afxReal /* NOT delta */ time);
+ARX void ArxStepPuppetMotives
+(
+    arxPuppet pup, 
+    afxReal /* NOT delta */ time
+);
 
-ARX void        ArxPurgeTerminatedMotives(arxPuppet pup);
+ARX void ArxPurgeTerminatedMotives
+(
+    arxPuppet pup
+);
 
-ARX void        ArxAccumulatePuppetAnimations(arxPose rslt, arxPuppet pup, afxUnit basePivotIdx, afxUnit pivotCnt, afxReal allowedErr, afxUnit const sparseJntMap[]);
+ARX void ArxAccumulatePuppetAnimations
+(
+    arxPose rslt, 
+    arxPuppet pup, 
+    afxUnit basePivotIdx, 
+    afxUnit pivotCnt, 
+    afxReal allowedErr, 
+    afxUnit const sparseJntMap[]
+);
 
-ARX void        ArxComputePuppetMotionVectors(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxV3d translation, afxV3d rotation);
+ARX void ArxComputePuppetMotionVectors
+(
+    arxPuppet pup, 
+    afxReal secsElapsed, 
+    afxBool inverse, 
+    afxV3d translation, 
+    afxV3d rotation
+);
 
-ARX void        ArxComputePuppetMotionMatrix(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxM4d const mm, afxM4d m);
+ARX void ArxComputePuppetMotionMatrix
+(
+    arxPuppet pup, 
+    afxReal secsElapsed, 
+    afxBool inverse, 
+    afxM4d const mm, 
+    afxM4d m
+);
 
 
 AFX_DEFINE_STRUCT(arxAnimSampleContext)
@@ -71,28 +109,22 @@ AFX_DEFINE_STRUCT(arxAnimSampleContext)
 
 ARX afxBool     ArxSampleBodyAnimationsUnified(arxPuppet pup, arxAnimSampleContext const* ctx);
 
-ARX void        ArxCmdBindAttitude(afxDrawContext dctx, arxPose pose);
-ARX void        ArxCmdBindPosture(afxDrawContext dctx, arxPlacement wp);
-ARX void        ArxCmdBindSparsePivotMap(afxDrawContext dctx, afxUnit const* sparseBoneArray);
-ARX void        ArxCmdSetAllowedSamplingError(afxDrawContext dctx, afxReal allowedErr);
-ARX void        ArxCmdSampleBodyMotions(afxDrawContext dctx, arxPuppet pup, afxUnit basePivot, afxUnit pivotCnt);
-
-ARX void        ArxSetBodyMass(arxPuppet pup, afxV3d mass);
-
-ARX void        ArxDoPuppetDynamics(arxPuppet pup, afxReal dt);
-ARX void        ArxApplyForceAndTorque(arxPuppet pup, afxV3d const force, afxV3d const torque);
-
-ARX afxBool     ArxGetPuppetPose(arxPuppet pup, arxPose* pose, arxPlacement* placement);
-
-ARX afxError    ArxNodulatePuppet
+ARX afxBool ArxGetPuppetPose
 (
-    arxPuppet     pup, 
-    afxUnit     basePartIdx, 
-    afxUnit     cnt, 
-    arxNode     nod, 
-    void        (*sync)(arxNodular*), 
-    afxFlags    flags, 
-    afxMask     mask
+    arxPuppet pup, 
+    arxPose* pose, 
+    arxPlacement* placement
+);
+
+ARX afxError ArxNodulatePuppet
+(
+    arxPuppet pup, 
+    afxUnit basePartIdx, 
+    afxUnit cnt, 
+    arxNode nod, 
+    void (*sync)(arxNodular*), 
+    afxFlags flags, 
+    afxMask mask
 );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,13 +146,47 @@ AFX_DEFINE_STRUCT(arxPuppetInfo)
     afxReal angularSleepThreshold; // 1.0
 };
 
-ARX afxError    ArxSpawnBodies(arxModel proto, afxUnit cnt, arxPuppet pup[]);
+ARX afxError ArxSpawnBodies
+(
+    arxModel proto, 
+    afxUnit cnt, 
+    arxPuppet pup[]
+);
 
-ARX afxError    ArxAcquirePuppets(arxScenario scio, arxModel mdl, afxUnit cnt, arxPuppet puppets[]);
+ARX afxError ArxAcquirePuppets
+(
+    arxScenario scio, 
+    arxModel mdl, 
+    afxUnit cnt, 
+    arxPuppet puppets[]
+);
 
-ARX afxUnit     ArxPerformManipulatedPose(arxPose pose, afxReal startTime, afxReal duration, afxUnit iterCnt, arxTrackMask* modelMask, afxUnit cnt, arxPuppet puppets[]);
+ARX afxUnit ArxPerformManipulatedPose
+(
+    arxPose pose, 
+    afxReal startTime, 
+    afxReal duration, 
+    afxUnit iterCnt, 
+    arxTrackMask* modelMask, 
+    afxUnit cnt, 
+    arxPuppet puppets[]
+);
 
-ASX afxUnit         ArxEnumeratePuppets(arxScenario scio, afxUnit first, afxUnit cnt, arxPuppet puppets[]);
-ASX afxUnit         ArxInvokePuppets(arxScenario scio, afxUnit first, afxUnit cnt, afxBool(*f)(arxPuppet, void*), void *udd);
+ASX afxUnit ArxEnumeratePuppets
+(
+    arxScenario scio, 
+    afxUnit first, 
+    afxUnit cnt, 
+    arxPuppet puppets[]
+);
+
+ASX afxUnit ArxInvokePuppets
+(
+    arxScenario scio, 
+    afxUnit first, 
+    afxUnit cnt, 
+    afxBool(*f)(arxPuppet, void*), 
+    void *udd
+);
 
 #endif//ARX_PUPPET_H
