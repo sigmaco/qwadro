@@ -32,26 +32,18 @@
 typedef enum amxAptitude
 {
     // Supports transfers via direct memory access.
-    amxAptitude_DMA       = AFX_BITMASK(0),
+    amxAptitude_DMA     = AFX_BITMASK(0),
     // Supports sound effects.
-    amxAptitude_SFX       = AFX_BITMASK(1),
+    amxAptitude_SFX     = AFX_BITMASK(1),
     // Supports video effects.
-    amxAptitude_VFX       = AFX_BITMASK(2),
+    amxAptitude_VFX     = AFX_BITMASK(2),
     // Supports general purpose computation.
-    amxAptitude_COMPUTE   = AFX_BITMASK(3),
+    amxAptitude_PCX     = AFX_BITMASK(3),
     // Supports on-device output.
-    amxAptitude_SINK      = AFX_BITMASK(4),
+    amxAptitude_SINK    = AFX_BITMASK(4),
     // Supports video acceleration on input/output.
-    amxAptitude_VAIO      = AFX_BITMASK(5),
+    amxAptitude_VAIO    = AFX_BITMASK(5),
 } amxAptitude;
-
-AFX_DEFINE_STRUCT(amxPortInfo)
-{
-    amxAptitude     capabilities;
-    afxAcceleration acceleration;
-    afxUnit         minQueCnt; // usually 3
-    afxUnit         maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
-};
 
 AFX_DEFINE_STRUCT(amxBridgeConfig)
 {

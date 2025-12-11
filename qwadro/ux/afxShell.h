@@ -204,7 +204,7 @@ AUX afxUnit AfxChooseShells
     afxShellLimits const* limits,
 
     // The operations or features that the shell must supports.
-    amxPortInfo const* caps,
+    amxDeviceInfo const* caps,
 
     // The maximum number of shells to be selected and returned in the @sshIds array.
     afxUnit maxCnt,

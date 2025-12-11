@@ -114,21 +114,41 @@ AFX_DEFINE_STRUCT(arxBufferIo)
     afxUnit         rowCnt; // is the number of rows to stream in/out.
 };
 
-ARX arxScenario   ArxGetBufferHost(arxBuffer sbuf);
+ARX arxScenario ArxGetBufferHost
+(
+    arxBuffer sbuf
+);
 
-ARX void*           ArxGetBufferUdd(arxBuffer sbuf);
+ARX void* ArxGetBufferUdd
+(
+    arxBuffer sbuf
+);
 
-ARX afxUnit         ArxGetBufferCapacity(arxBuffer sbuf, afxUnit from);
+ARX afxUnit ArxGetBufferCapacity
+(
+    arxBuffer sbuf, 
+    afxUnit from
+);
 
-ARX arxBufferUsage  ArxGetBufferUsage(arxBuffer sbuf, arxBufferUsage usage);
+ARX arxBufferUsage ArxGetBufferUsage
+(
+    arxBuffer sbuf, arxBufferUsage usage);
 
-ARX arxBufferFlags  ArxGetBufferFlags(arxBuffer sbuf, arxBufferFlags mask);
+ARX arxBufferFlags ArxGetBufferFlags
+(
+    arxBuffer sbuf, 
+    arxBufferFlags mask
+);
 
-ARX void*           ArxGetBufferData(arxBuffer sbuf, afxSize from);
+ARX void* ArxGetBufferData
+(
+    arxBuffer sbuf, 
+    afxSize from
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError        ArxAcquireBuffers
+ARX afxError ArxAcquireBuffers
 (
     arxScenario scio, 
     afxUnit cnt, 

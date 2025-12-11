@@ -57,9 +57,38 @@ ARX afxError ArxDownloadMeshIndices
     afxUnit dstIdxSiz
 );
 
-ARX afxError ArxUpdateVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, afxUnit baseVtx, afxUnit vtxCnt, void const* src, afxUnit32 srcStride);
-ARX afxError ArxUploadVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, afxUnit baseVtx, afxUnit vtxCnt, afxStream in, afxUnit stride);
-ARX afxError ArxDownloadVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, afxUnit baseVtx, afxUnit vtxCnt, afxStream out, afxUnit stride);
+ARX afxError ArxUpdateVertexData
+(
+    arxMesh msh, 
+    afxUnit attrIdx, 
+    afxUnit morphIdx, 
+    afxUnit baseVtx, 
+    afxUnit vtxCnt, 
+    void const* src, 
+    afxUnit32 srcStride
+);
+
+ARX afxError ArxUploadVertexData
+(
+    arxMesh msh, 
+    afxUnit attrIdx, 
+    afxUnit morphIdx, 
+    afxUnit baseVtx, 
+    afxUnit vtxCnt, 
+    afxStream in, 
+    afxUnit stride
+);
+
+ARX afxError ArxDownloadVertexData
+(
+    arxMesh msh, 
+    afxUnit attrIdx, 
+    afxUnit morphIdx, 
+    afxUnit baseVtx, 
+    afxUnit vtxCnt, 
+    afxStream out, 
+    afxUnit stride
+);
 
 /*
     The ArxExportMeshTopology() function exports and potentially processes a mesh's topology in different formats 

@@ -31,19 +31,51 @@ AFX_DEFINE_STRUCT(arxTerrainConfig)
     afxReal heightScale;
 };
 
-ARX afxError    ArxResetTerrainSector(arxTerrain ter, afxUnit secIdx, arxMesh msh);
+ARX afxError ArxResetTerrainSector
+(
+    arxTerrain ter, 
+    afxUnit secIdx, 
+    arxMesh msh
+);
 
-ARX afxUnit     ArxGetTerrainMeshes(arxTerrain ter, afxUnit secIdx, afxUnit cnt, arxMesh meshes[]);
+ARX afxUnit ArxGetTerrainMeshes
+(
+    arxTerrain ter, 
+    afxUnit secIdx, 
+    afxUnit cnt, 
+    arxMesh meshes[]
+);
 
-ARX afxBool     ArxGetTerrainHeightAt(arxTerrain ter, afxReal x, afxReal z, afxReal* y);
+ARX afxBool ArxGetTerrainHeightAt
+(
+    arxTerrain ter, 
+    afxReal x, 
+    afxReal z, 
+    afxReal* y
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError    ArxAcquireTerrain(arxScenario scio, arxTerrainConfig const* cfg, arxTerrain* terrain);
+ARX afxError ArxAcquireTerrain
+(
+    arxScenario scio, 
+    arxTerrainConfig const* cfg, 
+    arxTerrain* terrain
+);
 
-ARX afxError    ArxGenerateTerrain(arxScenario scio, afxWarp const whd, arxTerrain* terrain);
+ARX afxError ArxGenerateTerrain
+(
+    arxScenario scio, 
+    afxWarp const whd, 
+    arxTerrain* terrain
+);
 
-ARX afxError    ArxGenerateHeightmappedTerrain(arxScenario scio, afxUri const* uri, arxTerrain* terrain);
+ARX afxError ArxGenerateHeightmappedTerrain
+(
+    arxScenario scio, 
+    afxUri const* uri, 
+    arxTerrain* terrain
+);
 
 
 #endif//ARX_TERRAIN_H

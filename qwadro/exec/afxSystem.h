@@ -72,8 +72,15 @@ AFX_DEFINE_STRUCT(afxIoFeatures)
     afxBool nfs;
 };
 
-AFX_DEFINE_UNION(afxSystemConfigExt)
+AFX_DEFINE_STRUCT(afxSystemConfigExt)
 {
+    afxSystemConfigExt* next;
+    afxString           tag;
+};
+
+AFX_DEFINE_STRUCT(afxHostSystemConfigExt)
+{
+    afxSystemConfigExt  ext;
 #ifdef AFX_ON_WINDOWS
     struct
     {
@@ -115,15 +122,21 @@ AFX_DEFINE_STRUCT(afxSystemConfig)
 
     afxUnit                 ioBufSiz;
     afxUnit                 ioArenaSpace;
-    afxUnit                 hwThreadingCap; // max amount of hardware threads managed by Qwadro.
-    afxReal                 unitsToMeter; // the number of units in a meter.
+    // max amount of hardware threads managed by Qwadro.
+    afxUnit                 hwThreadingCap;
+    // the number of units in a meter.
+    afxReal                 unitsToMeter;
     afxBool                 strictStorage;
-    afxAssertHook           assertHook; // external assertion handling function (optional)
+    // external assertion handling function (optional)
+    afxAssertHook           assertHook;
     afxReallocatorFn        reallocatorFn;
 
-    afxProfilerPushTimerFn  profilerPushTimer; // external (optional) function for tracking performance of the system that is called when a timer starts. (only called in Debug and Profile binaries; this is not called in Release)
-    afxProfilerPopTimerFn   profilerPopTimer; // external (optional) function for tracking performance of the system that is called when a timer stops. (only called in Debug and Profile binaries; this is not called in Release)
-    afxProfilerPostMarkerFn profilerPostMarker; // external (optional) function for tracking significant events in the system, to act as a marker or bookmark. (only called in Debug and Profile binaries; this is not called in Release)
+    // external (optional) function for tracking performance of the system that is called when a timer starts. (only called in Debug and Profile binaries; this is not called in Release)
+    afxProfilerPushTimerFn  profilerPushTimer;
+    // external (optional) function for tracking performance of the system that is called when a timer stops. (only called in Debug and Profile binaries; this is not called in Release)
+    afxProfilerPopTimerFn   profilerPopTimer;
+    // external (optional) function for tracking significant events in the system, to act as a marker or bookmark. (only called in Debug and Profile binaries; this is not called in Release)
+    afxProfilerPostMarkerFn profilerPostMarker;
 
     afxChar const*          root;
 
@@ -132,47 +145,87 @@ AFX_DEFINE_STRUCT(afxSystemConfig)
     afxBool                 auxDisabled;
     afxUri32                shell;
 
-    afxChar const*          appId; // a 32-byte long unique identifier for the application.
-    afxSystemConfigExt      idd;
+    // a 32-byte long unique identifier for the application.
+    afxChar const*          appId;
+    afxSystemConfigExt*     exts;
 };
+
+AFX void AfxConfigureSystem
+(
+    afxSystemConfig* cfg
+);
+
+AFX afxError AfxBootstrapSystem
+(
+    afxSystemConfig const* cfg
+);
+
+AFX afxError AfxRebootSystem
+(
+    afxSystemConfig const* cfg
+);
 
 // Perform a Qwadro bootstrap.
 
-AFX afxBool             AfxSystemIsExecuting(void);
+AFX afxBool AfxSystemIsExecuting(void);
 
-AFX afxBool             AfxGetSystem(afxSystem* system);
+AFX afxBool AfxGetSystem
+(
+    afxSystem* system
+);
 
-AFX void                AfxConfigureSystem(afxSystemConfig* cfg);
-AFX afxError            AfxBootstrapSystem(afxSystemConfig const* cfg);
-AFX afxError            AfxRebootSystem(afxSystemConfig const* cfg);
+AFX void AfxDoSystemShutdown
+(
+    afxInt exitCode
+);
 
-AFX void                AfxDoSystemShutdown(afxInt exitCode);
-AFX void                AfxRequestShutdown(afxInt exitCode);
+AFX void AfxRequestShutdown
+(
+    afxInt exitCode
+);
 
 
-//AFX afxTime             AfxDoSystemThreading(afxTime timeout);
+//AFX afxTime AfxDoSystemThreading(afxTime timeout);
 
-AFX afxUnit             AfxGetIoBufferSize(void);
+AFX afxUnit AfxGetIoBufferSize(void);
 
-AFX afxUnit             AfxGetMemoryPageSize(void);
+AFX afxUnit AfxGetMemoryPageSize(void);
 
 /// Returns the ideal number of threads that this process can run in parallel. 
 /// This is done by querying the number of logical processors available to this process (if supported by this OS) or the total number of logical processors in the system. 
 /// This function returns 1 if neither value could be determined.
-AFX afxUnit             AfxGetThreadingCapacity(void);
+AFX afxUnit AfxGetThreadingCapacity(void);
 
-AFX afxUri const*       AfxGetSystemDirectory(afxUri *dst);
-AFX afxString const*    AfxGetSystemDirectoryString(afxString *dst);
+AFX afxUri const* AfxGetSystemDirectory
+(
+    afxUri* dst
+);
 
-AFX afxUri const*       AfxGetPwd(afxUri *dst);
-AFX afxString const*    AfxGetPwdString(afxString *dst);
+AFX afxString const* AfxGetSystemDirectoryString
+(
+    afxString* dst
+);
 
-AFX afxUnit32           AfxGetPrimeTid(void);
+AFX afxUri const* AfxGetPwd
+(
+    afxUri* dst
+);
+
+AFX afxString const* AfxGetPwdString
+(
+    afxString* dst
+);
+
+AFX afxUnit32 AfxGetPrimeTid(void);
 
 // Sends event event directly to receiver receiver, using the notify() function. Returns the value that was returned from the event handler.
 // Adds the event event, with the object receiver as the receiver of the event, to an event queue and returns immediately.
 
-AFX afxBool             AfxEmitEvent(afxObject receiver, afxEvent* ev);
+AFX afxBool AfxEmitEvent
+(
+    afxObject receiver, 
+    afxEvent* ev
+);
 
 
 #endif//AFX_SYSTEM_H

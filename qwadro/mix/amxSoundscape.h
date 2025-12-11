@@ -23,12 +23,12 @@
 
 AFX_DEFINE_STRUCT(amxSoundscapeConfig)
 {
-    afxFlags    flags;
-    afxUnit     ambiOrder; // 1
-    afxUri      orderHrirCfg;
+    afxFlags flags;
+    afxUnit ambiOrder; // 1
+    afxUri orderHrirCfg;
 };
 
-AMX afxError    AmxAcquireSoundscape
+AMX afxError AmxAcquireSoundscape
 (
     afxMixSystem msys, 
     amxSoundscapeConfig const*cfg, 
@@ -37,12 +37,44 @@ AMX afxError    AmxAcquireSoundscape
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AMX afxError    AmxUpdateAudient(amxSoundscape snds, afxTransform const* placement, afxV3d const velocity);
+AMX afxError AmxUpdateAudient
+(
+    amxSoundscape snds, 
+    afxTransform const* placement, 
+    afxV3d const velocity
+);
 
-AMX afxError    AmxRouteAudition(amxSoundscape snds, afxMixContext mix, afxUnit baseSmixIdx);
+AMX afxError AmxRouteAudition
+(
+    amxSoundscape snds, 
+    afxMixContext mix, 
+    afxUnit baseSmixIdx
+);
 
-AMX afxError    AmxSetAuditionRenderer(amxSoundscape snds, afxUnit exuIdx);
+AMX afxError AmxSetAuditionRenderer
+(
+    amxSoundscape snds, 
+    afxUnit exuIdx
+);
 
-AMX afxError    AmxTransformSounds(amxSoundscape snds, afxUnit cnt, afxTransform const t[], afxUnit soundId[]);
+AMX afxError AmxTransformSounds
+(
+    amxSoundscape snds, 
+    afxUnit cnt, 
+    afxTransform const t[], 
+    afxUnit soundId[]
+);
+
+AMX afxError AmxLockSoundscape
+(
+    amxSoundscape snds,
+    afxUnit64 timeout,
+    afxMask exuMask
+);
+
+AMX afxError AmxUnlockSoundscape
+(
+    amxSoundscape snds
+);
 
 #endif//AMX_SOUNDSCAPE_H
