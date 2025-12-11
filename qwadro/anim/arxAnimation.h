@@ -50,26 +50,80 @@ AFX_DEFINE_STRUCT(arxAnimationBlueprint)
     afxString32     id;
 };
 
-ARX afxBool     ArxGetAnimationUrn(arxAnimation ani, afxString* id);
+ARX afxBool ArxGetAnimationUrn
+(
+    arxAnimation ani, 
+    afxString* id
+);
 
-ARX afxBool     ArxFindMotion(arxAnimation ani, afxString const* id, afxUnit *motIdx);
+ARX afxBool ArxFindMotion
+(
+    arxAnimation ani, 
+    afxString const* id, 
+    afxUnit *motIdx
+);
 
-ARX afxError    ArxGetMotions(arxAnimation ani, afxUnit first, afxUnit cnt, arxGesture motions[]);
+ARX afxError ArxGetMotions
+(
+    arxAnimation ani, 
+    afxUnit first, 
+    afxUnit cnt, 
+    arxGesture motions[]
+);
 
-ARX afxError    ArxRelinkMotions(arxAnimation ani, afxUnit baseSlot, afxUnit slotCnt, arxGesture motions[]);
+ARX afxError ArxRelinkMotions
+(
+    arxAnimation ani, 
+    afxUnit baseSlot, 
+    afxUnit slotCnt, 
+    arxGesture motions[]
+);
 
-ARX afxUnit     ArxPerformAnimation(arxAnimation ani, afxReal startTime, afxUnit iterCnt, afxUnit cnt, arxPuppet bodies[]);
+ARX afxUnit ArxPerformAnimation
+(
+    arxAnimation ani, 
+    afxReal startTime, 
+    afxUnit iterCnt, 
+    afxUnit cnt, 
+    arxPuppet bodies[]
+);
 
-//ARX afxUnit    ArxPerformAnimationBinding(arxAnimation ani, afxReal startTime, afxUnit iterCnt, struct arxInstancedAnimation *binding, afxUnit cnt, arxPuppet bodies[]);
+//ARX afxUnit ArxPerformAnimationBinding(arxAnimation ani, afxReal startTime, afxUnit iterCnt, struct arxInstancedAnimation *binding, afxUnit cnt, arxPuppet bodies[]);
 
-ARX afxError    ArxArchiveAnimation(arxAnimation ani, afxUri const* uri);
+ARX afxError ArxArchiveAnimation
+(
+    arxAnimation ani, 
+    afxUri const* uri
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError    ArxLoadAnimation(arxScenario scio, afxString const* urn, afxUri const* uri, arxAnimation* animation);
+ARX afxError ArxLoadAnimation
+(
+    arxScenario scio, 
+    afxString const* urn, 
+    afxUri const* uri, 
+    arxAnimation* animation
+);
 
-ARX afxError    ArxAssembleAnimations(arxScenario scio, afxUnit cnt, arxAnimationBlueprint const blueprints[], arxAnimation animations[]);
+ARX afxError ArxAssembleAnimations
+(
+    arxScenario scio, 
+    afxUnit cnt, 
+    arxAnimationBlueprint const blueprints[], 
+    arxAnimation animations[]
+);
 
-ARX void        ArxTransformAnimations(afxM3d const ltm, afxM3d const iltm, afxReal linearTol, afxV4d const atv, afxReal affineTol, afxFlags flags, afxUnit cnt, arxAnimation animations[]);
+ARX void ArxTransformAnimations
+(
+    afxM3d const ltm, 
+    afxM3d const iltm, 
+    afxReal linearTol, 
+    afxV4d const atv, 
+    afxReal affineTol, 
+    afxFlags flags, 
+    afxUnit cnt, 
+    arxAnimation animations[]
+);
 
 #endif//ARX_ANIMATION_H

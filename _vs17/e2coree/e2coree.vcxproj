@@ -19,7 +19,41 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\qwadro\qwadro\mix\amxFormat.h" />
+    <ClInclude Include="..\..\exec\afxDeviceDDK.h" />
+    <ClInclude Include="..\..\exec\afxModuleDDK.h" />
+    <ClInclude Include="..\..\exec\afxServiceDDK.h" />
+    <ClInclude Include="..\..\exec\afxSystemDDK.h" />
+    <ClInclude Include="..\..\exec\afxThreadingDDK.h" />
+    <ClInclude Include="..\..\io\afxArchiveDDK.h" />
+    <ClInclude Include="..\..\io\afxIoDDK.h" />
+    <ClInclude Include="..\..\io\afxStorageDDK.h" />
+    <ClInclude Include="..\..\io\afxStreamDDK.h" />
+    <ClInclude Include="..\..\mixva\amxAudioDDK.h" />
+    <ClInclude Include="..\..\mixva\amxBridgeDDK.h" />
+    <ClInclude Include="..\..\mixva\amxBufferDDK.h" />
+    <ClInclude Include="..\..\mixva\amxContextDDK.h" />
+    <ClInclude Include="..\..\mixva\amxDeviceDDK.h" />
+    <ClInclude Include="..\..\mixva\amxIcd.h" />
+    <ClInclude Include="..\..\mixva\amxMpuAudio.h" />
+    <ClInclude Include="..\..\mixva\amxMpuContext.h" />
+    <ClInclude Include="..\..\mixva\amxMpuExecutor.h" />
+    <ClInclude Include="..\..\mixva\amxMpuSoundscape.h" />
+    <ClInclude Include="..\..\mixva\amxMpuTransference.h" />
+    <ClInclude Include="..\..\mixva\amxQueueDDK.h" />
+    <ClInclude Include="..\..\mixva\amxSinkDDK.h" />
+    <ClInclude Include="..\..\mixva\amxSoundDDK.h" />
+    <ClInclude Include="..\..\mixva\amxSoundscapeDDK.h" />
+    <ClInclude Include="..\..\mixva\amxStorageDDK.h" />
+    <ClInclude Include="..\..\mixva\amxSystemDDK.h" />
+    <ClInclude Include="..\..\mixva\amxTrackerDDK.h" />
+    <ClInclude Include="..\..\mmux\auxDisplayDDK.h" />
+    <ClInclude Include="..\..\mmux\auxEnvironmentDDK.h" />
+    <ClInclude Include="..\..\mmux\auxFontDDK.h" />
+    <ClInclude Include="..\..\mmux\auxHidDDK.h" />
+    <ClInclude Include="..\..\mmux\auxIcd.h" />
+    <ClInclude Include="..\..\mmux\auxShellDDK.h" />
+    <ClInclude Include="..\..\mmux\auxWidgetDDK.h" />
+    <ClInclude Include="..\..\mmux\auxWindowDDK.h" />
     <ClInclude Include="..\..\qwadro\afxQwadro.h" />
     <ClInclude Include="..\..\qwadro\base\afxChain.h" />
     <ClInclude Include="..\..\qwadro\base\afxClass.h" />
@@ -55,6 +89,7 @@
     <ClInclude Include="..\..\qwadro\draw\avxBuffered.h" />
     <ClInclude Include="..\..\qwadro\draw\avxBus.h" />
     <ClInclude Include="..\..\qwadro\draw\avxCanvas.h" />
+    <ClInclude Include="..\..\qwadro\draw\avxCodebase.h" />
     <ClInclude Include="..\..\qwadro\draw\avxColor.h" />
     <ClInclude Include="..\..\qwadro\draw\avxDrawing.h" />
     <ClInclude Include="..\..\qwadro\draw\avxFence.h" />
@@ -70,7 +105,6 @@
     <ClInclude Include="..\..\qwadro\draw\avxRasterization.h" />
     <ClInclude Include="..\..\qwadro\draw\avxRasterizationEXT.h" />
     <ClInclude Include="..\..\qwadro\draw\avxSampler.h" />
-    <ClInclude Include="..\..\qwadro\draw\avxCodebase.h" />
     <ClInclude Include="..\..\qwadro\draw\avxSynchronization.h" />
     <ClInclude Include="..\..\qwadro\draw\avxTransference.h" />
     <ClInclude Include="..\..\qwadro\draw\avxTransformation.h" />
@@ -151,17 +185,26 @@
     <ClInclude Include="..\..\qwadro\mix\amxBuffer.h" />
     <ClInclude Include="..\..\qwadro\mix\amxBuffered.h" />
     <ClInclude Include="..\..\qwadro\mix\amxCodec.h" />
+    <ClInclude Include="..\..\qwadro\mix\amxDecoder.h" />
     <ClInclude Include="..\..\qwadro\mix\amxEncoder.h" />
+    <ClInclude Include="..\..\qwadro\mix\amxFormat.h" />
     <ClInclude Include="..\..\qwadro\mix\amxMixage.h" />
-    <ClInclude Include="..\..\qwadro\mix\amxTracker.h" />
+    <ClInclude Include="..\..\qwadro\mix\amxPump.h" />
     <ClInclude Include="..\..\qwadro\mix\amxSound.h" />
     <ClInclude Include="..\..\qwadro\mix\amxSoundscape.h" />
-    <ClInclude Include="..\..\qwadro\mix\amxSource.h" />
+    <ClInclude Include="..\..\qwadro\mix\amxTracker.h" />
     <ClInclude Include="..\..\qwadro\mix\amxVideo.h" />
-    <ClInclude Include="..\..\qwadro\mix\amxDecoder.h" />
     <ClInclude Include="..\..\qwadro\mix\amxVoice.h" />
-    <ClInclude Include="..\..\qwadro\ux\afxFont.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepBridge.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepContext.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepDefs.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepDevice.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepQueue.h" />
+    <ClInclude Include="..\..\qwadro\pro\afxStepSystem.h" />
+    <ClInclude Include="..\..\qwadro\pro\asxBuffer.h" />
+    <ClInclude Include="..\..\qwadro\pro\asxFormat.h" />
     <ClInclude Include="..\..\qwadro\ux\afxEnvironment.h" />
+    <ClInclude Include="..\..\qwadro\ux\afxFont.h" />
     <ClInclude Include="..\..\qwadro\ux\afxLayout.h" />
     <ClInclude Include="..\..\qwadro\ux\afxScript.h" />
     <ClInclude Include="..\..\qwadro\ux\afxShell.h" />
@@ -170,90 +213,98 @@
     <ClInclude Include="..\..\qwadro\ux\afxWidget.h" />
     <ClInclude Include="..\..\qwadro\ux\afxWindow.h" />
     <ClInclude Include="..\..\qwadro\ux\auxPaint.h" />
-    <ClInclude Include="..\..\src\draw\avxContextDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxDeviceDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxIcd.h" />
-    <ClInclude Include="..\..\src\draw\avxSystemDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxSurfaceDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxBridgeDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxQueueDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxFenceDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxRasterDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxBufferDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxStorageDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxSamplerDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxCanvasDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxQueryPoolDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxCodebaseDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxVertexInputDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxPipelineDDK.h" />
-    <ClInclude Include="..\..\src\draw\avxLigatureDDK.h" />
-    <ClInclude Include="..\..\src\draw\dpu\avxDpuExecutor.h" />
-    <ClInclude Include="..\..\src\draw\dpu\avxDpuTransference.h" />
-    <ClInclude Include="..\..\src\exec\afxDeviceDDK.h" />
-    <ClInclude Include="..\..\src\exec\afxModuleDDK.h" />
-    <ClInclude Include="..\..\src\exec\afxServiceDDK.h" />
-    <ClInclude Include="..\..\src\exec\afxSystemDDK.h" />
-    <ClInclude Include="..\..\src\exec\afxThreadingDDK.h" />
-    <ClInclude Include="..\..\src\hid\auxDisplayDDK.h" />
-    <ClInclude Include="..\..\src\hid\auxHidDDK.h" />
-    <ClInclude Include="..\..\src\impl\xss\xss.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssCommon.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssCompiler.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssCore.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssDebug.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssMath.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssOpcodes.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssOptMeta.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssOptRandom.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssPrimitive.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssUtils.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssValue.h" />
-    <ClInclude Include="..\..\src\impl\xss\xssVm.h" />
-    <ClInclude Include="..\..\src\io\afxArchiveDDK.h" />
-    <ClInclude Include="..\..\src\io\afxStorageDDK.h" />
-    <ClInclude Include="..\..\src\io\afxStreamDDK.h" />
-    <ClInclude Include="..\..\src\io\afxIoDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxDeviceDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxSinkDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxIcd.h" />
-    <ClInclude Include="..\..\src\mix\amxBridgeDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxContextDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxTrackerDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxQueueDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxSoundDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxSoundscapeDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxSystemDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxStorageDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxAudioDDK.h" />
-    <ClInclude Include="..\..\src\mix\amxBufferDDK.h" />
-    <ClInclude Include="..\..\src\mix\mpu\amxMpuAudio.h" />
-    <ClInclude Include="..\..\src\mix\mpu\amxMpuContext.h" />
-    <ClInclude Include="..\..\src\mix\mpu\amxMpuExecutor.h" />
-    <ClInclude Include="..\..\src\mix\mpu\amxMpuSoundscape.h" />
-    <ClInclude Include="..\..\src\mix\mpu\amxMpuTransference.h" />
-    <ClInclude Include="..\..\src\ux\auxIcd.h" />
-    <ClInclude Include="..\..\src\ux\auxWindowDDK.h" />
-    <ClInclude Include="..\..\src\ux\auxWidgetDDK.h" />
-    <ClInclude Include="..\..\src\ux\auxEnvironmentDDK.h" />
-    <ClInclude Include="..\..\src\ux\auxFontDDK.h" />
-    <ClInclude Include="..\..\src\ux\auxShellDDK.h" />
+    <ClInclude Include="..\..\serpro\asxBridgeDDK.h" />
+    <ClInclude Include="..\..\serpro\asxBufferDDK.h" />
+    <ClInclude Include="..\..\serpro\asxContextDDK.h" />
+    <ClInclude Include="..\..\serpro\asxDeviceDDK.h" />
+    <ClInclude Include="..\..\serpro\asxIcd.h" />
+    <ClInclude Include="..\..\serpro\asxQueueDDK.h" />
+    <ClInclude Include="..\..\serpro\asxSpuContext.h" />
+    <ClInclude Include="..\..\serpro\asxSpuExecutor.h" />
+    <ClInclude Include="..\..\serpro\asxSpuTransference.h" />
+    <ClInclude Include="..\..\serpro\asxStorageDDK.h" />
+    <ClInclude Include="..\..\serpro\asxSystemDDK.h" />
+    <ClInclude Include="..\..\targa\avxBridgeDDK.h" />
+    <ClInclude Include="..\..\targa\avxBufferDDK.h" />
+    <ClInclude Include="..\..\targa\avxCanvasDDK.h" />
+    <ClInclude Include="..\..\targa\avxCodebaseDDK.h" />
+    <ClInclude Include="..\..\targa\avxContextDDK.h" />
+    <ClInclude Include="..\..\targa\avxDeviceDDK.h" />
+    <ClInclude Include="..\..\targa\avxDpuExecutor.h" />
+    <ClInclude Include="..\..\targa\avxDpuTransference.h" />
+    <ClInclude Include="..\..\targa\avxFenceDDK.h" />
+    <ClInclude Include="..\..\targa\avxIcd.h" />
+    <ClInclude Include="..\..\targa\avxIommuDDK.h" />
+    <ClInclude Include="..\..\targa\avxLigatureDDK.h" />
+    <ClInclude Include="..\..\targa\avxPipelineDDK.h" />
+    <ClInclude Include="..\..\targa\avxQueryPoolDDK.h" />
+    <ClInclude Include="..\..\targa\avxQueueDDK.h" />
+    <ClInclude Include="..\..\targa\avxRasterDDK.h" />
+    <ClInclude Include="..\..\targa\avxSamplerDDK.h" />
+    <ClInclude Include="..\..\targa\avxSurfaceDDK.h" />
+    <ClInclude Include="..\..\targa\avxSystemDDK.h" />
+    <ClInclude Include="..\..\targa\avxVertexInputDDK.h" />
+    <ClInclude Include="..\..\xss\xss.h" />
+    <ClInclude Include="..\..\xss\xssCommon.h" />
+    <ClInclude Include="..\..\xss\xssCompiler.h" />
+    <ClInclude Include="..\..\xss\xssCore.h" />
+    <ClInclude Include="..\..\xss\xssDebug.h" />
+    <ClInclude Include="..\..\xss\xssMath.h" />
+    <ClInclude Include="..\..\xss\xssOpcodes.h" />
+    <ClInclude Include="..\..\xss\xssOptMeta.h" />
+    <ClInclude Include="..\..\xss\xssOptRandom.h" />
+    <ClInclude Include="..\..\xss\xssPrimitive.h" />
+    <ClInclude Include="..\..\xss\xssUtils.h" />
+    <ClInclude Include="..\..\xss\xssValue.h" />
+    <ClInclude Include="..\..\xss\xssVm.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\qwadro\draw\README.md" />
     <None Include="..\..\README.md" />
-    <None Include="..\..\src\impl\xss\xssCore.xss" />
-    <None Include="..\..\src\impl\xss\xssCore.xss.inc" />
-    <None Include="..\..\src\impl\xss\xssOptMeta.xss" />
-    <None Include="..\..\src\impl\xss\xssOptMeta.xss.inc" />
-    <None Include="..\..\src\impl\xss\xssOptRandom.xss" />
-    <None Include="..\..\src\impl\xss\xssOptRandom.xss.inc" />
+    <None Include="..\..\xss\xssCore.xss" />
+    <None Include="..\..\xss\xssCore.xss.inc" />
+    <None Include="..\..\xss\xssOptMeta.xss" />
+    <None Include="..\..\xss\xssOptMeta.xss.inc" />
+    <None Include="..\..\xss\xssOptRandom.xss" />
+    <None Include="..\..\xss\xssOptRandom.xss.inc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\src\go-horse.txt" />
+    <Text Include="..\..\go-horse.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\base\afxArithmetic.c" />
+    <ClCompile Include="..\..\base\afxArithmetic2.c" />
+    <ClCompile Include="..\..\base\afxChain.c" />
+    <ClCompile Include="..\..\base\afxClass.c" />
+    <ClCompile Include="..\..\base\afxCoreDefs.c" />
+    <ClCompile Include="..\..\base\afxFixedString.c" />
+    <ClCompile Include="..\..\base\afxHyperbolicTrigonometry.c" />
+    <ClCompile Include="..\..\base\afxLogarithmic.c" />
+    <ClCompile Include="..\..\base\afxMathOps.c" />
+    <ClCompile Include="..\..\base\afxMatrix.c" />
+    <ClCompile Include="..\..\base\afxObject.c" />
+    <ClCompile Include="..\..\base\afxQuaternion.c" />
+    <ClCompile Include="..\..\base\afxRawString.c" />
+    <ClCompile Include="..\..\base\afxReal16.c" />
+    <ClCompile Include="..\..\base\afxRect.c" />
+    <ClCompile Include="..\..\base\afxRotor.c" />
+    <ClCompile Include="..\..\base\afxScalar.c" />
+    <ClCompile Include="..\..\base\afxSimd.c" />
+    <ClCompile Include="..\..\base\afxString.c" />
+    <ClCompile Include="..\..\base\afxTransform.c" />
+    <ClCompile Include="..\..\base\afxTrigonometry.c" />
+    <ClCompile Include="..\..\base\afxUri.c" />
+    <ClCompile Include="..\..\base\afxVector.c" />
+    <ClCompile Include="..\..\base\afxVersion.c" />
+    <ClCompile Include="..\..\base\afxVertex.c" />
+    <ClCompile Include="..\..\base\afxWarp.c" />
+    <ClCompile Include="..\..\coll\afxBox.c" />
+    <ClCompile Include="..\..\coll\afxCapsule.c" />
+    <ClCompile Include="..\..\coll\afxFrustum.c" />
+    <ClCompile Include="..\..\coll\afxPlane.c" />
+    <ClCompile Include="..\..\coll\afxRay.c" />
+    <ClCompile Include="..\..\coll\afxSphere.c" />
     <ClCompile Include="..\..\dep\c11threads\c11threads_win32.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -268,204 +319,186 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\dep\tinycthread\tinycthread.c" />
-    <ClCompile Include="..\..\src\base\afxRect.c" />
-    <ClCompile Include="..\..\src\base\afxSimd.c" />
-    <ClCompile Include="..\..\src\base\afxUri.c" />
-    <ClCompile Include="..\..\src\base\afxWarp.c" />
-    <ClCompile Include="..\..\src\coll\afxBox.c" />
-    <ClCompile Include="..\..\src\coll\afxCapsule.c" />
-    <ClCompile Include="..\..\src\coll\afxFrustum.c" />
-    <ClCompile Include="..\..\src\coll\afxPlane.c" />
-    <ClCompile Include="..\..\src\coll\afxRay.c" />
-    <ClCompile Include="..\..\src\coll\afxSphere.c" />
-    <ClCompile Include="..\..\src\draw\avxBridge.c" />
-    <ClCompile Include="..\..\src\draw\avxCodebaseDDK.c" />
-    <ClCompile Include="..\..\src\draw\avxContext.c" />
-    <ClCompile Include="..\..\src\draw\afxDrawDefs.c" />
-    <ClCompile Include="..\..\src\draw\avxDevice.c" />
-    <ClCompile Include="..\..\src\draw\avxQueue.c" />
-    <ClCompile Include="..\..\src\draw\avxSystem.c" />
-    <ClCompile Include="..\..\src\draw\avxSurface.c" />
-    <ClCompile Include="..\..\src\draw\avxContextDDK.c" />
-    <ClCompile Include="..\..\src\draw\avxIcd.c" />
-    <ClCompile Include="..\..\src\draw\avxStorage.c" />
-    <ClCompile Include="..\..\src\draw\avxSurfaceDDK.c" />
-    <ClCompile Include="..\..\src\draw\avxBuffer.c" />
-    <ClCompile Include="..\..\src\draw\avxBuffered.c" />
-    <ClCompile Include="..\..\src\draw\avxBufferIo.c" />
-    <ClCompile Include="..\..\src\draw\avxCanvas.c" />
-    <ClCompile Include="..\..\src\draw\avxClipping.c" />
-    <ClCompile Include="..\..\src\draw\avxColor.c" />
-    <ClCompile Include="..\..\src\draw\avxDrawing.c" />
-    <ClCompile Include="..\..\src\draw\avxFormatDXT.c" />
-    <ClCompile Include="..\..\src\draw\avxFence.c" />
-    <ClCompile Include="..\..\src\draw\avxFormat.c" />
-    <ClCompile Include="..\..\src\draw\avxLigature.c" />
-    <ClCompile Include="..\..\src\draw\avxMatrix.c" />
-    <ClCompile Include="..\..\src\draw\avxPipeline.c" />
-    <ClCompile Include="..\..\src\draw\avxProvision.c" />
-    <ClCompile Include="..\..\src\draw\avxQueryPool.c" />
-    <ClCompile Include="..\..\src\draw\avxRaster.c" />
-    <ClCompile Include="..\..\src\draw\avxRasterFile.c" />
-    <ClCompile Include="..\..\src\draw\avxRasterIo.c" />
-    <ClCompile Include="..\..\src\draw\avxRasterization.c" />
-    <ClCompile Include="..\..\src\draw\avxRasterizationEXT.c" />
-    <ClCompile Include="..\..\src\draw\avxSampler.c" />
-    <ClCompile Include="..\..\src\draw\avxCodebase.c" />
-    <ClCompile Include="..\..\src\draw\avxSynchronization.c" />
-    <ClCompile Include="..\..\src\draw\avxTransference.c" />
-    <ClCompile Include="..\..\src\draw\avxTransformation.c" />
-    <ClCompile Include="..\..\src\draw\avxTransformationEXT.c" />
-    <ClCompile Include="..\..\src\draw\avxTxd.c" />
-    <ClCompile Include="..\..\src\draw\avxVertexInput.c" />
-    <ClCompile Include="..\..\src\draw\avxViewport.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuAllocation.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuBufferIo.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuContext.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuExecutor.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuPaint.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuRasterIo.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuRasterization.c" />
-    <ClCompile Include="..\..\src\draw\dpu\avxDpuTransformation.c" />
-    <ClCompile Include="..\..\src\etc\afxManifest.c" />
-    <ClCompile Include="..\..\src\etc\afxManifest2.c">
+    <ClCompile Include="..\..\etc\afxManifest.c" />
+    <ClCompile Include="..\..\etc\afxManifest2.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\etc\afxResource.c">
+    <ClCompile Include="..\..\etc\afxResource.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\etc\afxUrd.c" />
-    <ClCompile Include="..\..\src\etc\afxXml.c" />
-    <ClCompile Include="..\..\src\exec\afxDebug_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxProcess_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxSystemModules.c" />
-    <ClCompile Include="..\..\src\exec\afxThreadPool.c" />
-    <ClCompile Include="..\..\src\hid\afxDisplay.c" />
-    <ClCompile Include="..\..\src\hid\afxGamepad.c" />
-    <ClCompile Include="..\..\src\hid\afxHid.c" />
-    <ClCompile Include="..\..\src\hid\afxKeyboard.c" />
-    <ClCompile Include="..\..\src\impl\xssInterfaceIo.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssCompiler.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssCore.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssDebug.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssOptMeta.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssOptRandom.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssPrimitive.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssUtils.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssValue.c" />
-    <ClCompile Include="..\..\src\impl\xss\xssVm.c" />
-    <ClCompile Include="..\..\src\io\afxIoBridge.c" />
-    <ClCompile Include="..\..\src\io\afxIoContext.c" />
-    <ClCompile Include="..\..\src\io\afxIoPort.c" />
-    <ClCompile Include="..\..\src\io\afxIoQueue.c" />
-    <ClCompile Include="..\..\src\io\afxStreamOps.c" />
-    <ClCompile Include="..\..\src\io\afxStreamXpu.c" />
-    <ClCompile Include="..\..\src\math\afxArithmetic.c" />
-    <ClCompile Include="..\..\src\math\afxArithmetic2.c" />
-    <ClCompile Include="..\..\src\math\afxHyperbolicTrigonometry.c" />
-    <ClCompile Include="..\..\src\math\afxLogarithmic.c" />
-    <ClCompile Include="..\..\src\math\afxReal16.c" />
-    <ClCompile Include="..\..\src\afxQwadro.c" />
-    <ClCompile Include="..\..\src\afxQwadroCpp.cpp" />
-    <ClCompile Include="..\..\src\base\afxChain.c" />
-    <ClCompile Include="..\..\src\base\afxClass.c" />
-    <ClCompile Include="..\..\src\base\afxCoreDefs.c" />
-    <ClCompile Include="..\..\src\base\afxFixedString.c" />
-    <ClCompile Include="..\..\src\base\afxObject.c" />
-    <ClCompile Include="..\..\src\base\afxRawString.c" />
-    <ClCompile Include="..\..\src\base\afxString.c" />
-    <ClCompile Include="..\..\src\base\afxVersion.c" />
-    <ClCompile Include="..\..\src\exec\afxAtomic_PC.c" />
-    <ClCompile Include="..\..\src\exec\afxClock_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxCondition_PC.c" />
-    <ClCompile Include="..\..\src\exec\afxDevice.c" />
-    <ClCompile Include="..\..\src\exec\afxModule_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxMutex_PC.c" />
-    <ClCompile Include="..\..\src\exec\afxSemaphore.c" />
-    <ClCompile Include="..\..\src\exec\afxService.c" />
-    <ClCompile Include="..\..\src\exec\afxFutex_PC.c" />
-    <ClCompile Include="..\..\src\exec\afxSystem.c" />
-    <ClCompile Include="..\..\src\exec\afxSystem_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxTerminal_W32.c" />
-    <ClCompile Include="..\..\src\exec\afxThread_PC.c" />
-    <ClCompile Include="..\..\src\exec\afxTime_W32.c" />
-    <ClCompile Include="..\..\src\io\afxArchive.c" />
-    <ClCompile Include="..\..\src\io\afxData.c" />
-    <ClCompile Include="..\..\src\io\afxDatabase.c" />
-    <ClCompile Include="..\..\src\io\afxFile.c" />
-    <ClCompile Include="..\..\src\io\afxSource.c" />
-    <ClCompile Include="..\..\src\io\afxStorage.c" />
-    <ClCompile Include="..\..\src\io\afxStream.c" />
-    <ClCompile Include="..\..\src\math\afxMatrix.c" />
-    <ClCompile Include="..\..\src\math\afxQuaternion.c" />
-    <ClCompile Include="..\..\src\math\afxRotor.c" />
-    <ClCompile Include="..\..\src\math\afxScalar.c" />
-    <ClCompile Include="..\..\src\math\afxTrigonometry.c" />
-    <ClCompile Include="..\..\src\math\afxVector.c" />
-    <ClCompile Include="..\..\src\math\afxMathOps.c" />
-    <ClCompile Include="..\..\src\math\afxTransform.c" />
-    <ClCompile Include="..\..\src\math\afxVertex.c" />
-    <ClCompile Include="..\..\src\mem\afxArena.c" />
-    <ClCompile Include="..\..\src\mem\afxArray.c" />
-    <ClCompile Include="..\..\src\mem\afxInterlockedQueue.c" />
-    <ClCompile Include="..\..\src\mem\afxMappedString.c" />
-    <ClCompile Include="..\..\src\mem\afxMemory.c" />
-    <ClCompile Include="..\..\src\mem\afxMemoryUtil.c" />
-    <ClCompile Include="..\..\src\mem\afxPool.c" />
-    <ClCompile Include="..\..\src\mem\afxQueue.c" />
-    <ClCompile Include="..\..\src\mem\afxRing.c" />
-    <ClCompile Include="..\..\src\mem\afxSlabAllocator.c" />
-    <ClCompile Include="..\..\src\mem\afxStack.c" />
-    <ClCompile Include="..\..\src\mix\amxBuffered.c" />
-    <ClCompile Include="..\..\src\mix\amxBufferIo.c" />
-    <ClCompile Include="..\..\src\mix\amxContextDDK.c" />
-    <ClCompile Include="..\..\src\mix\amxFormat.c" />
-    <ClCompile Include="..\..\src\mix\amxMixage.c" />
-    <ClCompile Include="..\..\src\mix\amxBridge.c" />
-    <ClCompile Include="..\..\src\mix\amxContext.c" />
-    <ClCompile Include="..\..\src\mix\afxMixDefs.c" />
-    <ClCompile Include="..\..\src\mix\amxDevice.c" />
-    <ClCompile Include="..\..\src\mix\amxQueue.c" />
-    <ClCompile Include="..\..\src\mix\amxSystem.c" />
-    <ClCompile Include="..\..\src\mix\amxSink.c" />
-    <ClCompile Include="..\..\src\mix\amxAudio.c" />
-    <ClCompile Include="..\..\src\mix\amxAudioFile.c" />
-    <ClCompile Include="..\..\src\mix\amxBuffer.c" />
-    <ClCompile Include="..\..\src\mix\amxCodec.c" />
-    <ClCompile Include="..\..\src\mix\amxEncoder.c" />
-    <ClCompile Include="..\..\src\mix\amxIcd.c" />
-    <ClCompile Include="..\..\src\mix\amxTracker.c" />
-    <ClCompile Include="..\..\src\mix\amxSound.c" />
-    <ClCompile Include="..\..\src\mix\amxSoundscape.c" />
-    <ClCompile Include="..\..\src\mix\amxSource.c" />
-    <ClCompile Include="..\..\src\mix\amxVideo.c" />
-    <ClCompile Include="..\..\src\mix\amxDecoder.c" />
-    <ClCompile Include="..\..\src\mix\amxVoice.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuAudioIo.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuBufferIo.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuContext.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuExecutor.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuSoundscape.c" />
-    <ClCompile Include="..\..\src\mix\mpu\amxMpuTest.c" />
-    <ClCompile Include="..\..\src\ux\auxFont.c" />
-    <ClCompile Include="..\..\src\ux\auxEnvironment.c" />
-    <ClCompile Include="..\..\src\ux\auxLayout.c" />
-    <ClCompile Include="..\..\src\ux\auxScript.c" />
-    <ClCompile Include="..\..\src\ux\auxShell.c" />
-    <ClCompile Include="..\..\src\ux\auxTheme.c" />
-    <ClCompile Include="..\..\src\ux\auxWidget.c" />
-    <ClCompile Include="..\..\src\ux\auxWindow.c" />
-    <ClCompile Include="..\..\src\ux\auxEnvironmentDDK.c" />
-    <ClCompile Include="..\..\src\ux\auxIcd.c" />
-    <ClCompile Include="..\..\src\ux\auxWidgetDDK.c" />
-    <ClCompile Include="..\..\src\ux\auxWindowDDK.c" />
-    <ClCompile Include="..\..\src\ux\auxPaint.c" />
+    <ClCompile Include="..\..\etc\afxUrd.c" />
+    <ClCompile Include="..\..\etc\afxXml.c" />
+    <ClCompile Include="..\..\exec\afxAtomic_PC.c" />
+    <ClCompile Include="..\..\exec\afxClock_W32.c" />
+    <ClCompile Include="..\..\exec\afxCondition_PC.c" />
+    <ClCompile Include="..\..\exec\afxDebug_W32.c" />
+    <ClCompile Include="..\..\exec\afxDevice.c" />
+    <ClCompile Include="..\..\exec\afxFutex_PC.c" />
+    <ClCompile Include="..\..\exec\afxModule_W32.c" />
+    <ClCompile Include="..\..\exec\afxMutex_PC.c" />
+    <ClCompile Include="..\..\exec\afxProcess_W32.c" />
+    <ClCompile Include="..\..\exec\afxQwadro.c" />
+    <ClCompile Include="..\..\exec\afxQwadroCpp.cpp" />
+    <ClCompile Include="..\..\exec\afxSemaphore.c" />
+    <ClCompile Include="..\..\exec\afxService.c" />
+    <ClCompile Include="..\..\exec\afxSystem.c" />
+    <ClCompile Include="..\..\exec\afxSystemModules.c" />
+    <ClCompile Include="..\..\exec\afxSystem_W32.c" />
+    <ClCompile Include="..\..\exec\afxTerminal_W32.c" />
+    <ClCompile Include="..\..\exec\afxThreadPool.c" />
+    <ClCompile Include="..\..\exec\afxThread_PC.c" />
+    <ClCompile Include="..\..\exec\afxTime_W32.c" />
+    <ClCompile Include="..\..\io\afxArchive.c" />
+    <ClCompile Include="..\..\io\afxData.c" />
+    <ClCompile Include="..\..\io\afxDatabase.c" />
+    <ClCompile Include="..\..\io\afxFile.c" />
+    <ClCompile Include="..\..\io\afxIoBridge.c" />
+    <ClCompile Include="..\..\io\afxIoContext.c" />
+    <ClCompile Include="..\..\io\afxIoPort.c" />
+    <ClCompile Include="..\..\io\afxIoQueue.c" />
+    <ClCompile Include="..\..\io\afxSource.c" />
+    <ClCompile Include="..\..\io\afxStorage.c" />
+    <ClCompile Include="..\..\io\afxStream.c" />
+    <ClCompile Include="..\..\io\afxStreamOps.c" />
+    <ClCompile Include="..\..\io\afxStreamXpu.c" />
+    <ClCompile Include="..\..\mem\afxArena.c" />
+    <ClCompile Include="..\..\mem\afxArray.c" />
+    <ClCompile Include="..\..\mem\afxInterlockedQueue.c" />
+    <ClCompile Include="..\..\mem\afxMappedString.c" />
+    <ClCompile Include="..\..\mem\afxMemory.c" />
+    <ClCompile Include="..\..\mem\afxMemoryUtil.c" />
+    <ClCompile Include="..\..\mem\afxPool.c" />
+    <ClCompile Include="..\..\mem\afxQueue.c" />
+    <ClCompile Include="..\..\mem\afxRing.c" />
+    <ClCompile Include="..\..\mem\afxSlabAllocator.c" />
+    <ClCompile Include="..\..\mem\afxStack.c" />
+    <ClCompile Include="..\..\mixva\afxMixDefs.c" />
+    <ClCompile Include="..\..\mixva\amxAudio.c" />
+    <ClCompile Include="..\..\mixva\amxAudioFile.c" />
+    <ClCompile Include="..\..\mixva\amxBridge.c" />
+    <ClCompile Include="..\..\mixva\amxBuffer.c" />
+    <ClCompile Include="..\..\mixva\amxBuffered.c" />
+    <ClCompile Include="..\..\mixva\amxBufferIo.c" />
+    <ClCompile Include="..\..\mixva\amxCodec.c" />
+    <ClCompile Include="..\..\mixva\amxContext.c" />
+    <ClCompile Include="..\..\mixva\amxContextDDK.c" />
+    <ClCompile Include="..\..\mixva\amxDecoder.c" />
+    <ClCompile Include="..\..\mixva\amxDevice.c" />
+    <ClCompile Include="..\..\mixva\amxEncoder.c" />
+    <ClCompile Include="..\..\mixva\amxFormat.c" />
+    <ClCompile Include="..\..\mixva\amxIcd.c" />
+    <ClCompile Include="..\..\mixva\amxMixage.c" />
+    <ClCompile Include="..\..\mixva\amxMpuAudioIo.c" />
+    <ClCompile Include="..\..\mixva\amxMpuBufferIo.c" />
+    <ClCompile Include="..\..\mixva\amxMpuContext.c" />
+    <ClCompile Include="..\..\mixva\amxMpuExecutor.c" />
+    <ClCompile Include="..\..\mixva\amxMpuSoundscape.c" />
+    <ClCompile Include="..\..\mixva\amxMpuTest.c" />
+    <ClCompile Include="..\..\mixva\amxPump.c" />
+    <ClCompile Include="..\..\mixva\amxQueue.c" />
+    <ClCompile Include="..\..\mixva\amxSink.c" />
+    <ClCompile Include="..\..\mixva\amxSound.c" />
+    <ClCompile Include="..\..\mixva\amxSoundscape.c" />
+    <ClCompile Include="..\..\mixva\amxStorage.c" />
+    <ClCompile Include="..\..\mixva\amxSystem.c" />
+    <ClCompile Include="..\..\mixva\amxTracker.c" />
+    <ClCompile Include="..\..\mixva\amxVideo.c" />
+    <ClCompile Include="..\..\mixva\amxVoice.c" />
+    <ClCompile Include="..\..\mmux\afxDisplay.c" />
+    <ClCompile Include="..\..\mmux\afxGamepad.c" />
+    <ClCompile Include="..\..\mmux\afxHid.c" />
+    <ClCompile Include="..\..\mmux\afxKeyboard.c" />
+    <ClCompile Include="..\..\mmux\auxEnvironment.c" />
+    <ClCompile Include="..\..\mmux\auxEnvironmentDDK.c" />
+    <ClCompile Include="..\..\mmux\auxFont.c" />
+    <ClCompile Include="..\..\mmux\auxIcd.c" />
+    <ClCompile Include="..\..\mmux\auxLayout.c" />
+    <ClCompile Include="..\..\mmux\auxPaint.c" />
+    <ClCompile Include="..\..\mmux\auxScript.c" />
+    <ClCompile Include="..\..\mmux\auxShell.c" />
+    <ClCompile Include="..\..\mmux\auxTheme.c" />
+    <ClCompile Include="..\..\mmux\auxWidget.c" />
+    <ClCompile Include="..\..\mmux\auxWidgetDDK.c" />
+    <ClCompile Include="..\..\mmux\auxWindow.c" />
+    <ClCompile Include="..\..\mmux\auxWindowDDK.c" />
+    <ClCompile Include="..\..\serpro\asxBridge.c" />
+    <ClCompile Include="..\..\serpro\asxBuffer.c" />
+    <ClCompile Include="..\..\serpro\asxBufferIo.c" />
+    <ClCompile Include="..\..\serpro\asxContext.c" />
+    <ClCompile Include="..\..\serpro\asxContextDDK.c" />
+    <ClCompile Include="..\..\serpro\asxDevice.c" />
+    <ClCompile Include="..\..\serpro\asxIcd.c" />
+    <ClCompile Include="..\..\serpro\asxQueue.c" />
+    <ClCompile Include="..\..\serpro\asxSpuBufferIo.c" />
+    <ClCompile Include="..\..\serpro\asxSpuContext.c" />
+    <ClCompile Include="..\..\serpro\asxSpuExecutor.c" />
+    <ClCompile Include="..\..\serpro\asxStorage.c" />
+    <ClCompile Include="..\..\serpro\asxSystem.c" />
+    <ClCompile Include="..\..\targa\afxDrawDefs.c" />
+    <ClCompile Include="..\..\targa\avxBridge.c" />
+    <ClCompile Include="..\..\targa\avxBuffer.c" />
+    <ClCompile Include="..\..\targa\avxBuffered.c" />
+    <ClCompile Include="..\..\targa\avxBufferIo.c" />
+    <ClCompile Include="..\..\targa\avxCanvas.c" />
+    <ClCompile Include="..\..\targa\avxClipping.c" />
+    <ClCompile Include="..\..\targa\avxCodebase.c" />
+    <ClCompile Include="..\..\targa\avxCodebaseDDK.c" />
+    <ClCompile Include="..\..\targa\avxColor.c" />
+    <ClCompile Include="..\..\targa\avxContext.c" />
+    <ClCompile Include="..\..\targa\avxContextDDK.c" />
+    <ClCompile Include="..\..\targa\avxDevice.c" />
+    <ClCompile Include="..\..\targa\avxDpuContext.c" />
+    <ClCompile Include="..\..\targa\avxDpuExecutor.c" />
+    <ClCompile Include="..\..\targa\avxDpuPaint.c" />
+    <ClCompile Include="..\..\targa\avxDpuRasterIo.c" />
+    <ClCompile Include="..\..\targa\avxDpuRasterization.c" />
+    <ClCompile Include="..\..\targa\avxDpuTransference.c" />
+    <ClCompile Include="..\..\targa\avxDpuTransformation.c" />
+    <ClCompile Include="..\..\targa\avxDrawing.c" />
+    <ClCompile Include="..\..\targa\avxFence.c" />
+    <ClCompile Include="..\..\targa\avxFormat.c" />
+    <ClCompile Include="..\..\targa\avxFormatDXT.c" />
+    <ClCompile Include="..\..\targa\avxIcd.c" />
+    <ClCompile Include="..\..\targa\avxIommu.c" />
+    <ClCompile Include="..\..\targa\avxIommuDDK.c" />
+    <ClCompile Include="..\..\targa\avxLigature.c" />
+    <ClCompile Include="..\..\targa\avxMatrix.c" />
+    <ClCompile Include="..\..\targa\avxPipeline.c" />
+    <ClCompile Include="..\..\targa\avxProvision.c" />
+    <ClCompile Include="..\..\targa\avxQueryPool.c" />
+    <ClCompile Include="..\..\targa\avxQueue.c" />
+    <ClCompile Include="..\..\targa\avxRaster.c" />
+    <ClCompile Include="..\..\targa\avxRasterFile.c" />
+    <ClCompile Include="..\..\targa\avxRasterIo.c" />
+    <ClCompile Include="..\..\targa\avxRasterization.c" />
+    <ClCompile Include="..\..\targa\avxRasterizationEXT.c" />
+    <ClCompile Include="..\..\targa\avxSampler.c" />
+    <ClCompile Include="..\..\targa\avxSurface.c" />
+    <ClCompile Include="..\..\targa\avxSurfaceDDK.c" />
+    <ClCompile Include="..\..\targa\avxSynchronization.c" />
+    <ClCompile Include="..\..\targa\avxSystem.c" />
+    <ClCompile Include="..\..\targa\avxTransference.c" />
+    <ClCompile Include="..\..\targa\avxTransformation.c" />
+    <ClCompile Include="..\..\targa\avxTransformationEXT.c" />
+    <ClCompile Include="..\..\targa\avxTxd.c" />
+    <ClCompile Include="..\..\targa\avxVertexInput.c" />
+    <ClCompile Include="..\..\targa\avxViewport.c" />
+    <ClCompile Include="..\..\xss\xssCompiler.c" />
+    <ClCompile Include="..\..\xss\xssCore.c" />
+    <ClCompile Include="..\..\xss\xssDebug.c" />
+    <ClCompile Include="..\..\xss\xssInterfaceIo.c" />
+    <ClCompile Include="..\..\xss\xssOptMeta.c" />
+    <ClCompile Include="..\..\xss\xssOptRandom.c" />
+    <ClCompile Include="..\..\xss\xssPrimitive.c" />
+    <ClCompile Include="..\..\xss\xssUtils.c" />
+    <ClCompile Include="..\..\xss\xssValue.c" />
+    <ClCompile Include="..\..\xss\xssVm.c" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="e2coree.rc" />
@@ -553,7 +586,7 @@
       <Optimization>Disabled</Optimization>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;__e2serpro__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -578,7 +611,7 @@
       <Optimization>Disabled</Optimization>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;__e2serpro__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -603,7 +636,7 @@
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;__e2serpro__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
@@ -621,7 +654,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__e2coree__;__e2targa__;__e2mmux__;__e2mix__;__e2mixva__;__e2serpro__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>

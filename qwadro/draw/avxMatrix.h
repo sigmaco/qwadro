@@ -109,27 +109,27 @@ AVXINL void     AfxCubemapMatrix_Direct3D(afxM4d m, afxUnit face);
 
 // View space
 
-AVXINL void     AfxComputeLookToMatrix(afxM4d m, afxV3d const eye, afxV3d const dir, afxV3d const up, afxBool nonRh);
-AVXINL void     AfxComputeLookAtMatrix(afxM4d m, afxV3d const eye, afxV3d const target, afxV3d const up, afxBool nonRh);
+AVXINL void     AfxComputeLookToMatrix(afxM4d m, afxV3d const eye, afxV3d const dir, afxV3d const up, afxBool nonRhcs);
+AVXINL void     AfxComputeLookAtMatrix(afxM4d m, afxV3d const eye, afxV3d const target, afxV3d const up, afxBool nonRhcs);
 
 // Orthographic projective space
 
-AVXINL void     AfxComputeOrthographicMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRh, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeOffcenterOrthographicMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRh, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeOrthographicMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeOffcenterOrthographicMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
 
 /// Computa uma afxM4d de projeção ortográfica desde uma afxBox.
-AVXINL void     AfxComputeBoundingOrthographicMatrix(afxM4d m, afxBox const aabb, afxBool nonRh, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeBoundingOrthographicMatrix(afxM4d m, afxBox const aabb, afxBool nonRhcs, avxClipSpaceDepth clip);
 
 /// Computa uma afxM4d de projeção ortográfica genérica.
-AVXINL void     AfxComputeBasicOrthographicMatrix(afxM4d m, afxReal aspectRatio, afxReal scale, afxReal range, afxBool nonRh, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeBasicOrthographicMatrix(afxM4d m, afxReal aspectRatio, afxReal scale, afxReal range, afxBool nonRhcs, avxClipSpaceDepth clip);
 
 // Perspective projective space
 
-AVXINL void     AfxComputePerspectiveMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRh, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeFovPerspectiveMatrix(afxM4d m, afxReal fovY, afxReal aspectRatio, afxReal near, afxReal far, afxBool nonRh, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeOffcenterPerspectiveMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRh, avxClipSpaceDepth clip);
+AVXINL void     AfxComputePerspectiveMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeFovPerspectiveMatrix(afxM4d m, afxReal fovY, afxReal aspectRatio, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeOffcenterPerspectiveMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
 
-AVXINL void     AfxComputeBasicPerspectiveMatrix(afxM4d m, afxReal aspectRatio, afxReal range, afxBool nonRh, avxClipSpaceDepth clip);
+AVXINL void     AfxComputeBasicPerspectiveMatrix(afxM4d m, afxReal aspectRatio, afxReal range, afxBool nonRhcs, avxClipSpaceDepth clip);
 
 // Decompose
 

@@ -249,7 +249,7 @@ typedef enum afxFcc
     afxFcc_MCDC     = AFX_MAKE_FCC('m', 'c', 'd', 'c'), // amxCodec
     afxFcc_MENC     = AFX_MAKE_FCC('m', 'e', 'n', 'c'), // amxEncoder
     afxFcc_MDEC     = AFX_MAKE_FCC('m', 'd', 'e', 'c'), // amxDecoder
-    afxFcc_MSRC     = AFX_MAKE_FCC('m', 's', 'r', 'c'), // amxSource
+    afxFcc_MSRC     = AFX_MAKE_FCC('m', 's', 'r', 'c'), // amxPump
     afxFcc_SCTX     = AFX_MAKE_FCC('s', 'c', 't', 'x'), // afxSoundContext
     //afxFcc_SBUF     = AFX_MAKE_FCC('s', 'b', 'u', 'f'), // afxWaveform
     afxFcc_MBUF     = AFX_MAKE_FCC('m', 'b', 'u', 'f'), // amxBuffer

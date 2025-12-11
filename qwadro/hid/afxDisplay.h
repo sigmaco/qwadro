@@ -18,15 +18,21 @@
 // This software is part of Advanced Video Graphics Extensions & Experiments.
 // This software is part of Advanced User Experiences Extensions & Experiments.
 
-#ifndef AVX_DISPLAY_H
-#define AVX_DISPLAY_H
+#ifndef AFX_DISPLAY_H
+#define AFX_DISPLAY_H
 
 #include "qwadro/draw/avxPipeline.h"
 #include "qwadro/draw/avxRaster.h"
 #include "qwadro/draw/avxBuffer.h"
 //#include "qwadro/draw/afxSurface.h"
 
-#define AVX_MAX_GAMMA_CURVE_LENGTH (1025)
+#define AFX_MAX_GAMMA_CURVE_LENGTH (1025)
+
+typedef enum afxDisplayFlag
+{
+    // The display is attached to (and backing) the desktop.
+    afxDisplayFlag_DESKTOP = AFX_BITMASK(0),
+} afxDisplayFlags;
 
 typedef enum avxVideoScaling
 // mask specifying presentation scaling methods.
@@ -101,11 +107,11 @@ typedef enum avxVideoAlpha
     The gamma curve here is a piecewise linear function; not a spline. 
     It's essentially a lookup table (LUT) or function approximation over the [0,1] domain using a set of explicitly defined control points.
     
-    The array avxGammaControlCapabilites.ctrlPntPos are the X-values (inputs in [0,1] range).
+    The array afxGammaCapabilites.ctrlPntPos are the X-values (inputs in [0,1] range).
     Often uniformly spaced, but the driver can specify non-uniform spacing.
     Think of this as: x0,x1,x2,...,xn-1 e [0, 1].
 
-    The array avxGammaControl.curve are the corresponding Y-values (R, G, B output intensities).
+    The array afxGammaCurve.curve are the corresponding Y-values (R, G, B output intensities).
     So together, they define: (x0,y0),(x1,y1),...,(xn-1,yn-1).
     Each y_i is a afxV3d, meaning we have three gamma curves: one each for red, green, and blue.
 
@@ -114,7 +120,7 @@ typedef enum avxVideoAlpha
     It’s meant to be rendering-efficient, hence uses simple linear interpolation between points.
 */
 
-AFX_DEFINE_STRUCT(avxGammaControlCapabilites)
+AFX_DEFINE_STRUCT(afxGammaCapabilites)
 // The capabilities of the hardware for gamma correction, particularly how gamma control points can be used.
 {
     // When TRUE, the hardware supports scaling and offsetting the gamma curve.
@@ -128,22 +134,22 @@ AFX_DEFINE_STRUCT(avxGammaControlCapabilites)
     // Can be up to 1025. This determines the resolution of the gamma curve.
     afxUnit ctrlPntCnt;
     // These are the normalized (0.0 to 1.0) input values for the gamma curve.
-    // Corresponds to curve[] values in avxGammaControl.
-    afxReal ctrlPntPos[AVX_MAX_GAMMA_CURVE_LENGTH];
+    // Corresponds to curve[] values in afxGammaCurve.
+    afxReal ctrlPntPos[AFX_MAX_GAMMA_CURVE_LENGTH];
 };
 
-AFX_DEFINE_STRUCT(avxGammaControl)
+AFX_DEFINE_STRUCT(afxGammaCurve)
 // Structure specifying/describing the gamma curve settings to apply to the display.
 {
-    // scale and offset are used if avxGammaControlCapabilites.scaleAndOffsetSupported is TRUE.
+    // scale and offset are used if afxGammaCapabilites.scaleAndOffsetSupported is TRUE.
     // Each channel (Red, Green, Blue) has its own scaling and offset factor.
     // Formula for each output channel: output = scale * input + offset.
     afxV3d scale;
     afxV3d offset;
     // Defines the gamma curve for red, green, and blue channels.
-    // The values correspond to the avxGammaControlCapabilites.ctrlPntPos.
+    // The values correspond to the afxGammaCapabilites.ctrlPntPos.
     // You provide a afxV3d value (with R, G, B floats) for each control point position.
-    afxV3d curve[AVX_MAX_GAMMA_CURVE_LENGTH];
+    afxV3d curve[AFX_MAX_GAMMA_CURVE_LENGTH];
 };
 
 AFX_DEFINE_STRUCT(avxDisplayPortInfo)
@@ -221,17 +227,23 @@ AFX_DEFINE_STRUCT(avxDisplayMode)
 };
 
 // Win32: only supported while in full-screen mode.
-AVX afxError AvxQueryGammaControlCapabilites(afxDisplay dsp, avxGammaControlCapabilites* caps);
+AVX afxError AfxQueryGammaControlCapabilites(afxDisplay dsp, afxGammaCapabilites* caps);
 
 // Win32: only supported while in full-screen mode.
-AVX afxError AvxDescribeGammaControl(afxDisplay dsp, avxGammaControl* desc);
+AVX afxError AfxDescribeGammaControl(afxDisplay dsp, afxGammaCurve* desc);
 
 // Win32: only supported while in full-screen mode.
-AVX afxError AvxControlGamma(afxDisplay dsp, avxGammaControl const* ctrl);
+AVX afxError AfxControlGamma(afxDisplay dsp, afxGammaCurve const* ctrl);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxUnit AfxEnumerateDisplays(afxModule icd, afxUnit first, afxUnit cnt, afxDisplay displays[]);
+AVX afxUnit AfxEnumerateDisplays
+(
+    afxUnit icd, 
+    afxUnit first, 
+    afxUnit cnt, 
+    afxDisplay displays[]
+);
 
 // dwmgl
 // dwmgdi
@@ -239,10 +251,36 @@ AVX afxUnit AfxEnumerateDisplays(afxModule icd, afxUnit first, afxUnit cnt, afxD
 // dwmd3d11
 // dwmd3d12
 
-/// If you don't know what the physical aspect ratio is of the device you're using 
-/// (for example, if you're using a standard PC, there is no way to determine for sure what kind of monitor is attached), 
-/// you can either assume square pixels (pass the width of the screen divided by the height), or you can use Qwadro's "best guess": 
+/*
+    The AfxFindPhysicalAspectRatio() function determines the physical aspect ratio of a screen based on its width and height. 
+    The function computes the ratio based on a predefined set of conditions.
+    @screenWidth and @screenHeight are expected to be afxUnit types, likely representing screen dimensions.
+    The function returns a afxReal64 value representing the calculated aspect ratio.
 
-AVX afxReal64       AvxFindPhysicalAspectRatio(afxUnit screenWidth, afxUnit screenHeight);
+    The ratio is calculated by dividing the width by the height.
+    The ratio is then compared to predefined thresholds (1.4, 1.6, etc) to assign it a specific aspect ratio (1.33, 1.56, or 1.78).
 
-#endif//AVX_DISPLAY_H
+    Common Aspect Ratios
+     - 4:3 (Standard definition CRT monitors and some old TVs)
+     - 16:9 (Widescreen HDTV, most modern displays)
+     - 16:10 (Popular for some computer monitors and laptops)
+     - 5:4 (Older computer monitors, especially in office environments)
+     - 21:9 (Ultrawide monitors, often used for gaming or multitasking)
+     - 3:2 (Used by some laptops, like Microsoft Surface)
+     - 32:9 (Super ultrawide displays)
+
+    Explanation.
+    The width-to-height ratio for 5:4 is 1.25. In the extended function, there is a check for div <= 1.5 which assigns the ratio 1.25 to it.
+    The ultrawide monitors, such as 21:9, are typically in the range of 2.33 (21 divided by 9). There is a condition to check for values between 1.7 and 2.0 to accommodate this.
+    For even wider screens (like 32:9), there is check for ratios greater than 2.5 too.
+
+    This function performs an approximation and is intended to be used when the user does not know the aspect ratio of the desired device.
+*/
+
+AVX afxReal64 AfxFindPhysicalAspectRatio
+(
+    afxUnit screenWidth, 
+    afxUnit screenHeight
+);
+
+#endif//AFX_DISPLAY_H

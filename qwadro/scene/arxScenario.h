@@ -96,13 +96,24 @@ AFX_DEFINE_STRUCT(arxScenarioConfig)
     void*               udd;
 };
 
-ARX afxDrawSystem   ArxGetScenarioDrawSystem(arxScenario scio);
+ARX afxDrawSystem ArxGetScenarioDrawSystem
+(
+    arxScenario scio
+);
 
-ARX void*           ArxGetScenarioUdd(arxScenario scio);
+ARX void* ArxGetScenarioUdd
+(
+    arxScenario scio
+);
 
 // OPTICAL MATRIX UTILITY
 
-ARX void            ArxGetClipSpaceInfo(arxScenario scio, avxClipSpaceDepth* depth, afxBool* leftHanded);
+ARX void ArxGetClipSpaceInfo
+(
+    arxScenario scio, 
+    avxClipSpaceDepth* depth, 
+    afxBool* nonRhcs
+);
 
 ARX void ArxComputeLookToMatrices
 (
@@ -206,9 +217,15 @@ ARX void ArxComputePerspectiveMatrices
     afxM4d ip
 );
 
-ARX afxError        ArxUplinkTxds(arxScenario scio, afxUnit baseSlot, afxUnit slotCnt, afxUri const uris[]);
+ARX afxError ArxUplinkTxds(arxScenario scio, afxUnit baseSlot, afxUnit slotCnt, afxUri const uris[]);
 
-ARX void            ArxQueryLodErrorTolerance(arxScenario scio, afxReal allowedErr, afxReal *allowedErrEnd, afxReal *allowedErrScaler);
+ARX void ArxQueryLodErrorTolerance
+(
+    arxScenario scio, 
+    afxReal allowedErr, 
+    afxReal *allowedErrEnd, 
+    afxReal *allowedErrScaler
+);
 
 ARX void ArxComputeSimilarity
 (
@@ -223,9 +240,18 @@ ARX void ArxComputeSimilarity
     afxV3d atv
 );
 
-ARX afxError ArxCullBodies(arxScenario scio, afxFrustum const* f, afxArray* pvs);
+ARX afxError ArxCullBodies
+(
+    arxScenario scio, 
+    afxFrustum const* f, 
+    afxArray* pvs
+);
 
-ARX afxUnit ArxRecenterAllCapstanClocks(arxScenario scio, afxReal dCurrentClock);
+ARX afxUnit ArxRecenterAllCapstanClocks
+(
+    arxScenario scio, 
+    afxReal dCurrentClock
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 

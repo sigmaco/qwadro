@@ -40,6 +40,7 @@
 #include "qwadro/mix/amxBuffer.h"
 #include "qwadro/mix/amxBuffered.h"
 #include "qwadro/mix/amxTracker.h"
+#include "qwadro/mix/amxPump.h"
 
 #define AMX_MAX_BRIDGES_PER_SYSTEM (32)
 
@@ -283,7 +284,7 @@ AMX afxError AmxWaitForMixSystem
     If the bridge does not reach the ready state within the timeout, the function might return an error.
 */
 
-AMX afxError AmxWaitForMixBridge
+AMX afxError AmxWaitForMixBridges
 (
     // The mixing system to which the specific bridge belongs.
     afxMixSystem msys, 
@@ -292,10 +293,10 @@ AMX afxError AmxWaitForMixBridge
     // The time is expressed in microseconds, and the function will stop waiting once this period has elapsed.
     afxTime timeout,
 
-    // The index of the execution unit (bridge) that needs to be waited on. 
+    // The bitmask of the execution units (bridge) that needs to be waited on. 
     // If the mixing system has multiple bridges or execution units (e.g., for communication between different components or devices), 
-    // this index identifies the particular bridge you're concerned with.
-    afxUnit exuIdx
+    // this bitmask identifies the particular bridges you're concerned with.
+    afxMask exuMask
 );
 
 /*
@@ -323,10 +324,10 @@ AMX afxError AmxWaitForMixQueue
     // The queue you want to wait for. 
     // Mixing systems often have multiple command queues for various tasks like synthesis, compute, or transfer operations. 
     // The queId specifies which queue's state should be checked.
-    afxUnit queIdx
+    afxUnit queId
 );
 
-AMX void AmxGetEnabledMixFeatures
+AMX void AmxGetEnabledSystemFeatures
 (
     afxMixSystem msys, 
     amxFeatures* features

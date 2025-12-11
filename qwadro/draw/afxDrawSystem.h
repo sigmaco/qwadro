@@ -75,21 +75,22 @@ AFX_DEFINE_STRUCT(avxSystemConfig)
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    avxAptitude           caps;
+    avxAptitude         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
     // The features to be enabled.
-    avxFeatures     features;
+    avxFeatures         features;
     // The number of system extensions to be enabled.
     afxUnit             extCnt;
     // An array of Qwadro strings containing the names of extensions to enable for the desired system.
     afxString const*    exts;
     // The depth mapping used by projection to map depth values into the clip space. 
     avxClipSpaceDepth   clipSpcDepth;
+    afxBool             nonRhcs;
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    avxBridgeConfig exus[AVX_MAX_BRIDGES_PER_SYSTEM];
+    avxBridgeConfig     exus[AVX_MAX_BRIDGES_PER_SYSTEM];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.

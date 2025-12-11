@@ -127,7 +127,7 @@ AFX afxUnit     AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(
 AFX afxError    AfxForEachUriResolution(afxUri const* pattern, afxFileFlags flags, afxBool(*proc)(void* udd, afxUri const* uri), void* udd);
 
 
-AFX afxUnit     AfxEnumerateStorages(afxUnit first, afxUnit cnt, afxStorage systems[]);
+AFX afxUnit     AfxEnumerateStorages(afxUnit first, afxUnit cnt, afxStorage storages[]);
 
 AFX afxUnit     AfxInvokeStorages(afxUnit first, afxUnit cnt, afxBool(*f)(afxStorage, void*), void *udd);
 

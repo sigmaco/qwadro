@@ -40,20 +40,6 @@ typedef enum amxCodecId
     amxCodecId_FLAC,
 } amxCodecId;
 
-AFX_DEFINE_STRUCT(amxPacket)
-{
-    afxFlags    flags;
-    afxUnit     srcIdx; // index of source stream
-    afxInt64    posn; // in stream
-    afxInt64    dts; // time at which the packet is decompressed
-    afxInt64    pts; // time at which the decompressed packet will be presented
-    amxBuffer   buf; // packet data storage
-    afxByte*    data;
-    afxUnit     siz;
-    afxUnit64   dur; // duration
-    void*       udd;
-};
-
 AFX_DEFINE_STRUCT(amxFrame)
 {
     afxByte*    data;

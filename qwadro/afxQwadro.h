@@ -23,6 +23,8 @@
 
 /*
     CODING APPROACHES
+    
+    "Technically correct is the best kind of correct".
 
     That's a clear and performance-oriented design philosophy. Under Qwadro’s guidelines, 
     we don't do defensive programming for required parameters at runtime; we assume correct usage in release builds, 

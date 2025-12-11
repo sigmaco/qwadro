@@ -1,17 +1,17 @@
 ![Logo](doc/qwadro-banner-2048x520-bg-t.png)
 
-# Accelerated Video Graphics Extensions (AVX)
+# Advanced Video Graphics Extensions (AVX)
 Video graphics extensions for Qwadro **Acceleration Framework Experimental** (**AFX**)
 
 ## Overview
-**AVX**, alphabetism and initalism for **Accelerated Video Graphics Extensions**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a complete, scalable, hardware-accelerated video graphics foundation.
+**AVX**, alphabetism and initalism for **Advanced Video Graphics Extensions**, is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the Qwadro Execution Ecosystem with a complete, scalable, hardware-accelerated video graphics foundation.
 
 AVX achieves this by defining and establishing the **Qwadro Video Graphics Infrastructure**, a unified, device-agnostic, low-level video graphics subsystem that standardizes how accelerated video graphics devices are discovered, negotiated, initialized, and operated within the AFX ecosystem.
 
 AVX provides the **infrastructure** and **device-driver** interfaces required to build rendering runtimes on top of a stable, explicit, cross-platform  
 foundation.
 
-Alongside AVX exists the **Accelerated MMUX Experimental** (**AUX**) amendment. AUX is another amendment for AFX focusing on the system-wide integration side of the user experience.
+Alongside AVX exists the **Advanced MMUX Experimental** (**AUX**) amendment. AUX is another amendment for AFX focusing on the system-wide integration side of the user experience.
 
 AUX provides a shells and desktop-environment intercommunication layers that eliminates the historical issues developers face when trying to interface video graphics runtimes with the host system.
 

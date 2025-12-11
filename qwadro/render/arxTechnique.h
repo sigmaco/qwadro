@@ -68,12 +68,17 @@ ARX afxBool             ArxFindDrawPass(arxTechnique dtec, afxString const *name
 ARX afxString const*    ArxGetDrawPassName(arxTechnique dtec, afxUnit passIdx);
 ARX avxPipeline         ArxGetDrawPipeline(arxTechnique dtec, afxUnit passIdx);
 
-ARX afxError            ArxUpdateRasterizationPass(arxTechnique dtec, afxUnit passIdx, avxPipelineConfig const* cfg);
+ARX afxError ArxUpdateRasterizationPass(arxTechnique dtec, afxUnit passIdx, avxPipelineConfig const* cfg);
 
-ARX afxCmdId            AvxCmdUseDrawTechniqueSIGMA(afxDrawContext dctx, arxTechnique dtec, afxUnit passIdx, avxVertexInput vin, afxFlags dynamics);
+ARX afxCmdId AvxCmdUseDrawTechniqueSIGMA(afxDrawContext dctx, arxTechnique dtec, afxUnit passIdx, avxVertexInput vin, afxFlags dynamics);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxError            ArxLoadRenderTechnique(arxScenario scio, afxUri const* uri, arxTechnique* technique);
+ARX afxError ArxLoadRenderTechnique
+(
+    arxScenario scio, 
+    afxUri const* uri, 
+    arxTechnique* technique
+);
 
 #endif//ARX_TECHNIQUE_H

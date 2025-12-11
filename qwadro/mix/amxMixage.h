@@ -404,6 +404,7 @@ AFX_DEFINE_STRUCT(amxVideoDecode)
     afxUnit         refSlotCnt;
     // An array of structures describing the DPB slots and corresponding reference picture resources to use in this video decode operation (the set of active reference pictures).
     amxVideoPicture refSlots[8];
+    afxUnit         refSlotIds[8];
     // The source video bitstream buffer to read the encoded bitstream from.
     avxBuffer       srcBuf;
     // The starting offset in bytes from the start of @srcBuf to read the encoded bitstream from.
@@ -447,6 +448,7 @@ AFX_DEFINE_STRUCT(amxVideoScope)
     void*           param; // video session parameters in Vulkan
     afxUnit         refCnt;
     amxVideoPicture refSlots[8];
+    afxUnit         refSlotIds[8];
 };
 
 AFX_DEFINE_STRUCT(amxVideoEncRate)

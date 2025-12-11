@@ -62,6 +62,11 @@ AFX afxUnit32   AfxGetArchivedFileCrc(afxArchive arc, afxUnit idx);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AFX afxArchive  AfxOpenArchive(afxUri const* uri, afxFileFlags const flags, afxError* err);
+AFX afxError AfxOpenArchive
+(
+    afxUri const* uri, 
+    afxFileFlags const flags, 
+    afxArchive* archive
+);
 
 #endif//AFX_ARCHIVE_H

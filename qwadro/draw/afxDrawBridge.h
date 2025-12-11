@@ -73,14 +73,6 @@ typedef enum avxAptitude
     avxAptitude_RTX      = AFX_BITMASK(5),
 } avxAptitude;
 
-AFX_DEFINE_STRUCT(avxPortInfo)
-{
-    avxAptitude         capabilities;
-    afxAcceleration     acceleration;
-    afxUnit             minQueCnt; // usually 3
-    afxUnit             maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
-};
-
 AFX_DEFINE_STRUCT(avxBridgeConfig)
 {
     afxUnit             ddevId;

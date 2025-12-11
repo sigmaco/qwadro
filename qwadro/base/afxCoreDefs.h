@@ -169,15 +169,22 @@ typedef afxMask32   afxMask;
 // For each used unit in a bitmask
 #define AFX_ITERATE_BITMASK(iter_, usage) for (afxMask _u##__LINE__ = (usage), (iter_) = 0; _u##__LINE__; ++(iter_), _u##__LINE__ >>= 1) if (_u##__LINE__ & 1)
 
-#define AFX_MASK64_NONE (0x0000000000000000)
-#define AFX_MASK64_ALL (0xffffffffffffffff)
-#define AFX_MASK32_NONE (0x00000000)
-#define AFX_MASK32_ALL (0xffffffff)
-#define AFX_MASK_ALL AFX_MASK32_ALL
-#define AFX_MASK_NONE AFX_MASK32_NONE
+#define AFX_FORCE_ENUM_N32 (0x7fffffff)
+
+#define AFX_MASK64_NONE     (0x0000000000000000)
+#define AFX_MASK32_NONE     (0x00000000)
+#define AFX_MASK_NONE       AFX_MASK32_NONE
+
+#define AFX_MASK64_ALL      (0xffffffffffffffff)
+#define AFX_MASK32_ALL      (0xffffffff)
+#define AFX_MASK_ALL        AFX_MASK32_ALL
+
+#define AFX_MASK_IGNORED    AFX_MASK_NONE
+#define AFX_MASK32_IGNORED  AFX_MASK32_NONE
+#define AFX_MASK64_IGNORED  AFX_MASK64_NONE
+
 #define AFX_MASK_LAST AFX_BITMASK(31)
 #define AFX_MASK_FIRST AFX_BITMASK(0)
-#define AFX_FORCE_ENUM_N32 (0x7fffffff)
 
 typedef afxInt8     afxI8;
 typedef afxInt16    afxI16;
@@ -199,6 +206,16 @@ typedef afxChar32   afxC32;
 
 // 4 bytes interpreted as 16:16 fixed.
 typedef afxInt32 afxFixed;
+
+AFX_DEFINE_STRUCT(afxRational)
+{
+    // The numerator component.
+    afxInt numer;
+    // The denominator component.
+    afxInt denom;
+};
+
+typedef afxRational afxRat;
 
 AFXINL afxFixed AfxFixedFromFloat(afxReal f);
 
@@ -286,6 +303,11 @@ typedef enum afxError
     afxError_TOO_MANY_OBJECTS,
     afxError_FMT_NOT_SUPPORTED,
     afxError_FRAGMENTED_POOL,
+    afxError_NOT_SUPPORTED,
+    afxError_NOT_IMPLEMENTED,
+    afxError_NOT_ENABLED,
+    afxError_NOT_ALLOWED,
+    afxError_NOT_AUTHORIZED,
 } afxError;
 
 typedef enum afxCriterion

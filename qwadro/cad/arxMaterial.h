@@ -30,9 +30,9 @@
 
 ARX afxString const*ArxGetMaterialUrn(arxMaterial mtl);
 
-ARX afxUnit         ArxGetMaterialTextures(arxMaterial mtl, afxUnit baseIdx, afxUnit cnt, avxRaster rasters[], avxSampler samplers[]);
-ARX afxError        ArxBindMaterialTextures(arxMaterial mtl, afxUnit baseIdx, afxUnit cnt, avxRaster rasters[]);
-ARX void            ArxReloadMaterialTexture(arxMaterial mtl, afxUri const *tex);
+ARX afxUnit ArxGetMaterialTextures(arxMaterial mtl, afxUnit baseIdx, afxUnit cnt, avxRaster rasters[], avxSampler samplers[]);
+ARX afxError ArxBindMaterialTextures(arxMaterial mtl, afxUnit baseIdx, afxUnit cnt, avxRaster rasters[]);
+ARX void ArxReloadMaterialTexture(arxMaterial mtl, afxUri const *tex);
 
 AFX_DEFINE_STRUCT(arxMaterialInfo)
 {
@@ -104,33 +104,37 @@ AFX_DEFINE_STRUCT(arxMaterialInfo)
     afxReal wearFactor; // (ex.: metal = 0.2)
 };
 
-ARX void            ArxUpdateMaterial(arxMaterial mtl, arxMaterialInfo const* info);
+ARX void ArxUpdateMaterial
+(
+    arxMaterial mtl, 
+    arxMaterialInfo const* info
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxUnit             ArxEnumerateMaterials
+ARX afxUnit ArxEnumerateMaterials
 (
     arxMtd mtd,
-    afxUnit             first, 
-    afxUnit             cnt, 
-    arxMaterial         materials[]
+    afxUnit first, 
+    afxUnit cnt, 
+    arxMaterial materials[]
 );
 
-ARX afxUnit             ArxFindMaterials
+ARX afxUnit ArxFindMaterials
 (
     arxMtd mtd,
-    afxUnit             cnt,
-    afxString const     materials[],
-    afxUnit             ids[],
-    arxMaterial         handles[]
+    afxUnit cnt,
+    afxString const materials[],
+    afxUnit ids[],
+    arxMaterial handles[]
 );
 
-ARX afxError            ArxDeclareMaterials
+ARX afxError ArxDeclareMaterials
 (
     arxMtd mtd,
-    afxUnit             cnt, 
-    afxString const     ids[], 
-    arxMaterial         materials[]
+    afxUnit cnt, 
+    afxString const ids[], 
+    arxMaterial materials[]
 );
 
 

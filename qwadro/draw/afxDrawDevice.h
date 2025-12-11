@@ -39,6 +39,7 @@
 #include "qwadro/draw/afxDrawBridge.h"
 #include "qwadro/draw/afxSurface.h"
 #include "qwadro/hid/afxDisplay.h"
+#include "qwadro/draw/avxMatrix.h"
 
 AFX_DEFINE_STRUCT(avxFeatures)
 /**
@@ -47,17 +48,36 @@ AFX_DEFINE_STRUCT(avxFeatures)
     such as games, simulations, or visualizations.
 */
 {
-    afxBool8 robustBufAccess;
-    afxBool8 fullDrawIdxUint32;
-    afxBool8 rasterCubeArray;
-    afxBool8 independentBlend;
+    afxBool8 robustness;
+
     afxBool8 primShader;
-    afxBool8 tessShader;
+    // Supports tesselation shading.
+    afxBool8 tesselation;
     afxBool8 sampleRateShading;
+
+    afxBool8 independentBlend;
+    // Supports dual source blending.
     afxBool8 dualSrcBlend;
+    // Supports logical operation on framebuffer output.
     afxBool8 logicOp;
-    afxBool8 multiDrawIndirect;
-    afxBool8 drawIndirectFirstInst;
+    // Supports multidraw indirect operations.
+
+    afxBool8 mdi;
+    // Supports MDI base instance.
+    afxBool8 baseInst;
+    afxBool8 fullDrawIdxUint32;
+
+    afxBool8 clipDist;
+    afxBool8 cullDist;
+    afxBool8 viewports;
+
+    afxBool8 rasterCubeArray;
+    afxBool8 etc2; // texture compression.
+    afxBool8 astc_LDR; // texture compression.
+    afxBool8 dxt; // texture compression.
+
+    afxBool8 samplerAnisotropy;
+
     afxBool8 depthClamp;
     afxBool8 depthBiasClamp;
     afxBool8 fillModeNonSolid;
@@ -65,17 +85,14 @@ AFX_DEFINE_STRUCT(avxFeatures)
     afxBool8 wideLines;
     afxBool8 largePoints;
     afxBool8 alphaToOne;
-    afxBool8 multiViewport;
-    afxBool8 samplerAnisotropy;
-    afxBool8 etc2; // texture compression.
-    afxBool8 astc_LDR; // texture compression.
-    afxBool8 dxt; // texture compression.
+
     afxBool8 occlusionQueryPrecise;
     afxBool8 pipelineStatsQuery;
     afxBool8 vtxPipelineStoresAndAtomics;
     afxBool8 fragStoresAndAtomics;
     afxBool8 shaderTessAndPrimPointSiz;
     afxBool8 shaderRasterGatherExt;
+
     afxBool8 shaderStorageRasterExtFmts;
     afxBool8 shaderStorageRasterMultisample;
     afxBool8 shaderStorageRasterReadWithoutFmt;
@@ -84,8 +101,6 @@ AFX_DEFINE_STRUCT(avxFeatures)
     afxBool8 shaderSampledRasterArrayDynIndexing;
     afxBool8 shaderSsboArrayDynIndexing;
     afxBool8 shaderStorageImageArrayDynIndexing;
-    afxBool8 shaderClipDist;
-    afxBool8 shaderCullDist;
     afxBool8 shaderFloat64;
     afxBool8 shaderInt64;
     afxBool8 shaderInt16;
@@ -319,6 +334,20 @@ AFX_DEFINE_STRUCT(avxLimits)
     afxUnit     maxColorAttachments;
 };
 
+AFX_DEFINE_STRUCT(avxDeviceInfo)
+{
+    avxAptitude         capabilities;
+    afxAcceleration     acceleration;
+    afxUnit             minQueCnt; // usually 3
+    afxUnit             maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
+    afxBool             nonRhcs;
+    avxClipSpaceDepth   clipSpaceDepth;
+    // User-defined data.
+    void*               udd;
+    // Debugging tag.
+    afxString           tag;
+};
+
 // IMPLEMENTATION DISCOVERY ////////////////////////////////////////////////////
 
 /*
@@ -335,14 +364,14 @@ AVX afxUnit AvxChooseDrawDevices
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd, 
 
+    // The operations or features that the device must supports.
+    avxDeviceInfo const* caps,
+
     // A structure that specifies the features that the drawing devices must support.
     avxFeatures const* features, 
 
     // A structure that defines the limits that the drawing devices should meet.
     avxLimits const* limits, 
-
-    // The operations or features that the device must supports.
-    avxPortInfo const* caps,
 
     // The maximum number of devices to be selected and returned in the @ddevIds array.
     afxUnit maxCnt, 
@@ -433,7 +462,7 @@ AVX afxUnit AvxEvokeDrawDevices
     afxDrawDevice devices[]
 );
 
-// DRAW DEVICE HANDLING ////////////////////////////////////////////////////////
+// DEVICE HANDLING /////////////////////////////////////////////////////////////
 
 AVX afxBool AvxIsDrawDevicePrompt
 (
@@ -495,7 +524,7 @@ AVX void AvxQueryDrawCapabilities
     // The drawing device to query.
     afxDrawDevice ddev, 
 
-    avxPortInfo* caps
+    avxDeviceInfo* caps
 );
 
 // Query draw port support for presentation.

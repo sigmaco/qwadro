@@ -73,50 +73,107 @@ AFX_DEFINE_STRUCT(arxCapstanConfig)
     afxUnit iterCnt;
 };
 
-ARXINL void         ArxQueryCapstanState
+ARXINL void ArxQueryCapstanState
 /// Query the current state of a motor execution.
 (
-    arxCapstan        caps,
-    arxCapstanState*  state
+    arxCapstan caps,
+    arxCapstanState* state
 );
 
-ARX afxReal         ArxQueryCapstanLocalTime
+ARX afxReal ArxQueryCapstanLocalTime
 /// Query the raw local clock and, optionally, compute a clamped value of it valid to be used to sample animation.
 (
-    arxCapstan        caps,
-    afxReal*        clamped // [0-localDur]
+    arxCapstan caps,
+    afxReal* clamped // [0-localDur]
 );
 
-ARX void            ArxGetCapstanTiming
+ARX void ArxGetCapstanTiming
 /// Get internal clocks for a motor.
 (
-    arxCapstan        caps,
+    arxCapstan caps,
     arxCapstanTiming* timing
 );
 
-ARX afxBool         ArxCapstanIsUnused(arxCapstan caps);
+ARX afxBool ArxCapstanIsUnused
+(
+    arxCapstan caps
+);
 
 // TERMINATION
 
-ARX afxBool         ArxCapstanHasTerminated(arxCapstan caps);
+ARX afxBool ArxCapstanHasTerminated
+(
+    arxCapstan caps
+);
 
-ARX afxBool         ArxCapstanTerminationIsScheduled(arxCapstan caps);
+ARX afxBool ArxCapstanTerminationIsScheduled
+(
+    arxCapstan caps
+);
 
-ARX afxBool         ArxCapstanIsActive(arxCapstan caps);
+ARX afxBool ArxCapstanIsActive
+(
+    arxCapstan caps
+);
 
-ARX afxBool         ArxCapstanHasEffect(arxCapstan caps);
+ARX afxBool ArxCapstanHasEffect
+(
+    arxCapstan caps
+);
 
-ARX void*           ArxGetCapstanUdd(arxCapstan caps);
+ARX void* ArxGetCapstanUdd
+(
+    arxCapstan caps
+);
 
-ARX void            ArxSetCapstanTargetState(arxCapstan caps, afxReal currGlobalTime, afxReal targetGlobalTime, afxReal localTime, afxInt currIterIdx);
+ARX void ArxSetCapstanTargetState
+(
+    arxCapstan caps, 
+    afxReal currGlobalTime, 
+    afxReal targetGlobalTime, 
+    afxReal localTime, 
+    afxInt currIterIdx
+);
 
-ARX void            ArxSetCapstanEaseInCurve(arxCapstan caps, afxReal startSeconds, afxReal endSeconds, afxReal startValue, afxReal startTangent, afxReal endTangent, afxReal endValue); // Ease the control in over the next two seconds
-ARX void            ArxSetCapstanEaseOutCurve(arxCapstan caps, afxReal startSeconds, afxReal endSeconds, afxReal startValue, afxReal startTangent, afxReal endTangent, afxReal endValue); // In ten seconds, ease the control out over two seconds
+ARX void ArxSetCapstanEaseInCurve
+(
+    arxCapstan caps, 
+    afxReal startSeconds, 
+    afxReal endSeconds, 
+    afxReal startValue, 
+    afxReal startTangent, 
+    afxReal endTangent, 
+    afxReal endValue
+); // Ease the control in over the next two seconds
 
-ARX afxReal         ArxCapstanEaseIn(arxCapstan caps, afxReal duration, afxBool fromCurrent);
-ARX afxReal         ArxCapstanEaseOut(arxCapstan caps, afxReal duration);
+ARX void ArxSetCapstanEaseOutCurve
+(
+    arxCapstan caps, 
+    afxReal startSeconds, 
+    afxReal endSeconds, 
+    afxReal startValue, 
+    afxReal startTangent, 
+    afxReal endTangent, 
+    afxReal endValue
+); // In ten seconds, ease the control out over two seconds
 
-ARX afxReal         ArxGetCapstanEaseCurveMultiplier(arxCapstan caps);
+ARX afxReal ArxCapstanEaseIn
+(
+    arxCapstan caps, 
+    afxReal duration, 
+    afxBool fromCurrent
+);
+
+ARX afxReal ArxCapstanEaseOut
+(
+    arxCapstan caps, 
+    afxReal duration
+);
+
+ARX afxReal ArxGetCapstanEaseCurveMultiplier
+(
+    arxCapstan caps
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 

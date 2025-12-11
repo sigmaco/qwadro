@@ -116,7 +116,7 @@ AFX_DEFINE_STRUCT(arxSkeletonInfo)
     afxReal const*      le;
 };
 
-ARX afxError    ArxAcquireSkeletons
+ARX afxError ArxAcquireSkeletons
 (
     arxScenario scio, 
     afxUnit cnt, 
@@ -125,7 +125,7 @@ ARX afxError    ArxAcquireSkeletons
     arxSkeleton skeletons[]
 );
 
-ARX afxUnit     ArxEnumerateSkeletons
+ARX afxUnit ArxEnumerateSkeletons
 (
     arxScenario scio, 
     afxUnit first, 
@@ -141,7 +141,7 @@ ARX afxBool ArxIdentifySkeletons
     arxSkeleton skeletons[]
 );
 
-ARX void        ArxTransformSkeletons
+ARX void ArxTransformSkeletons
 (
     afxM3d const ltm, 
     afxM3d const iltm, 
@@ -155,13 +155,13 @@ ARX void        ArxTransformSkeletons
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ARX afxBool     ArxGetSkeletonUrn
+ARX afxBool ArxGetSkeletonUrn
 (
     arxSkeleton skl, 
     afxString* id
 );
 
-ARX void        ArxDescribeSkeleton
+ARX void ArxDescribeSkeleton
 (
     arxSkeleton skl, 
     arxSkeletonInfo* info
@@ -169,12 +169,12 @@ ARX void        ArxDescribeSkeleton
 
 // SKELETON
 
-ARX afxUnit     ArxGetSkeletonDepth
+ARX afxUnit ArxGetSkeletonDepth
 (
     arxSkeleton skl
 );
 
-ARX afxUnit     ArxGetBoneTransforms
+ARX afxUnit ArxGetBoneTransforms
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -182,7 +182,7 @@ ARX afxUnit     ArxGetBoneTransforms
     afxTransform transforms[]
 );
 
-ARX afxUnit     ArxGetBoneLodErrors
+ARX afxUnit ArxGetBoneLodErrors
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -190,7 +190,7 @@ ARX afxUnit     ArxGetBoneLodErrors
     afxReal lodErrors[]
 );
 
-ARX afxUnit     ArxGetBoneInversors
+ARX afxUnit ArxGetBoneInversors
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -199,7 +199,7 @@ ARX afxUnit     ArxGetBoneInversors
     afxUnit stride
 );
 
-ARX afxUnit     ArxGetBoneParents
+ARX afxUnit ArxGetBoneParents
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -208,7 +208,7 @@ ARX afxUnit     ArxGetBoneParents
     afxUnit stride
 );
 
-ARX afxError    ArxReparentBones
+ARX afxError ArxReparentBones
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -217,7 +217,7 @@ ARX afxError    ArxReparentBones
     afxUnit stride
 );
 
-ARX afxError    ArxResetBoneTransforms
+ARX afxError ArxResetBoneTransforms
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -225,7 +225,7 @@ ARX afxError    ArxResetBoneTransforms
     afxTransform const transforms[]
 );
 
-ARX afxError    ArxResetBoneInversors
+ARX afxError ArxResetBoneInversors
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -234,7 +234,7 @@ ARX afxError    ArxResetBoneInversors
     afxUnit stride
 );
 
-ARX afxError    ArxResetBoneLodErrors
+ARX afxError ArxResetBoneLodErrors
 (
     arxSkeleton skl, 
     afxUnit boneIdx, 
@@ -242,7 +242,7 @@ ARX afxError    ArxResetBoneLodErrors
     afxReal const lodErrors[]
 );
 
-ARX afxUnit     ArxFindBones
+ARX afxUnit ArxFindBones
 (
     arxSkeleton skl, 
     afxUnit boneCnt,

@@ -36,7 +36,7 @@ AFX_DEFINE_STRUCT(arxSkyInfo)
     arxSkyType skyType;
 };
 
-ARX afxError    ArxBuildSky
+ARX afxError ArxBuildSky
 (
     arxScenario scio, 
     arxSkyInfo const* info, 
