@@ -19,7 +19,8 @@
 #include <windows.h>
 #include <mmdeviceapi.h>
 #include <audioclient.h>
-#include "zalSdev.h"
+#include "zalInteropOal.h"
+#include "zalObjects.h"
 #pragma comment(lib, "mmdevapi")
 
 AFX_DEFINE_STRUCT(zalOalSinkIdd)
@@ -126,7 +127,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
     afxUri uri;
     afxModule oalDll;
     AfxMakeUri(&uri, 0, "//./c/openal32.dll", 0);
-    if (AfxLoadModule(&uri, NIL, &oalDll))
+    if (AfxAcquireModule(&uri, NIL, &oalDll))
     {
         AfxThrowError();
         return;
@@ -170,9 +171,9 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
     audi.fmt = amxFormat_S16i; // asi->m.fmt;
     audi.freq = asi->m.freq;
     audi.sampCnt = asi->m.samplesPerFrame;
-    afxMixSystem ssys = AfxGetHost(asi);
-    AmxAcquireAudios(ssys, 1, &audi, &idd->frames[0]);
-    AmxAcquireAudios(ssys, 1, &audi, &idd->frames[1]);
+    afxMixSystem msys = AfxGetHost(asi);
+    AmxAcquireAudios(msys, 1, &audi, &idd->frames[0]);
+    AmxAcquireAudios(msys, 1, &audi, &idd->frames[1]);
     //AmxAcquireAudios(ssys, 1, &audi, &idd->frames[2]);
 
     for (afxUnit i = 0; i < ARRAY_SIZE(idd->alBufs); i++)

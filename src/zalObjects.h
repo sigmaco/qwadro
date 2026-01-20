@@ -17,6 +17,11 @@
 #ifndef ZAL_OBJECTS_H
 #define ZAL_OBJECTS_H
 
+#include <d3d9.h>
+#include <dxva.h>
+#include <dxva2api.h>
+#include <d3dhalex.h>
+
 #include "zalBase.h"
 #include "zalInteropOal.h"
 #include "zalInteropWasapi.h"
@@ -66,20 +71,32 @@ AFX_OBJECT(afxMixDevice)
 AFX_OBJECT(afxMixSystem)
 {
     AFX_OBJECT(_amxMixSystem) m;
+
+    // DXVA
+    IDirect3D9Ex* d3d9;
+    unsigned resetToken;
+    UINT adapter;
+    HANDLE deviceHandle;
+    IDirect3DDeviceManager9* d3d9devmgr;
+    IDirect3DDevice9Ex* d3d9device;
+    IDirectXVideoDecoderService* decoder_service;
 };
 
 AFX_OBJECT(afxMixBridge)
 {
     AFX_OBJECT(_amxMixBridge) m;
     zalSpu                  spu;
-    ALCdevice*              alcdev;
-    ALCcontext*             alctx;
-    afxMixSystem          activeSctx;
-    afxUnit                 verMajor, verMinor, verPatch;
-    afxString               subsysName;
-    afxString               subsysVer;
 
-    afxInterlockedQueue     deletionQueue;
+};
+
+AFX_OBJECT(amxSink)
+{
+    AFX_OBJECT(_amxSink) m;
+};
+
+AFX_OBJECT(amxBuffer)
+{
+    AFX_OBJECT(_amxBuffer) m;
 };
 
 AFX_OBJECT(afxSemaphore)
@@ -106,6 +123,16 @@ AFX_OBJECT(amxAudio)
     afxFlags updFlags;
 };
 
+AFX_OBJECT(amxVideo)
+{
+    AFX_OBJECT(_amxVideo) m;
+};
+
+AFX_OBJECT(amxPump)
+{
+    AFX_OBJECT(_amxPump) m;
+};
+
 AFX_OBJECT(afxMixContext)
 {
     AFX_OBJECT(_amxMixContext) m;
@@ -125,7 +152,23 @@ ZAL afxError _SpuOutputWav(zalSpu* spu, amxAudio wav, afxStream out, afxUnit opC
 ZAL afxError _SpuInputWav(zalSpu* spu, amxAudio wav, afxStream in, afxUnit opCnt, amxAudioIo const* ops);
 
 ZAL afxError _ZalAsioInitOalCb(afxSink asi, afxSinkConfig const* cfg);
+
 ZAL afxError _ZalMsysCtorCb(afxMixSystem ssys, void** args, afxUnit invokeNo);
 ZAL afxError _ZalMsysDtorCb(afxMixSystem ssys);
+
+ZAL afxError _ZalVidDtorCb(amxVideo vid);
+ZAL afxError _ZalVidCtorCb(amxVideo vid, void** args, afxUnit invokeNo);
+
+ZAL afxError _ZalTraxDtorCb(amxTracker trax);
+ZAL afxError _ZalTraxCtorCb(amxTracker trax, void** args, afxUnit invokeNo);
+
+ZAL afxError _ZalMpmpDtorCb(amxPump pmp);
+ZAL afxError _ZalMpmpCtorCb(amxPump pmp, void** args, afxUnit invokeNo);
+
+ZAL afxError _ZalMbufDtorCb(amxBuffer mbuf);
+ZAL afxError _ZalMbufCtorCb(amxBuffer mbuf, void** args, afxUnit invokeNo);
+
+ZAL afxError _ZalMexuDtorCb(afxMixBridge mexu);
+ZAL afxError _ZalMexuCtorCb(afxMixBridge mexu, void** args, afxUnit invokeNo);
 
 #endif//ZAL_OBJECTS_H

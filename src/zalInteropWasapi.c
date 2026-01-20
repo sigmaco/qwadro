@@ -365,7 +365,7 @@ _ZAL afxError wasapiInputRb(zalWasapi* idd, AudioRingBuffer* rb)
             }
 
             // Write to ring buffer
-            audio_ringbuffer_write(&rb, (float*)data, sizeof(float), numFrames);
+            audio_ringbuffer_write(rb, (float*)data, sizeof(float), numFrames);
 
             idd->pCaptureClient->lpVtbl->ReleaseBuffer(idd->pCaptureClient, numFrames);
             idd->pCaptureClient->lpVtbl->GetNextPacketSize(idd->pCaptureClient, &packetLength);

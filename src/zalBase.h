@@ -48,6 +48,14 @@
 #define _AMX_SOUND_IMPL
 #define _AMX_AUDIO_C
 #define _AMX_WAVEFORM_IMPL
+#define _AMX_VIDEO_C
+#define _AMX_VIDEO_IMPL
+#define _AMX_BUFFER_C
+#define _AMX_BUFFER_IMPL
+#define _AMX_PUMP_C
+#define _AMX_PUMP_IMPL
+#define _AMX_SINK_C
+#define _AMX_SINK_IMPL
 #define _AMX_TRACK_C
 #define _AMX_TRACK_IMPL
 #define _AMX_MIX_CONTEXT_C
@@ -60,7 +68,7 @@
 
 #include "qwadro/mix/afxMixSystem.h"
 #include "qwadro/exec/afxSystem.h"
-#include "../qwadro_afx/src/mix/amxIcd.h"
+#include "../qwadro_afx/mixva/amxIcd.h"
 
 #ifndef AMX_DRV_SRC
 #   ifdef _DEBUG

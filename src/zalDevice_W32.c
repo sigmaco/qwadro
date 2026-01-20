@@ -46,7 +46,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
                 //else
                 AfxMakeUri(&uri, 0, "//./c/openal32.dll", 0);
                 {
-                    if (AfxLoadModule(&uri, NIL, &sdev->idd->oalDll)) AfxThrowError();
+                    if (AfxAcquireModule(&uri, NIL, &sdev->idd->oalDll)) AfxThrowError();
                     else
                     {
                         alcVmt alc;
@@ -190,7 +190,7 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
     _amxMdevReg const* info = (_amxMdevReg const *)(args[1]) + invokeNo;
     AFX_ASSERT(info);
 
-    static afxMixPortInfo const portCaps[] =
+    static amxDeviceInfo const portCaps[] =
     {
         {
             .capabilities = amxAptitude_SFX | amxAptitude_DMA,
@@ -215,7 +215,7 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
 #if 0
     AfxMakeUri(&uri, 0, "//./c/openal32.dll", 0);
     {
-        if (AfxLoadModule(&uri, NIL, &mdev->oalDll)) AfxThrowError();
+        if (AfxAcquireModule(&uri, NIL, &mdev->oalDll)) AfxThrowError();
         else
         {
             // TODO detect features and limits
@@ -247,18 +247,18 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     msysClsCfg.ctor = (void*)_ZalMsysCtorCb;
     msysClsCfg.dtor = (void*)_ZalMsysDtorCb;
 
-    _amxMsysImpl impl = { 0 };
+    _amxImplementation impl = { 0 };
     impl.mcdcCls = _AMX_MCDC_CLASS_CONFIG;
     impl.mdevCls = mdevClsCfg;
     impl.msysCls = msysClsCfg;
 
-    if (_AmxImplementMixSystem(icd, &impl))
+    if (_AmxIcdImplement(icd, &impl))
     {
         AfxThrowError();
         return err;
     }
 
-    static afxMixFeatures features = { 0 };
+    static amxFeatures features = { 0 };
 
     _amxMdevReg mdevInfos[] =
     {
@@ -267,7 +267,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_SFX | amxAptitude_DMA | amxAptitude_COMPUTE | amxAptitude_SINK,
+            .capabilities = amxAptitude_SFX | amxAptitude_DMA | amxAptitude_PCX | amxAptitude_SINK,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,
@@ -281,7 +281,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_DMA | amxAptitude_COMPUTE,
+            .capabilities = amxAptitude_DMA | amxAptitude_PCX,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,
@@ -322,7 +322,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
     afxMixDevice mdevices[ARRAY_SIZE(mdevInfos)];
 
-    if (_AmxRegisterMixDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices)) AfxThrowError();
+    if (_AmxIcdRegisterDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices)) AfxThrowError();
     else
     {
 

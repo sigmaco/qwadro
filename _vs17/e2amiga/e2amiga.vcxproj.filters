@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="_nfo">
+    <Filter Include="_dll">
       <UniqueIdentifier>{c79ae1af-0897-4fa1-8f80-e7146f627a17}</UniqueIdentifier>
     </Filter>
     <Filter Include="e2amiga">
@@ -10,7 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>_nfo</Filter>
+      <Filter>_dll</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\zalInteropWasapi.h">
       <Filter>e2amiga</Filter>
@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="e2amiga.rc">
-      <Filter>_nfo</Filter>
+      <Filter>_dll</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,7 +49,19 @@
     <ClCompile Include="..\..\src\zalInteropWasapi.c">
       <Filter>e2amiga</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\zalSession.c">
+    <ClCompile Include="..\..\src\zalBuffer.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalVideo.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalPump.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalBridge.c">
+      <Filter>e2amiga</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zalTracker.c">
       <Filter>e2amiga</Filter>
     </ClCompile>
   </ItemGroup>

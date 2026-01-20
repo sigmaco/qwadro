@@ -5,7 +5,8 @@ Vendor=SIGMA Technology Group
 Href=https://sigmaco.org
 FeatureScore=1
 Service=pragma
-DllFile=e2catalyst.dll
+Subsystem=AKX
+DllFile=e2kurwa.dll
 Devices=Icd.Devices
 
 [Icd.Devices]
@@ -13,7 +14,7 @@ Devices=Icd.Devices
 
 [Device.Combo]
 Class=PRAGMA
-Description=Math Computation Accelerator
+Description=Kinematic Accelerator
 PortCount=1
 Ports=Combo.Ports
 ; device internal
