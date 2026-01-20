@@ -350,9 +350,6 @@ void UpdateFrameMovement(arxCamera cam, afxReal64 DeltaTime)
 {
     afxError err = AFX_ERR_NONE;
     
-    afxSession ses;
-    AfxGetSession(&ses);
-
     afxReal64 MovementThisFrame = DeltaTime * CameraSpeed;
 
     // Note: because the NegZ axis is forward, we have to invert the way you'd normally
@@ -376,7 +373,7 @@ afxBool AskNextFrame(afxSurface dout, afxUnit* outBufIdx, afxUnit* frameIdxHolde
     afxBool rslt = FALSE;
 
     afxUnit outBufIdx2 = AFX_INVALID_INDEX;
-    if (0 == AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_NONE, NIL, &outBufIdx2, NIL))
+    if (0 == AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx2))
     {
         gFrameIdx = (gFrameIdx + 1) % gFrameCnt;
         *frameIdxHolder = gFrameIdx;
@@ -404,7 +401,7 @@ int main(int argc, char const* argv[])
 
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
-    afxDrawSystemConfig dsyc = { 0 };
+    avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
@@ -412,31 +409,31 @@ int main(int argc, char const* argv[])
     AvxEstablishDrawSystem(drawIcd, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    // Starting a session
+    // Starting an environment
 
-    afxSession ses;
-    afxSessionConfig sCfg = { 0 };
-    sCfg.dsys = dsys;
-    AfxAcquireSession(0, &sCfg, &ses);
-    AFX_ASSERT_OBJECTS(afxFcc_SES, 1, &ses);
-    AfxOpenSession(ses, NIL, NIL, NIL);
-
+    afxEnvironment env;
+    afxEnvironmentConfig ecfg = { 0 };
+    ecfg.dsys = dsys;
+    AfxAcquireSession(0, &ecfg, &env);
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    
     // Acquire a drawable surface
 
     afxWindow wnd;
     afxSurface dout;
     afxWindowConfig wcfg = { 0 };
     wcfg.dsys = dsys;
-    AfxConfigureWindow(ses, &wcfg, NIL, AFX_V2D(0.5, 0.5));
-    AfxAcquireWindow(ses, &wcfg, &wnd);
+    AfxConfigureWindow(env, &wcfg, NIL, AFX_V2D(0.5, 0.5));
+    AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
     AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
     // Open a draw input mechanism
 
     arxRenderContext rctx;
-    arxRenderwareConfig rwec = { 0 };
+    arxRenderConfiguration rwec = { 0 };
     rwec.dsys = dsys;
     rwec.proc = NIL;
     rwec.udd = NIL;
@@ -488,9 +485,9 @@ int main(int argc, char const* argv[])
     afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, 3);
 
     afxDrawContext drawContexts[3];
-    avxContextInfo ctxi = { 0 };
+    avxContextConfig ctxi = { 0 };
     ctxi.caps = avxAptitude_GFX;
-    AvxAcquireDrawContexts(dsys, &ctxi, frameCap, drawContexts);
+    AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
     // Run
@@ -526,22 +523,21 @@ int main(int argc, char const* argv[])
 
         afxDrawContext dctx = drawContexts[outBufIdx];
 
-        afxUnit batchId;
-        if (AvxRecordDrawCommands(dctx, TRUE, FALSE, &batchId))
+        if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
             continue;
         }
 
-        afxRect area;
         avxCanvas canv;
+        afxLayeredRect area;
         AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &area);
         AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
         avxDrawScope dps = { 0 };
         dps.canv = canv;
-        dps.rgn.area = area;
+        dps.bounds = area;
         dps.targetCnt = 1;
         dps.targets[0].clearVal = AVX_COLOR_VALUE(0.3f, 0.1f, 0.3f, 1);
         dps.targets[0].loadOp = avxLoadOp_CLEAR;
@@ -552,14 +548,14 @@ int main(int argc, char const* argv[])
         dps.ds[0].storeOp = avxStoreOp_STORE;
         AvxCmdCommenceDrawScope(dctx, &dps);
 
-        avxViewport vp = AVX_VIEWPORT(0, 0, area.w, area.h, 0, 1);
+        avxViewport vp = AVX_VIEWPORT(0, 0, area.area.w, area.area.h, 0, 1);
         AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
         DrawSky(&skybox, &vp, cam, frameIdx, dout, dctx);
 
         AvxCmdConcludeDrawScope(dctx);
 
-        if (AvxCompileDrawCommands(dctx, batchId))
+        if (AvxCompileDrawCommands(dctx))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
@@ -568,9 +564,8 @@ int main(int argc, char const* argv[])
 
         avxFence drawCompletedFence = NIL;
         avxSubmission subm = { 0 };
-        subm.fence = drawCompletedFence;
+        subm.signal = drawCompletedFence;
         subm.dctx = dctx;
-        subm.batchId = batchId;
 
         if (AvxExecuteDrawCommands(dsys, 1, &subm))
         {
@@ -594,7 +589,7 @@ int main(int argc, char const* argv[])
     }
 
     AfxDisposeObjects(1, &wnd);
-    AfxDisposeObjects(1, &ses);
+    AfxDisposeObjects(1, &env);
     AfxDisposeObjects(1, &dsys);
     AfxDoSystemShutdown(0);
     return 0;

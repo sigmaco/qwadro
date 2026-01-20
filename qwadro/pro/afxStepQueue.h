@@ -15,25 +15,25 @@
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
-#ifndef ASX_STEP_QUEUE_H
-#define ASX_STEP_QUEUE_H
+#ifndef ACX_STEP_QUEUE_H
+#define ACX_STEP_QUEUE_H
 
 #include "qwadro/pro/afxStepDefs.h"
 
-typedef enum asxBusStage
+typedef enum acxBusStage
 // Bitmask-based value specifying pipeline stages.
 {
-    asxBusStage_HOST = AFX_BITMASK(0),
-    asxBusStage_COMMANDS = AFX_BITMASK(1),
-    asxBusStage_COPY = AFX_BITMASK(4),
-    asxBusStage_RESOLVE = AFX_BITMASK(5),
-    asxBusStage_TRANSFER = (asxBusStage_COPY | asxBusStage_RESOLVE),
-    asxBusStage_COMPUTE = AFX_BITMASK(8),
-} asxBusStage;
+    acxBusStage_HOST = AFX_BITMASK(0),
+    acxBusStage_COMMANDS = AFX_BITMASK(1),
+    acxBusStage_COPY = AFX_BITMASK(4),
+    acxBusStage_RESOLVE = AFX_BITMASK(5),
+    acxBusStage_TRANSFER = (acxBusStage_COPY | acxBusStage_RESOLVE),
+    acxBusStage_COMPUTE = AFX_BITMASK(8),
+} acxBusStage;
 
-AFX_DEFINE_STRUCT(asxSubmission)
+AFX_DEFINE_STRUCT(acxSubmission)
 {
     // A bitmask specifying which bridges can assume this operation.
     // If NIL, any bridge is allowed to assume this operation.
@@ -47,18 +47,18 @@ AFX_DEFINE_STRUCT(asxSubmission)
     // for synthetizing objects, setting up filters, and managing resources.
     afxStepContext      sctx;
 
-    asxFence            wait;
+    acxFence            wait;
     afxUnit64           waitValue;
-    asxBusStage         waitStageMask;
+    acxBusStage         waitStageMask;
     afxUnit32           waitReserved;
     // A fence which will be signaled when the operation have completed execution.
-    asxFence            signal;
+    acxFence            signal;
     afxUnit64           signalValue;
-    asxBusStage         signalStageMask;
+    acxBusStage         signalStageMask;
     afxUnit32           signalReserved;
 };
 
-AFX_DEFINE_STRUCT(asxTransference)
+AFX_DEFINE_STRUCT(acxTransference)
 {
     // A bitmask specifying which bridges can assume this operation.
     // If NIL, any bridge is allowed to assume this operation.
@@ -67,21 +67,21 @@ AFX_DEFINE_STRUCT(asxTransference)
     afxUnit             queCnt;
 
     // A semaphore upon which to wait on before the operation begin execution.
-    asxFence    wait;
+    acxFence    wait;
     afxUnit64   waitValue;
-    asxBusStage waitStageMask;
+    acxBusStage waitStageMask;
     afxUnit32   waitReserved;
     // A semaphore which will be signaled when the operation have completed execution.
     // A fence which will be signaled when the operation have completed execution.
-    asxFence    signal;
+    acxFence    signal;
     afxUnit64   signalValue;
-    asxBusStage signalStageMask;
+    acxBusStage signalStageMask;
     afxUnit32   signalReserved;
 
     union
     {
         //amxAudio    aud;
-        asxBuffer   buf;
+        acxBuffer   buf;
         void*       dst;
         void const* src;
         afxStream   iob;
@@ -90,7 +90,7 @@ AFX_DEFINE_STRUCT(asxTransference)
     union
     {
         //amxAudio    aud;
-        asxBuffer   buf;
+        acxBuffer   buf;
         void*       dst;
         void const* src;
         afxStream   iob;
@@ -102,7 +102,7 @@ AFX_DEFINE_STRUCT(asxTransference)
     afxUnit         decSiz;
 };
 
-ASX afxStepDevice    AsxGetStepQueueDevice(afxStepQueue sque);
-ASX afxStepSystem    AsxGetStepQueueSystem(afxStepQueue sque);
+ACX afxStepDevice    AcxGetStepQueueDevice(afxStepQueue sque);
+ACX afxStepSystem    AcxGetStepQueueSystem(afxStepQueue sque);
 
-#endif//ASX_STAGE_QUEUE_H
+#endif//ACX_STAGE_QUEUE_H

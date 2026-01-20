@@ -32,11 +32,38 @@
 #include "qwadro/math/afxVector.h"
 
 typedef enum afxQuatBlend
+// The afxQuatBlend enum represents different blending modes for quaternions, which are often used for representing rotations in 3D space. 
+// These blending modes allow for various ways of interpolating or combining rotations, depending on the specific use case, 
+// such as animation blending, procedural animation, or adjusting poses.
 {
-    afxQuatBlend_DIRECT, // mixar como está.
-    afxQuatBlend_INV, // mixar entrada como seu produto inverso.
-    afxQuatBlend_ADJACENT, // usar adjacencia à rest pose.
-    afxQuatBlend_ACCUM_ADJACENT, // usar brevidade
+    // Directly mix the quaternions as they are.
+    // This blending mode uses a direct interpolation of the quaternions, meaning the input quaternions are blended as they are, 
+    // without any modification. This is the most straightforward blending mode, where two or more quaternions are mixed together 
+    // directly. This is useful when you just want to blend rotations in their raw form, such as when blending between different 
+    // animation poses in a straightforward way.
+    afxQuatBlend_DIRECT,
+
+    // Mix input as its inverse product.
+    // This mode blends the inverse of the input quaternion. Essentially, it blends the input quaternion with its inverse rotation.
+    // This is useful when you want to perform an inverse blending operation, which can be helpful in situations like reverse 
+    // animations, mirroring rotations, or undoing a transformation. This could be applied, for instance, in an inverse 
+    // kinematics (IK) system or when calculating corrective transformations.
+    afxQuatBlend_INV,
+
+    // Use adjacency to the rest pose for blending.
+    // In this mode, blending uses adjacency to the rest pose. It likely calculates a relative rotation from the current pose 
+    // to the rest pose and blends between them. This mode is useful in skeletal animation systems, where you want to smoothly 
+    // transition between the current pose and a rest pose (or a reference pose) of the character. The "adjacency" implies that 
+    // the blending is based on how close or far the current pose is relative to the neutral rest pose of the skeleton.
+    afxQuatBlend_ADJACENT,
+
+    // Use brevity for adjacent blending.
+    // This mode uses brevity(likely referring to an efficient or simplified blending technique) to accumulate rotations relative 
+    // to the rest pose.This could involve applying a series of incremental transformations rather than blending between large 
+    // rotation differences. This mode is potentially useful when you're accumulating small rotations (like blending incremental 
+    // pose changes) over time, such as in procedural animation systems or when blending small corrective transformations over a 
+    // longer period.
+    afxQuatBlend_ACCUM_ADJACENT,
 } afxQuatBlend;
 
 AFX afxQuat const AFX_QUAT_ZERO;

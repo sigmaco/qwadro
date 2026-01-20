@@ -22,8 +22,8 @@
 #include "qwadro/base/afxString.h"
 #include "qwadro/base/afxString.h"
 
-AFX afxBool     AfxReacquireConsole(void);
-AFX afxBool     AfxReleaseConsole(void);
+AFX afxBool     AfxAcquireTerminal(void);
+AFX afxBool     AfxDisposeTerminal(void);
 
 AFX afxResult   AfxPrompt(afxString const* cur, afxString* buf);
 

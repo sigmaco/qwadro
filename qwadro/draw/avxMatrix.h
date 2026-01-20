@@ -15,7 +15,7 @@
  */
 
 // This code is part of SIGMA Foundation Math <https://sigmaco.org/math>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 // Projective transformation matrix.
 

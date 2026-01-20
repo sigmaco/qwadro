@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_SURFACE_H
 #define AVX_SURFACE_H
@@ -310,13 +310,27 @@ AVX afxError AvxPresentSurfaces
     // The drawing system where the outputs will be presented.
     afxDrawSystem dsys,
 
-    // The number of outputs to be presented. This indicates how many items in the @outputs array should be processed.
+    // The number of outputs to be presented. This indicates how many items in the @presentations array should be processed.
     afxUnit cnt,
 
     // A control structure for the presentation settings. 
     // This structure would contain configuration options that manage how the output is presented, such as swap chains, 
     // synchronization details, or specific rendering modes(e.g., vsync settings or buffer flipping).
     avxPresentation presentations[]
+);
+
+AVX afxError AvxCaptureSurfaces
+(
+    // The drawing system where the outputs will be captured.
+    afxDrawSystem dsys,
+
+    // The number of outputs to be captured. This indicates how many items in the @captions array should be processed.
+    afxUnit cnt,
+
+    // A control structure for the caption settings. 
+    // This structure would contain configuration options that manage how the output is captured, such as swap chains, 
+    // synchronization details, or specific rendering modes.
+    avxCaption captions[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////

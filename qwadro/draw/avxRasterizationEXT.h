@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_RASTERIZATION_EXT_H
 #define AVX_RASTERIZATION_EXT_H

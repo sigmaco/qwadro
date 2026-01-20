@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 // Welcome to Department of Redundancy Department.
 
@@ -70,7 +70,7 @@ AFX_DEFINE_HANDLE(arxEntity);
 AFX_DEFINE_HANDLE(arxNode);
 AFX_DEFINE_HANDLE(arxPuppet);
 AFX_DEFINE_HANDLE(arxPuppetLink);
-AFX_DEFINE_HANDLE(arxCapstan);
+AFX_DEFINE_HANDLE(arxPulley);
 AFX_DEFINE_HANDLE(arxGesture);
 AFX_DEFINE_HANDLE(arxAnimation);
 

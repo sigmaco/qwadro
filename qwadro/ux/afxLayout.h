@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 /*
     This layout engine can measure child sizes, arrange rows/columns with wrapping, respect margins and padding, 

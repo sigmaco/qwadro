@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_CODEC_H
 #define AMX_CODEC_H
@@ -73,6 +73,7 @@ AFX_OBJECT(amxDecoder)
     int a;
 };
 #endif
+
 AFX_DEFINE_STRUCT(amxCodecFeatures)
 {
     afxBool encode;
@@ -85,12 +86,41 @@ AFX_DEFINE_STRUCT(amxCodecLimits)
     afxUnit bitsPerSample;
 };
 
-AMX afxUnit AmxEnumerateCodecs(afxUnit icd, afxUnit first, afxUnit cnt, amxCodec codecs[]);
+AMX afxUnit AmxEnumerateCodecs
+(
+    afxUnit icd, 
+    afxUnit first, 
+    afxUnit cnt, 
+    amxCodec codecs[]
+);
 
-AMX afxUnit AmxInvokeCodecs(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, amxCodec), afxUnit cnt);
+AMX afxUnit AmxInvokeCodecs
+(
+    afxUnit icd, 
+    afxUnit first, 
+    void* udd, 
+    afxBool(*f)(void*, amxCodec), 
+    afxUnit cnt
+);
 
-AMX afxUnit AmxEvokeCodecs(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, amxCodec), afxUnit cnt, amxCodec codecs[]);
+AMX afxUnit AmxEvokeCodecs
+(
+    afxUnit icd, 
+    afxUnit first, 
+    void* udd, 
+    afxBool(*f)(void*, amxCodec), 
+    afxUnit cnt, 
+    amxCodec codecs[]
+);
 
-AMX afxUnit AmxChooseCodecs(afxUnit icd, amxCodecFeatures const* features, amxCodecLimits const* limits, void const* caps, afxUnit maxCnt, afxUnit mcdcId[]);
+AMX afxUnit AmxChooseCodecs
+(
+    afxUnit icd, 
+    amxCodecFeatures const* features, 
+    amxCodecLimits const* limits, 
+    void const* caps, 
+    afxUnit maxCnt, 
+    afxUnit mcdcId[]
+);
 
 #endif//AMX_CODEC_H

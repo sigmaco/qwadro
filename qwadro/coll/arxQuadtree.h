@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ASX_QUADTREE_H
 #define ASX_QUADTREE_H
@@ -26,7 +26,7 @@
 #include "qwadro/coll/afxSphere.h"
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/cad/arxPose.h"
-#include "qwadro/scene/arxPlacement.h"
+#include "qwadro/scene/arxPosture.h"
 
 
 AFX_DEFINE_STRUCT(asxQuadrant)

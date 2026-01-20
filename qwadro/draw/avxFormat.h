@@ -18,7 +18,7 @@
  // QWADRO FIXED FUNCTION VIDEO DATA FORMAT                                  //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_FORMAT_H
 #define AVX_FORMAT_H

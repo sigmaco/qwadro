@@ -18,7 +18,7 @@
  // MIX MEMORY BUFFERIZATION                                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_BUFFERED_H
 #define AMX_BUFFERED_H

@@ -127,57 +127,61 @@ AFX_DEFINE_STRUCT(afxObjectStash)
     void**  var;
 };
 
-AFX void                AfxInstallEventHandler(afxObject obj, afxBool(*handler)(afxObject obj,afxEvent*));
-
-AFX afxBool             AfxNotifyObject(afxObject obj, afxEvent *ev);
-AFX afxError            AfxConnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, afxObject watched, afxEvent *ev), afxUnit cnt, afxObject watcheds[]);
-AFX afxError            AfxDisconnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, afxObject watched, afxEvent *ev), afxUnit cnt, afxObject watcheds[]);
-
-AFX afxResult           AfxTestObjectFcc(afxObject obj, afxFcc fcc);
-AFX afxFcc              AfxGetObjectFcc(afxObject obj);
-AFX afxChar const*      AfxGetObjectFccAsString(afxObject obj);
-
-AFX afxClass*           AfxGetClass(afxObject obj);
-AFX void*               AfxGetHost(afxObject obj);
-AFXINL afxBool          AfxDoesObjectInherit(afxObject obj, afxClass const* cls);
-
-AFX afxInt32            AfxGetRefCount(afxObject obj);
-
-AFX afxUnit32            AfxGetObjectTid(afxObject obj);
-
-AFX afxObjectFlags      AfxSetObjectFlags(afxObject obj, afxObjectFlags flags);
-AFX afxObjectFlags      AfxClearObjectFlags(afxObject obj, afxObjectFlags flags);
-AFX afxBool             AfxTestObjectFlags(afxObject obj, afxObjectFlags flags);
-
-AFXINL afxError         AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxObjectStash const stashes[]);
-AFXINL afxError         AfxDeallocateInstanceData(afxObject obj, afxUnit cnt, afxObjectStash const stashes[]);
-
-// %p?%.4s#%i
-#define AfxPushObject(obj_) 0,0,0//(obj_), (obj_) ? AfxGetObjectFccAsString((afxHandle*)obj_) : NIL, (obj_) ? ((afxHandle*)obj_)->refCnt : 0
-
 /*
     In Qwadro, we do not "create" things. This may be confuse but remember that the Qwadro is literally an alchemist canvas.
-    This mean that we declare, proclaim, promulgate and/or publicize things using classes, we never create them. 
+    This mean that we declare, proclaim, promulgate and/or publicize things using classes, we never create them.
     That is why you "acquire" things, via AfxAcquireObjects(), where everything existing is already existing before you but has not been yet "classified".
 
-    The result of an acquisition is a handle to an entity. Despite it being a combined object-handle given the afxObject component, 
+    The result of an acquisition is a handle to an entity. Despite it being a combined object-handle given the afxObject component,
     the object is idealized to be just a state of your contract of acquision. Thus, the object acquired is firstly symbolic.
 */
 
-AFX afxError    AfxAcquireObjects(afxClass* cls, afxUnit cnt, afxObject objects[], void const* udd[]);
+AFX afxError AfxAcquireObjects
+(
+    afxClass* cls, 
+    afxUnit cnt, 
+    afxObject objects[], 
+    void const* udd[]
+);
 
 /*
     As a whole system, handles are shareable, where they can be reacquired across the system.
 */
 
-AFX afxError    AfxReacquireObjects(afxHere const dbg, afxUnit cnt, afxObject objects[]);
+AFX afxError AfxReacquireObjects
+(
+    afxHere const dbg, 
+    afxUnit cnt, 
+    afxObject objects[]
+);
 
 /*
     As every handle is shareable and things not being created, the function to get rid of it is the AfxDisposeObjects().
     This function can destroy the object when the reference counter is decremented to zero, and deallocate its storage if the pool is ready to free the page backing such object.
 */
 
-AFX afxBool     AfxDisposeObjects(afxHere const dbg, afxUnit cnt, afxObject objects[]);
+AFX afxBool AfxDisposeObjects
+(
+    afxHere const dbg, 
+    afxUnit cnt, 
+    afxObject objects[]
+);
+
+AFX afxUnit _AfxAssertObjects
+// returns the number of exceptions (if any); expects valid handles only.
+(
+    afxUnit cnt, 
+    afxObject const objects[], 
+    afxFcc fcc
+); 
+
+AFX afxUnit _AfxTryAssertObjects
+// returns the number of exceptions (if any); ignore nil handles.
+(
+    afxUnit cnt, 
+    afxObject const objects[], 
+    afxFcc fcc
+);
 
 #ifndef _AFX_MANAGER_C
 //#   define AfxAcquireObjects(_mgr_,_cnt_,_objects_,_udd_) AfxAcquireObjects((_mgr_),(_cnt_),(afxObject*)(_objects_), ((_udd_)) )
@@ -185,11 +189,9 @@ AFX afxBool     AfxDisposeObjects(afxHere const dbg, afxUnit cnt, afxObject obje
 #   define AfxDisposeObjects(_cnt_,_objects_) AfxDisposeObjects(AfxHere(), (_cnt_),(afxObject*)(_objects_))
 #endif
 
-AFX afxUnit      _AfxAssertObjects(afxUnit cnt, afxObject const objects[], afxFcc fcc); // returns the number of exceptions (if any); expects valid handles only.
-AFX afxUnit      _AfxTryAssertObjects(afxUnit cnt, afxObject const objects[], afxFcc fcc); // returns the number of exceptions (if any); ignore nil handles.
-//#define         AfxAssertObjects(_cnt_,_objects_,_fcc_) AFX_ASSERT(((afxResult)(_cnt_)) == _AfxAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))
-//#define         AfxTryAssertObjects(_cnt_,_objects_,_fcc_) AFX_ASSERT((!_cnt_) || ((_objects_) && !(_AfxTryAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))))
-//#define         AfxAssertObjects(_cnt_,_objects_,_fcc_)    AFX_ASSERT((!_cnt_) || ((_objects_) && !(_AfxAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))))
+//#define AfxAssertObjects(_cnt_,_objects_,_fcc_) AFX_ASSERT(((afxResult)(_cnt_)) == _AfxAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))
+//#define AfxTryAssertObjects(_cnt_,_objects_,_fcc_) AFX_ASSERT((!_cnt_) || ((_objects_) && !(_AfxTryAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))))
+//#define AfxAssertObjects(_cnt_,_objects_,_fcc_)    AFX_ASSERT((!_cnt_) || ((_objects_) && !(_AfxAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))))
 
 #ifdef _AFX_DEBUG
 #   define  AFX_TRY_ASSERT_OBJECTS(_fcc_,_cnt_,_objects_) AFX_ASSERT((!_cnt_) || ((_objects_) && !(_AfxTryAssertObjects((_cnt_), (afxObject const*)(_objects_),(_fcc_)))))
@@ -199,7 +201,129 @@ AFX afxUnit      _AfxTryAssertObjects(afxUnit cnt, afxObject const objects[], af
 #   define  AFX_ASSERT_OBJECTS(_fcc_,_cnt_,_objects_) 
 #endif
 
-AFX afxUnit      AfxGetObjectId(afxObject obj);
+////////////////////////////////////////////////////////////////////////////////
+
+AFX void* AfxGetHost
+(
+    afxObject obj
+);
+
+AFX afxUnit AfxGetObjectId
+(
+    afxObject obj
+);
+
+AFX afxClass* AfxGetClass
+(
+    afxObject obj
+);
+
+AFXINL afxBool AfxTestObjectInheritance
+(
+    afxObject obj, 
+    afxClass const* cls
+);
+
+AFX afxFcc AfxGetObjectFcc
+(
+    afxObject obj
+);
+
+AFX afxResult AfxTestObjectFcc
+(
+    afxObject obj, 
+    afxFcc fcc
+);
+
+AFX afxChar const* AfxGetObjectFccAsString
+(
+    afxObject obj
+);
+
+AFX afxInt32 AfxGetRefCount
+(
+    afxObject obj
+);
+
+AFX afxUnit32 AfxGetObjectTid
+(
+    afxObject obj
+);
+
+AFX afxBool AfxTestObjectFlags
+(
+    afxObject obj, 
+    afxObjectFlags flags
+);
+
+AFX afxObjectFlags AfxSetObjectFlags
+(
+    afxObject obj, 
+    afxObjectFlags flags
+);
+
+AFX afxObjectFlags AfxClearObjectFlags
+(
+    afxObject obj, 
+    afxObjectFlags flags
+);
+
+////////////////////////////////////////////////////////////////////////////////
+// EVENT MECHANISM
+
+AFX void AfxInstallEventHandler
+(
+    afxObject obj, 
+    afxBool(*handler)(afxObject obj, afxEvent* ev)
+);
+
+AFX afxBool AfxNotifyObject
+(
+    afxObject obj, 
+    afxEvent *ev
+);
+
+// Sends event event directly to receiver receiver, using the notify() function. Returns the value that was returned from the event handler.
+// Adds the event event, with the object receiver as the receiver of the event, to an event queue and returns immediately.
+
+AFX afxBool AfxEmitEvent
+(
+    afxObject receiver,
+    afxEvent* ev
+);
+
+AFX afxError AfxConnectObjects
+(
+    afxObject obj, 
+    afxBool(*handler)(afxObject obj, afxObject watched, afxEvent *ev), 
+    afxUnit cnt, 
+    afxObject watcheds[]
+);
+
+AFX afxError AfxDisconnectObjects
+(
+    afxObject obj, 
+    afxBool(*handler)(afxObject obj, afxObject watched, afxEvent *ev), 
+    afxUnit cnt, 
+    afxObject watcheds[]
+);
+
+AFXINL afxError AfxAllocateInstanceData
+(
+    afxObject obj, 
+    afxUnit cnt, 
+    afxObjectStash const stashes[]
+);
+
+AFXINL afxError AfxDeallocateInstanceData
+(
+    afxObject obj, 
+    afxUnit cnt, 
+    afxObjectStash const stashes[]
+);
+
+// %p?%.4s#%i
+#define AfxPushObject(obj_) 0,0,0//(obj_), (obj_) ? AfxGetObjectFccAsString((afxHandle*)obj_) : NIL, (obj_) ? ((afxHandle*)obj_)->refCnt : 0
 
 AFX afxResult   AfxWaitForObject(afxTime timeout, afxObject obj);
 

@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_DRAW_CONTEXT_H
 #define AVX_DRAW_CONTEXT_H
@@ -180,7 +180,14 @@ AVX afxError AvxExecuteDrawCommands
 
 AVX afxMask AvxGetCommandPort
 (
-    afxDrawContext dctx
+    afxDrawContext dctx,
+    afxMask exuMask
+);
+
+AVX avxAptitude AvxGetCommandAptitude
+(
+    afxDrawContext dctx, 
+    avxAptitude caps
 );
 
 AVX afxDrawContext AvxGetCommandPool

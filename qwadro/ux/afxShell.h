@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // The Unified Shell                                                        //
@@ -204,7 +204,7 @@ AUX afxUnit AfxChooseShells
     afxShellLimits const* limits,
 
     // The operations or features that the shell must supports.
-    amxDeviceInfo const* caps,
+    afxShellInfo const* caps,
 
     // The maximum number of shells to be selected and returned in the @sshIds array.
     afxUnit maxCnt,

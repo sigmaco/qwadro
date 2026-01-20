@@ -15,7 +15,7 @@
  */
 
 // This code is part of SIGMA Foundation Math <https://sigmaco.org/math>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_VIEWPORT_H
 #define AVX_VIEWPORT_H
