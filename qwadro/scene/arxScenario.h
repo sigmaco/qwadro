@@ -7,15 +7,15 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *          Q W A D R O   4 D   R E N D E R I N G   I N F R A S T R U C T U R E
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This code is part of SIGMA GL/2.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_SCENARIO_H
 #define ARX_SCENARIO_H
@@ -37,24 +37,32 @@
 
 */
 
+/*
+    Motion Engines in Animation and Graphics.
+    In computer graphics or animation, "motion engines" might refer to the systems or software that control the movement of characters, 
+    objects, or camera perspectives in a scene. Examples include physics engines or animation systems used in video games, movies, or simulations.
+    Game Engines with Motion Physics: In game development, motion engines are often built into game engines (like Unity, Unreal Engine, etc.) 
+    to simulate realistic movements, from the character's walk cycle to the behavior of vehicles or fluids.
+*/
+
 #include "qwadro/draw/afxDrawSystem.h"
 
-#include "qwadro/render/arxRenderable.h"
-#include "qwadro/render/arxRenderModel.h"
-#include "qwadro/render/arxRenderBody.h"
-#include "qwadro/render/arxRenderTerrain.h"
+#include "qwadro/iris/arxIrisDefs.h"
+#include "qwadro/iris/arxRenderModel.h"
+#include "qwadro/iris/arxRenderPuppet.h"
+#include "qwadro/iris/arxRenderTerrain.h"
 #include "qwadro/cad/arxTerrain.h"
 #include "qwadro/cad/arxModel.h"
 #include "qwadro/cad/arxMesh.h"
-#include "qwadro/scene/arxPlacement.h"
+#include "qwadro/scene/arxPosture.h"
 #include "qwadro/cad/arxPose.h"
 #include "qwadro/scene/arxCamera.h"
 #include "qwadro/scene/arxSky.h"
 #include "qwadro/scene/arxBufferizer.h"
-#include "qwadro/render/arxTechnique.h"
-#include "qwadro/render/arxRenderContext.h"
+#include "qwadro/iris/arxTechnique.h"
+#include "qwadro/iris/arxRenderContext.h"
 #include "qwadro/scene/arxIllumination.h"
-#include "qwadro/render/arxRenderer.h"
+#include "qwadro/iris/arxRenderer.h"
 #include "qwadro/anim/arxAnimation.h"
 
 
@@ -106,117 +114,6 @@ ARX void* ArxGetScenarioUdd
     arxScenario scio
 );
 
-// OPTICAL MATRIX UTILITY
-
-ARX void ArxGetClipSpaceInfo
-(
-    arxScenario scio, 
-    avxClipSpaceDepth* depth, 
-    afxBool* nonRhcs
-);
-
-ARX void ArxComputeLookToMatrices
-(
-    arxScenario scio, 
-    afxV3d const eye, 
-    afxV3d const dir, 
-    afxM4d v, 
-    afxM4d iv
-);
-
-ARX void ArxComputeLookAtMatrices
-(
-    arxScenario scio, 
-    afxV3d const eye, 
-    afxV3d const target, 
-    afxM4d v, 
-    afxM4d iv
-);
-
-ARX void ArxComputeBasicOrthographicMatrices
-(
-    arxScenario scio, 
-    afxReal aspectRatio, 
-    afxReal scale, 
-    afxReal range, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeOrthographicMatrices
-(
-    arxScenario scio, 
-    afxV2d const extent, 
-    afxReal near, 
-    afxReal far, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeOffcenterOrthographicMatrices
-(
-    arxScenario scio, 
-    afxReal left, 
-    afxReal right, 
-    afxReal bottom, 
-    afxReal top, 
-    afxReal near, 
-    afxReal far, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeBoundingOrthographicMatrices
-(
-    arxScenario scio, 
-    afxBox const aabb, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeFovMatrices
-(
-    arxScenario scio, 
-    afxReal fovY, 
-    afxReal aspectRatio, 
-    afxReal near, 
-    afxReal far, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeFrustrumMatrices
-(
-    arxScenario scio, 
-    afxReal left, 
-    afxReal right, 
-    afxReal bottom, 
-    afxReal top, 
-    afxReal near, 
-    afxReal far, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputeBasicPerspectiveMatrices
-(
-    arxScenario scio, 
-    afxReal aspectRatio, 
-    afxReal range, 
-    afxM4d p, 
-    afxM4d ip
-);
-
-ARX void ArxComputePerspectiveMatrices
-(
-    arxScenario scio, 
-    afxV2d const extent, 
-    afxReal near, 
-    afxReal far, 
-    afxM4d p, 
-    afxM4d ip
-);
-
 ARX afxError ArxUplinkTxds(arxScenario scio, afxUnit baseSlot, afxUnit slotCnt, afxUri const uris[]);
 
 ARX void ArxQueryLodErrorTolerance
@@ -240,14 +137,7 @@ ARX void ArxComputeSimilarity
     afxV3d atv
 );
 
-ARX afxError ArxCullBodies
-(
-    arxScenario scio, 
-    afxFrustum const* f, 
-    afxArray* pvs
-);
-
-ARX afxUnit ArxRecenterAllCapstanClocks
+ARX afxUnit ArxRecenterAllPulleyClocks
 (
     arxScenario scio, 
     afxReal dCurrentClock

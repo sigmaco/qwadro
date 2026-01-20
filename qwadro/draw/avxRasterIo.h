@@ -18,7 +18,7 @@
  // RASTER INPUT/OUTPUT MECHANISM                                            //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of AVX and SIGMA GL/2 <https://sigmaco.org/gl>
+// This code is part of AVX and SIGMA GL/2.
 
 #ifndef AVX_RASTER_IO_H
 #define AVX_RASTER_IO_H

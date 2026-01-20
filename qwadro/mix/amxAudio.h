@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 /// PCM
 /// The Pulse-Code Modulation file is a digital representation of analogue signals. 
@@ -256,14 +256,14 @@ AMX afxReal     AmxGetAudioDuration(amxAudio aud);
 
 AMX void        AmxDescribeAudio(amxAudio aud, amxAudioInfo* desc);
 
-AMX afxError    AmxPackAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], amxBuffer buf, avxFence signal);
-AMX afxError    AmxUnpackAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], amxBuffer buf, avxFence signal);
+AMX afxError    AmxPackAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], amxBuffer buf, amxFence signal);
+AMX afxError    AmxUnpackAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], amxBuffer buf, amxFence signal);
 
-AMX afxError    AmxUploadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream in, avxFence signal);
-AMX afxError    AmxDownloadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream out, avxFence signal);
+AMX afxError    AmxUploadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream in, amxFence signal);
+AMX afxError    AmxDownloadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream out, amxFence signal);
 
-AMX afxError    AmxDumpAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void* dst, avxFence signal);
-AMX afxError    AmxUpdateAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void const* src, avxFence signal);
+AMX afxError    AmxDumpAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void* dst, amxFence signal);
+AMX afxError    AmxUpdateAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void const* src, amxFence signal);
 
 AMX afxError    AmxPrintAudio(amxAudio aud, amxAudioPeriod const* op, afxUri const* uri);
 

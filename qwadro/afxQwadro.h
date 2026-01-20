@@ -61,7 +61,7 @@
 #if !0
 // ARX
 #include "qwadro/scene/arxScenario.h"
-// ASX
+// ACX
 #include "qwadro/sim/arxSimulation.h"
 #endif
 

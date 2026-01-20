@@ -60,7 +60,7 @@ typedef enum afxFcc
     afxFcc_DBG      = AFX_MAKE_FCC('d', 'b', 'g', '\0'), // afxDebugger
     afxFcc_APP      = AFX_MAKE_FCC('a', 'p', 'p', '\0'), // afxApplication
     afxFcc_PROC     = AFX_MAKE_FCC('p', 'r', 'o', 'c'), // afxProcess
-    afxFcc_XSS      = AFX_MAKE_FCC('x', 's', 's', '\0'), // afxScript
+    afxFcc_XSS      = AFX_MAKE_FCC('x', 's', 's', '\0'), // afxConsole
     afxFcc_SVC      = AFX_MAKE_FCC('s', 'v', 'c', '\0'), // afxService
     afxFcc_DEV      = AFX_MAKE_FCC('d', 'e', 'v', '\0'), // afxDevice
     afxFcc_SYS      = AFX_MAKE_FCC('s', 'y', 's', '\0'), // afxSystem
@@ -179,7 +179,8 @@ typedef enum afxFcc
     afxFcc_DSYS     = AFX_MAKE_FCC('d', 's', 'y', 's'), // afxDrawSystem
     afxFcc_DDRV     = AFX_MAKE_FCC('d', 'd', 'r', 'v'), // afxDrawDriver
     afxFcc_DDEV     = AFX_MAKE_FCC('d', 'd', 'e', 'v'), // afxDrawDevice
-    afxFcc_VDU      = AFX_MAKE_FCC('v', 'd', 'u', '\0'), // afxVdu
+    afxFcc_VDU      = AFX_MAKE_FCC('v', 'd', 'u', '\0'), // afxDisplayPort
+    afxFcc_DPY      = AFX_MAKE_FCC('d', 'p', 'y', '\0'), // afxDisplay
     afxFcc_DOUT     = AFX_MAKE_FCC('d', 'o', 'u', 't'), // afxSurface
     afxFcc_DIN      = AFX_MAKE_FCC('d', 'i', 'n', '\0'), // afxDrawInput
     afxFcc_RCTX     = AFX_MAKE_FCC('r', 'w', 'e', '\0'), // arxRenderContext
@@ -274,8 +275,9 @@ typedef enum afxFcc
     afxFcc_SDEV     = AFX_MAKE_FCC('m', 'd', 'e', 'v'), // arxEngine
     afxFcc_SEXU     = AFX_MAKE_FCC('m', 'e', 'x', 'u'), // arxSimBridge
     afxFcc_SQUE     = AFX_MAKE_FCC('m', 'q', 'u', 'e'), // arxSimQueue
-    afxFcc_CTX     = AFX_MAKE_FCC('c', 't', 'x', '\0'), // arxContext
+    afxFcc_CTX      = AFX_MAKE_FCC('c', 't', 'x', '\0'), // arxContext
     afxFcc_SIM      = AFX_MAKE_FCC('s', 'i', 'm', '\0'), // arxSimulation
+    afxFcc_KAR      = AFX_MAKE_FCC('k', 'a', 'r', '\0'), // akxKarma
     afxFcc_HUB      = AFX_MAKE_FCC('h', 'u', 'b', '\0'), // afxHub
     afxFcc_DAG      = AFX_MAKE_FCC('d', 'a', 'g', '\0'), // afxDag
     afxFcc_NOD      = AFX_MAKE_FCC('n', 'o', 'd', '\0'), // arxNode
@@ -302,7 +304,7 @@ typedef enum afxFcc
     afxFcc_BONB     = AFX_MAKE_FCC('b', 'o', 'n', 'b'), // afxBoneBlueprint
     afxFcc_POSE     = AFX_MAKE_FCC('p', 'o', 's', 'e'), // arxPose
     afxFcc_POSB     = AFX_MAKE_FCC('p', 'o', 's', 'b'), // arxPoseBuffer
-    afxFcc_PLCE     = AFX_MAKE_FCC('p', 'o', 's', 'b'), // arxPlacement
+    afxFcc_PLCE     = AFX_MAKE_FCC('p', 'o', 's', 'b'), // arxPosture
     afxFcc_MSHV     = AFX_MAKE_FCC('m', 's', 'h', 'v'), // arxMeshBias
     afxFcc_MSHC     = AFX_MAKE_FCC('m', 's', 'h', 'c'), // arxMeshConnection
     afxFcc_MSH      = AFX_MAKE_FCC('m', 's', 'h', '\0'), // arxMesh
@@ -317,7 +319,7 @@ typedef enum afxFcc
     afxFcc_MSHR     = AFX_MAKE_FCC('m', 's', 'h', 'r'), // _arxMeshLinkage
     afxFcc_MDLM     = AFX_MAKE_FCC('m', 'd', 'l', 'm'), // AfxModelingMechanism
     afxFcc_MDIO     = AFX_MAKE_FCC('m', 'd', 'i', 'o'), // akxModelIoAssistent
-    afxFcc_SHAP     = AFX_MAKE_FCC('s', 'h', 'a', 'p'), // asxShape
+    afxFcc_SHAP     = AFX_MAKE_FCC('s', 'h', 'a', 'p'), // acxShape
     afxFcc_MTL      = AFX_MAKE_FCC('m', 't', 'l', '\0'), // arxMaterial
     afxFcc_MORP     = AFX_MAKE_FCC('m', 't', 'l', 'y'), // arxGeome
     afxFcc_MTLB     = AFX_MAKE_FCC('m', 't', 'l', 'b'), // afxMaterialBlueprint
@@ -338,7 +340,8 @@ typedef enum afxFcc
     afxFcc_BRN      = AFX_MAKE_FCC('b', 'r', 'n', '\0'), // afxBrain
     afxFcc_BOD      = AFX_MAKE_FCC('b', 'o', 'd', '\0'), // arxBody
     afxFcc_AMUS     = AFX_MAKE_FCC('a', 'm', 'u', 's'), // akxAnimus
-    afxFcc_MOTO     = AFX_MAKE_FCC('m', 'o', 't', '\0'), // arxCapstan
+    afxFcc_MOTO     = AFX_MAKE_FCC('m', 'o', 't', '\0'), // arxMotor
+    afxFcc_PULL     = AFX_MAKE_FCC('p', 'u', 'l', 'l'), // arxPulley
     afxFcc_PUP      = AFX_MAKE_FCC('p', 'u', 'p', '\0'), // arxPuppet
     afxFcc_BODC     = AFX_MAKE_FCC('b', 'o', 'd', 'c'), // arxBodyControl
     afxFcc_BODP     = AFX_MAKE_FCC('b', 'o', 'd', 'p'), // arxBodyPart
@@ -351,16 +354,17 @@ typedef enum afxFcc
     afxFcc_CUR      = AFX_MAKE_FCC('c', 'u', 'r', '\0'), // arxCurve
     afxFcc_RND      = AFX_MAKE_FCC('r', 'n', 'd', '\0'), // arxRenderer
     afxFcc_SBUF     = AFX_MAKE_FCC('s', 'b', 'u', 'f'), // arxBuffer
-    afxFcc_SMEM     = AFX_MAKE_FCC('s', 'm', 'e', 'm'), // asxMemory
+    afxFcc_RBUF     = AFX_MAKE_FCC('r', 'b', 'u', 'f'), // arxBuffer
+    afxFcc_SMEM     = AFX_MAKE_FCC('s', 'm', 'e', 'm'), // acxMemory
 
     afxFcc_TER      = AFX_MAKE_FCC('t', 'e', 'r', '\0'), // arxTerrain
     
-    afxFcc_CONS     = AFX_MAKE_FCC('c', 'o', 'n', 's'), // apxConstraint
+    afxFcc_CONS     = AFX_MAKE_FCC('c', 'o', 'n', 's'), // akxConstraint
     afxFcc_JNT      = AFX_MAKE_FCC('j', 'n', 't', '\0'), // apxJoint
-    afxFcc_FLD      = AFX_MAKE_FCC('f', 'l', 'd', '\0'), // apxField
+    afxFcc_FLD      = AFX_MAKE_FCC('f', 'l', 'd', '\0'), // akxField
     afxFcc_PAWN     = AFX_MAKE_FCC('p', 'a', 'w', 'n'), // apxPawn
     afxFcc_COL      = AFX_MAKE_FCC('c', 'o', 'l', '\0'), // apxCollidable
-    afxFcc_COLL     = AFX_MAKE_FCC('c', 'o', 'l', 'l'), // apxCollider
+    afxFcc_COLL     = AFX_MAKE_FCC('c', 'o', 'l', 'l'), // akxCollider
 
     //afxFcc_RCTX     = AFX_MAKE_FCC('d', 'i', 'n', '\0'), // arxRenderContext
     

@@ -14,13 +14,13 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_SYSTEM_DDK_H
 #define AMX_SYSTEM_DDK_H
 
 #include "qwadro/mix/afxMixSystem.h"
-#include "amxMpuExecutor.h"
+#include "mpu/amxMpuExecutor.h"
 #include "amxSoundscapeDDK.h"
 
 #ifndef _AMX_MIX_C
@@ -149,6 +149,7 @@ AMX afxClass const* _AmxMsysGetMencClass(afxMixSystem msys);
 AMX afxClass const* _AmxMsysGetMdecClass(afxMixSystem msys);
 AMX afxClass const* _AmxMsysGetMsrcClass(afxMixSystem msys);
 
+AMX afxDrawSystem _AmxMsysGetDsys(afxMixSystem msys);
 AMX _amxDdiMsys const* _AmxMsysGetDdi(afxMixSystem msys);
 AMX afxMask _AmxMsysGetIoExuMask(afxMixSystem msys, afxMask* dedIoExuMask);
 

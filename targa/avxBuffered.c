@@ -14,21 +14,21 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 #define _AVX_BUFFER_C
 #include "avxIcd.h"
 
-_AVX void AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit blockSiz, afxUnit blockAlign, avxBuffer buf, afxSize bufCap, void* mapped)
+_AVX afxError AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit blockSiz, afxUnit blockAlign, avxBuffer buf, afxSize bufCap, void* mapped)
 {
     // Small buffered ring utility.
     // Reuse memory across frames (no new buffer creation).
     // Efficient for dynamic scenes and many objects.
     // Prevents CPU-GPU sync stalls and fragmentation.
 
-    afxError err;
+    afxError err = { 0 };
     AFX_ASSERT(rng);
     *rng = (avxBufferedRing) { 0 };
 
@@ -48,6 +48,8 @@ _AVX void AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit bloc
     if (mapped) rng->basePtr = mapped;
     else if (AvxMapBuffer(buf, 0, bufCap, NIL, (void**)&rng->basePtr))
         AfxThrowError();
+
+    return err;
 }
 
 _AVX afxSize AvxCycleBufferedRing(avxBufferedRing* rng)
@@ -124,14 +126,23 @@ static avxBufferedPumpStash create_new_chunk(avxBufferedPump* pump, afxSize size
 }
 
 // Initialize the buffered pump
-_AVX void AvxDeployBufferedPump(avxBufferedPump* pump, avxBufferUsage usage, avxBufferFlags flags, afxUnit minChunkSiz, afxUnit blockAlign, afxUnit rounds)
+_AVX afxError AvxDeployBufferedPump(avxBufferedPump* pump, avxBufferUsage usage, avxBufferFlags flags, afxUnit minChunkSiz, afxUnit blockAlign, afxUnit rounds, afxDrawSystem dsys)
 {
     afxError err = { 0 };
+
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    pump->dsys = dsys;
+
     pump->capacity_chunks = 4;
-    pump->chunks = (avxBufferedPumpStash*)malloc(sizeof(avxBufferedPumpStash) * pump->capacity_chunks);
     pump->num_chunks = 0;
     pump->current_frame = 0;
     pump->last = NULL;
+    pump->chunks = NIL;
+
+    if (AfxAllocate(sizeof(avxBufferedPumpStash) * pump->capacity_chunks, NIL, AfxHere(), (void**)&pump->chunks))
+    {
+        AfxThrowError();
+    }
 
     AFX_ASSERT(32 >= rounds);
     pump->rounds = rounds ? rounds : 3; // triple buffering
@@ -141,6 +152,8 @@ _AVX void AvxDeployBufferedPump(avxBufferedPump* pump, avxBufferUsage usage, avx
     pump->minChunkSiz = minChunkSiz ? AVX_ALIGN_BUFFERED(minChunkSiz) : 2 * 1024 * 1024; // 2MB
     AFX_ASSERT_ALIGNMENT(blockAlign, AVX_BUFFER_ALIGNMENT);
     pump->blockAlign = blockAlign ? AVX_ALIGN_BUFFERED(blockAlign) : 256; // uniform buffer alignment
+
+    return err;
 }
 
 // Find a chunk with enough space or create a new one
@@ -182,13 +195,16 @@ static avxBufferedPumpStash* find_available_chunk(avxBufferedPump* pump, afxSize
     if (pump->num_chunks >= pump->capacity_chunks)
     {
         afxSize new_capacity = pump->capacity_chunks * 2;
-        avxBufferedPumpStash* new_chunks = (avxBufferedPumpStash*)realloc(pump->chunks, sizeof(avxBufferedPumpStash) * new_capacity);
-        if (!new_chunks)
+
+        if (AfxReallocate(sizeof(avxBufferedPumpStash) * new_capacity, 0, AfxHere(), (void**)&pump->chunks))
         {
             AfxThrowError(); // or handle OOM gracefully
         }
-        pump->chunks = new_chunks;
-        pump->capacity_chunks = new_capacity;
+        else
+        {
+            AFX_ASSERT(pump->chunks);
+            pump->capacity_chunks = new_capacity;
+        }
     }
 
     afxSize chunk_size = size_needed > pump->minChunkSiz ? size_needed : pump->minChunkSiz;
@@ -208,22 +224,36 @@ _AVX void* AvxRequestBufferedPump(avxBufferedPump* pump, afxSize size, avxBuffer
 }
 
 // Advance to next frame
-_AVX void AvxAdvanceBufferedPump(avxBufferedPump* pump)
+_AVX afxError AvxAdvanceBufferedPump(avxBufferedPump* pump)
 {
+    afxError err = { 0 };
     pump->current_frame += 1;
+    return err;
 }
 
 // Cleanup all buffers
-_AVX void AvxDismantleBufferedPump(avxBufferedPump* pump)
+_AVX afxError AvxDismantleBufferedPump(avxBufferedPump* pump)
 {
+    afxError err = { 0 };
+
     for (afxSize i = 0; i < pump->num_chunks; ++i)
     {
         AvxUnmapBuffer(pump->chunks[i].buffer, FALSE);
         AfxDisposeObjects(1, &pump->chunks[i].buffer);
     }
-    free(pump->chunks);
-    pump->chunks = NULL;
+
     pump->num_chunks = 0;
-    pump->capacity_chunks = 0;
     pump->last = NULL;
+
+    if (pump->chunks)
+    {
+        if (AfxDeallocate((void**)&pump->chunks, AfxHere()))
+            AfxThrowError();
+
+        pump->chunks = NULL;
+    }
+
+    pump->capacity_chunks = 0;
+
+    return err;
 }

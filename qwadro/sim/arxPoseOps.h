@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ASX_POSE_OPS_H
 #define ASX_POSE_OPS_H
@@ -25,15 +25,15 @@ ASX afxCmdId AsxCmdCopyPose(arxContext ctx, arxPose src, afxUnit from, arxPose d
 
 ASX afxCmdId AsxCmdApplyRootMotionVectors(arxContext ctx, arxPose pose, afxV3d const translation, afxV3d const rotation);
 
-ASX afxCmdId AsxCmdSamplePuppetAnimationsAcceleratedLOD(arxContext ctx, arxPuppet bod, afxUnit pivotCnt, afxM4d const offset, arxPose scratch, arxPlacement plce, afxReal allowedErr);
-ASX afxCmdId AsxCmdSampleSinglePuppetAnimationLODSparse(arxContext ctx, arxPuppet bod, arxCapstan moto, afxUnit basePivotIdx, afxUnit pivotCnt, arxPose pose, afxReal allowedErr, afxUnit const* sparseBoneArray);
+ASX afxCmdId AsxCmdSamplePuppetAnimationsAcceleratedLOD(arxContext ctx, arxPuppet bod, afxUnit pivotCnt, afxM4d const offset, arxPose scratch, arxPosture plce, afxReal allowedErr);
+ASX afxCmdId AsxCmdSampleSinglePuppetAnimationLODSparse(arxContext ctx, arxPuppet bod, arxPulley moto, afxUnit basePivotIdx, afxUnit pivotCnt, arxPose pose, afxReal allowedErr, afxUnit const* sparseBoneArray);
 ASX afxCmdId AsxCmdSamplePuppetAnimationsLODSparse(arxContext ctx, arxPuppet bod, afxUnit basePivotIdx, afxUnit pivotCnt, arxPose pose, afxReal allowedErr, afxUnit const* sparseBoneArray);
 
 // MODEL OPS
 
 ASX afxCmdId    AsxCmdDisplaceModel(arxContext sctx, arxModel mdl, afxTransform const* t);
 
-ASX afxCmdId    AsxCmdBuildRiggedMeshCompositeMatrices(arxContext sctx, arxModel mdl, afxUnit rigIdx, arxPlacement const plce, afxUnit cnt, afxUnit bufIdx, afxSize offset);
+ASX afxCmdId    AsxCmdBuildRiggedMeshCompositeMatrices(arxContext sctx, arxModel mdl, afxUnit rigIdx, arxPosture const plce, afxUnit cnt, afxUnit bufIdx, afxSize offset);
 
 // SKELETON OPS
 
@@ -43,10 +43,10 @@ ASX afxCmdId    AsxCmdResetJointInversors(arxContext sctx, arxSkeleton skl, afxU
 ASX afxCmdId    AsxCmdResetJointLodErrors(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxReal const lodErrors[]);
 
 ASX afxCmdId    AsxCmdBuildRestPose(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, arxPose pose);
-ASX afxCmdId    AsxCmdBuildPlacement(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxUnit baseReqJnt, afxUnit reqJntCnt, arxPose pose, afxM4d const displace, afxBool noComposite, arxPlacement plce);
-ASX afxCmdId    AsxCmdRebuildPose(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxM4d const displace, arxPlacement plce, afxBool rigid, arxPose pose);
+ASX afxCmdId    AsxCmdBuildPlacement(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxUnit baseReqJnt, afxUnit reqJntCnt, arxPose pose, afxM4d const displace, afxBool noComposite, arxPosture plce);
+ASX afxCmdId    AsxCmdRebuildPose(arxContext sctx, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt, afxM4d const displace, arxPosture plce, afxBool rigid, arxPose pose);
 
-ASX afxCmdId    AsxCmdBuildCompositeMatrices(arxContext sctx, arxSkeleton skl, arxPlacement plce, afxUnit baseJnt, afxUnit jntCnt, afxBool /*3x4*/transposed, afxUnit bufIdx, afxSize offset);
-ASX afxCmdId    AsxCmdBuildIndexedCompositeMatrices(arxContext sctx, arxSkeleton skl, arxPlacement plce, afxUnit jntCnt, afxUnit const jntMap[], afxBool /*3x4*/transposed, afxUnit bufIdx, afxSize offset);
+ASX afxCmdId    AsxCmdBuildCompositeMatrices(arxContext sctx, arxSkeleton skl, arxPosture plce, afxUnit baseJnt, afxUnit jntCnt, afxBool /*3x4*/transposed, afxUnit bufIdx, afxSize offset);
+ASX afxCmdId    AsxCmdBuildIndexedCompositeMatrices(arxContext sctx, arxSkeleton skl, arxPosture plce, afxUnit jntCnt, afxUnit const jntMap[], afxBool /*3x4*/transposed, afxUnit bufIdx, afxSize offset);
 
 #endif//ASX_POSE_OPS_H

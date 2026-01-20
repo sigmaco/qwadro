@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience on Qwadro                                       //
@@ -24,8 +24,7 @@
 #define AUX_UX_DEFS_H
 
 #include "qwadro/exec/afxSystem.h"
-#include "qwadro/draw/afxDrawSystem.h"
-#include "qwadro/mix/afxMixSystem.h"
+#include "qwadro/base/afxRect.h"
 
 #ifndef __e2mmux__
 #   ifdef _DEBUG
@@ -50,7 +49,6 @@
 #endif//__e2mmux__
 
 AFX_DEFINE_HANDLE(afxWidget);
-AFX_DEFINE_HANDLE(afxScript);
 AFX_DEFINE_HANDLE(afxEnvironment);
 AFX_DEFINE_HANDLE(afxTerminal);
 AFX_DEFINE_HANDLE(afxFont);
@@ -76,10 +74,13 @@ typedef enum auxEventId
     auxEventId_PLACEMENT,
     auxEventId_MOVE, // Window/widget's position changed.
     auxEventId_SIZE, // Window/widget's size changed.
+    auxEventId_EDGE, // Window/widget's edge dragged.
     auxEventId_FOCUS, // widget focus changed
     auxEventId_FOCUS_LOST, // widget focus changed
     auxEventId_SCROLL, // ex.: list scroll
     auxEventId_CHANGED, // ex.: setting applied
+    auxEventId_DISPLAY, // ex.: setting applied
+    auxEventId_SCREEN, // ex.: setting applied
     auxEventId_CHECKED, // ex.: combobox (un)checked
     auxEventId_STYLE, // Window/widget's style has been changed.
     auxEventId_SHOW, // Window/widget was shown on screen.
@@ -116,6 +117,14 @@ AFX_DEFINE_STRUCT(auxEvent)
     afxWidget       wid;
     afxSize         udd;
     afxSize         udd2;
+};
+
+AFX_DEFINE_STRUCT(auxEventRECT)
+{
+    auxEvent ev;
+    afxRect area;
+    afxEdge edge;
+    afxAnchor anchor;
 };
 
 AFX_DEFINE_STRUCT(auxInputEvent)

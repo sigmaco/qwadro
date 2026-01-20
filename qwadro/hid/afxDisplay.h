@@ -14,19 +14,36 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
+// This software is part of Advanced User Experience Extensions.
 
 #ifndef AFX_DISPLAY_H
 #define AFX_DISPLAY_H
 
+#include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxPipeline.h"
 #include "qwadro/draw/avxRaster.h"
 #include "qwadro/draw/avxBuffer.h"
 //#include "qwadro/draw/afxSurface.h"
 
 #define AFX_MAX_GAMMA_CURVE_LENGTH (1025)
+
+typedef enum afxDisplayType
+{
+    // The expected for a PC display; a fixed display.
+    afxDisplay_FIXED,
+
+    // Head-Mounted Display
+    // The tracked display is attached to the user’s head. The user cannot touch the display itself. 
+    // A VR headset would be an example of this form factor.
+    afxDisplayType_HMD,
+
+    // The tracked display is held in the user’s hand, independent from the user’s head. 
+    // The user may be able to touch the display, allowing for screen-space UI. 
+    // A mobile phone running an AR experience using pass-through video would be an example of this form factor.
+    afxDisplayType_HANDHELD
+} afxDisplayType;
 
 typedef enum afxDisplayFlag
 {
@@ -103,6 +120,15 @@ typedef enum avxVideoAlpha
     // If the application does not set the blending mode using native window system commands, then a platform-specific default will be used.
 } avxVideoAlpha;
 
+typedef enum avxScanlining
+// Flags indicating the method the raster uses to create an image on a surface.
+{
+    avxScanlining_IGNORE, // Scanline order is unspecified.
+    avxScanlining_PROGRESSIVE, // The image is created from the first scanline to the last without skipping any.
+    avxScanlining_INTERLACED_UFF, // upper field first; the even-numbered lines (0, 2, 4, 6, ...)
+    avxScanlining_INTERLACED_LFF, // lower field first; the odd-numbered lines (1, 3, 5, 7, ...)
+} avxScanlining;
+
 /*
     The gamma curve here is a piecewise linear function; not a spline. 
     It's essentially a lookup table (LUT) or function approximation over the [0,1] domain using a set of explicitly defined control points.
@@ -152,7 +178,7 @@ AFX_DEFINE_STRUCT(afxGammaCurve)
     afxV3d curve[AFX_MAX_GAMMA_CURVE_LENGTH];
 };
 
-AFX_DEFINE_STRUCT(avxDisplayPortInfo)
+AFX_DEFINE_STRUCT(afxDisplayPortInfo)
 {
     afxDisplay          vdu;
     afxChar             name[32]; // the name of the display.
@@ -166,7 +192,7 @@ AFX_DEFINE_STRUCT(avxDisplayPortInfo)
     afxRect             fullArea;
 };
 
-AFX_DEFINE_STRUCT(avxDisplayInfo)
+AFX_DEFINE_STRUCT(afxDisplayInfo)
 {
     afxDeviceInfo       dev;
     afxDisplay          vdu;
@@ -180,7 +206,7 @@ AFX_DEFINE_STRUCT(avxDisplayInfo)
     afxBool             persistentContent; // can submit persistent present operations on swapchains created against this display?
 };
 
-AFX_DEFINE_STRUCT(avxDisplayCapabilities)
+AFX_DEFINE_STRUCT(afxDisplayCapabilities)
 {
     avxRange           currExtent;
     avxRange           minBufExtent;
@@ -193,15 +219,6 @@ AFX_DEFINE_STRUCT(avxDisplayCapabilities)
     avxRasterUsage      supportedUsage;
 };
 
-typedef enum avxScanlining
-// Flags indicating the method the raster uses to create an image on a surface.
-{
-    avxScanlining_IGNORE, // Scanline order is unspecified.
-    avxScanlining_PROGRESSIVE, // The image is created from the first scanline to the last without skipping any.
-    avxScanlining_INTERLACED_UFF, // upper field first; the even-numbered lines (0, 2, 4, 6, ...)
-    avxScanlining_INTERLACED_LFF, // lower field first; the odd-numbered lines (1, 3, 5, 7, ...)
-} avxScanlining;
-
 /*
     Mode-setting refers to configuring the display resolution, refresh rate, and color depth at a low level, 
     typically during system startup or when changing display settings. This is handled by:
@@ -212,7 +229,7 @@ typedef enum avxScanlining
     is owned by the shell, not by the application. So the application should never change it for its private interests.
 */
 
-AFX_DEFINE_STRUCT(avxDisplayMode)
+AFX_DEFINE_STRUCT(afxDisplayMode)
 // Describes a display mode.
 {
     afxUnit         width;
@@ -226,23 +243,100 @@ AFX_DEFINE_STRUCT(avxDisplayMode)
     afxBool         stereo;
 };
 
-// Win32: only supported while in full-screen mode.
-AVX afxError AfxQueryGammaControlCapabilites(afxDisplay dsp, afxGammaCapabilites* caps);
+AFX_DEFINE_STRUCT(afxDisplayPortConfig)
+{
+    afxUnit             portId;
+    // the name of the display.
+    afxString           name;
+    // the friendly name of the display.
+    afxString           label;
+    // the physical width and height of the visible portion of the display, in millimeters.
+    afxUnit             dimWh[2];
+    // the physical, native, or preferred resolution of the display.
+    afxUnit             resWh[2];
+    afxUnit             dpi[2];
+    // desktop coordinates
+    afxRect             workArea;
+    afxRect             fullArea;
+    // transforms are supported by this display.
+    avxVideoTransform   supportedXforms;
+    // can re-arrange the planes on this display in any order relative to each other?
+    afxBool             planeReorder;
+    // can submit persistent present operations on swapchains created against this display?
+    afxBool             persistentContent;
 
-// Win32: only supported while in full-screen mode.
-AVX afxError AfxDescribeGammaControl(afxDisplay dsp, afxGammaCurve* desc);
+    void*               udd;
+    afxString           tag;
+};
 
-// Win32: only supported while in full-screen mode.
-AVX afxError AfxControlGamma(afxDisplay dsp, afxGammaCurve const* ctrl);
+AFX_DEFINE_STRUCT(afxDisplayConfig)
+{
+    afxDeviceInfo       dev;
+    // the name of the display.
+    afxString           name;
+    // the friendly name of the display.
+    afxString           label;
+
+    void*               udd;
+    afxString           tag;
+};
+
+AUX afxUnit AfxEnumerateDisplays
+(
+    afxUnit icd,
+    afxUnit first,
+    afxUnit cnt,
+    afxDisplay displays[]
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxUnit AfxEnumerateDisplays
+AUX afxDisplayPort AfxGetDisplayPort
 (
-    afxUnit icd, 
-    afxUnit first, 
-    afxUnit cnt, 
-    afxDisplay displays[]
+    afxDisplay dpy, 
+    afxUnit port
+);
+
+AUX afxUnit AfxQueryDisplayModes
+(
+    afxDisplay dpy,
+    afxUnit port,
+    avxFormat fmt,
+    afxUnit cnt,
+    afxDisplayMode modes[]
+);
+
+// Gets a copy of the current display surface.
+
+AUX afxError AfxCopyBackDisplayBuffer
+(
+    afxDisplay dpy,
+    afxUnit port,
+    afxSurface dout
+);
+
+// Win32: only supported while in full-screen mode.
+AUX afxError AfxQueryGammaControlCapabilites
+(
+    afxDisplay dpy,
+    afxUnit port,
+    afxGammaCapabilites* caps
+);
+
+// Win32: only supported while in full-screen mode.
+AUX afxError AfxDescribeGammaControl
+(
+    afxDisplay dpy,
+    afxUnit port,
+    afxGammaCurve* desc
+);
+
+// Win32: only supported while in full-screen mode.
+AUX afxError AfxControlGamma
+(
+    afxDisplay dpy,
+    afxUnit port,
+    afxGammaCurve const* ctrl
 );
 
 // dwmgl
@@ -277,7 +371,7 @@ AVX afxUnit AfxEnumerateDisplays
     This function performs an approximation and is intended to be used when the user does not know the aspect ratio of the desired device.
 */
 
-AVX afxReal64 AfxFindPhysicalAspectRatio
+AUX afxReal64 AfxFindPhysicalAspectRatio
 (
     afxUnit screenWidth, 
     afxUnit screenHeight

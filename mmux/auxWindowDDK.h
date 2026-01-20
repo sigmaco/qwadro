@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -23,7 +23,7 @@
 #ifndef AUX_WINDOW_DDK_H
 #define AUX_WINDOW_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxShell.h"
@@ -85,9 +85,9 @@ AFX_OBJECT(afxWindow)
     afxRect             surfacePadding; // used to align content area
     afxRect             surfaceRc; // aka client area
     
-    avxRaster           icon;
+    avxRaster           iconFnt;
     avxRasterRegion     iconCrop;
-    avxRaster           curs;
+    avxRaster           cursFnt;
     avxRasterRegion     cursCrop;
     afxString512        title;
 

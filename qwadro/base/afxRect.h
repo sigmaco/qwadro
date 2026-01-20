@@ -22,6 +22,91 @@
 #include "qwadro/math/afxVector.h"
 #include "qwadro/draw/afxDrawDefs.h"
 
+typedef enum afxAnchor
+// Bitmask enumerants to handle rectangle sides as anchors.
+{
+    // Anchor from the left side to the right side.
+    afxAnchor_LEFT      = AFX_BITMASK(0),
+
+    // Anchor from the center to left/right sides.
+    afxAnchor_CENTER    = AFX_BITMASK(1),
+
+    // Anchor from the right side to the left side.
+    afxAnchor_RIGHT     = AFX_BITMASK(2),
+
+    // Anchor from the top side to the bottom side.
+    afxAnchor_TOP       = AFX_BITMASK(3),
+
+    // Anchor from the middle side to the top/bottom sides.
+    afxAnchor_MIDDLE    = AFX_BITMASK(4),
+
+    // Anchor from the bottom side to the top side.
+    afxAnchor_BOTTOM    = AFX_BITMASK(5),
+
+    // Anchor mask for vertical combos.
+    afxAnchor_V         = (afxAnchor_LEFT | afxAnchor_CENTER | afxAnchor_RIGHT),
+
+    // Anchor mask for horizontal combos.
+    afxAnchor_H         = (afxAnchor_TOP | afxAnchor_MIDDLE | afxAnchor_BOTTOM),
+
+    // Anchor mask for the left-top combo.
+    afxAnchor_LT        = (afxAnchor_LEFT | afxAnchor_TOP),
+
+    // Anchor mask for the left-middle combo.
+    afxAnchor_LM        = (afxAnchor_LEFT | afxAnchor_MIDDLE),
+
+    // Anchor mask for the left-bottom combo.
+    afxAnchor_LB        = (afxAnchor_LEFT | afxAnchor_BOTTOM),
+
+
+    // Anchor mask for the right-top combo.
+    afxAnchor_RT        = (afxAnchor_RIGHT | afxAnchor_TOP),
+
+
+    // Anchor mask for the right-middle combo.
+    afxAnchor_RM        = (afxAnchor_RIGHT | afxAnchor_MIDDLE),
+
+    // Anchor mask for the right-bottom combo.
+    afxAnchor_RB        = (afxAnchor_RIGHT | afxAnchor_BOTTOM),
+
+    // Anchor mask for the center-top combo.
+    afxAnchor_CT        = (afxAnchor_CENTER | afxAnchor_TOP),
+
+    // Anchor mask for the center-middle combo.
+    afxAnchor_CM        = (afxAnchor_CENTER | afxAnchor_MIDDLE),
+
+    // Anchor mask for the center-bottom combo.
+    afxAnchor_CB        = (afxAnchor_CENTER | afxAnchor_BOTTOM),
+} afxAnchor;
+
+typedef enum afxEdge
+// Bitmask enumerants to handle rectangle sides as edges and corners.
+{
+    // The bitmask value for the LEFT edge.
+    afxEdge_LEFT    = AFX_BITMASK(0),
+
+    // The bitmask value for the TOP edge.
+    afxEdge_TOP     = AFX_BITMASK(1),
+
+    // The bitmask value for the RIGHT edge.
+    afxEdge_RIGHT   = AFX_BITMASK(2),
+
+    // The bitmask value for the BOTTOM edge.
+    afxEdge_BOTTOM  = AFX_BITMASK(3),
+
+    // The bitmask value for the LEFT-TOP edges as a corner.
+    afxEdge_LT      = (afxEdge_LEFT | afxEdge_TOP),
+
+    // The bitmask value for the LEFT-BOTTOM edges as a corner.
+    afxEdge_LB      = (afxEdge_LEFT | afxEdge_BOTTOM),
+
+    // The bitmask value for the RIGHT-TOP edges as a corner.
+    afxEdge_RT      = (afxEdge_RIGHT | afxEdge_TOP),
+
+    // The bitmask value for the RIGHT-BOTTOM edges as a corner.
+    afxEdge_RB      = (afxEdge_RIGHT | afxEdge_BOTTOM),
+} afxEdge;
+
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRect)
 // Rectangles are used to describe a specified rectangular region within an bidimensional area.
 {
@@ -65,11 +150,11 @@ AFX afxLayeredRect const AFX_LAYERED_RECT_MAX;
     .baseLayer = (z_), .layerCnt = (d_) }
 
 /*
-    The AfxGetRectArea() function calculates the square units for a rectangle.
+    The AfxGetRectSize() function calculates the square units for a rectangle.
     The resulting value can be used to determine whether a rectangle is or not empty.
 */
 
-AFXINL afxUnit      AfxGetRectArea
+AFXINL afxUnit      AfxGetRectSize
 // Returns the square units of the rectangle.
 (
     afxRect const*  rc

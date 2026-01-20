@@ -212,6 +212,7 @@ AFX_DEFINE_STRUCT(afxClass)
     afxBool         (*defEventFilter)(afxObject obj, afxObject watched, afxEvent *ev);
     
     afxBool         dbgAcq;
+    afxBool         acquiring;
 
     afxUnit         instBaseSiz;
     // A virtual method table (manual polymorphism).

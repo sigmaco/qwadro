@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
- // This software is part of Advanced User Experiences Extensions & Experiments.
+ // This software is part of Advanced User Experience Extensions.
 
 #define _AFX_CORE_C
 #define _AFX_DEVICE_C
@@ -70,8 +70,6 @@ _AUX afxError _AuxHidDtorCb(afxHid hid)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_HID, 1, &hid);
-
-    AfxDeregisterChainedClasses(&hid->dev.classes);
 
     return err;
 }

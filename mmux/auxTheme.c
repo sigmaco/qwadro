@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AUX_UX_C
 #define _AUX_THEME_C
@@ -67,16 +67,9 @@ _AUX afxClassConfig const _AUX_THEM_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError AfxAcquireThemes(afxUnit cnt, afxThemeInfo const info[], afxFont fonts[])
+_AUX afxError AfxAcquireThemes(afxEnvironment env, afxUnit cnt, afxThemeInfo const info[], afxFont fonts[])
 {
     afxError err = { 0 };
-
-    afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
-    {
-        AfxThrowError();
-        return err;
-    }
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (!info)
@@ -97,9 +90,10 @@ _AUX afxError AfxAcquireThemes(afxUnit cnt, afxThemeInfo const info[], afxFont f
     return err;
 }
 
-_AUX afxError AfxLoadThemes(afxUnit cnt, afxUri const uri[], afxTheme themes[])
+_AUX afxError AfxLoadThemes(afxEnvironment env, afxUnit cnt, afxUri const uri[], afxTheme themes[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     afxUri uri2;
     AfxMakeUri(&uri2, 0, "//./z/video/font-256.tga", 0);

@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_CURVE_H
 #define ARX_CURVE_H
@@ -40,7 +40,7 @@
 // and length and if they are then the Bezier curves are c-continuous.
 
 #include "qwadro/coll/afxSphere.h"
-#include "qwadro/render/arxRenderable.h"
+#include "qwadro/iris/arxIrisDefs.h"
 
 typedef enum arxCurveFlag
 {
@@ -114,6 +114,9 @@ AFX_DEFINE_STRUCT(arxCurveInfo)
     afxUnit         sampleDim;
     afxReal const*  xformedSamples;
     afxReal const*  origSamples;
+
+    void*           udd;
+    afxString       tag;
 };
 
 AFX_DEFINE_STRUCT(arxSampleContext)

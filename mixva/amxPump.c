@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #define _AMX_MIX_C
 #define _AMX_MIX_SYSTEM_C
@@ -27,63 +27,13 @@
 #define _AMX_MIX_CONTEXT_C
 #define _AMX_TRACK_C
 #define _AMX_AUDIO_C
-#define _AMX_AUDIO_C
+#define _AMX_PUMP_C
 #include "amxIcd.h"
 
-AFX_DEFINE_STRUCT(_amxPumpStream)
-{
-    amxCodec cdc;
-    afxUnit idx;
-    // This is the fundamental unit of time(in seconds) in terms of which frame timestamps are represented.
-    afxRational timeBase;
-    // Decoding : pts of the first frame of the stream in presentation order, in stream time base.
-    afxInt64 start_time;
-    // Decoding : duration of the stream, in stream time base.
-    afxInt64 duration;
-    // number of frames in this stream if known or 0
-    afxInt64 frameCnt;
-    afxRational avgFrameRate;
-};
-
-AFX_OBJECT(amxPump)
-// Media sources are objects that generate media data. For example, the data might come from a video file, 
-// a network stream, or a hardware device, such as a camera. Each media source contains one or more streams, 
-// and each stream delivers data of one type, such as audio or video.
-{
-    // input or output URL.
-    afxUri128 uri;
-
-    afxUnit streamCnt;
-    _amxPumpStream streams[2];
-
-    // Position of the first frame of the component, in AV_TIME_BASE fractional seconds.
-    afxInt64 start_time;
-    // Duration of the stream, in AV_TIME_BASE fractional seconds.
-    afxInt64 duration;
-    // Total stream bitrate in bit/s, 0 if not available.
-    afxInt64 bit_rate;
-};
-
-AFX_DEFINE_STRUCT(amxPumpStreamInfo)
-{
-    amxCodec cdc;
-    // The stream index in pump.
-    afxUnit idx;
-    // This is the fundamental unit of time(in seconds) in terms of which frame timestamps are represented.
-    afxRational timeBase;
-    // Decoding : pts of the first frame of the stream in presentation order, in stream time base.
-    afxInt64 start_time;
-    // Decoding : duration of the stream, in stream time base.
-    afxInt64 duration;
-    // number of frames in this stream if known or 0
-    afxInt64 frameCnt;
-    afxRational avgFrameRate;
-};
-
-_AMX afxError AmxDescribePump(amxPump msrc, amxPumpInfo* info)
+_AMX afxError AmxDescribePump(amxPump pmp, amxPumpInfo* info)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(info);
 
 
@@ -91,10 +41,10 @@ _AMX afxError AmxDescribePump(amxPump msrc, amxPumpInfo* info)
     return err;
 }
 
-_AMX afxError AmxDescribePumpStreams(amxPump msrc, afxUnit first, afxUnit cnt, amxPumpStreamInfo infos[])
+_AMX afxError AmxDescribePumpStreams(amxPump pmp, afxUnit first, afxUnit cnt, amxPumpStreamInfo infos[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(infos);
 
 
@@ -102,10 +52,10 @@ _AMX afxError AmxDescribePumpStreams(amxPump msrc, afxUnit first, afxUnit cnt, a
     return err;
 }
 
-_AMX afxError AmxFormatPumpStreams(amxPump msrc, afxUnit first, afxUnit cnt, amxPumpStreamInfo infos[])
+_AMX afxError AmxFormatPumpStreams(amxPump pmp, afxUnit first, afxUnit cnt, amxPumpStreamInfo infos[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(infos);
 
 
@@ -137,10 +87,10 @@ _AMX afxError AmxFormatPumpStreams(amxPump msrc, afxUnit first, afxUnit cnt, amx
     in terms of system load or reducing the rate of data intake/output.
 */
 
-_AMX afxError AmxPumpIn(amxPump msrc, amxPacket* pkt)
+_AMX afxError AmxPumpIn(amxPump pmp, amxPacket* pkt)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(pkt);
 
 
@@ -148,10 +98,10 @@ _AMX afxError AmxPumpIn(amxPump msrc, amxPacket* pkt)
     return err;
 }
 
-_AMX afxError AmxPumpOut(amxPump msrc, amxPacket* pkt)
+_AMX afxError AmxPumpOut(amxPump pmp, amxPacket* pkt)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(pkt);
 
 
@@ -159,10 +109,10 @@ _AMX afxError AmxPumpOut(amxPump msrc, amxPacket* pkt)
     return err;
 }
 
-_AMX afxError AmxPumpUp(amxPump msrc, amxPacket* pkt)
+_AMX afxError AmxPumpUp(amxPump pmp, amxPacket* pkt)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(pkt);
 
 
@@ -170,10 +120,10 @@ _AMX afxError AmxPumpUp(amxPump msrc, amxPacket* pkt)
     return err;
 }
 
-_AMX afxError AmxPumpDown(amxPump msrc, amxPacket* pkt)
+_AMX afxError AmxPumpDown(amxPump pmp, amxPacket* pkt)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
     AFX_ASSERT(pkt);
 
 
@@ -181,20 +131,20 @@ _AMX afxError AmxPumpDown(amxPump msrc, amxPacket* pkt)
     return err;
 }
 
-_AMX afxError _AmxMsrcDtorCb(amxPump msrc)
+_AMX afxError _AmxPmpDtorCb(amxPump pmp)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
 
 
 
     return err;
 }
 
-_AMX afxError _AmxMsrcCtorCb(amxPump msrc, void** args, afxUnit invokeNo)
+_AMX afxError _AmxPmpCtorCb(amxPump pmp, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &msrc);
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, 1, &pmp);
 
     afxMixSystem msys = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
@@ -210,15 +160,15 @@ _AMX afxClassConfig const _AMX_MSRC_CLASS_CONFIG =
 {
     .fcc = afxFcc_MSRC,
     .name = "Pump",
-    .desc = "I/O Pump",
+    .desc = "Media I/O Pump",
     .fixedSiz = sizeof(AFX_OBJECT(amxPump)),
-    .ctor = (void*)_AmxMsrcCtorCb,
-    .dtor = (void*)_AmxMsrcDtorCb
+    .ctor = (void*)_AmxPmpCtorCb,
+    .dtor = (void*)_AmxPmpDtorCb
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AMX afxError AmxAcquirePumps(afxMixSystem msys, afxUnit cnt, amxPumpConfig const cfgs[], amxPump pumps[])
+_AMX afxError AmxAcquireInputPumps(afxMixSystem msys, afxUnit cnt, amxPumpConfig const cfgs[], amxPump pumps[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
@@ -238,6 +188,26 @@ _AMX afxError AmxAcquirePumps(afxMixSystem msys, afxUnit cnt, amxPumpConfig cons
     return err;
 }
 
+_AMX afxError AmxAcquireOutputPumps(afxMixSystem msys, afxUnit cnt, amxPumpConfig const cfgs[], amxPump pumps[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(pumps);
+
+    afxClass* cls = (afxClass*)_AmxMsysGetMsrcClass(msys);
+    AFX_ASSERT_CLASS(cls, afxFcc_MSRC);
+
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)pumps, (void const*[]) { msys, cfgs }))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_MSRC, cnt, pumps);
+
+    return err;
+}
+
 _AMX afxError AmxAcquirePumpFromFile(afxMixSystem msys, afxUri const* uri, amxPump* pump)
 {
     afxError err = { 0 };
@@ -246,4 +216,9 @@ _AMX afxError AmxAcquirePumpFromFile(afxMixSystem msys, afxUri const* uri, amxPu
     AFX_ASSERT(uri);
 
     return err;
+}
+
+_AMX afxError AmxAssumeMediaStream(amxPump pmp, afxUnit capstan, afxStream iob, afxSize iobBase)
+{
+
 }

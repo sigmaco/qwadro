@@ -15,7 +15,7 @@
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #define _AFX_SYSTEM_C
 #define _AFX_MODULE_C
@@ -155,9 +155,9 @@ _AMX afxError _AmxIcdRegisterAsi(afxModule icd, afxClassConfig const* asiCls)
 
     clsCfg = *asiCls;
     AFX_ASSERT(clsCfg.fcc == afxFcc_ASI);
-    //AFX_ASSERT(clsCfg.fixedSiz >= _AUX_VDU_CLASS_CONFIG.fixedSiz);
+    //AFX_ASSERT(clsCfg.fixedSiz >= _AUX_DPY_CLASS_CONFIG.fixedSiz);
     if ((clsCfg.fcc != afxFcc_ASI) //||
-        //(_AUX_VDU_CLASS_CONFIG.fixedSiz > clsCfg.fixedSiz)
+        //(_AUX_DPY_CLASS_CONFIG.fixedSiz > clsCfg.fixedSiz)
         )
     {
         AfxThrowError();

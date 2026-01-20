@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced Sound Experience on Qwadro                                      //
@@ -23,25 +23,25 @@
 
 // Qwadro Sound Synthesis Infrastructure
 
-#ifndef ASX_STEP_DEVICE_H
-#define ASX_STEP_DEVICE_H
+#ifndef ACX_STEP_DEVICE_H
+#define ACX_STEP_DEVICE_H
 
 #include "qwadro/exec/afxDevice.h"
 #include "qwadro/pro/afxStepBridge.h"
 
-AFX_DEFINE_STRUCT(asxFeatures)
+AFX_DEFINE_STRUCT(acxFeatures)
 {
     afxBool8 a;
 };
 
-AFX_DEFINE_STRUCT(asxLimits)
+AFX_DEFINE_STRUCT(acxLimits)
 {
     int a;
 };
 
-AFX_DEFINE_STRUCT(asxDeviceInfo)
+AFX_DEFINE_STRUCT(acxDeviceInfo)
 {
-    asxAptitude     capabilities;
+    acxAptitude     capabilities;
     afxAcceleration acceleration;
     afxUnit         minQueCnt; // usually 3
     afxUnit         maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
@@ -55,63 +55,63 @@ AFX_DEFINE_STRUCT(asxDeviceInfo)
  // DEVICE HANDLING                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-ASX afxBool AsxIsStepDevicePrompt
+ACX afxBool AcxIsStepDevicePrompt
 (
     afxStepDevice sdev
 );
 
 /*
-    The AsxQueryStepDeviceFeatures() function is a way to query and retrieve detailed information about
+    The AcxQueryStepDeviceFeatures() function is a way to query and retrieve detailed information about
     features of a specific stepping device. The amxFeatures structure holds the queried features, and after calling this function,
     you can access the capabilities of the device to make informed decisions about rendering or utilizing the device's features.
 */
 
-ASX void AsxQueryStepDeviceFeatures
+ACX void AcxQueryStepDeviceFeatures
 (
     // A handle for a stepping device to query for its features.
     afxStepDevice sdev, 
 
     // A pointer to a amxFeatures structure where the results will be stored.
-    asxFeatures* features
+    acxFeatures* features
 );
 
 /*
-    The AsxQueryStepDeviceLimits() function queries the hardware limits of a specific stepping device.
+    The AcxQueryStepDeviceLimits() function queries the hardware limits of a specific stepping device.
     The device's capabilities are often constrained by the physical hardware, and knowing these limits
     is crucial when developing applications that need to operate efficiently within the device's capabilities.
     These limits are often critical for tasks such as optimizing memory usage, setting rendering parameters,
     or determining which rendering techniques can be supported.
 */
 
-ASX void AsxQueryStepDeviceLimits
+ACX void AcxQueryStepDeviceLimits
 (
     // The device to query for its limits.
     afxStepDevice sdev, 
 
     // A amxLimits structure where the device's limits will be stored.
-    asxLimits* limits
+    acxLimits* limits
 );
 
 /*
-    The AsxIsStepDeviceAcceptable() function determines if a given stepping device is suitable for use based on both the
+    The AcxIsStepDeviceAcceptable() function determines if a given stepping device is suitable for use based on both the
     required features and hardware limits. If the device meets both the feature requirements and hardware constraints, it
     would be considered acceptable for the application. If it fails to meet either one, the device would not be considered acceptable.
 */
 
-ASX afxBool AsxIsStepDeviceAcceptable
+ACX afxBool AcxIsStepDeviceAcceptable
 (
     // The device you are considering for use in your application.
     afxStepDevice sdev,
 
     // A amxFeatures structure containing the required features that the stepping device must support.
-    asxFeatures const* features,
+    acxFeatures const* features,
 
     // A amxLimits structure containing the hardware limits that the stepping device should meet or exceed.
-    asxLimits const* limits
+    acxLimits const* limits
 );
 
 /*
-    The AsxQueryStepCapabilities() function retrieves the capabilities of a synthesis device across multiple ports.
+    The AcxQueryStepCapabilities() function retrieves the capabilities of a synthesis device across multiple ports.
     It will return the stepping capabilities in the caps[] array. Each element in caps[] corresponds to the stepping
     capabilities of a specific port, and this information will help the application understand what features and stepping
     methods are supported by each port on the device.
@@ -119,12 +119,12 @@ ASX afxBool AsxIsStepDeviceAcceptable
     Returns the number of elements in caps[] array or the number of ports from specified base index.
 */
 
-ASX void AsxQueryStepCapabilities
+ACX void AcxQueryStepCapabilities
 (
     // The stepping device to query.
     afxStepDevice sdev, 
 
-    asxDeviceInfo* caps
+    acxDeviceInfo* caps
 );
 
   //////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ ASX void AsxQueryStepCapabilities
 //////////////////////////////////////////////////////////////////////////////
 
 /**
-    The AsxEnumerateStepDevices() function enumerates the available stepping devices associated with an ICD.
+    The AcxEnumerateStepDevices() function enumerates the available stepping devices associated with an ICD.
     It allows you to discover which devices are available for rendering tasks on a system, which is important in
     scenarios where multiple devices (e.g., integrated and discrete GPUs) exist. The function provides the number
     of devices found and populates an array with the relevant devices for further processing. This is useful for
@@ -141,7 +141,7 @@ ASX void AsxQueryStepCapabilities
     Returns the number of step devices inserted in the @devices.
 */
 
-ASX afxUnit AsxEnumerateStepDevices
+ACX afxUnit AcxEnumerateStepDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd,
@@ -157,14 +157,14 @@ ASX afxUnit AsxEnumerateStepDevices
 );
 
 /*
-    The AsxInvokeStepDevices() function provides an iterative mechanism to enumerate available stepping devices (e.g., GPUs)
+    The AcxInvokeStepDevices() function provides an iterative mechanism to enumerate available stepping devices (e.g., GPUs)
     and invoke a callback function for each device. This approach is useful when you want to perform operations or checks
     on multiple devices without having to manually loop through them.
 
     Returns the count of found devices.
 */
 
-ASX afxUnit AsxInvokeStepDevices
+ACX afxUnit AcxInvokeStepDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd, 
@@ -183,7 +183,7 @@ ASX afxUnit AsxInvokeStepDevices
 );
 
 /*
-    The AsxEvokeStepDevices() function provides an iterative mechanism to enumerate stepping devices and
+    The AcxEvokeStepDevices() function provides an iterative mechanism to enumerate stepping devices and
     process each device through a callback function. It also stores the enumerated devices in the devices[] array,
     allowing further operations or checks to be performed after enumeration. This function offers flexibility in
     both processing devices and retrieving them for further use, making it useful for applications that need to
@@ -192,7 +192,7 @@ ASX afxUnit AsxInvokeStepDevices
     Returns the count of found devices.
 */
 
-ASX afxUnit AsxEvokeStepDevices
+ACX afxUnit AcxEvokeStepDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd, 
@@ -214,7 +214,7 @@ ASX afxUnit AsxEvokeStepDevices
 );
 
 /*
-    The AsxChooseStepDevices() function provides a way to select stepping devices that match specified feature and limit requirements.
+    The AcxChooseStepDevices() function provides a way to select stepping devices that match specified feature and limit requirements.
     It returns the number of selected devices and populates an array with their device IDs. This function is helpful in scenarios
     where an application needs to filter and choose devices based on certain hardware capabilities or constraints, such as selecting
     GPUs that support specific rendering features or fall within particular performance limits.
@@ -222,19 +222,19 @@ ASX afxUnit AsxEvokeStepDevices
     Returns the count of found devices.
 */
 
-AVX afxUnit AsxChooseStepDevices
+AVX afxUnit AcxChooseStepDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
     afxUnit icd,
 
     // The operations or features that the device must supports.
-    asxDeviceInfo const* caps,
+    acxDeviceInfo const* caps,
 
     // A structure that specifies the features that the stepping devices must support.
-    asxFeatures const* features,
+    acxFeatures const* features,
 
     // A structure that defines the limits that the stepping devices should meet.
-    asxLimits const* limits,
+    acxLimits const* limits,
 
     // The maximum number of devices to be selected and returned in the @ddevIds array.
     afxUnit maxCnt,
@@ -243,4 +243,4 @@ AVX afxUnit AsxChooseStepDevices
     afxUnit sdevIds[]
 );
 
-#endif//ASX_STEP_DEVICE_H
+#endif//ACX_STEP_DEVICE_H

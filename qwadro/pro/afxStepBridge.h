@@ -15,40 +15,40 @@
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
-#ifndef ASX_STEP_BRIDGE_H
-#define ASX_STEP_BRIDGE_H
+#ifndef ACX_STEP_BRIDGE_H
+#define ACX_STEP_BRIDGE_H
 
 #include "qwadro/pro/afxStepQueue.h"
 
-#define ASX_MAX_QUEUES_PER_BRIDGE (32)
+#define ACX_MAX_QUEUES_PER_BRIDGE (32)
 
-typedef enum asxAptitude
+typedef enum acxAptitude
 {
     // Supports transfers via direct memory access.
-    asxAptitude_DMA     = AFX_BITMASK(0),
+    acxAptitude_DMA     = AFX_BITMASK(0),
     // Supports general purpose computation.
-    asxAptitude_PCX     = AFX_BITMASK(1),
+    acxAptitude_PCX     = AFX_BITMASK(1),
     // Supports parallel threaded execution.
-    asxAptitude_PTX     = AFX_BITMASK(2),
-} asxAptitude;
+    acxAptitude_PTX     = AFX_BITMASK(2),
+} acxAptitude;
 
-AFX_DEFINE_STRUCT(asxBridgeConfig)
+AFX_DEFINE_STRUCT(acxBridgeConfig)
 {
     afxUnit         sdevId;
     afxAcceleration acceleration;
-    asxAptitude     capabilities; // specifies capabilities of queues in a port.
+    acxAptitude     capabilities; // specifies capabilities of queues in a port.
     afxUnit         minQueCnt;
     afxReal const*  queuePriority;
 };
 
-ASX afxStepSystem   AsxGetBridgedStepSystem(afxStepBridge sexu, afxUnit* bridgeId);
-ASX afxStepDevice   AsxGetBridgedStepDevice(afxStepBridge sexu, afxUnit* sdevId);
+ACX afxStepSystem   AcxGetBridgedStepSystem(afxStepBridge sexu, afxUnit* bridgeId);
+ACX afxStepDevice   AcxGetBridgedStepDevice(afxStepBridge sexu, afxUnit* sdevId);
 
-ASX afxUnit         AsxGetStepQueues(afxStepBridge sexu, afxUnit first, afxUnit cnt, afxStepQueue queues[]);
+ACX afxUnit         AcxGetStepQueues(afxStepBridge sexu, afxUnit first, afxUnit cnt, afxStepQueue queues[]);
 
-ASX afxError        AsxWaitForIdleStepBridge(afxStepBridge sexu, afxUnit64 timeout);
-ASX afxError        AsxWaitForEmptyStepQueue(afxStepBridge sexu, afxUnit queIdx, afxUnit64 timeout);
+ACX afxError        AcxWaitForIdleStepBridge(afxStepBridge sexu, afxUnit64 timeout);
+ACX afxError        AcxWaitForEmptyStepQueue(afxStepBridge sexu, afxUnit queIdx, afxUnit64 timeout);
 
-#endif//ASX_STEP_BRIDGE_H
+#endif//ACX_STEP_BRIDGE_H

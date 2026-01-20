@@ -30,6 +30,18 @@
 #include <float.h>
 #include <intrin.h>
 
+// Try to determine which is the compiler.
+#if defined(__clang__)
+#   define AFX_COMPILER_CLANG
+#elif defined(__GNUC__)
+#   define AFX_COMPILER_GCC
+#elif defined(_MSC_VER)
+#   define AFX_COMPILER_MSVC
+#endif
+#if defined(__MINGW64__) || defined (__MINGW32__)
+#   define AFX_COMPILER_MINGW
+#endif
+
 // Detect x64 architecture.
 #if defined(_M_X64) || defined(__x86_64__) || defined(__amd64__)
 #   define AFX_ARCH_X64 1
@@ -436,5 +448,93 @@ typedef sig_atomic_t    afxAtomic;
 #       define AFX_MAX_SIMD_REGISTERS (8)
 #   endif
 #endif//AFX_MAX_SIMD_REGISTERS
+
+// Count the number of bits set in a value.
+static inline afxUnit AfxCountBits(afxUnit32 inValue)
+{
+#if defined(AFX_COMPILER_CLANG) || defined(AFX_COMPILER_GCC)
+    return __builtin_popcount(inValue);
+#elif defined(AFX_COMPILER_MSVC)
+#   if defined(AFX_ISA_SSE4_2)
+    return _mm_popcnt_u32(inValue);
+#   elif defined(AFX_ISA_NEON) && (_MSC_VER >= 1930) // _CountOneBits not available on MSVC2019
+    return _CountOneBits(inValue);
+#   else
+    inValue = inValue - ((inValue >> 1) & 0x55555555);
+    inValue = (inValue & 0x33333333) + ((inValue >> 2) & 0x33333333);
+    inValue = (inValue + (inValue >> 4)) & 0x0F0F0F0F;
+    return (inValue * 0x01010101) >> 24;
+#   endif
+#else
+#   error Unsupported
+#endif
+}
+
+// Compute the number of leading zero bits (how many high bits are zero).
+static inline afxUnit AfxCountLeadingZeros(afxUnit32 inValue)
+{
+#if defined(AFX_ISA_X86) || defined(AFX_ISA_WASM)
+#if defined(AFX_ISA_LZCNT)
+    return _lzcnt_u32(inValue);
+#elif defined(AFX_COMPILER_MSVC)
+    if (inValue == 0) return 32;
+    unsigned long result;
+    _BitScanReverse(&result, inValue);
+    return 31 - result;
+#else
+    if (inValue == 0) return 32;
+    return __builtin_clz(inValue);
+#endif
+#elif defined(AFX_ISA_ARM)
+#if defined(AFX_COMPILER_MSVC)
+    return _CountLeadingZeros(inValue);
+#else
+    return __builtin_clz(inValue);
+#endif
+#elif defined(AFX_ISA_E2K) || defined(AFX_ISA_RISCV) || defined(AFX_ISA_PPC) || defined(ISA_AFX_LOONGARCH)
+    return inValue ? __builtin_clz(inValue) : 32;
+#else
+#error Undefined
+#endif
+}
+
+// Compute number of trailing zero bits (how many low bits are zero).
+static inline afxUnit AfxCountTrailingZeros(afxUnit32 inValue)
+{
+#if defined(AFX_ISA_X86) || defined(AFX_ISA_WASM)
+#if defined(AFX_ISA_TZCNT)
+    return _tzcnt_u32(inValue);
+#elif defined(AFX_COMPILER_MSVC)
+    if (inValue == 0)
+        return 32;
+    unsigned long result;
+    _BitScanForward(&result, inValue);
+    return result;
+#else
+    if (inValue == 0) return 32;
+    return __builtin_ctz(inValue);
+#endif
+#elif defined(AFX_ISA_ARM)
+#if defined(AFX_COMPILER_MSVC)
+    if (inValue == 0) return 32;
+    unsigned long result;
+    _BitScanForward(&result, inValue);
+    return result;
+#else
+    if (inValue == 0) return 32;
+    return __builtin_ctz(inValue);
+#endif
+#elif defined(AFX_ISA_E2K) || defined(AFX_ISA_RISCV) || defined(AFX_ISA_PPC) || defined(AFX_ISA_LOONGARCH)
+    return inValue ? __builtin_ctz(inValue) : 32;
+#else
+#error Undefined
+#endif
+}
+
+// Get the next higher power of 2 of a value, or the value itself if the value is already a power of 2.
+static inline afxUnit32 AfxGetNextPowerOf2(afxUnit32 inValue)
+{
+    return inValue <= 1 ? (afxUnit32)1 : (afxUnit32)1 << (32 - AfxCountLeadingZeros(inValue - 1));
+}
 
 #endif//AFX_PLATFORM_DEFS_H

@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -34,7 +34,7 @@
 
 AFX_DEFINE_STRUCT(_auxImplementation)
 {
-    afxClassConfig vduCls;
+    afxClassConfig dpyCls;
     afxClassConfig envCls;
     afxError(*getInteropDoutCls)(afxDrawSystem dsys, afxString const* tool, afxClassConfig* cfg);
     afxError(*getInteropSinkCls)(afxMixSystem msys, afxString const* tool, afxClassConfig* cfg);
@@ -48,7 +48,7 @@ AUX afxError _AuxIcdGetInteropSinkClass(afxMixSystem msys, afxString const* tool
 
 AUX afxClass const* _AuxIcdGetHidClass(afxModule icd);
 AUX afxClass const* _AuxIcdGetSshClass(afxModule icd);
-AVX afxClass const* _AuxIcdGetDpyClass(afxModule icd);
+AUX afxClass const* _AuxIcdGetDpyClass(afxModule icd);
 
 
 AUX afxError _AuxRegisterHids(afxModule icd, afxUnit cnt, afxHidInfo const infos[], afxHid hids[]);

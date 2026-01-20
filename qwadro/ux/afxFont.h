@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #ifndef AUX_FONT_H
 #define AUX_FONT_H
@@ -38,9 +38,10 @@ AFX_DEFINE_STRUCT(afxFontConfig)
 
 AUX afxError AfxAcquireFonts
 (
-    afxUnit             cnt, 
-    afxFontConfig const cfg[], 
-    afxFont             fonts[]
+    afxEnvironment env,
+    afxUnit cnt,
+    afxFontConfig const cfg[],
+    afxFont fonts[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////

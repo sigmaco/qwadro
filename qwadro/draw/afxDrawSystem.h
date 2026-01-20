@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 // QWADRO is an open-source coalition of libraries that supports rapid development of software that deals with 4D data.
 // The QWADRO frontend exposes a set of carefully selected data structures and algorithms in C.

@@ -5,6 +5,7 @@ Vendor=SIGMA Technology Group
 Href=https://sigmaco.org
 FeatureScore=1
 Service=video
+Subsystem=AVX
 DllFile=e2tarzgl4.dll
 Devices=Icd.Devices
 

@@ -18,8 +18,8 @@
  // QWADRO FORMATTED VIDEO MEMORY BUFFER                                     //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_RASTER_H
 #define AVX_RASTER_H
@@ -217,18 +217,19 @@ AFX_DEFINE_STRUCT(avxRasterRegion)
 
 AFX_DEFINE_STRUCT(avxRasterInfo)
 {
-    // A avxFormat describing the format of the data elements in the raster.
-    avxFormat       fmt;
-    // The extent of the raster.
-    avxRange        whd;
-    // The number of mipmaps/upsamples. Default is mipmap.
-    afxUnit         lodCnt;
-    // A bitmask specifying additional parameters of the raster.
-    avxRasterFlags  flags;
     // A bitmask specifying allowed usages of the raster.
     avxRasterUsage  usage;
+    // A bitmask specifying additional parameters of the raster.
+    avxRasterFlags  flags;
+    // The number of mipmaps/upsamples. Default is mipmap.
+    afxUnit         lodCnt;
+    // The extent of the raster.
+    avxRange        whd;
+    // A avxFormat describing the format of the data elements in the raster.
+    avxFormat       fmt;
     // A bitmask of device bridges that will access this buffer.
-    afxMask         exuMask;    
+    afxMask         exuMask;
+
     // A user-defined data.
     void*           udd;
     // A static string specifying a debug tag.
@@ -275,19 +276,20 @@ AVX afxError AvxAcquireExternalRasters
 
 AFX_DEFINE_STRUCT(avxSubrasterInfo)
 {
+    // A bitmask specifying additional parameters of the raster.
+    avxRasterFlags  flags;
     // A avxRaster on which the view will be created.
     avxRaster       ras;
-    // A avxFormat describing the format of the data elements in the raster.
-    avxFormat       fmt;
-    avxSwizzling    swizzle;
     afxUnit         baseLod;
     // The number of mipmaps/upsamples. Default is mipmap.
     afxUnit         lodCnt;
     // The index of the layer to be used as first layer by the subraster.
     afxUnit         baseLayer;
     afxUnit         layerCnt;
-    // A bitmask specifying additional parameters of the raster.
-    avxRasterFlags  flags;
+    // A avxFormat describing the format of the data elements in the raster.
+    avxFormat       fmt;
+    avxSwizzling    swizzle;
+
     // A user-defined data.
     void*           udd;
     // A static string specifying a debug tag.

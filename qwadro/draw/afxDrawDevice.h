@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Qwadro Unified Video Graphics Infrastructure                             //
@@ -588,6 +588,6 @@ AVX afxError AvxDescribeDeviceFormats
 AVX afxUnit         AvxEnumerateVideoPresentationModes(afxSurface dout, afxUnit first, afxUnit cnt, avxPresentFlags modes[]);
 AVX afxUnit         AvxEnumerateVideoOutputFormats(afxSurface dout, afxUnit first, afxUnit cnt, avxFormat formats[]);
 
-AVX afxUnit         AvxEnumerateDisplayModes(afxDrawDevice ddev, afxUnit vdu, afxUnit cnt, avxDisplayMode modes[]);
+AVX afxUnit         AvxEnumerateDisplayModes(afxDrawDevice ddev, afxUnit vdu, afxUnit cnt, afxDisplayMode modes[]);
 
 #endif//AVX_DRAW_DEVICE_H

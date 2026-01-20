@@ -14,28 +14,28 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
-#ifndef ASX_STEP_SYSTEM_H
-#define ASX_STEP_SYSTEM_H
+#ifndef ACX_STEP_SYSTEM_H
+#define ACX_STEP_SYSTEM_H
 
 #include "qwadro/pro/afxStepDevice.h"
 #include "qwadro/pro/afxStepContext.h"
-#include "qwadro/pro/asxBuffer.h"
+#include "qwadro/pro/acxBuffer.h"
 
-#define ASX_MAX_BRIDGES_PER_SYSTEM (32)
+#define ACX_MAX_BRIDGES_PER_SYSTEM (32)
 
-AFX_DEFINE_STRUCT(asxSystemConfig)
+AFX_DEFINE_STRUCT(acxSystemConfig)
 // The system-wide settings and parameters.
 {
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    asxAptitude         caps;
+    acxAptitude         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
     // The features to be enabled.
-    asxFeatures         features;
+    acxFeatures         features;
     // The number of system extensions to be enabled.
     afxUnit             extCnt;
     // An array of Qwadro strings containing the names of extensions to enable for the desired system.
@@ -45,38 +45,38 @@ AFX_DEFINE_STRUCT(asxSystemConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    asxBridgeConfig     exus[ASX_MAX_BRIDGES_PER_SYSTEM];
+    acxBridgeConfig     exus[ACX_MAX_BRIDGES_PER_SYSTEM];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
     afxString           tag;
 };
 
-ASX afxError AsxConfigureStepSystem
+ACX afxError AcxConfigureStepSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver.
     afxUnit icd,
 
     // A configuration structure that holds the parameters required to establish and configure the stepping system.
-    asxSystemConfig* cfg
+    acxSystemConfig* cfg
 );
 
 /*
-    The AsxEstablishStepSystem() function establishes a new stepping system based on a specific driver and configuration.
+    The AcxEstablishStepSystem() function establishes a new stepping system based on a specific driver and configuration.
     It provides the ability to establish a system for rendering and stepping operations, allowing for further interaction
     with the synthesis pipeline (such as rendering, resource management, and more). This function is often used during the
     initialization phase of an application to prepare the system for tasks.
 */
 
-ASX afxError AsxEstablishStepSystem
+ACX afxError AcxEstablishStepSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver
     afxUnit icd, 
 
     // A configuration structure that holds the parameters required to establish and configure the stepping system.
-    asxSystemConfig const* cfg, 
+    acxSystemConfig const* cfg, 
 
     // A pointer to an afxMixSystem where the created stepping system will be stored. 
     // The function will populate this pointer with the reference to the newly established stepping system.
@@ -84,13 +84,13 @@ ASX afxError AsxEstablishStepSystem
 );
 
 /*
-    The AsxEnumerateStepSystems() function enumerates stepping systems established by a given installable client driver (ICD).
+    The AcxEnumerateStepSystems() function enumerates stepping systems established by a given installable client driver (ICD).
     By specifying a starting index and a count of systems to retrieve, you can query and retrieve information about the
     established stepping systems. This functionality is useful when your application needs to detect and interact with
     multiple systems, providing a way to select the best system for rendering.
 */
 
-ASX afxUnit AsxEnumerateStepSystems
+ACX afxUnit AcxEnumerateStepSystems
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
@@ -109,13 +109,13 @@ ASX afxUnit AsxEnumerateStepSystems
 );
 
 /*
-    The AsxInvokeStepSystems() function performs custom actions on a set of stepping systems established by a given ICD.
+    The AcxInvokeStepSystems() function performs custom actions on a set of stepping systems established by a given ICD.
     By specifying a callback function, you can iterate over multiple stepping systems and apply specific logic to each system.
     This is useful when you need to perform system-specific operations, such as querying, configuring, or logging properties
     for each stepping system. The function provides a robust mechanism for handling multiple systems in a streamlined way.
 */
 
-ASX afxUnit AsxInvokeStepSystems
+ACX afxUnit AcxInvokeStepSystems
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
@@ -136,13 +136,13 @@ ASX afxUnit AsxInvokeStepSystems
 );
 
 /*
-    The AsxEvokeStepSystems() function retrieves and process stepping systems in one go.
+    The AcxEvokeStepSystems() function retrieves and process stepping systems in one go.
     It not only retrieves the systems but also invokes a callback function on each one to determine when push it to the @systems array,
     enabling you to perform custom logic while working with the retrieved systems.
     This function is useful when you need to both enumerate stepping systems and apply specific actions or checks to each system.
 */
 
-ASX afxUnit AsxEvokeStepSystems
+ACX afxUnit AcxEvokeStepSystems
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
@@ -169,19 +169,19 @@ ASX afxUnit AsxEvokeStepSystems
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
-    The AsxGetStepSystemIcd() function retrieves the ICD (Installable Client Driver) running a specific stepping system.
+    The AcxGetStepSystemIcd() function retrieves the ICD (Installable Client Driver) running a specific stepping system.
     This allows the application to determine which implementation is being used for the stepping system and to perform
     further actions with the corresponding driver or module.
 */
 
-ASX afxModule AsxGetStepSystemIcd
+ACX afxModule AcxGetStepSystemIcd
 (
     // The stepping system for which the ICD is being queried.
     afxStepSystem ssys
 );
 
 /*
-    The AsxGetStepBridges() function retrieves stepping bridges for a established stepping system.
+    The AcxGetStepBridges() function retrieves stepping bridges for a established stepping system.
     Mixing bridges are components that link and provide communication between an established system and its working devices.
     This function allows applications to query and retrieve information about the established bridges,
     which can be useful when dealing with systems that involve multiple hardware/software interfaces.
@@ -189,7 +189,7 @@ ASX afxModule AsxGetStepSystemIcd
     Returns the number of arranged bridges. If @bridges is NIL, it returns the total number of bridges from the base index.
 */
 
-ASX afxUnit AsxGetStepBridges
+ACX afxUnit AcxGetStepBridges
 (
     // The established stepping system.
     afxStepSystem ssys, 
@@ -205,14 +205,14 @@ ASX afxUnit AsxGetStepBridges
 );
 
 /*
-    The AsxChooseStepBridges() function provides a way to select specific stepping bridges in an established stepping system,
+    The AcxChooseStepBridges() function provides a way to select specific stepping bridges in an established stepping system,
     filtered by device ID. The function returns the selected bridges in an array and allows the application
     to filter the available bridges based on the provided indices. This is useful for applications that need to work
     with multiple bridges or interfaces between components in a stepping system, such as managing communication between
     the CPU and GPU or between different parts of the synthesis pipeline.
 */
 
-ASX afxUnit AsxChooseStepBridges
+ACX afxUnit AcxChooseStepBridges
 (
     // The established stepping system.
     afxStepSystem ssys, 
@@ -221,7 +221,7 @@ ASX afxUnit AsxChooseStepBridges
     afxUnit mdevId,
 
     // An optional bitmask describing the stepping device's port capabilities for which bridges must be linked against. 
-    asxAptitude caps,
+    acxAptitude caps,
 
     afxMask exuMask,
 
@@ -236,7 +236,7 @@ ASX afxUnit AsxChooseStepBridges
 );
 
 /*
-    The AsxWaitForStepSystem() function waits for a stepping system to become ready, ensuring synchronization between the
+    The AcxWaitForStepSystem() function waits for a stepping system to become ready, ensuring synchronization between the
     application and the synthesis context. It is particularly useful for managing asynchronous tasks or ensuring the system
     is in a stable state before proceeding with further operations. It provides a way to wait for completion or readiness
     while managing timeouts for better control over the execution flow.
@@ -244,7 +244,7 @@ ASX afxUnit AsxChooseStepBridges
     If the system is not ready within the given @timeout, the function may return an error or a timeout code.
 */
 
-ASX afxError AsxWaitForStepSystem
+ACX afxError AcxWaitForStepSystem
 (
     // The stepping system that you want to wait for.
     afxStepSystem ssys, 
@@ -256,7 +256,7 @@ ASX afxError AsxWaitForStepSystem
 );
 
 /*
-    The AsxWaitForStepBridges() function waits for a specific bridge in a stepping system to become ready or finish its operation.
+    The AcxWaitForStepBridges() function waits for a specific bridge in a stepping system to become ready or finish its operation.
     It is useful for synchronizing tasks in synthesis pipelines or handling communication between multiple devices.
     By providing a timeout, it ensures that the function does not block indefinitely and allows you to proceed with other
     operations if the bridge does not become ready in time. This function is useful in contexts where bridges or execution
@@ -265,7 +265,7 @@ ASX afxError AsxWaitForStepSystem
     If the bridge does not reach the ready state within the timeout, the function might return an error.
 */
 
-ASX afxError AsxWaitForStepBridges
+ACX afxError AcxWaitForStepBridges
 (
     // The stepping system to which the specific bridge belongs.
     afxStepSystem ssys, 
@@ -281,7 +281,7 @@ ASX afxError AsxWaitForStepBridges
 );
 
 /*
-    The AsxWaitForStepQueue() function waits for a specific queue in a stepping system to become ready or finish its tasks.
+    The AcxWaitForStepQueue() function waits for a specific queue in a stepping system to become ready or finish its tasks.
     It is useful for managing synchronization in systems that utilize multiple command queues, ensuring that one queue's
     operations are complete before continuing with the next phase of processing. The timeout parameter provides control
     over how long to wait, preventing the system from hanging indefinitely.
@@ -289,7 +289,7 @@ ASX afxError AsxWaitForStepBridges
     If the queue does not become ready within this time frame, the function will return an error.
 */
 
-ASX afxError AsxWaitForStepQueue
+ACX afxError AcxWaitForStepQueue
 (
     // The stepping system that contains the queue.
     afxStepSystem ssys, 
@@ -308,10 +308,10 @@ ASX afxError AsxWaitForStepQueue
     afxUnit queId
 );
 
-ASX void AsxGetEnabledSystemFeatures
+ACX void AcxGetEnabledSystemFeatures
 (
     afxStepSystem ssys, 
-    asxFeatures* features
+    acxFeatures* features
 );
 
-#endif//ASX_STEP_SYSTEM_H
+#endif//ACX_STEP_SYSTEM_H

@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 //#define _AFX_DEVICE_C
@@ -387,6 +387,38 @@ _AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresent
     return err;
 }
 
+_AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption captions[])
+{
+    afxError err = { 0 };
+    // @dexu must be a valid afxDrawBridge handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(captions);
+
+    afxDrawQueue dque;
+    afxUnit queIdx = 0;
+    afxBool queued = FALSE;
+    while (AvxGetDrawQueues(dexu, queIdx++, 1, &dque))
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_DQUE, 1, &dque);
+
+        afxError err2 = _AvxDqueCaptureBuffers(dque, cnt, captions);
+
+        if (!err2)
+        {
+            queued = TRUE;
+            break; // while
+        }
+
+        if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+            continue; // while
+
+        err = err2;
+        AfxThrowError();
+    }
+    return err;
+}
+
 _AVX _avxDdiDexu const _AVX_DDI_DEXU =
 {
     .pingCb = _AvxDexu_PingCb
@@ -408,6 +440,7 @@ _AVX afxError _AvxDexuDtorCb(afxDrawBridge dexu)
         while (AfxIsThreadRunning(dexu->worker))
         {
             AfxRequestThreadInterruption(dexu->worker);
+            dexu->ddi->pingCb(dexu, 0);
         }
         afxInt exitCode;
         AfxWaitForThreadExit(dexu->worker, &exitCode);

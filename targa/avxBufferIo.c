@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 #define _AVX_BUFFER_C
@@ -25,7 +25,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError AvxDumpBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], void* dst, afxMask exuMask)
+_AVX afxError AvxDumpBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], void* dst, afxMask exuMask, avxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
@@ -47,6 +47,7 @@ _AVX afxError AvxDumpBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[
     // Prepare the transfer structure for the dump operation
     avxTransference transfer = { 0 };
     transfer.exuMask = exuMask;
+    transfer.signal = signal;
     transfer.srcFcc = afxFcc_BUF;
     transfer.src.buf = buf;
     transfer.dst.dst = dst;
@@ -74,7 +75,7 @@ _AVX afxError AvxDumpBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[
     return err;
 }
 
-_AVX afxError AvxUpdateBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], void const* src, afxMask exuMask)
+_AVX afxError AvxUpdateBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], void const* src, afxMask exuMask, avxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
@@ -96,6 +97,7 @@ _AVX afxError AvxUpdateBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const op
     // Prepare the transfer structure
     avxTransference transfer = { 0 };
     transfer.exuMask = exuMask;
+    transfer.signal = signal;
     transfer.dstFcc = afxFcc_BUF;
     transfer.dst.buf = buf;
     transfer.src.src = src;
@@ -125,7 +127,7 @@ _AVX afxError AvxUpdateBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const op
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError AvxUploadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], afxStream in, afxMask exuMask)
+_AVX afxError AvxUploadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], afxStream in, afxMask exuMask, avxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
@@ -144,6 +146,7 @@ _AVX afxError AvxUploadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const op
     // Prepare a transfer structure for the operation
     avxTransference transfer = { 0 };
     transfer.exuMask = exuMask;
+    transfer.signal = signal;
     transfer.dstFcc = afxFcc_BUF;
     transfer.srcFcc = afxFcc_IOB;
     transfer.dst.buf = buf;
@@ -171,7 +174,7 @@ _AVX afxError AvxUploadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const op
     return err;
 }
 
-_AVX afxError AvxDownloadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], afxStream out, afxMask exuMask)
+_AVX afxError AvxDownloadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const ops[], afxStream out, afxMask exuMask, avxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
@@ -190,6 +193,7 @@ _AVX afxError AvxDownloadBuffer(avxBuffer buf, afxUnit opCnt, avxBufferIo const 
     // Prepare the transfer structure for the download operation
     avxTransference transfer = { 0 };
     transfer.exuMask = exuMask;
+    transfer.signal = signal;
     transfer.srcFcc = afxFcc_BUF;
     transfer.dstFcc = afxFcc_IOB;
     transfer.src.buf = buf;
@@ -580,7 +584,7 @@ _AVX afxError AvxCohereMappedBuffers(afxDrawSystem dsys, afxBool invalidate, afx
     return err;
 }
 
-_AVX afxError AvxCopyBuffers(afxDrawSystem dsys, afxMask exuMask, afxUnit cnt, avxBufferedCopy const ops[])
+_AVX afxError AvxCopyBuffers(afxDrawSystem dsys, afxMask exuMask, afxUnit cnt, avxBufferedCopy const ops[], avxFence signal)
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -608,6 +612,7 @@ _AVX afxError AvxCopyBuffers(afxDrawSystem dsys, afxMask exuMask, afxUnit cnt, a
         // Prepare the transfer structure
         avxTransference transfer = { 0 };
         transfer.exuMask = exuMask;
+        transfer.signal = signal;
         transfer.dstFcc = afxFcc_BUF;
         transfer.srcFcc = afxFcc_BUF;
         transfer.dst.buf = dst;

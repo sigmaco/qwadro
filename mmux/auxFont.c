@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AUX_UX_C
 #define _AUX_FONT_C
@@ -322,20 +322,14 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         afxDrawSystem dsys = cfg->dsys;
 
         // DEVICE FONT STUFF
-
+        
         avxVertexInput vin;
         avxVertexLayout vlay = { 0 };
         vlay.binCnt = 1;
-        vlay.bins[0].attrCnt = 3;
-        vlay.bins[0].instRate = 1;
-        vlay.attrs[0].location = 0;
-        vlay.attrs[0].fmt = avxFormat_RG32f;
-        vlay.attrs[1].location = 1;
-        vlay.attrs[1].offset = 8;
-        vlay.attrs[1].fmt = avxFormat_RG32f;
-        vlay.attrs[2].location = 2;
-        vlay.attrs[2].offset = 16;
-        vlay.attrs[2].fmt = avxFormat_RGBA8un;
+        vlay.bins[0] = AVX_VERTEX_STREAM(0, 0, 1, 0, 3);
+        vlay.attrs[0] = AVX_VERTEX_ATTR(0,  0, avxFormat_RG32f);
+        vlay.attrs[1] = AVX_VERTEX_ATTR(1,  8, avxFormat_RG32f);
+        vlay.attrs[2] = AVX_VERTEX_ATTR(2, 16, avxFormat_RGBA8un);
         AvxAcquireVertexInputs(dsys, 1, &vlay, &vin);
         AFX_ASSERT_OBJECTS(afxFcc_VIN, 1, &vin);
 
@@ -435,16 +429,9 @@ _AUX afxClassConfig const _AUX_FNT_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError AfxAcquireFonts(afxUnit cnt, afxFontConfig const cfg[], afxFont fonts[])
+_AUX afxError AfxAcquireFonts(afxEnvironment env, afxUnit cnt, afxFontConfig const cfg[], afxFont fonts[])
 {
     afxError err = { 0 };
-
-    afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
-    {
-        AfxThrowError();
-        return err;
-    }
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (!cfg)
@@ -465,11 +452,14 @@ _AUX afxError AfxAcquireFonts(afxUnit cnt, afxFontConfig const cfg[], afxFont fo
     return err;
 }
 
-_AUX afxError AfxLoadFonts(afxUnit cnt, afxUri const uri[], afxFont fonts[])
+_AUX afxError AfxLoadFonts(afxEnvironment env, afxUnit cnt, afxUri const uri[], afxFont fonts[])
 {
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     afxUri uri2;
     AfxMakeUri(&uri2, 0, "//./z/video/font-256.tga", 0);
     //AvxLoadRasters(dsys, avxRasterUsage_TEXTURE, NIL, 1, &uri2, &dsys->fntRas);
+
 
 }

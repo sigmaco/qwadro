@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AFX_CORE_C
 #define _AFX_SYSTEM_C
@@ -24,27 +24,18 @@
 #define _AUX_ENVIRONMENT_C
 #define _AUX_WINDOW_C
 #include "auxIcd.h"
-#include "../qwadro_xss/src/xss.h"
+#include "../xss/xss.h"
 
 // TODO move to afxSystem.
+// TODO TLS it
  _AUX afxEnvironment gActiveEnv = NIL;
+
+AUX xssConsoleCrateInfo envXssCrates[];
 
 _AUX afxUnit AfxGetEnvironmentId(afxEnvironment env)
 {
     afxError err = { 0 };
     return env ? AfxGetObjectId(env) : 0;
-}
-
-_AUX afxBool AfxGetEnvironment(afxEnvironment* environment)
-{
-    afxError err = { 0 };
-    afxEnvironment env = gActiveEnv;
-    AFX_TRY_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-
-    if (environment)
-        *environment = env;
-
-    return !!env;
 }
 
 _AUX afxClass const* _AuxEnvGetWndClass(afxEnvironment env)
@@ -71,15 +62,6 @@ _AUX afxClass const* _AuxEnvGetThemClass(afxEnvironment env)
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     afxClass const* cls = &env->themCls;
     AFX_ASSERT_CLASS(cls, afxFcc_THEM);
-    return cls;
-}
-
-_AUX afxClass const* _AuxEnvGetXssClass(afxEnvironment env)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-    afxClass const* cls = &env->xssCls;
-    AFX_ASSERT_CLASS(cls, afxFcc_XSS);
     return cls;
 }
 
@@ -121,39 +103,66 @@ _AUX afxError AfxDrawBackgroundEXT(afxDrawContext dctx, afxFlags flags)
     return env->ddi->drawBgCb(env, dctx, flags);
 }
 
-_AUX afxBool AfxGetEnvironmentVideo(afxDrawSystem* system)
+_AUX afxBool AfxGetConsole(afxEnvironment env, afxConsole* console)
 {
     afxError err = { 0 };
-
-    afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-
-    afxDrawSystem dsys = env->dsys;
-    if (system) *system = dsys;
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    return !!dsys;
+    afxConsole con = env->con;
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_XSS, 1, &con);
+    AFX_ASSERT(console);
+    *console = con;
+    return !!con;
 }
 
-_AUX afxBool AfxGetEnvironmentAudio(afxMixSystem* system, afxSink* sink)
+_AUX afxBool AfxGetEnvironmentAvx(afxEnvironment env, afxDrawSystem* system, afxSurface* surface)
 {
     afxError err = { 0 };
-
-    afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-
-    afxMixSystem msys = env->msys;
-    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
-    AFX_ASSERT(system || sink);
+    AFX_ASSERT(system || surface);
+    afxBool rslt = 0;
 
     if (system)
+    {
+        afxDrawSystem dsys = env->dsys;
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+        *system = dsys;
+        rslt |= AFX_BITMASK(0);
+    }
+
+    if (surface)
+    {
+        afxSurface dout = NIL;
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+        *surface = dout;
+        rslt |= AFX_BITMASK(1);
+    }
+
+    return rslt;
+}
+
+_AUX afxBool AfxGetEnvironmentAmx(afxEnvironment env, afxMixSystem* system, afxSink* sink)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    AFX_ASSERT(system || sink);
+    afxBool rslt = 0;
+
+    if (system)
+    {
+        afxMixSystem msys = env->msys;
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
         *system = msys;
+        rslt |= AFX_BITMASK(0);
+    }
 
     if (sink)
-        *sink = env->aso;
-
-    return !!msys;
+    {
+        afxSink snk = env->aso;
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_ASIO, 1, &snk);
+        *sink = snk;
+        rslt |= AFX_BITMASK(1);
+    }
+    return rslt;
 }
 
 _AUX afxBool AfxHasClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags)
@@ -361,8 +370,6 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
         afxClassConfig themClsCfg = cfg->themClsCfg ? *cfg->themClsCfg : _AUX_THEM_CLASS_CONFIG;
         AfxMountClass(&env->themCls, NIL, &env->classes, &themClsCfg);
 
-        afxClassConfig xssClsCfg = cfg->xssClsCfg ? *cfg->xssClsCfg : (afxClassConfig) { 0 };
-        AfxMountClass(&env->xssCls, NIL, &env->classes, &xssClsCfg);
     }
 
     afxUnit dwmCnt = 1;
@@ -495,10 +502,16 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
                     AfxDismountStorageUnit('d', &location, afxFileFlag_RWX);
             }
 
-            LunaConfiguration vmCfg = { 0 };
-            xssInitConfiguration(&vmCfg);
-            vmCfg.parent = NIL;// sysVm;
-            env->vm = xssCreateVm(&vmCfg);
+            afxConsole con;
+            afxConsoleConfig conCfg = { 0 };
+            conCfg.crates = envXssCrates;
+
+            if (AfxAcquireConsole(&conCfg, &con))
+            {
+                AfxThrowError();
+            }
+
+            env->con = con;
 
             if (err)
             {
@@ -541,14 +554,17 @@ _AUX afxError AfxConfigureEnvironment(afxUnit icd, afxEnvironmentConfig const* c
         return err;
     }
 
-    afxModule driver;
-    if (!_AuxGetIcd(icd, &driver))
+    if (icd != AFX_INVALID_INDEX)
     {
-        AfxThrowError();
-        return err;
+        afxModule drv;
+        if (!_AuxGetIcd(icd, &drv))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AUX));
     }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &driver);
-    AFX_ASSERT(AfxTestModule(driver, afxModuleFlag_ICD | afxModuleFlag_AUX));
 
     if (cfg->dsys)
     {
@@ -577,32 +593,36 @@ _AUX afxError AfxAcquireEnvironment(afxUnit icd, afxEnvironmentConfig const* cfg
         return err;
     }
 
-    afxModule driver;
-    if (!_AuxGetIcd(icd, &driver))
-    {
-        AfxThrowError();
-        return err;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &driver);
-    AFX_ASSERT(AfxTestModule(driver, afxModuleFlag_ICD | afxModuleFlag_AUX));
+    afxClass* envCls = NIL;
+    afxModule drv = NIL;
 
-#if 0
-    afxShell ssh;
-    AFX_ASSERT(cfg->sshId != AFX_INVALID_INDEX);
-    if (!AfxEnumerateShells(icd, cfg->sshId, 1, &ssh))
+    if (icd != AFX_INVALID_INDEX)
     {
-        AfxThrowError();
-        return err;
+        if (!_AuxGetIcd(icd, &drv))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AUX));
+
+        envCls = (afxClass*)_AuxIcdGetEnvClass(drv);
+        AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
     }
-
-    AFX_ASSERT_OBJECTS(afxFcc_SSH, 1, &ssh);
-
-    if (AfxCallDevice((afxDevice)ssh, 1, NIL))
+    else
     {
-        AfxThrowError(); // let the device build its DPUs.
-        return err;
+        static afxBool clsInited = FALSE;
+        static afxClass staticEnvCls = { 0 };
+
+        if (!clsInited)
+        {
+            AfxMountClass(&staticEnvCls, NIL, NIL, &_AUX_ENV_CLASS_CONFIG);
+            clsInited = TRUE;
+        }
+
+        envCls = &staticEnvCls;
+        AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
     }
-#endif
 
     _auxEnvAcq cfg2 = { 0 };
 
@@ -618,11 +638,10 @@ _AUX afxError AfxAcquireEnvironment(afxUnit icd, afxEnvironmentConfig const* cfg
     cfg2.udd = cfg->udd;
     cfg2.name = cfg->name;
 
-    afxClass* cls = (afxClass*)_AuxIcdGetEnvClass(driver);
-    AFX_ASSERT_CLASS(cls, afxFcc_ENV);
+    AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
 
     afxEnvironment env;
-    if (AfxAcquireObjects(cls, 1, (afxObject*)&env, (void const*[]) { driver, &cfg2, NIL }))
+    if (AfxAcquireObjects(envCls, 1, (afxObject*)&env, (void const*[]) { drv, &cfg2, NIL }))
     {
         AfxThrowError();
         return err;
@@ -632,4 +651,16 @@ _AUX afxError AfxAcquireEnvironment(afxUnit icd, afxEnvironmentConfig const* cfg
     *environment = env;
 
     return err;
+}
+
+_AUX afxBool AfxGetEnvironment(afxEnvironment* environment)
+{
+    afxError err = { 0 };
+    afxEnvironment env = gActiveEnv;
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (environment)
+        *environment = env;
+
+    return !!env;
 }

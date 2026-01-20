@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 #define _AVX_BUFFER_C
@@ -232,9 +232,9 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
     afxDrawSystem dsys = AvxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    avxBufferInfo const *bufi = args[1] ? ((avxBufferInfo const *)args[1]) + invokeNo : NIL;
+    avxBufferInfo const* bufi = args[1] ? ((avxBufferInfo const*)args[1]) + invokeNo : NIL;
     AFX_ASSERT(bufi && bufi->size && bufi->usage);
-    avxMetabufferInfo const* sub = args[2] ? ((avxMetabufferInfo const *)args[2]) + invokeNo : NIL;
+    avxMetabufferInfo const* sub = args[2] ? ((avxMetabufferInfo const*)args[2]) + invokeNo : NIL;
 
     buf->tag = bufi->tag;
     buf->udd = bufi->udd;
@@ -252,8 +252,8 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
             return err;
         }
 
-        afxSize from = sub->from;
-        afxSize range = sub->range;
+        afxSize from = sub->bufBase;
+        afxSize range = sub->bufRange;
         afxSize srcCap = AvxGetBufferCapacity(base, 0);
         AFX_ASSERT_RANGE(srcCap, from, range);
 
@@ -290,7 +290,7 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
         buf->usage = base->usage;
         buf->flags = base->flags;
-        buf->sharingMask = base->sharingMask;
+        buf->exuMask = base->exuMask;
 
         buf->storage[0] = base->storage[0];
         buf->storageOffset = base->storageOffset;
@@ -328,10 +328,10 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
     if (err) return err;
 
     afxUnit exuCnt = 16; // TODO Get it from DSYS
-    buf->sharingMask = NIL;
+    buf->exuMask = NIL;
     for (afxUnit i = 0; i < exuCnt; i++)
     {
-        buf->sharingMask |= bufi->sharingMask & AFX_BITMASK(i);
+        buf->exuMask |= bufi->exuMask & AFX_BITMASK(i);
     }
 
     // STORAGE
@@ -359,7 +359,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_BUF =
 {
     .fcc = afxFcc_BUF,
     .name = "Buffer",
-    .desc = "Video Buffer", // AVX Buffer
+    .desc = "Video Memory Buffer", // AVX Buffer
     .fixedSiz = sizeof(AFX_OBJECT(avxBuffer)),
     .ctor = (void*)_AvxBufCtorCb,
     .dtor = (void*)_AvxBufDtorCb
@@ -428,7 +428,7 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 
         AFX_ASSERT(buf->reqSiz >= bufi->size);
         AFX_ASSERT((buf->flags & bufi->flags) == bufi->flags);
-        AFX_ASSERT(buf->sharingMask == bufi->sharingMask);
+        AFX_ASSERT(buf->exuMask == bufi->exuMask);
         AFX_ASSERT(buf->udd == bufi->udd);
         AFX_ASSERT((buf->usage & bufi->usage) == bufi->usage);
         AFX_ASSERT(buf->tag.start == bufi->tag.start);
@@ -476,7 +476,7 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
                 iop.srcStride = 1;
                 iop.dstStride = 1;
                 iop.rowCnt = bufi->dataSiz;
-                if (AvxUpdateBuffer(buf, 1, &iop, bufi->data, 0))
+                if (AvxUpdateBuffer(buf, 1, &iop, bufi->data, 0, NIL))
                 {
                     AfxThrowError();
                     break;
@@ -539,10 +539,10 @@ _AVX afxError AvxReacquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxMetabuffer
         avxMetabufferInfo const* bufi = &infos[i];
 
         AFX_ASSERT(buf->base == bufi->buf);
-        AFX_ASSERT(buf->reqSiz >= bufi->range);
+        AFX_ASSERT(buf->reqSiz >= bufi->bufRange);
         AFX_ASSERT((buf->flags & bufi->flags) == bufi->flags);
         AFX_ASSERT(buf->fmt == bufi->fmt);
-        AFX_ASSERT(buf->from == bufi->from);
+        AFX_ASSERT(buf->from == bufi->bufBase);
         AFX_ASSERT(buf->udd == bufi->udd);
         AFX_ASSERT(buf->tag.start == bufi->tag.start);
     }

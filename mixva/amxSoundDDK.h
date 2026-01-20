@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_SOUND_DDK_H
 #define AMX_SOUND_DDK_H
@@ -53,7 +53,7 @@ AFX_OBJECT(amxSound)
         afxInt          currIterIdx;
         afxInt          iterCnt;
         afxReal         currWeight;
-        //arxCapstanTiming  timing;
+        //arxPulleyTiming  timing;
         afxUnit32       easeInValues;
         afxUnit32       easeOutValues;
         void*           userData[4];

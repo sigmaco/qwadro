@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\mirage\scene\arxIcd.h" />
+    <ClInclude Include="..\..\qwadro\anim\arxAnimation.h" />
+    <ClInclude Include="..\..\qwadro\anim\arxPuppet.h" />
+    <ClInclude Include="..\..\qwadro\anim\arxPulley.h" />
+    <ClInclude Include="..\..\qwadro\anim\arxCurve.h" />
+    <ClInclude Include="..\..\qwadro\anim\arxGesture.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxMaterial.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxMesh.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxMeshFactory.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxMeshIo.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxModel.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxPose.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxSkeleton.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxTerrain.h" />
+    <ClInclude Include="..\..\qwadro\cad\arxTriangulation.h" />
+    <ClInclude Include="..\..\qwadro\coll\arxBvh.h" />
+    <ClInclude Include="..\..\qwadro\coll\arxCollider.h" />
+    <ClInclude Include="..\..\qwadro\coll\arxCollision.h" />
+    <ClInclude Include="..\..\qwadro\coll\arxOctree.h" />
+    <ClInclude Include="..\..\qwadro\coll\arxQuadtree.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxIrisDefs.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxRenderPuppet.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxRenderContext.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxRenderer.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxRenderModel.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxRenderTerrain.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxTechnique.h" />
+    <ClInclude Include="..\..\qwadro\iris\arxWireframe.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxBuffer.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxBufferizer.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxCamera.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxIllumination.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxNode.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxPosture.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxScenario.h" />
+    <ClInclude Include="..\..\qwadro\scene\arxSky.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxEngine.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxMiscOps.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxPoseOps.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxSampleContext.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxSimBridge.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxSimDefs.h" />
+    <ClInclude Include="..\..\qwadro\sim\arxSimulation.h" />
+    <ClInclude Include="..\..\mirage\anim\arxAnimationDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxPulleyDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxGestureDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxInstancedAnimationDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxMotiveDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxPuppetDDK.h" />
+    <ClInclude Include="..\..\mirage\anim\arxCurveDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxMaterialDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxMeshDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxModelDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxPoseDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxSkeletonDDK.h" />
+    <ClInclude Include="..\..\mirage\cad\arxTerrainDDK.h" />
+    <ClInclude Include="..\..\mirage\iris\arxMaterialShaders.h" />
+    <ClInclude Include="..\..\mirage\iris\arxRenderContextDDK.h" />
+    <ClInclude Include="..\..\mirage\iris\arxWireframeShaders.h" />
+    <ClInclude Include="..\..\mirage\scene\arxCameraDDK.h" />
+    <ClInclude Include="..\..\mirage\scene\arxIlluminationDDK.h" />
+    <ClInclude Include="..\..\mirage\scene\arxBufferDDK.h" />
+    <ClInclude Include="..\..\mirage\scene\arxNodeDDK.h" />
+    <ClInclude Include="..\..\mirage\scene\arxScenarioDDK.h" />
+    <ClInclude Include="..\..\mirage\scene\arxSkyDDK.h" />
+    <ClInclude Include="..\..\mirage\sim\asxImplementation.h" />
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Context.h" />
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Executor.h" />
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Simulation.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="e2mirage.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\qwadro_afx\_vs17\e2coree\e2coree.vcxproj">
+      <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\mirage\anim\arxAnimation.c" />
+    <ClCompile Include="..\..\mirage\anim\arxAnimationIo.c" />
+    <ClCompile Include="..\..\mirage\anim\arxPuppet.c" />
+    <ClCompile Include="..\..\mirage\anim\arxPulley.c" />
+    <ClCompile Include="..\..\mirage\anim\arxCurve.c" />
+    <ClCompile Include="..\..\mirage\anim\arxInstancedAnimation.c" />
+    <ClCompile Include="..\..\mirage\anim\arxGesture.c" />
+    <ClCompile Include="..\..\mirage\anim\arxMotive.c" />
+    <ClCompile Include="..\..\mirage\cad\arxMaterial.c" />
+    <ClCompile Include="..\..\mirage\cad\arxMaterialIo.c" />
+    <ClCompile Include="..\..\mirage\cad\arxMesh.c" />
+    <ClCompile Include="..\..\mirage\cad\arxMeshFactory.c" />
+    <ClCompile Include="..\..\mirage\cad\arxMeshIo.c" />
+    <ClCompile Include="..\..\mirage\cad\arxModel.c" />
+    <ClCompile Include="..\..\mirage\cad\arxModelIo.c" />
+    <ClCompile Include="..\..\mirage\cad\arxPose.c" />
+    <ClCompile Include="..\..\mirage\cad\arxSkeleton.c" />
+    <ClCompile Include="..\..\mirage\cad\arxTerrain.c" />
+    <ClCompile Include="..\..\mirage\cad\arxTriangulation.c" />
+    <ClCompile Include="..\..\mirage\coll\arxBvh.c" />
+    <ClCompile Include="..\..\mirage\coll\arxCollider.c" />
+    <ClCompile Include="..\..\mirage\coll\arxCollision.c" />
+    <ClCompile Include="..\..\mirage\coll\arxOctree.c" />
+    <ClCompile Include="..\..\mirage\coll\arxQuadtree.c" />
+    <ClCompile Include="..\..\mirage\iris\arxMaterialShaders.c" />
+    <ClCompile Include="..\..\mirage\iris\arxIrisDefs.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderPuppet.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderContext.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderer.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderModel.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderNode.c" />
+    <ClCompile Include="..\..\mirage\iris\arxWireframe.c" />
+    <ClCompile Include="..\..\mirage\iris\arxWireframeShaders.c" />
+    <ClCompile Include="..\..\mirage\iris\arxRenderTerrain.c" />
+    <ClCompile Include="..\..\mirage\iris\arxTechnique.c" />
+    <ClCompile Include="..\..\mirage\scene\arxBuffer.c" />
+    <ClCompile Include="..\..\mirage\scene\arxBufferizer.c" />
+    <ClCompile Include="..\..\mirage\scene\arxCamera.c" />
+    <ClCompile Include="..\..\mirage\scene\arxIcd.c" />
+    <ClCompile Include="..\..\mirage\scene\arxIllumination.c" />
+    <ClCompile Include="..\..\mirage\scene\arxBufferDDK.c" />
+    <ClCompile Include="..\..\mirage\scene\arxNode.c" />
+    <ClCompile Include="..\..\mirage\scene\arxPosture.c" />
+    <ClCompile Include="..\..\mirage\scene\arxScenario.c" />
+    <ClCompile Include="..\..\mirage\scene\arxSky.c" />
+    <ClCompile Include="..\..\mirage\sim\arxEngine.c" />
+    <ClCompile Include="..\..\mirage\sim\arxMiscOps.c" />
+    <ClCompile Include="..\..\mirage\sim\arxPoseOps.c" />
+    <ClCompile Include="..\..\mirage\sim\arxSampleContext.c" />
+    <ClCompile Include="..\..\mirage\sim\arxSimBridge.c" />
+    <ClCompile Include="..\..\mirage\sim\arxSimQueue.c" />
+    <ClCompile Include="..\..\mirage\sim\arxSimulation.c" />
+    <ClCompile Include="..\..\mirage\sim\arxXmd.c" />
+    <ClCompile Include="..\..\mirage\sim\asxImplementation.c" />
+    <ClCompile Include="..\..\mirage\sim\asxImpl_Context.c" />
+    <ClCompile Include="..\..\mirage\sim\asxImpl_Executor.c" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{0F78F3C8-D287-4A15-A69B-208B85C038F4}</ProjectGuid>
+    <RootNamespace>e2mirage</RootNamespace>
+    <ProjectName>e2mirage</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>llvm</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>llvm</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>llvm</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>llvm</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)..\qwd\w$(PlatformArchitecture)d\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\qwd\w$(PlatformArchitecture)\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)..\qwd\w$(PlatformArchitecture)d\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)..\qwd\w$(PlatformArchitecture)\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>__e2mirage__;__e2kinee__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>__e2mirage__;__e2kinee__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <PreprocessorDefinitions>__e2mirage__;__e2kinee__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <PreprocessorDefinitions>__e2mirage__;__e2kinee__;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\;$(SolutionDir)..\..\;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\;$(ProjectDir)..\..\..\qwadro;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>-msse4.2 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

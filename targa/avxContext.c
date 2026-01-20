@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AFX_CORE_C
 #define _AFX_DEVICE_C
@@ -63,18 +63,27 @@ _AVX avxContextState _AvxDctxGetStatus(afxDrawContext dctx)
     return dctx->state;
 }
 
-_AVX afxMask AvxGetCommandPort(afxDrawContext dctx)
+_AVX afxMask AvxGetCommandPort(afxDrawContext dctx, afxMask exuMask)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    return dctx->exuMask;
+    return exuMask ? (dctx->exuMask & exuMask) : dctx->exuMask;
+}
+
+_AVX avxAptitude AvxGetCommandAptitude(afxDrawContext dctx, avxAptitude caps)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    return caps ? (dctx->caps & caps) : dctx->caps;
 }
 
 _AVX afxDrawContext AvxGetCommandPool(afxDrawContext dctx)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    return dctx->pool;
+    afxDrawContext pool = dctx->pool;
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &pool);
+    return pool;
 }
 
 _AVX afxError AvxTraverseDrawCommands(afxDrawContext dctx, afxCmdId(*f)(void* udd, void* cmd), void* udd)

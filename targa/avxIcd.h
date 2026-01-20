@@ -18,14 +18,14 @@
  // The Qwadro Video Graphics Infrastructure                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_ICD_H
 #define AVX_ICD_H
 
-#include "../exec/afxSystemDDK.h"
-#include "../io/afxIoDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
+#include "../coree/io/afxIoDDK.h"
 
 #ifdef _AFX_DEBUG
 // hardcoded validation controls
@@ -36,8 +36,8 @@
 
 #include "avxSystemDDK.h"
 #include "avxDeviceDDK.h"
-#include "avxDpuTransference.h"
-#include "avxDpuExecutor.h"
+#include "dpu/avxDpuTransference.h"
+#include "dpu/avxDpuExecutor.h"
 
 AFX_DEFINE_STRUCT(_avxImplementation)
 {
@@ -48,7 +48,7 @@ AFX_DEFINE_STRUCT(_avxImplementation)
 AVX afxClass const* _AvxIcdGetDdevClass(afxModule icd);
 AVX afxClass const* _AvxIcdGetDsysClass(afxModule icd);
 
-AVX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, avxDisplayInfo const infos[], afxDisplay displays[]);
+AVX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[]);
 AVX afxError _AvxIcdRegisterDevices(afxModule icd, afxUnit cnt, _avxDdevReg const infos[], afxDrawDevice devices[]);
 AVX afxError _AvxIcdImplement(afxModule icd, _avxImplementation const* cfg);
 

@@ -15,7 +15,7 @@
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_MIX_QUEUE_H
 #define AMX_MIX_QUEUE_H

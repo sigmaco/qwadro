@@ -18,8 +18,8 @@
  // QWADRO DRAWING DEVICE EXECUTION PIPELINE                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_PIPELINE_H
 #define AVX_PIPELINE_H
@@ -118,8 +118,14 @@ AFX_DEFINE_STRUCT(avxPipelineConfig)
     // The width of rasterized line segments.
     afxReal             lineWidth; // 1.f
 
+    /*
+        I think that we should remove <fmt> from avxColorOutput and place into its own array.
+        Actually, I think it is somehow weird to be in blending ops/color output once <dsFmt> is not.
+        But I have to see that later.
+    */
+
     // --- Depth Bias Computation
-    // When depth bias is enabled, the fragment depth values will be biased according to a specified configuration.
+    // The fragment depth values will be biased.
     afxBool             depthBiasEnabled; // FALSE
     // A scalar factor applied to a fragment's slope in depth bias calculations.
     afxReal             depthBiasSlopeScale; // 0.f
@@ -127,6 +133,8 @@ AFX_DEFINE_STRUCT(avxPipelineConfig)
     afxReal             depthBiasConstFactor; // 0.f
     // The maximum (or minimum) depth bias of a fragment.
     afxReal             depthBiasClamp; // 0.f
+    // The format of depth/stencil surface this pipeline will be compatible with.
+    avxFormat           dsFmt;
 
     // fragment & pixel output operations
     avxMultisampling    ms;
@@ -146,8 +154,6 @@ AFX_DEFINE_STRUCT(avxPipelineConfig)
     // controls whether depth writes are enabled when depthTestEnabled is TRUE. 
     // Depth writes are always disabled when depthTestEnabled is FALSE. 
     afxBool             depthWriteDisabled; // FALSE
-    // is the format of depth/stencil surface this pipeline will be compatible with.
-    avxFormat           dsFmt;
     // depth bounds test
     // Controls whether depth bounds testing is enabled.
     afxBool             depthBoundsTestEnabled;

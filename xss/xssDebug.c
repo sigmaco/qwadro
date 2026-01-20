@@ -2,23 +2,6 @@
 
 #include "xssDebug.h"
 
-void VM_error(xssVm env, LunaErrorType type, const char* module,
-    int line, const char* message) {
-
-    if (type == LUNA_ERROR_COMPILE)
-    {
-        AfxReportError("ERR/CP: %s,%u --- %s", module, line, message);
-    }
-    else if (type == LUNA_ERROR_RUNTIME)
-    {
-        AfxReportError("ERR/RT: %s,%u --- %s", module, line, message);
-    }
-    else if (type == LUNA_ERROR_STACK_TRACE)
-    {
-        AfxReportError("ERR/ST: %s,%u --- %s", module, line, message);
-    }
-}
-
 void xssDebugPrintStackTrace(xssVm env)
 {
   // Bail if the host doesn't enable printing errors.
@@ -27,25 +10,15 @@ void xssDebugPrintStackTrace(xssVm env)
   ObjFiber* fiber = env->fiber;
   if (IS_STRING(fiber->error))
   {
-#if 0
     env->config.errorFn(env, LUNA_ERROR_RUNTIME,
                        NULL, -1, AS_CSTRING(fiber->error));
-#else
-      VM_error(env, LUNA_ERROR_RUNTIME,
-          NULL, -1, AS_CSTRING(fiber->error));
-#endif
   }
   else
   {
     // TODO: Print something a little useful here. Maybe the name of the error's
     // class?
-#if 0
     env->config.errorFn(env, LUNA_ERROR_RUNTIME,
                        NULL, -1, "[error object]");
-#else
-      VM_error(env, LUNA_ERROR_RUNTIME,
-          NULL, -1, "[error object]");
-#endif
   }
 
   for (int i = fiber->numFrames - 1; i >= 0; i--)
@@ -63,15 +36,10 @@ void xssDebugPrintStackTrace(xssVm env)
     
     // -1 because IP has advanced past the instruction that it just executed.
     int line = fn->debug->sourceLines.data[frame->ip - fn->code.data - 1];
-#if 0
+
     env->config.errorFn(env, LUNA_ERROR_STACK_TRACE,
                        fn->module->name->value, line,
                        fn->debug->name);
-#else
-    VM_error(env, LUNA_ERROR_STACK_TRACE,
-        fn->module->name->value, line,
-        fn->debug->name);
-#endif
   }
 }
 

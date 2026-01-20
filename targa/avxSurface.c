@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 //#define _AVX_DRAW_SYSTEM_C
@@ -849,6 +849,83 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
                 }
 
                 afxError err2 = _AvxDexuPresentBuffers(dexu, cnt, presentations);
+                err = err2;
+
+                if (!err2)
+                {
+                    queued = TRUE;
+                    break; // for --- iterate bridges
+                }
+
+                if ((err2 == afxError_TIMEOUT) || (err2 == afxError_BUSY))
+                {
+                    continue;
+                }
+
+                AfxThrowError();
+            }
+
+            if (err || queued)
+                break; // while --- find bridges
+        }
+
+        if (err || queued)
+            break; // for
+    }
+    return err;
+}
+
+_AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption captions[])
+{
+    afxError err = { 0 };
+    // @dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(captions);
+    AFX_ASSERT(cnt);
+
+    for (afxUnit doutIt = 0; doutIt < cnt; doutIt++)
+    {
+        avxCaption* cap = &captions[doutIt];
+
+        afxSurface dout = cap->dout;
+        if (!dout)
+        {
+            AFX_ASSERT(dout);
+            continue;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+
+        afxUnit bufxIdx = cap->bufIdx;
+        if (bufxIdx >= dout->swapCnt)
+        {
+            AFX_ASSERT_RANGE(dout->swapCnt, bufxIdx, 1);
+            continue;
+        }
+
+        afxMask exuMask = cap->exuMask;
+        afxUnit exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, NIL, exuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        afxUnit nextExuIdx = AfxRandom2(0, exuCnt - 1);
+
+        afxBool queued = FALSE;
+
+        while (1)
+        {
+            for (afxUnit exuIdx = nextExuIdx; exuIdx < exuCnt; exuIdx++)
+            {
+                nextExuIdx = 0;
+
+                if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+
+                afxDrawBridge dexu;
+                if (!AvxGetDrawBridges(dsys, exuIdx, 1, &dexu))
+                {
+                    AfxThrowError();
+                    return err;
+                }
+
+                afxError err2 = _AvxDexuCaptureBuffers(dexu, cnt, captions);
                 err = err2;
 
                 if (!err2)

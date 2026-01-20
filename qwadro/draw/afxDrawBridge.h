@@ -18,8 +18,8 @@
  // DRAW DEVICE COMMAND, OPERATION AND COMMUNICATION BRIDGE                  //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_DRAW_BRIDGE_H
 #define AVX_DRAW_BRIDGE_H

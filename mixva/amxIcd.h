@@ -14,20 +14,20 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_ICD_H
 #define AMX_ICD_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/mix/afxMixSystem.h"
 #include "amxAudioDDK.h"
 #include "amxContextDDK.h"
-#include "amxMpuAudio.h"
-#include "amxMpuExecutor.h"
-#include "amxMpuContext.h"
-#include "amxMpuSoundscape.h"
-#include "amxMpuTransference.h"
+#include "mpu/amxMpuAudio.h"
+#include "mpu/amxMpuExecutor.h"
+#include "mpu/amxMpuContext.h"
+#include "mpu/amxMpuSoundscape.h"
+#include "mpu/amxMpuTransference.h"
 #include "amxSoundscapeDDK.h"
 #include "amxSystemDDK.h"
 #include "amxSinkDDK.h"

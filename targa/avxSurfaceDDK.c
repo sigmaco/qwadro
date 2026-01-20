@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
 //#define _AFX_DEVICE_C
@@ -27,21 +27,21 @@
 //#define _AVX_BUFFER_C
 #include "avxIcd.h"
 
-_AVX afxError _AvxDoutImplIoctl2Cb(afxSurface dout, afxUnit code, afxUnit inSiz, void* in, afxUnit outCap, void* out, afxUnit32* outSiz, avxFence signal)
+_AVX afxError _AvxDoutIoctl2Cb(afxSurface dout, afxUnit code, afxUnit inSiz, void* in, afxUnit outCap, void* out, afxUnit32* outSiz, avxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
     return err;
 }
 
-_AVX afxError _AvxDoutImplIoctlCb(afxSurface dout, afxUnit code, va_list ap)
+_AVX afxError _AvxDoutIoctlCb(afxSurface dout, afxUnit code, va_list ap)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
     return err;
 }
 
-_AVX afxError _AvxDoutImplAdjustCb(afxSurface dout, afxRect const* area, afxBool fse)
+_AVX afxError _AvxDoutAdjustCb(afxSurface dout, afxRect const* area, afxBool fse)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
@@ -65,7 +65,7 @@ _AVX afxError _AvxDoutImplAdjustCb(afxSurface dout, afxRect const* area, afxBool
     return err;
 }
 
-_AVX afxError _AvxDoutImplRegenBuffers(afxSurface dout, afxBool build)
+_AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
@@ -177,7 +177,7 @@ _AVX afxError _AvxDoutImplRegenBuffers(afxSurface dout, afxBool build)
     return err;
 }
 
-_AVX afxError _AvxDoutImplLockBufferCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx)
+_AVX afxError _AvxDoutLockBufferCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
@@ -316,7 +316,7 @@ _AVX afxError _AvxDoutImplLockBufferCb(afxSurface dout, afxMask exuMask, avxFenc
     return err;
 }
 
-_AVX afxError _AvxDoutImplUnlockBufferCb(afxSurface dout, afxUnit bufIdx)
+_AVX afxError _AvxDoutUnlockBufferCb(afxSurface dout, afxUnit bufIdx)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
@@ -349,7 +349,7 @@ _AVX afxError _AvxDoutImplUnlockBufferCb(afxSurface dout, afxUnit bufIdx)
     
     //swap->lockedCanv = NIL;
 
-    // Bumped up by _AvxDoutImplLockBufferCb.
+    // Bumped up by _AvxDoutLockBufferCb.
     --swap->locked;
 
     return err;
@@ -422,12 +422,80 @@ _AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresenta
     return err;
 }
 
+_AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption captions[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxCaption* cap = &captions[i];
+
+        afxSurface dout = cap->dout;
+        AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+#if 0
+        if (pres->waitOnDpu && pres->dout->ddi->presOnDpuCb)
+        {
+            _AvxDqueSubmitCallback(dque, (void*)pres->dout->ddi->presOnDpuCb, pres);
+        }
+        else
+#endif
+        {
+            //AFX_ASSERT(dout->presentingBufIdx == (afxAtom32)AFX_INVALID_INDEX);
+            //dout->presentingBufIdx = pres->bufIdx;
+#if 0
+            if (pres->waitOnDpu)
+            {
+                while (AvxWaitForFences(AfxGetHost(pres->dout), AFX_TIMEOUT_INFINITE, FALSE, 1, &pres->waitOnDpu, NIL))
+                {
+                    AfxYield();
+                }
+            }
+#endif
+            if (dout->ddi->captureCb && dout->ddi->captureCb(dque, cap))
+                AfxThrowError();
+
+            dout->lastPresentedBufIdx = (afxAtom32)cap->bufIdx;
+
+            afxClock currClock;
+            AfxGetClock(&currClock);
+            ++dout->outNo;
+
+            if ((1.0 <= AfxGetSecondsElapsed(&dout->outCntResetClock, &currClock)))
+            {
+                dout->outCntResetClock = currClock;
+                dout->outRate = dout->outNo; // 681 no showing (presenting from overlay thread (acquirer)), 818 frozen (present from draw thread (worker))
+                dout->outNo = 0;
+
+                afxReal64 ct = AfxGetSecondsElapsed(&dout->startClock, &currClock);
+                afxReal64 dt = AfxGetSecondsElapsed(&dout->lastClock, &currClock);
+                dout->lastClock = currClock;
+
+                if (AfxTestObjectFcc(dout->endpointNotifyObj, afxFcc_WND))
+                {
+                    //AfxFormatWindowTitle(dout->endpointNotifyObj, "%0f, %u --- Qwadro Video Graphics Infrastructure --- Qwadro Execution Ecosystem (c) 2017 SIGMA --- Public Test Build", dt, dout->m.outRate);
+                }
+
+                if (dout->endpointNotifyFn)
+                {
+                    dout->endpointNotifyFn(dout->endpointNotifyObj, cap->bufIdx);
+                }
+            }
+
+            --dout->swaps[cap->bufIdx].locked;
+            AfxPushInterlockedQueue(&dout->freeBuffers, (afxUnit[]) { cap->bufIdx });
+            //AfxDecAtom32(&dout->m.submCnt);
+        }
+    }
+    return err;
+}
+
 _AVX _avxDdiDout const _AVX_DDI_DOUT =
 {
-    .ioctlCb = _AvxDoutImplIoctlCb,
-    .adjustCb = _AvxDoutImplAdjustCb,
+    .ioctlCb = _AvxDoutIoctlCb,
+    .adjustCb = _AvxDoutAdjustCb,
     .presentCb = NIL,
-    .lockCb = _AvxDoutImplLockBufferCb,
-    .unlockCb = _AvxDoutImplUnlockBufferCb,
-    .regenCb = _AvxDoutImplRegenBuffers
+    .captureCb = NIL,
+    .lockCb = _AvxDoutLockBufferCb,
+    .unlockCb = _AvxDoutUnlockBufferCb,
+    .regenCb = _AvxDoutRegenBuffers
 };

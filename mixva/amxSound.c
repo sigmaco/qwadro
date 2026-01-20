@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #define _AMX_AUDIO_C
 #define _AMX_SOUND_C
@@ -98,7 +98,7 @@ _AMX afxError _AmxSndCtorCb(amxSound snd, void** args, afxUnit invokeNo)
     AFX_ASSERT(spec);
 
     {
-        snd->ctrl.flags = /*arxCapstanFlag_ACTIVE*/0x01;
+        snd->ctrl.flags = /*arxPulleyFlag_ACTIVE*/0x01;
         //snd->ctrl.timing.currClock = /*startTime*/0;
         snd->ctrl.dtLocalClockPending = 0.0;
         snd->ctrl.localClock = 0.0;

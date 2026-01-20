@@ -18,7 +18,7 @@
  // DRAWING PIPELINE EXECUTION SYNCHRONIZATION OPERATIONS                    //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_SYNCHRONIZATION_H
 #define AVX_SYNCHRONIZATION_H

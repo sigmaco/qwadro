@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_MIXAGE_H
 #define AMX_MIXAGE_H
@@ -378,6 +378,9 @@ AMX afxCmdId AmxCmdConcludeMixScope
     afxMixContext mix
 );
 
+// For HEVC, reference slot counts tend to be slightly higher due to the more sophisticated prediction methods.
+// Values like even 32 can be seen in HEVC decoders and encoders.
+
 AFX_DEFINE_STRUCT(amxVideoPicture)
 // Structure specifying the parameters of a video picture resource.
 {
@@ -403,8 +406,8 @@ AFX_DEFINE_STRUCT(amxVideoDecode)
     // The number of elements in the @refSlots array.
     afxUnit         refSlotCnt;
     // An array of structures describing the DPB slots and corresponding reference picture resources to use in this video decode operation (the set of active reference pictures).
-    amxVideoPicture refSlots[8];
-    afxUnit         refSlotIds[8];
+    amxVideoPicture refSlots[32];
+    afxUnit         refSlotIds[32];
     // The source video bitstream buffer to read the encoded bitstream from.
     avxBuffer       srcBuf;
     // The starting offset in bytes from the start of @srcBuf to read the encoded bitstream from.
@@ -427,7 +430,7 @@ AFX_DEFINE_STRUCT(amxVideoEncode)
     // The number of elements in the @refSlots array.
     afxUnit         refSlotCnt;
     // An array of structures describing the DPB slots and corresponding reference picture resources to use in this video encode operation (the set of active reference pictures).
-    amxVideoPicture refSlots[8];
+    amxVideoPicture refSlots[32];
     // The number of bytes externally encoded by the application to the video bitstream and is used to update the internal state of the implementation's rate control algorithm to account for the bitrate budget consumed by these externally encoded bytes.
     afxUnit         precedingEncBytes;
     // The destination video bitstream buffer to write the encoded bitstream to.
@@ -441,14 +444,14 @@ AFX_DEFINE_STRUCT(amxVideoEncode)
 AMX afxCmdId        AmxCmdEncodeVideo(afxMixContext mix, amxVideoEncode const* param);
 AMX afxCmdId        AmxCmdDecodeVideo(afxMixContext mix, amxVideoDecode const* param);
 
-AFX_DEFINE_STRUCT(amxVideoScope)
+AFX_DEFINE_STRUCT(amxVideoCodingScope)
 {
     afxFlags        flags;
     afxUnit         trackId; // video session in Vulkan
     void*           param; // video session parameters in Vulkan
     afxUnit         refCnt;
-    amxVideoPicture refSlots[8];
-    afxUnit         refSlotIds[8];
+    amxVideoPicture refSlots[32];
+    afxUnit         refSlotIds[32];
 };
 
 AFX_DEFINE_STRUCT(amxVideoEncRate)
@@ -470,7 +473,7 @@ AFX_DEFINE_STRUCT(amxVideoEncScope)
     afxUnit         trackId; // video session in Vulkan
     void*           param; // video session parameters in Vulkan
     afxUnit         refCnt;
-    amxVideoPicture refSlots[8];
+    amxVideoPicture refSlots[32];
 
     afxFlags        ctrlFlags;
 
@@ -483,7 +486,7 @@ AFX_DEFINE_STRUCT(amxVideoEncScope)
     // The number of rate control layers to use.
     afxUnit         rateCtrlCnt;
     // An array of structures, each specifying the rate control configuration of the corresponding rate control layer.
-    amxVideoEncRate rateCtrls[8];
+    amxVideoEncRate rateCtrls[32];
     // The size in milliseconds of the virtual buffer used by the implementation's rate control algorithm for the leaky bucket model, 
     // with respect to the average bitrate of the stream calculated by summing the values of the avgBitrate members of the elements of the layers array.
     afxUnit         virtBufSizInMs;
@@ -491,11 +494,35 @@ AFX_DEFINE_STRUCT(amxVideoEncScope)
     afxUnit         initialVirtBufSizInMs;
 };
 
-AMX afxCmdId        AmxCmdCommenceVideo(afxMixContext mix, amxVideoScope const* scope);
-AMX afxCmdId        AmxCmdConcludeVideo(afxMixContext mix);
+AMX afxCmdId        AmxCmdCommenceVideoCoding(afxMixContext mix, amxVideoCodingScope const* scope);
+AMX afxCmdId        AmxCmdConcludeVideoCoding(afxMixContext mix);
 
-AMX afxCmdId        AmxCmdCathodeVideo(afxMixContext mix, afxUnit track, afxReal yShift, afxReal uShift, afxReal vShift);
-AMX afxCmdId        AmxCmdStaticHiVideo(afxMixContext mix, afxUnit track, afxReal i);
+typedef enum amxVfxType
+{
+    amxVfxType_CATHODE,
+    amxVfxType_STATIC_HI
+} amxVfxType;
+
+AFX_DEFINE_STRUCT(amxVfxBase)
+{
+    amxVfxType type;
+};
+
+AFX_DEFINE_STRUCT(amxVfxCathode)
+{
+    amxVfxBase base;
+    afxReal yShift;
+    afxReal uShift;
+    afxReal vShift;
+};
+
+AFX_DEFINE_STRUCT(amxVfxStaticHi)
+{
+    amxVfxBase base;
+    afxReal i;
+};
+
+AMX afxCmdId        AmxCmdDoVfx(afxMixContext mix, afxUnit track, amxVfxBase const* vfx);
 
 AMX afxCmdId        AmxCmdComposeVideo(afxMixContext mix, afxUnit track, amxVideo vid, avxRaster composite);
 

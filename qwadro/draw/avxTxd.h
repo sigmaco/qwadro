@@ -18,7 +18,7 @@
  // QWADRO TEXTURE EXCHANGE DICTIONARY                                       //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_TXD_H
 #define AVX_TXD_H

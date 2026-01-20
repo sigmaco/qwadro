@@ -18,8 +18,8 @@
  // QWADRO VIDEO MEMORY BUFFER                                               //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_BUFFERED_H
 #define AVX_BUFFERED_H
@@ -38,7 +38,7 @@ AFX_DEFINE_STRUCT(avxBufferedRing)
     afxSize     currOffset;
 };
 
-AVX void AvxMakeBufferedRing
+AVX afxError AvxMakeBufferedRing
 (
     avxBufferedRing* rng, 
     afxUnit rounds, 
@@ -87,14 +87,15 @@ AFX_DEFINE_STRUCT(avxBufferedPump)
     afxDrawSystem dsys;
 };
 
-AVX void AvxDeployBufferedPump
+AVX afxError AvxDeployBufferedPump
 (
     avxBufferedPump* pump, 
     avxBufferUsage usage, 
     avxBufferFlags flags, 
     afxUnit minChunkSiz, 
     afxUnit blockAlign, 
-    afxUnit rounds
+    afxUnit rounds,
+    afxDrawSystem dsys
 );
 
 AVX void* AvxRequestBufferedPump
@@ -105,12 +106,12 @@ AVX void* AvxRequestBufferedPump
     afxSize* out_offset
 );
 
-AVX void AvxAdvanceBufferedPump
+AVX afxError AvxAdvanceBufferedPump
 (
     avxBufferedPump* pump
 );
 
-AVX void AvxDismantleBufferedPump
+AVX afxError AvxDismantleBufferedPump
 (
     avxBufferedPump* pump
 );

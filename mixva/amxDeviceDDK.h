@@ -14,16 +14,16 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_DEVICE_DDK_H
 #define AMX_DEVICE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/mix/afxMixSystem.h"
 #include "amxAudioDDK.h"
 #include "amxContextDDK.h"
-#include "amxMpuExecutor.h"
+#include "mpu/amxMpuExecutor.h"
 #include "amxSoundscapeDDK.h"
 #include "amxSystemDDK.h"
 

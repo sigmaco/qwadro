@@ -18,13 +18,13 @@
  // The Qwadro Video Graphics Infrastructure                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AFX_SURFACE_DDK_H
 #define AFX_SURFACE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 /*
@@ -46,6 +46,7 @@ AFX_DEFINE_STRUCT(_avxDdiDout)
     afxError(*adjustCb)(afxSurface dout, afxRect const* rc, afxBool fse);
     afxError(*regenCb)(afxSurface dout, afxBool build);
     afxError(*presentCb)(afxDrawQueue dque, avxPresentation* pres);
+    afxError(*captureCb)(afxDrawQueue dque, avxCaption* cap);
     afxError(*lockCb)(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit *bufIdx);
     afxError(*unlockCb)(afxSurface dout, afxUnit bufIdx);
     afxError(*modeSetCb)(afxSurface dout, avxModeSetting const* mode);
@@ -170,12 +171,13 @@ AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT;
 AVX _avxDdiDout const _AVX_DDI_DOUT;
 
 AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation presentations[]);
+AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption captions[]);
 
-AVX afxError _AvxDoutImplIoctlCb(afxSurface dout, afxUnit code, va_list ap);
-AVX afxError _AvxDoutImplAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);
-AVX afxError _AvxDoutImplRegenBuffers(afxSurface dout, afxBool build);
-AVX afxError _AvxDoutImplLockBufferCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx);
-AVX afxError _AvxDoutImplUnlockBufferCb(afxSurface dout, afxUnit bufIdx);
+AVX afxError _AvxDoutIoctlCb(afxSurface dout, afxUnit code, va_list ap);
+AVX afxError _AvxDoutAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);
+AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build);
+AVX afxError _AvxDoutLockBufferCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx);
+AVX afxError _AvxDoutUnlockBufferCb(afxSurface dout, afxUnit bufIdx);
 
 AVX afxError _AvxDoutAdjustNormalized(afxSurface dout, afxV3d const whd);
 AVX void _AvxDoutGetExtentNormalized(afxSurface dout, afxV3d whd); // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.

@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -39,29 +39,9 @@
 #include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxWidget.h"
+#include "qwadro/draw/afxSurface.h"
 
 // our facade
-
-typedef enum afxAnchor
-{
-    afxAnchor_LEFT      = AFX_BITMASK(0),
-    afxAnchor_CENTER    = AFX_BITMASK(1),
-    afxAnchor_RIGHT     = AFX_BITMASK(2),
-    afxAnchor_TOP       = AFX_BITMASK(3),
-    afxAnchor_MIDDLE    = AFX_BITMASK(4),
-    afxAnchor_BOTTOM    = AFX_BITMASK(5),
-    afxAnchor_V         = (afxAnchor_LEFT | afxAnchor_CENTER | afxAnchor_RIGHT),
-    afxAnchor_H         = (afxAnchor_TOP | afxAnchor_MIDDLE | afxAnchor_BOTTOM),
-    afxAnchor_LT        = (afxAnchor_LEFT | afxAnchor_TOP),
-    afxAnchor_LM        = (afxAnchor_LEFT | afxAnchor_MIDDLE),
-    afxAnchor_LB        = (afxAnchor_LEFT | afxAnchor_BOTTOM),
-    afxAnchor_RT        = (afxAnchor_RIGHT | afxAnchor_TOP),
-    afxAnchor_RM        = (afxAnchor_RIGHT | afxAnchor_MIDDLE),
-    afxAnchor_RB        = (afxAnchor_RIGHT | afxAnchor_BOTTOM),
-    afxAnchor_CT        = (afxAnchor_CENTER | afxAnchor_TOP),
-    afxAnchor_CM        = (afxAnchor_CENTER | afxAnchor_MIDDLE),
-    afxAnchor_CB        = (afxAnchor_CENTER | afxAnchor_BOTTOM),
-} afxAnchor;
 
 typedef enum afxWindowFlag
 // Flags specifying behavior and characteristics for windows.
@@ -75,18 +55,6 @@ typedef enum afxWindowFlag
     // The window can take full control of the display port.
     afxWindowFlag_IMMERSIVE     = AFX_BITMASK(3),
 } afxWindowFlags;
-
-typedef enum afxWindowEdge
-{
-    afxWindowEdge_L     = AFX_BITMASK(0),
-    afxWindowEdge_T     = AFX_BITMASK(1),
-    afxWindowEdge_R     = AFX_BITMASK(2),
-    afxWindowEdge_B     = AFX_BITMASK(3),
-    afxWindowEdge_LT    = (afxWindowEdge_L | afxWindowEdge_T),
-    afxWindowEdge_LB    = (afxWindowEdge_L | afxWindowEdge_B),
-    afxWindowEdge_RT    = (afxWindowEdge_R | afxWindowEdge_T),
-    afxWindowEdge_RB    = (afxWindowEdge_R | afxWindowEdge_B),
-} afxWindowEdge;
 
 typedef enum afxWindowState
 {
@@ -348,7 +316,7 @@ AUX afxError        AfxChangeWindowIcon
     // The handle of the afxWindow to be redecorated.
     afxWindow wnd, 
     // The handle of a avxRaster used as source for the icon.
-    avxRaster ras, 
+    avxRaster font, 
     // The region of the specified raster specifying the icon.
     avxRasterRegion const* rgn
 );
@@ -366,7 +334,7 @@ AUX afxError        AfxChangeWindowCursor
     // The handle of the afxWindow to be redecorated.
     afxWindow wnd,
     // The handle of a avxRaster used as source for the cursor.
-    avxRaster curs,
+    avxRaster font,
     // The region of the specified raster specifying the cursor.
     avxRasterRegion const* rgn, 
     // The horizontal displacement for the cursor's affection point.
@@ -385,5 +353,18 @@ AUX afxError AfxCloseWindow(afxWindow wnd);
 AUX afxError AfxRestoreWindow(afxWindow wnd);
 AUX afxError AfxMaximizeWindow(afxWindow wnd);
 AUX afxError AfxMinimizeWindow(afxWindow wnd);
+
+typedef enum afxWindowVisibility
+{
+    afxWindowVisibility_HIDDEN,
+    afxWindowVisibility_MINIMIZED,
+    afxWindowVisibility_MAXIMIZED,
+    afxWindowVisibility_FULLSCREEN,
+    afxWindowVisibility_ACTIVE,
+    afxWindowVisibility_DISABLED,
+    afxWindowVisibility_SUPERIOR,
+    afxWindowVisibility_TRANSLUCENT,
+    afxWindowVisibility_DOCKED,
+} afxWindowVisibility;
 
 #endif//AUX_WINDOW_H

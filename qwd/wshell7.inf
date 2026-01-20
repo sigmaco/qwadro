@@ -5,6 +5,7 @@ Vendor=SIGMA Technology Group
 Href=https://sigmaco.org
 FeatureScore=1
 Service=user
+Subsystem=AUX
 DllFile=e2wshell7.dll
 Devices=Icd.Devices
 

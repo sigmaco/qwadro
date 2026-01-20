@@ -393,7 +393,7 @@ static LunaForeignMethodFn findForeignMethod(xssVm vm,
 {
   LunaForeignMethodFn method = NULL;
   
-#if 0
+#if !0
   if (vm->config.bindForeignMethodFn != NULL)
   {
     method = vm->config.bindForeignMethodFn(vm, moduleName, className, isStatic,
@@ -680,7 +680,7 @@ static void bindForeignClass(xssVm vm, ObjClass* classObj, ObjModule* module)
   // Check the optional built-in module first so the host can override it.
 
   
-#if 0
+#if !0
   if (vm->config.bindForeignClassFn != NULL)
   {
 
@@ -882,7 +882,7 @@ static Value importModule(xssVm vm, Value name)
   LunaLoadModuleResult result = {0};
   const char* source = NULL;
   
-#if 0
+#if !0
   // Let the host try to provide the module.
   if (vm->config.loadModuleFn != NULL)
   {
@@ -941,8 +941,10 @@ static Value importModule(xssVm vm, Value name)
   // Now that we're done, give the result back in case there's cleanup to do.
   if(result.onComplete) result.onComplete(vm, AS_CSTRING(name), result);
   
+#if 0
   if (result.userData == file)
       AfxResetStream(result.userData);
+#endif
 
   if (moduleClosure == NULL)
   {

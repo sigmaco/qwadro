@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -23,7 +23,7 @@
 #ifndef AUX_ENVIRONMENT_DDK_H
 #define AUX_ENVIRONMENT_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxEnvironment.h"
@@ -58,7 +58,6 @@ AFX_DEFINE_STRUCT(_auxEnvAcq)
     afxClassConfig const* wndClsCfg;
     afxClassConfig const* fntClsCfg;
     afxClassConfig const* themClsCfg;
-    afxClassConfig const* xssClsCfg;
 };
 
 AFX_DECLARE_STRUCT(_auxIddEnv);
@@ -148,7 +147,6 @@ AFX_OBJECT(afxEnvironment)
     afxClass            wndCls;
     afxClass            fntCls;
     afxClass            themCls;
-    afxClass            xssCls;
 
     afxWindow           focusedWnd;
     afxBool             cursHidden;
@@ -161,11 +159,7 @@ AFX_OBJECT(afxEnvironment)
     afxUnit             seatCnt;
     _auxSeatData        seats[AFX_MAX_USERS_PER_ENVIRONMENT];
 
-    void*               vm;
-    afxUnit             scriptedEvCnt;
-    afxString const*    scriptedEvNames;
-    afxStringBase       scriptedEvNameDb;
-    afxPool             scriptedEvHandlers;
+    afxConsole          con;
 
     //afxUnit              dwmCnt;
     afxDesktop          dwm;
@@ -187,7 +181,6 @@ AUX _auxDdiEnv const _AUX_DDI_ENV;
 AUX afxClass const* _AuxEnvGetWndClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetFntClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetThemClass(afxEnvironment env);
-AUX afxClass const* _AuxEnvGetXssClass(afxEnvironment env);
 
 AUX afxError _AfxEnvFocusWindowCb(afxEnvironment env, afxUnit seat, afxWindow wnd, afxFlags flags);
 AUX afxError _AfxEnvSetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxFlags flags, afxString const* buf);

@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_CONTEXT_DDK_H
 #define AMX_CONTEXT_DDK_H
@@ -104,7 +104,7 @@ AFX_OBJECT(afxMixContext)
     afxUnit64   current_sample_time;
     struct
     {
-        /*arxCapstanFlags*/afxFlags   flags;
+        /*arxPulleyFlags*/afxFlags   flags;
         afxReal         dtLocalClockPending;
         afxReal         localClock;
         afxReal         speed;

@@ -7,15 +7,15 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *          Q W A D R O   4 D   R E N D E R I N G   I N F R A S T R U C T U R E
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This code is part of SIGMA GL/2.
+// This file is part of Advanced RenderWare Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // QWADRO DEVICE-AWARE CAMERA                                               //
@@ -71,11 +71,12 @@
     and the projection will “shrink” objects as they get farther from the camera, which is what gives the scene a realistic appearance.
 */
 
-#include "qwadro/render/arxRenderable.h"
+#include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/draw/afxDrawDefs.h"
 #include "qwadro/mem/afxArray.h"
 #include "qwadro/coll/afxFrustum.h"
 #include "qwadro/draw/avxMatrix.h"
+#include "qwadro/scene/arxNode.h"
 
 typedef enum afxCameraFlag
 {
@@ -553,6 +554,26 @@ ARX void ArxComputeCameraRelativePlanarBases
 );
 
 ARX afxError ArxAdjustCamera(arxCamera cam, avxViewport const* vp);
+
+ARX afxError ArxAttachCamera
+(
+    arxCamera cam, 
+    arxNode nod, 
+    void(*sync)(arxNodular*), 
+    afxFlags dagFlags, 
+    afxMask dagMask
+);
+
+ARX afxError ArxDetachCamera
+(
+    arxCamera cam
+);
+
+ARX afxBool ArxGetCameraNode
+(
+    arxCamera cam, 
+    arxNode* node
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 

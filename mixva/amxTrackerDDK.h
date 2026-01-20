@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_TRACKER_DDK_H
 #define AMX_TRACKER_DDK_H
@@ -64,7 +64,7 @@ AFX_OBJECT(amxVoice)
         afxInt          currIterIdx;
         afxInt          iterCnt;
         afxReal         currWeight;
-        //arxCapstanTiming  timing;
+        //arxPulleyTiming  timing;
         afxUnit32       easeInValues;
         afxUnit32       easeOutValues;
         void*           userData[4];
@@ -201,7 +201,7 @@ AFX_OBJECT(amxTracker)
 
     struct
     {
-        /*arxCapstanFlags*/afxFlags flags;
+        /*arxPulleyFlags*/afxFlags flags;
         afxReal dtLocalClockPending;
         afxReal localClock;
         afxReal speed;

@@ -1,6 +1,4 @@
-Esta lista foi criada para ajudar a entender e/ou resolver problemas oriundos da qualidade do código.
-Uma vez que tudo foi inicialmente prototipado com Go Horse, que é igual a forma errada só que mais rápida,
-há uma caralhada de problemas.
+Esta lista foi criada para ajudar a entender e/ou resolver problemas oriundos da qualidade do código. Uma vez que tudo foi inicialmente prototipado com Go Horse, que é igual a forma errada só que mais rápida, há uma caralhada de problemas.
 
 // POSSÍVEIS PROBLEMAS
 
@@ -20,7 +18,7 @@ Quando a afxChain começa por first linkage, avança-se com obtendo o prêvio linka
 
 Usar array de float em lugar de array de double.
 
-Processar empty string como zero-terminated string. Ignorar o tamanho e já partir para o ponteiro.
+Ignorar o tamanho e já partir para o ponteiro ao processar empty string como zero-terminated string.
 
 Loop dentro de loop usando a mesma variável de controle. Exemplo: i, j, etc.
 warning : declaration shadows a local variable [-Wshadow]
@@ -31,9 +29,9 @@ Ints sendo encapsulados em ints menores. Principalmente int array para structure
 
 Retornando referências para valores armazenados na call stack. Strucs, por exemplo.
 
-Ao usar high-color (16-bit) video mode, Intel drivers doesn't provide WGL extensions, causing DPU creation failure.
+Ao usar high-color (16-bit) video mode, Intel drivers doesn't provide WGL extensions, causing failure on DPU creation.
 
-Device-dependent classes sendo registradas com sizeof() básico devida a cópia da standard implementation.
+Device-dependent classes sendo registradas com sizeof() básico devido a cópia da standard implementation.
 
 Ponteiro sendo passado como pointero-ad-pointero.
 

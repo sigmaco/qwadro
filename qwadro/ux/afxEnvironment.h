@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced MMUX Extensions & Experiments.
+// This software is part of Advanced MMUX Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -27,6 +27,8 @@
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/hid/afxKeyboard.h"
 #include "qwadro/ux/afxShell.h"
+#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/mix/afxMixSystem.h"
 
 #define AFX_MAX_USERS_PER_ENVIRONMENT (2)
 
@@ -114,7 +116,12 @@ typedef enum afxAuthMethod
     afxAuthMethod_TOTAL
 } afxAuthMethod;
 
-typedef enum afxSeatCaps
+typedef enum afxSeatFlag
+{
+    afxSeatFlag_RESERVED = AFX_BITMASK(31)
+} afxSeatFlags;
+
+typedef enum afxSeatCap
 {
     afxSeatCap_KEYBOARD,
     afxSeatCap_MOUSE,
@@ -144,8 +151,10 @@ AFX_DEFINE_STRUCT(afxEnvironmentConfig)
 {
     afxUnit             verMajor;
     afxUnit             verMinor;
+
     // The friendly name for this environment.
     afxString           name;
+
     // The features to be enabled for this environment.
     afxShellFeatures    features;
     // The number of environment extensions to be enabled.
@@ -153,13 +162,17 @@ AFX_DEFINE_STRUCT(afxEnvironmentConfig)
     // An array of Qwadro strings containing the names of extensions to enable for the environment.
     afxString const*    exts;
     // The draw system attached to the environment.
+
     afxDrawSystem       dsys;
     // The mix system attached to the environment.
+
     afxMixSystem        msys;
     // The number of seats.
+
     afxUnit             seatCnt;
     // An array of configurations for each seat.
     afxSeatConfig       seats[AFX_MAX_USERS_PER_ENVIRONMENT];
+
     // User-defined data attached to the environment.
     void*               udd;
     // Debugging string attached to the environment.
@@ -189,17 +202,33 @@ AUX afxBool AfxGetEnvironment
     afxEnvironment* environment
 );
 
+////////////////////////////////////////////////////////////////////////////////
+
 AUX afxUnit AfxGetEnvironmentId
 (
     // can be NIL
     afxEnvironment env
 );
 
-////////////////////////////////////////////////////////////////////////////////
+AUX afxBool AfxGetConsole
+(
+    afxEnvironment env, 
+    afxConsole* console
+);
 
-AUX afxBool         AfxGetEnvironmentVideo(afxDrawSystem* system);
+AUX afxBool AfxGetEnvironmentAvx
+(
+    afxEnvironment env,
+    afxDrawSystem* system,
+    afxSurface* surface
+);
 
-AUX afxBool         AfxGetEnvironmentAudio(afxMixSystem* system, afxSink* sink);
+AUX afxBool AfxGetEnvironmentAmx
+(
+    afxEnvironment env,
+    afxMixSystem* system, 
+    afxSink* sink
+);
 
 AUX afxError        AfxBeginFrame(afxEnvironment env);
 AUX afxError        AfxWaitFrame(afxEnvironment env);

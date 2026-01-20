@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
   //////////////////////////////////////////////////////////////////////////////
  // Advanced User Experience                                                 //
@@ -23,24 +23,60 @@
 #ifndef AUX_DISPLAY_DDK_H
 #define AUX_DISPLAY_DDK_H
 
-#include "../exec/afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxShell.h"
 //#include "qwadro/../../dep_/vgl1/vgl1.h"
 
 AFX_DECLARE_STRUCT(_auxIddDisp);
-AFX_DECLARE_STRUCT(_auxDdiDisp);
+AFX_DEFINE_STRUCT(_auxDdiDisp)
+{
+    afxUnit(*qryModeCb)(afxDisplay, afxUnit port, avxFormat, afxUnit cnt, afxDisplayMode[]);
+    afxError(*askGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCapabilites*);
+    afxError(*getGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCurve*);
+    afxError (*setGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCurve const*);
+    afxError(*captureCb)(afxDisplay, afxUnit port, afxSurface);
+};
 
 #ifdef _AUX_DISPLAY_C
-
-AFX_DEFINE_STRUCT(_auxDisplayPort)
+#ifdef _AUX_DISPLAY_IMPL
+AFX_OBJECT(_auxDisplayPort)
+#else
+AFX_OBJECT(afxDisplayPort)
+#endif
 {
-    afxBool         prime;
-    afxRect         workArea;
-    afxRect         fullArea;
-    afxChar         name[32]; // the name of the display.
-    afxChar         label[128]; // the friendly name of the display.
+    // User-defined data.
+    void*               udd;
+    // Debugging tag.
+    afxString           tag;
+
+    // desktop coordinates.
+    afxRect workArea;
+    afxRect fullArea;
+    // the physical width and height of the visible portion of the display, in millimeters.
+    afxUnit dimWh[2];
+    // the physical, native, or preferred resolution of the display.
+    afxUnit resWh[2];
+    afxUnit dpi[2];
+    // transforms are supported by this display.
+    avxVideoTransform supportedXforms;
+    // can re-arrange the planes on this display in any order relative to each other?
+    afxBool planeReorder;
+    // can submit persistent present operations on swapchains created against this display?
+    afxBool persistentContent;
+    afxBool prime;
+
+    afxUnit bpp;
+    afxUnit freq;
+    afxUnit planeCnt;
+    afxUnit paletteSiz;
+    afxBool clipCapable;
+
+    // the name of the display.
+    afxString32     name;
+    // the friendly name of the display.
+    afxString128    label;
 };
 
 #ifdef _AUX_DISPLAY_IMPL
@@ -60,26 +96,20 @@ AFX_OBJECT(afxDisplay)
     // Debugging tag.
     afxString           tag;
 
-    afxUnit             portCnt;
-    _auxDisplayPort     ports[2];
+    afxClass            portCls;
 
-    afxChar             name[32]; // the name of the display.
-    afxChar             label[128]; // the friendly name of the display.
-    afxUnit             dimWh[2]; // the physical width and height of the visible portion of the display, in millimeters.
-    afxUnit             resWh[2]; // the physical, native, or preferred resolution of the display.
-    afxUnit             dpi[2];
-    avxVideoTransform supportedXforms; // transforms are supported by this display.
-    afxBool             planeReorder; // can re-arrange the planes on this display in any order relative to each other?
-    afxBool             persistentContent; // can submit persistent present operations on swapchains created against this display?
-    afxUnit             bpp;
-    afxUnit             freq;
-    afxUnit             planeCnt;
-    afxUnit             paletteSiz;
-    afxBool             clipCapable;
+    // the name of the display.
+    afxString32     name;
+    // the friendly name of the display.
+    afxString128    label;
+    
 };
 #endif//_AUX_DISPLAY_C
 
-
+AUX afxClassConfig const _AUX_DPY_CLASS_CONFIG;
 AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG;
+
+AUX afxClass const* _AuxDpyGetVduClass(afxDisplay dpy);
+AUX afxError _AuxRegisterDisplayPorts(afxDisplay dpy, afxUnit cnt, afxDisplayPortConfig const cfg[], afxDisplayPort ports[]);
 
 #endif//AUX_DISPLAY_DDK_H

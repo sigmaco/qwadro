@@ -18,8 +18,8 @@
  // QWADRO BUFFERED DRAWING CANVAS                                             //
 ////////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_CANVAS_H
 #define AVX_CANVAS_H

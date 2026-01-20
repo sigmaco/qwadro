@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AUX_UX_C
 //#define _AUX_SHELL_C
@@ -38,7 +38,7 @@ _AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd)
     return cls;
 }
 
-_AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster icon, avxRasterRegion const* rgn)
+_AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -46,29 +46,29 @@ _AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster icon, avxRasterRegion
     AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
     // If the host platform doesn't offer custom icon support, we do with via draw system.
-    avxRaster curr = wnd->icon;
+    avxRaster curr = wnd->iconFnt;
 
-    if (curr != icon)
+    if (curr != font)
     {
         if (curr)
         {
             AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
             AfxDisposeObjects(1, &curr);
-            wnd->icon = NIL;
+            wnd->iconFnt = NIL;
         }
 
-        if (icon)
+        if (font)
         {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &icon);
-            AfxReacquireObjects(1, &icon);
-            wnd->icon = icon;
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
+            AfxReacquireObjects(1, &font);
+            wnd->iconFnt = font;
             wnd->iconCrop = *rgn;
         }
     }
     return err;
 }
 
-_AUX afxError AfxChangeWindowIcon(afxWindow wnd, avxRaster icon, avxRasterRegion const* rgn)
+_AUX afxError AfxChangeWindowIcon(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -77,18 +77,18 @@ _AUX afxError AfxChangeWindowIcon(afxWindow wnd, avxRaster icon, avxRasterRegion
 
     if (!wnd->ddi->chIconCb)
     {
-        if (afxError_UNSUPPORTED != (err = _AfxWndChangeIconCb(wnd, icon, rgn)))
+        if (afxError_UNSUPPORTED != (err = _AfxWndChangeIconCb(wnd, font, rgn)))
             AfxThrowError();
     }
     else
     {
-        if (afxError_UNSUPPORTED != (err = wnd->ddi->chIconCb(wnd, icon, rgn)))
+        if (afxError_UNSUPPORTED != (err = wnd->ddi->chIconCb(wnd, font, rgn)))
             AfxThrowError();
     }
     return err;
 }
 
-_AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster curs, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
+_AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -96,29 +96,29 @@ _AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster curs, avxRasterRegi
     AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
     // If the host platform doesn't offer custom icon support, we do with via draw system.
-    avxRaster curr = wnd->curs;
+    avxRaster curr = wnd->cursFnt;
 
-    if (curr != curs)
+    if (curr != font)
     {
         if (curr)
         {
             AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
             AfxDisposeObjects(1, &curr);
-            wnd->curs = NIL;
+            wnd->cursFnt = NIL;
         }
 
-        if (curs)
+        if (font)
         {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curs);
-            AfxReacquireObjects(1, &curs);
-            wnd->curs = curs;
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
+            AfxReacquireObjects(1, &font);
+            wnd->cursFnt = font;
             wnd->cursCrop = *rgn;
         }
     }
     return err;
 }
 
-_AUX afxError AfxChangeWindowCursor(afxWindow wnd, avxRaster curs, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
+_AUX afxError AfxChangeWindowCursor(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -127,12 +127,12 @@ _AUX afxError AfxChangeWindowCursor(afxWindow wnd, avxRaster curs, avxRasterRegi
 
     if (!wnd->ddi->chCursCb)
     {
-        if (_AfxWndChangeCursorCb(wnd, curs, rgn, hotspotX, hotspotY))
+        if (_AfxWndChangeCursorCb(wnd, font, rgn, hotspotX, hotspotY))
             AfxThrowError();
     }
     else
     {
-        if (wnd->ddi->chCursCb(wnd, curs, rgn, hotspotX, hotspotY))
+        if (wnd->ddi->chCursCb(wnd, font, rgn, hotspotX, hotspotY))
             AfxThrowError();
     }
     return err;
@@ -227,7 +227,7 @@ _AUX afxError AfxRedrawWidgets(afxWindow wnd, afxRect const* area, afxDrawContex
     afxRect area2 = area ? *area : wnd->surfaceRc;
 
     // Desist if there is not area.
-    if (1 >= AfxGetRectArea(&area2))
+    if (1 >= AfxGetRectSize(&area2))
         return err;
 
     struct
@@ -256,6 +256,7 @@ _AUX afxError AfxRedrawWindow(afxWindow wnd, afxRect const* area)
 
     if (!wnd->ddi->redrawCb)
     {
+        AFX_ASSERT(wnd->ddi->redrawCb);
         AfxThrowError();
     }
     else
@@ -276,6 +277,7 @@ _AUX afxError AfxDamageWindow(afxWindow wnd, afxRect const* area)
 
     if (!wnd->ddi->damageCb)
     {
+        AFX_ASSERT(wnd->ddi->damageCb);
         AfxThrowError();
     }
     else
@@ -500,7 +502,6 @@ afxRect ResolveSurfaceRect(
     return out;
 }
 
-
 _AUX afxBool AfxGetWindowRect(afxWindow wnd, afxAnchor anchor, afxRect* surface)
 {
     afxError err = { 0 };
@@ -706,6 +707,7 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
 
     AFX_ASSERT(AfxDoesRectContain(&wnd->frameRc, &wnd->surfaceRc));
 
+#if  0
     afxSurface frameDout = wnd->frameDout;
     afxSurface surfaceDout = wnd->surfaceDout;
 
@@ -718,8 +720,11 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
         warea.w = wnd->frameRc.w;
         warea.h = wnd->frameRc.h;
 
-        if (AvxAdjustSurface(frameDout, &warea, wnd->fullscreen))
-            AfxThrowError();
+        if (AfxGetRectSize(&warea))
+        {
+            if (AvxAdjustSurface(frameDout, &warea, wnd->fullscreen))
+                AfxThrowError();
+        }
     }
 
     if (surfaceDout)
@@ -730,9 +735,13 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
         area.w = wnd->surfaceRc.w;
         area.h = wnd->surfaceRc.h;
 
-        if (AvxAdjustSurface(surfaceDout, &area, wnd->fullscreen))
-            AfxThrowError();
+        if (AfxGetRectSize(&area))
+        {
+            if (AvxAdjustSurface(surfaceDout, &area, wnd->fullscreen))
+                AfxThrowError();
+        }
     }
+#endif
 
     auxEvent ev = { 0 };
     ev.ev.id = afxEvent_UX;
@@ -1003,10 +1012,10 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
 
     afxWindowConfig cfg2 = { 0 };
     cfg2 = *cfg;
-
+#if 0
     if (!cfg2.dsys)
-        AfxGetEnvironmentVideo(&cfg2.dsys);
-
+        AfxGetEnvironmentAvx(env, &cfg2.dsys, NIL);
+#endif
     cfg2.eventCb = AFX_WND_EVENT_HANDLER;
 
     afxDesktop* dwm = &env->dwm;

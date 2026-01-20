@@ -18,8 +18,8 @@
  // QWADRO VIDEO MEMORY BUFFER                                               //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_BUFFER_H
 #define AVX_BUFFER_H
@@ -197,26 +197,27 @@ AFX_DEFINE_STRUCT(avxBufferedMap)
 
 AFX_DEFINE_STRUCT(avxBufferInfo)
 {
-    // A bitmask specifying additional parameters of the buffer.
-    avxBufferFlags  flags;
     // A bitmask specifying allowed usages of the buffer.
     avxBufferUsage  usage;
-    // A bitmask of device bridges that will access this buffer.
-    afxMask         sharingMask;
+    // A bitmask specifying additional parameters of the buffer.
+    avxBufferFlags  flags;
     // The size/range in bytes of the buffer to be created.
     afxSize         size;
     // A avxFormat describing the format of the data elements in the (FETCH/TENSOR) buffer.
     avxFormat       fmt; // required for FETCH/TENSOR buffers.
-    // A user-defined data.
-    void*           udd;
-    // A static string specifying a debug tag.
-    afxString       tag;
+    // A bitmask of device bridges that will access this buffer.
+    afxMask         exuMask;
 
     // Possibly initial data, to avoid boilerplate with unconvenient mappings.
     void*           data;
     afxSize         dataSiz;
     // Should this buffer be mapped at creation?
     afxBool         mapped; // replace for a avxBufferFlag flag?
+
+    // A user-defined data.
+    void*           udd;
+    // A static string specifying a debug tag.
+    afxString       tag;
 };
 
 /*
@@ -247,11 +248,12 @@ AFX_DEFINE_STRUCT(avxMetabufferInfo)
     // A avxBuffer on which the view will be created.
     avxBuffer       buf;
     // An offset in bytes from the base address of the buffer.
-    afxSize         from;
+    afxSize         bufBase;
     // The size/range in bytes of the buffer to be created.
-    afxSize         range;
+    afxSize         bufRange;
     // A avxFormat describing the format of the data elements in the buffer.
     avxFormat       fmt; // used for FETCH/TENSOR buffers.
+
     // A user-defined data.
     void*           udd;
     // A static string specifying a debug tag.
@@ -342,11 +344,11 @@ AVX afxError AvxUnmapBuffers
 AVX afxError AvxCohereMappedBuffers
 (
     // The draw system providing the buffers.
-    afxDrawSystem   dsys,
+    afxDrawSystem dsys,
     // A boolean specifying that any host modification must be discarded.
-    afxBool         invalidate,
+    afxBool invalidate,
     // The number of buffered maps.
-    afxUnit         cnt,
+    afxUnit cnt,
     // An array of buffered map operations.
     avxBufferedMap const maps[]
 );
@@ -355,24 +357,25 @@ AVX afxError AvxCohereMappedBuffers
     The AvxCopyBuffers() function schedules one or more copy operations of AVX buffers' data locally or across memory domains.
 */
 
-AVX afxError                AvxCopyBuffers
+AVX afxError AvxCopyBuffers
 (
     // The draw system providing the buffers.
-    afxDrawSystem           dsys,
+    afxDrawSystem dsys,
     // Mask specifying which execution units should execute the copy. 
     // Think of this as a way to filter or select copy pipelines.
-    afxMask                 exuMask,
+    afxMask exuMask,
     // The number of buffer copy operations to perform.
-    afxUnit                 cnt,
+    afxUnit cnt,
     // An array of avxBufferedCopy structs, each describing one buffer copy operation (src, dst, size, offsets, etc.).
-    avxBufferedCopy const   ops[]
+    avxBufferedCopy const ops[],
+    avxFence signal
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxDrawSystem   AvxGetBufferHost
+AVX afxDrawSystem AvxGetBufferHost
 (
-    avxBuffer       buf
+    avxBuffer buf
 );
 
 /*
@@ -386,12 +389,12 @@ AVX afxDrawSystem   AvxGetBufferHost
     indicating there is no available space starting from that position.
 */
 
-AVX afxSize         AvxGetBufferCapacity
+AVX afxSize AvxGetBufferCapacity
 (
     // The buffer to be queried.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The starting point in the buffer from which capacity is being measured.
-    afxSize         from
+    afxSize from
 );
 
 // Query an address of a buffer used to access the memory bound to this buffer on the device.
@@ -418,12 +421,12 @@ AVX afxSize AvxGetBufferAddress
     or, it returns the entire usage flag of the buffer (if no specific usage flag is specified).
 */
 
-AVX avxBufferUsage  AvxGetBufferUsage
+AVX avxBufferUsage AvxGetBufferUsage
 (
     // The buffer to be queried.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // A bitmask or a specific usage flag for the buffer.
-    avxBufferUsage  mask
+    avxBufferUsage mask
 );
 
 /*
@@ -434,12 +437,12 @@ AVX avxBufferUsage  AvxGetBufferUsage
     correctly in the graphics pipeline.
 */
 
-AVX avxBufferFlags  AvxGetBufferFlags
+AVX avxBufferFlags AvxGetBufferFlags
 (
     // The buffer to be queried.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // A bitmask representing a specific access flag or a query for specific access flags.
-    avxBufferFlags  mask
+    avxBufferFlags mask
 );
 
 /*
@@ -448,7 +451,7 @@ AVX avxBufferFlags  AvxGetBufferFlags
     Returns a pointer to a sub-region of a previously mapped buffer.
 */
 
-AVX void*           AvxGetBufferMap
+AVX void* AvxGetBufferMap
 (
     // An handle to a previously acquired and mapped buffer.
     avxBuffer buf, 
@@ -467,19 +470,19 @@ AVX void*           AvxGetBufferMap
     for a single buffer. Otherwise, AvxMapBuffers() should be used to avoid contention.
 */
 
-AVX afxError        AvxMapBuffer
+AVX afxError AvxMapBuffer
 (
     // The buffer that needs to be mapped.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The starting byte offset where the buffer mapping should begin.
-    afxSize         offset, 
+    afxSize offset, 
     // The size (in bytes or units) of the portion of the buffer to map, starting from the @offset.
-    afxUnit         range, 
+    afxUnit range, 
     // Flags that define the special behaviors for the mapping.
-    afxFlags        flags, 
+    afxFlags flags, 
     // A pointer to a pointer (void**), which will be used to store the address of the mapped memory.
     // After the mapping, this pointer will point to the memory region that has been mapped.
-    void**          placeholder
+    void** placeholder
 );
 
 /*
@@ -492,12 +495,12 @@ AVX afxError        AvxMapBuffer
     for a single buffer. Otherwise, AvxUnmapBuffers() should be used to avoid contention.
 */
 
-AVX afxError        AvxUnmapBuffer
+AVX afxError AvxUnmapBuffer
 (
     // The buffer to unmap.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // A flag indicating whether the operation should wait for synchronization.
-    afxBool         wait
+    afxBool wait
 );
 
 /*
@@ -510,18 +513,18 @@ AVX afxError        AvxUnmapBuffer
     Otherwise, AvxCohereMappedBuffers() should be used to avoid contention.
 */
 
-AVX afxError        AvxCohereMappedBuffer
+AVX afxError AvxCohereMappedBuffer
 (
     // The buffer that needs to be flushed.
-    avxBuffer       buf,
+    avxBuffer buf,
     // The starting point (in bytes) of the portion of the buffer that should be flushed.
-    afxSize         offset,
+    afxSize offset,
     // The size (in bytes or units) of the portion of the buffer to flush, starting from the @offset.
-    afxUnit         range,
+    afxUnit range,
     // The optional flags.
-    afxFlags        flags,
+    afxFlags flags,
     // A boolean specifying if any host modification should be discarded.
-    afxBool         invalidate
+    afxBool invalidate
 );
 
 /*
@@ -530,19 +533,20 @@ AVX afxError        AvxCohereMappedBuffer
     The use of execution units allows for parallel or distributed uploads, such as using a GPU to handle the operations.
 */
 
-AVX afxError        AvxUploadBuffer
+AVX afxError AvxUploadBuffer
 (
     // The destination buffer to which data will be uploaded.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt, 
+    afxUnit opCnt, 
     // An array of operations (@opCnt number of operations) to be performed on the buffer.
     // Each operation specifies where the data will be uploaded within the buffer and how the data should be handled.
     avxBufferIo const ops[],
     // The source stream from which the data will be transferred into the buffer.
-    afxStream       in,
+    afxStream in,
     // The execution unit index. This typically refers to the specific GPU or compute unit that will handle the operation.
-    afxMask         exuMask
+    afxMask exuMask,
+    avxFence signal
 );
 
 /*
@@ -552,19 +556,20 @@ AVX afxError        AvxUploadBuffer
     unit responsible for the operation.
 */
 
-AVX afxError        AvxDownloadBuffer
+AVX afxError AvxDownloadBuffer
 (
     // The source buffer from which data will be downloaded.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt, 
+    afxUnit opCnt, 
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how data should be extracted from the buffer.
     avxBufferIo const ops[],
     // The destination stream where the data from the buffer will be transferred.
-    afxStream       out,
+    afxStream out,
     // The execution unit index. This refers to the specific GPU or compute unit responsible for the operation.
-    afxMask         exuMask
+    afxMask exuMask,
+    avxFence signal
 );
 
 /*
@@ -574,34 +579,36 @@ AVX afxError        AvxDownloadBuffer
     the execution unit responsible for the operation.
 */
 
-AVX afxError        AvxDumpBuffer
+AVX afxError AvxDumpBuffer
 (
     // The source buffer from which data will be dumped.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt, 
+    afxUnit opCnt, 
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how data should be dumped from the buffer.
     avxBufferIo const ops[],
     // A pointer to the destination where the buffer data will be dumped.
-    void*           dst,
+    void* dst,
     // The execution unit index (e.g., GPU or compute unit) responsible for the operation.
-    afxMask         exuMask
+    afxMask exuMask,
+    avxFence signal
 );
 
-AVX afxError        AvxUpdateBuffer
+AVX afxError AvxUpdateBuffer
 (
     // The target buffer that will be updated with new data.
-    avxBuffer       buf, 
+    avxBuffer buf, 
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt, 
+    afxUnit opCnt, 
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how the buffer should be updated.
     avxBufferIo const ops[],
     // A pointer to the source data from which the buffer will be updated.
-    void const*     src,
+    void const* src,
     // The execution unit index (e.g., GPU or compute unit) that will perform the transfer.
-    afxMask         exuMask
+    afxMask exuMask,
+    avxFence signal
 );
 
 #endif//AVX_BUFFER_H

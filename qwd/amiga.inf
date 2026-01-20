@@ -5,6 +5,7 @@ Vendor=SIGMA Technology Group
 Href=https://sigmaco.org
 FeatureScore=1
 Service=audio
+Subsystem=AMX
 DllFile=e2amiga.dll
 Devices=Icd.Devices
 

@@ -14,8 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #define _AFX_CORE_C
 //#define _AFX_DEVICE_C
@@ -865,15 +865,18 @@ _AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
         return err;
     }
 
-    afxModule drv;
-    AFX_ASSERT(icd != AFX_INVALID_INDEX);
-    if (!_AvxGetIcd(icd, &drv))
+    if (icd != AFX_INVALID_INDEX)
     {
-        AfxThrowError();
-        return err;
+        afxModule drv;
+        AFX_ASSERT(icd != AFX_INVALID_INDEX);
+        if (!_AvxGetIcd(icd, &drv))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
     }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-    AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
 
     avxAptitude caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
@@ -977,14 +980,36 @@ _AVX afxError AvxEstablishDrawSystem(afxUnit icd, avxSystemConfig const* cfg, af
         }
     }
 
-    afxModule drv;
-    if (!_AvxGetIcd(icd, &drv))
+    afxClass* dsysCls = NIL;
+    afxModule drv = NIL;
+
+    if (icd != AFX_INVALID_INDEX)
     {
-        AfxThrowError();
-        return err;
+        if (!_AvxGetIcd(icd, &drv))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
+
+        dsysCls = (afxClass*)_AvxIcdGetDsysClass(drv);
+        AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
     }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-    AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
+    else
+    {
+        static afxBool inited = FALSE;
+        static afxClass staticDsysCls = { 0 };
+
+        if (!inited)
+        {
+            AfxMountClass(&staticDsysCls, NIL, NIL, &_AVX_CLASS_CONFIG_DSYS);
+            inited = TRUE;
+        }
+
+        dsysCls = &staticDsysCls;
+        AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
+    }
 
     // Acquire bridges and queues
     afxUnit totalDqueCnt = 0;
@@ -1067,11 +1092,10 @@ _AVX afxError AvxEstablishDrawSystem(afxUnit icd, avxSystemConfig const* cfg, af
     cfg2.udd = cfg->udd;
     cfg2.tag = cfg->tag;
 
-    afxClass* cls = (afxClass*)_AvxIcdGetDsysClass(drv);
-    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
+    AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
 
     afxDrawSystem dsys;
-    if (AfxAcquireObjects(cls, 1, (afxObject*)&dsys, (void const*[]) { drv, &cfg2, &bridgeCfg[0] }))
+    if (AfxAcquireObjects(dsysCls, 1, (afxObject*)&dsys, (void const*[]) { drv, &cfg2, &bridgeCfg[0] }))
     {
         AfxThrowError();
         return err;

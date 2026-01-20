@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #define _AMX_MIX_C
 #define _AMX_MIX_SYSTEM_C
@@ -264,7 +264,7 @@ _AMX afxError _AmxMctxCtorCb(afxMixContext mctx, void** args, afxUnit invokeNo)
     //mctx->freq = mctx->freq;
 
     {
-        mctx->motor.flags = 1;// arxCapstanFlag_ACTIVE;
+        mctx->motor.flags = 1;// arxPulleyFlag_ACTIVE;
         mctx->motor.timing.currClock = 0;// cfg->currClock; --- set by roll
         mctx->motor.dtLocalClockPending = 0.0;
         mctx->motor.localClock = 0.0;

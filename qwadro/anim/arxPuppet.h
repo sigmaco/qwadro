@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_PUPPET_H
 #define ARX_PUPPET_H
@@ -33,7 +33,7 @@
 // Para aquilo que importa, se você liberar os dados originais do modelo, nenhuma das chamadas para arxPuppet funcionarão, desde que elas todas dependem daqueles dados, como você esperaria.
 
 #include "qwadro/cad/arxModel.h"
-#include "qwadro/anim/arxCapstan.h"
+#include "qwadro/anim/arxPulley.h"
 #include "qwadro/scene/arxNode.h"
 
 ARX afxBool ArxGetPuppetModel
@@ -99,9 +99,9 @@ AFX_DEFINE_STRUCT(arxAnimSampleContext)
     afxBool         accelerated;
     afxUnit         firstPivot;
     afxUnit         pivotCnt;
-    arxCapstan        moto;
+    arxPulley      moto;
     arxPose         pose;
-    arxPlacement    posb;
+    arxPosture    posb;
     afxReal         allowedErr;
     afxM4d const    displacement;
     afxUnit const*  sparseBoneArray;
@@ -113,45 +113,36 @@ ARX afxBool ArxGetPuppetPose
 (
     arxPuppet pup, 
     arxPose* pose, 
-    arxPlacement* placement
+    arxPosture* placement
 );
 
-ARX afxError ArxNodulatePuppet
+ARX afxError ArxAttachPuppet
 (
     arxPuppet pup, 
-    afxUnit basePartIdx, 
-    afxUnit cnt, 
     arxNode nod, 
     void (*sync)(arxNodular*), 
-    afxFlags flags, 
-    afxMask mask
+    afxFlags dagFlags, 
+    afxMask dagMask
+);
+
+ARX afxError ArxDetachPuppet
+(
+    arxPuppet pup
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 
 AFX_DEFINE_STRUCT(arxPuppetInfo)
 {
-    afxReal mass;
-    afxTransform startWorldTransform;
-    //asxShape* collisionShape;
     arxModel mdl;
-    afxV3d localInertia;
-    afxReal linearDamp;
-    afxReal angularDamp;
-    afxReal friction; // 0.5
-    afxReal rollFriction;
-    afxReal spinFriction; //torsional friction around contact normal
-    afxReal restitution;
-    afxReal linearSleepThreshold; // 0.8
-    afxReal angularSleepThreshold; // 1.0
+    afxUnit partCnt;
+    afxUnit baseMshToPart;
+    afxUnit const* mshToPartMap;
+    arxNode nod;
+    void(*dagSync)(arxNodular*);
+    afxFlags dagFlags;
+    afxMask dagMask;
 };
-
-ARX afxError ArxSpawnBodies
-(
-    arxModel proto, 
-    afxUnit cnt, 
-    arxPuppet pup[]
-);
 
 ARX afxError ArxAcquirePuppets
 (

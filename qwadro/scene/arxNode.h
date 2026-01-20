@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_NODE_H
 #define ARX_NODE_H
@@ -48,7 +48,7 @@
 #include "qwadro/coll/afxSphere.h"
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/cad/arxPose.h"
-#include "qwadro/scene/arxPlacement.h"
+#include "qwadro/scene/arxPosture.h"
 
 #define ARX_NODE_DEFAULT_FILL_THRESHOLD (0.2)
 
@@ -116,6 +116,10 @@ ARX void    ArxGetNodeMatrix(arxNode nod, afxM4d m);
 
 ARX afxError ArxRelinkDagPose(arxNode nod, arxPose pose);
 
+ARX afxError ArxMakeNodulation(arxNodular* nodu, arxNode nod, void(*sync)(arxNodular*), afxFlags dagFlags, afxMask dagMask);
+ARX afxError ArxBreakNodulation(arxNodular* nodu);
+ARX afxBool ArxGetNode(arxNodular* nodu, arxNode* node);
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ARX afxError ArxAcquireJunctionNode(arxScenario scio, arxNode parent, arxModel skl, afxQuatBlend blendOp, afxReal fillThreshold, arxNode* node);
@@ -123,11 +127,32 @@ ARX afxError ArxAcquireCrossfadeNode(arxScenario scio, arxNode parent, arxNode a
 ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(*sample)(void*, afxReal, arxPose, afxUnit, afxUnit const*), void(*setClock)(void*, afxReal), void(*motionVectors)(void*, afxReal, afxReal*, afxReal*, afxBool), void* udd, arxNode* node);
 ARX afxError ArxAcquirePoseNode(arxScenario scio, arxNode parent, arxPose pose, arxNode* node);
 ARX afxError ArxAcquireAnimationNode(arxScenario scio, arxNode parent, arxPuppet bod, afxReal fillThreshold, arxNode* node);
-ARX afxError ArxAcquirePlacementNode(arxScenario scio, arxNode parent, arxPlacement plce, arxNode* node);
+ARX afxError ArxAcquirePostureNode(arxScenario scio, arxNode parent, arxPosture plce, arxNode* node);
 
-ARX afxError ArxCaptureNodes(arxScenario scio, afxBool(*node)(arxNode nod, void *udd), afxArray* pvs);
-ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, afxFrustum const* f, afxArray* pvs);
-ARX afxError ArxCaptureNodesInSphere(arxScenario scio, afxSphere const* area, afxArray* pvs);
-ARX afxError ArxUpdateDags(afxReal allowedErr, afxBool matrices, afxBool poses, afxBool placements, afxUnit cnt, arxNode nodes[]);
+typedef enum arxDagCaptureFlag
+{
+    arxDagCaptureFlag_RESERVED = AFX_BITMASK(31)
+} arxDagCaptureFlags;
+
+ARX afxError ArxCaptureNodes(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxArray* pvs);
+ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxBox const* bounds, afxArray* pvs);
+ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxSphere const* bounds, afxArray* pvs);
+ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxFrustum const* bounds, afxArray* pvs);
+
+typedef enum arxDagStepFlag
+{
+    arxDagStepFlag_RESERVED = AFX_BITMASK(31)
+} arxDagStepFlags;
+
+ARX afxError ArxStepDags(afxReal time, arxDagStepFlags flags, afxUnit cnt, arxNode nodes[]);
+
+typedef enum arxDagUpdateFlag
+{
+    arxDagUpdateFlag_LTM = AFX_BITMASK(0),
+    arxDagUpdateFlag_POSE = AFX_BITMASK(1),
+    arxDagUpdateFlag_POSTURE = AFX_BITMASK(2),
+} arxDagUpdateFlags;
+
+ARX afxError ArxUpdateDags(afxReal allowedErr, arxDagUpdateFlags flags, afxUnit cnt, arxNode nodes[]);
 
 #endif//ARX_NODE_H

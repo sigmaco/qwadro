@@ -18,13 +18,13 @@
  // The Qwadro Video Graphics Infrastructure                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_FENCE_DDK_H
 #define AVX_FENCE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../coree/exec/afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 AFX_DECLARE_STRUCT(_avxIddFenc);

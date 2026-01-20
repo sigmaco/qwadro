@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #define _AMX_MIX_C
 #define _AMX_BUFFER_C
@@ -138,7 +138,7 @@ _AMX void _AmxSanitizeAudioCopy(amxAudio src, amxAudio dst, amxAudioCopy const* 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AMX afxError AmxUpdateAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void const* src, avxFence signal)
+_AMX afxError AmxUpdateAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void const* src, amxFence signal)
 {
     afxResult err = NIL;
     AFX_ASSERT_OBJECTS(afxFcc_AUD, 1, &aud);
@@ -171,7 +171,7 @@ _AMX afxError AmxUpdateAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[]
     return err;
 }
 
-_AMX afxError AmxDumpAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void* dst, avxFence signal)
+_AMX afxError AmxDumpAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], void* dst, amxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_AUD, 1, &aud);
@@ -208,7 +208,7 @@ _AMX afxError AmxDumpAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AMX afxError AmxUploadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream in, avxFence signal)
+_AMX afxError AmxUploadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream in, amxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_AUD, 1, &aud);
@@ -240,7 +240,7 @@ _AMX afxError AmxUploadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[]
     return err;
 }
 
-_AMX afxError AmxDownloadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream out, avxFence signal)
+_AMX afxError AmxDownloadAudio(amxAudio aud, afxUnit opCnt, amxAudioIo const ops[], afxStream out, amxFence signal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_AUD, 1, &aud);

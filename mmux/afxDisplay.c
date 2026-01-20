@@ -14,9 +14,9 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AVX_DRAW_C
 #define _AFX_DEVICE_C
@@ -68,47 +68,45 @@ _AUX afxReal64 AfxFindPhysicalAspectRatio(afxUnit screenWidth, afxUnit screenHei
     return ratio;
 }
 
-_AUX afxError _AuxVduDtorCb(afxDisplay vdu)
+_AUX afxError _AuxVduDtorCb(afxDisplayPort vdu)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_VDU, 1, &vdu);
 
-    _AFX_DEV_CLASS_CONFIG.dtor(&vdu->dev);
+
 
     return err;
 }
 
-_AUX afxError _AuxVduCtorCb(afxDisplay vdu, void** args, afxUnit invokeNo)
+_AUX afxError _AuxVduCtorCb(afxDisplayPort vdu, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_VDU, 1, &vdu);
 
-    afxModule icd = AFX_CAST(afxModule, args[0]);
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    avxDisplayInfo const* info = AFX_CAST(avxDisplayInfo const*, args[1]) + invokeNo;
-    AFX_ASSERT(info);
+    afxDisplay dpy = AFX_CAST(afxDisplay, args[0]);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    afxDisplayPortConfig const* cfg = AFX_CAST(afxDisplayPortConfig const*, args[1]) + invokeNo;
+    AFX_ASSERT(cfg);
 
-    if (_AFX_DEV_CLASS_CONFIG.ctor(&vdu->dev, (void*[]) { icd, (void*)&info->dev }, 0))
-    {
-        AfxThrowError();
-        return err;
-    }
+    vdu->tag = cfg->tag;
+    vdu->udd = cfg->udd;
 
-    vdu->dimWh[0] = info->dimWh[0];
-    vdu->dimWh[1] = info->dimWh[1];
-    vdu->resWh[0] = info->resWh[0];
-    vdu->resWh[1] = info->resWh[1];
-    vdu->dpi[0] = info->dpi[0];
-    vdu->dpi[1] = info->dpi[1];
-    vdu->persistentContent = info->persistentContent;
-    vdu->planeReorder = info->planeReorder;
-    vdu->supportedXforms = info->supportedXforms;
-    AfxStrcpy(vdu->name, info->name);
-    AfxStrcpy(vdu->label, info->label);
+    vdu->dimWh[0] = cfg->dimWh[0];
+    vdu->dimWh[1] = cfg->dimWh[1];
+    vdu->resWh[0] = cfg->resWh[0];
+    vdu->resWh[1] = cfg->resWh[1];
+    vdu->fullArea = cfg->fullArea;
+    vdu->workArea = cfg->workArea;
+    vdu->persistentContent = cfg->persistentContent;
+    vdu->planeReorder = cfg->planeReorder;
+    vdu->supportedXforms = cfg->supportedXforms;
+    vdu->prime = FALSE;
 
-    vdu->portCnt = 1;
-    vdu->ports[0] = (_auxDisplayPort) { 0 };
-    vdu->ports[1] = (_auxDisplayPort) { 0 };
+    vdu->dpi[0] = cfg->dpi[0];
+    vdu->dpi[1] = cfg->dpi[1];
+
+    AfxMakeString32(&vdu->name, &cfg->name);
+    AfxMakeString128(&vdu->label, &cfg->label);
 
     return err;
 }
@@ -116,36 +114,206 @@ _AUX afxError _AuxVduCtorCb(afxDisplay vdu, void** args, afxUnit invokeNo)
 _AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG =
 {
     .fcc = afxFcc_VDU,
-    .name = "Display",
+    .name = "DisplayPort",
     .desc = "Video Display Unit",
-    .fixedSiz = sizeof(AFX_OBJECT(afxDisplay)),
+    .fixedSiz = sizeof(AFX_OBJECT(afxDisplayPort)),
     .ctor = (void*)_AuxVduCtorCb,
     .dtor = (void*)_AuxVduDtorCb
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, avxDisplayInfo const infos[], afxDisplay displays[])
+_AUX afxClass const* _AuxDpyGetVduClass(afxDisplay dpy)
 {
     afxError err = { 0 };
-    AFX_ASSERT(displays);
-    AFX_ASSERT(infos);
-    AFX_ASSERT(cnt);
-    
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    AFX_ASSERT(AfxTestModule(icd, afxModuleFlag_ICD | afxModuleFlag_AUX));
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    afxClass const* cls = &dpy->portCls;
+    AFX_ASSERT_CLASS(cls, afxFcc_VDU);
+    return cls;
+}
 
-    afxClass* cls = (afxClass*)_AuxIcdGetDpyClass(icd);
+_AUX afxError _AuxRegisterDisplayPorts(afxDisplay dpy, afxUnit cnt, afxDisplayPortConfig const cfg[], afxDisplayPort ports[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    AFX_ASSERT(ports);
+    AFX_ASSERT(cfg);
+    AFX_ASSERT(cnt);
+
+    afxClass* cls = (afxClass*)_AuxDpyGetVduClass(dpy);
     AFX_ASSERT_CLASS(cls, afxFcc_VDU);
 
-    if (AfxAcquireObjects(cls, cnt, (afxObject*)displays, (void const*[]) { icd, infos, NIL }))
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)ports, (void const*[]) { dpy, cfg }))
     {
         AfxThrowError();
         return err;
     }
     else
     {
-        AFX_ASSERT_OBJECTS(afxFcc_VDU, cnt, displays);
+        AFX_ASSERT_OBJECTS(afxFcc_VDU, cnt, ports);
+    }
+    return err;
+}
+
+_AUX afxDisplayPort AfxGetDisplayPort(afxDisplay dpy, afxUnit port)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    afxDisplayPort vdu = NIL;
+    if (_AfxEnumerateObjectsUnlocked(_AuxDpyGetVduClass(dpy), FALSE, port, 1, (afxObject*)&vdu))
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_VDU, 1, &vdu);
+    }
+    return vdu;
+}
+
+_AUX afxError AfxQueryGammaControlCapabilites(afxDisplay dpy, afxUnit port, afxGammaCapabilites* caps)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    
+    if (!dpy->ddi->askGammaCtrlCb)
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+    else if (afxError_UNSUPPORTED == (err = dpy->ddi->askGammaCtrlCb(dpy, port, caps)))
+    {
+        *caps = (afxGammaCapabilites) { 0 };
+    }
+    return err;
+}
+
+_AUX afxError AfxDescribeGammaControl(afxDisplay dpy, afxUnit port, afxGammaCurve* desc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    if (!dpy->ddi->getGammaCtrlCb)
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+    else if (afxError_UNSUPPORTED == (err = dpy->ddi->getGammaCtrlCb(dpy, port, desc)))
+    {
+        *desc = (afxGammaCurve) { 0 };
+    }
+    return err;
+}
+
+_AUX afxError AfxControlGamma(afxDisplay dpy, afxUnit port, afxGammaCurve const* ctrl)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    if (!dpy->ddi->setGammaCtrlCb)
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+    else if ((err = dpy->ddi->setGammaCtrlCb(dpy, port, ctrl)))
+    {
+        AfxThrowError();
+    }
+    return err;
+}
+
+_AUX afxUnit AfxQueryDisplayModes(afxDisplay dpy, afxUnit port, avxFormat fmt, afxUnit cnt, afxDisplayMode modes[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    AFX_ASSERT(modes);
+    AFX_ASSERT(cnt);
+    afxUnit rslt = 0;
+
+    rslt = dpy->ddi->qryModeCb(dpy, port, fmt, cnt, modes);
+
+    return rslt;
+}
+
+_AUX afxError AfxCopyBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface dout)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    if (dpy->ddi->captureCb(dpy, port, dout))
+        AfxThrowError();
+
+    return err;
+}
+
+_AUX afxError _AuxDpyDtorCb(afxDisplay dpy)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    AfxExhaustChainedClasses(&dpy->dev.classes);
+
+    _AFX_DEV_CLASS_CONFIG.dtor(&dpy->dev);
+
+    return err;
+}
+
+_AUX afxError _AuxDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    afxModule icd = AFX_CAST(afxModule, args[0]);
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    afxDisplayConfig const* cfg = AFX_CAST(afxDisplayConfig const*, args[1]) + invokeNo;
+    AFX_ASSERT(cfg);
+    afxClassConfig const* pPortClsCfg = args[2];
+
+    if (_AFX_DEV_CLASS_CONFIG.ctor(&dpy->dev, (void*[]) { icd, (void*)&cfg->dev }, 0))
+    {
+        AfxThrowError();
+        return err;
+    }
+    
+    dpy->tag = cfg->tag;
+    dpy->udd = cfg->udd;
+
+    AfxMakeString32(&dpy->name, &cfg->name);
+    AfxMakeString128(&dpy->label, &cfg->label);
+
+    afxClassConfig portClsCfg = pPortClsCfg ? *pPortClsCfg : _AUX_VDU_CLASS_CONFIG;
+
+    AfxMountClass(&dpy->portCls, NIL, &dpy->dev.classes, &portClsCfg);
+
+    return err;
+}
+
+_AUX afxClassConfig const _AUX_DPY_CLASS_CONFIG =
+{
+    .fcc = afxFcc_DPY,
+    .name = "Display",
+    .desc = "Video Display Device",
+    .fixedSiz = sizeof(AFX_OBJECT(afxDisplay)),
+    .ctor = (void*)_AuxDpyCtorCb,
+    .dtor = (void*)_AuxDpyDtorCb
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+_AUX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT(displays);
+    AFX_ASSERT(cfg);
+    AFX_ASSERT(cnt);
+    
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    AFX_ASSERT(AfxTestModule(icd, afxModuleFlag_ICD | afxModuleFlag_AUX));
+
+    afxClass* cls = (afxClass*)_AuxIcdGetDpyClass(icd);
+    AFX_ASSERT_CLASS(cls, afxFcc_DPY);
+
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)displays, (void const*[]) { icd, cfg, &_AUX_VDU_CLASS_CONFIG }))
+    {
+        AfxThrowError();
+        return err;
+    }
+    else
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_DPY, cnt, displays);
 
     }
     return err;
@@ -168,9 +336,9 @@ _AUX afxUnit AfxEnumerateDisplays(afxUnit icd, afxUnit first, afxUnit cnt, afxDi
 
     afxUnit rslt = 0;
     afxClass const* cls = _AuxIcdGetDpyClass(drv);
-    AFX_ASSERT_CLASS(cls, afxFcc_VDU);
+    AFX_ASSERT_CLASS(cls, afxFcc_DPY);
     rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)displays);
     // @displays must be an array of valid afxDisplay handles.
-    AFX_ASSERT_OBJECTS(afxFcc_VDU, rslt, displays);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, rslt, displays);
     return rslt;
 }

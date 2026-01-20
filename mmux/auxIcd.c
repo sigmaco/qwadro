@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 #define _AFX_SYSTEM_C
 #define _AFX_MODULE_C
@@ -50,8 +50,8 @@ _AVX afxClass const* _AuxIcdGetDpyClass(afxModule icd)
         AfxThrowError();
         return NIL;
     }
-    afxClass const* cls = &icd->icd.vduCls;
-    AFX_ASSERT_CLASS(cls, afxFcc_VDU);
+    afxClass const* cls = &icd->icd.dpyCls;
+    AFX_ASSERT_CLASS(cls, afxFcc_DPY);
     return cls;
 }
 
@@ -73,7 +73,7 @@ _AUX afxError _AuxIcdGetInteropDpyClass(afxUnit icd, afxString const* tool, afxC
         return NIL;
     }
     
-    driver->icd.getVduClsc(driver, tool, clsc);
+    driver->icd.getDpyClsc(driver, tool, clsc);
 
     return err;
 }
@@ -170,25 +170,25 @@ _AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg)
     AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
-    afxBool vduMounted = FALSE, sesMounted = FALSE;
+    afxBool dpyMounted = FALSE, envMounted = FALSE;
 
-    afxClassConfig vduCfg2 = cfg->vduCls.fcc ? cfg->vduCls : _AUX_VDU_CLASS_CONFIG;
-    AFX_ASSERT(vduCfg2.fcc == afxFcc_VDU);
-    AFX_ASSERT(vduCfg2.fixedSiz >= _AUX_VDU_CLASS_CONFIG.fixedSiz);
-    if ((vduCfg2.fcc != afxFcc_VDU) ||
-        (_AUX_VDU_CLASS_CONFIG.fixedSiz > vduCfg2.fixedSiz))
+    afxClassConfig dpyCfg2 = cfg->dpyCls.fcc ? cfg->dpyCls : _AUX_DPY_CLASS_CONFIG;
+    AFX_ASSERT(dpyCfg2.fcc == afxFcc_DPY);
+    AFX_ASSERT(dpyCfg2.fixedSiz >= _AUX_DPY_CLASS_CONFIG.fixedSiz);
+    if ((dpyCfg2.fcc != afxFcc_DPY) ||
+        (_AUX_DPY_CLASS_CONFIG.fixedSiz > dpyCfg2.fixedSiz))
     {
         AfxThrowError();
         return err;
     }
-    else if (AfxMountClass(&icd->icd.vduCls, &sys->vduCls, &icd->classes, &vduCfg2)) // require base*
+    else if (AfxMountClass(&icd->icd.dpyCls, &sys->dpyCls, &icd->classes, &dpyCfg2)) // require base*
     {
         AfxThrowError();
         return err;
     }
     else
     {
-        vduMounted = TRUE;
+        dpyMounted = TRUE;
     }
 
     afxClassConfig envClsCfg = cfg->envCls.fcc ? cfg->envCls : _AUX_ENV_CLASS_CONFIG;
@@ -198,18 +198,18 @@ _AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg)
         (_AUX_ENV_CLASS_CONFIG.fixedSiz > envClsCfg.fixedSiz))
     {
         AfxThrowError();
-        AfxDismountClass(&icd->icd.vduCls);
+        AfxDismountClass(&icd->icd.dpyCls);
         return err;
     }
     else if (AfxMountClass(&icd->icd.envCls, NIL, &icd->classes, &envClsCfg)) // require base*
     {
         AfxThrowError();
-        AfxDismountClass(&icd->icd.vduCls);
+        AfxDismountClass(&icd->icd.dpyCls);
         return err;
     }
     else
     {
-        sesMounted = TRUE;
+        envMounted = TRUE;
     }
 
     {

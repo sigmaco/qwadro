@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 // It is hard to invent something when there is nothing to be copied.
 
@@ -32,6 +32,14 @@
 //#define _AMX_SINK_C
 #include "amxIcd.h"
 #include "../mmux/auxIcd.h"
+
+_AMX afxDrawSystem _AmxMsysGetDsys(afxMixSystem msys)
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    return msys->dsys;
+}
 
 _AMX _amxDdiMsys const* _AmxMsysGetDdi(afxMixSystem msys)
 {
@@ -796,14 +804,37 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
         }
     }
 
-    afxModule drv;
-    if (!_AmxGetIcd(icd, &drv))
+    afxClass* msysCls = NIL;
+    afxModule drv = NIL;
+
+    if (icd != AFX_INVALID_INDEX)
     {
-        AfxThrowError();
-        return err;
+        if (!_AmxGetIcd(icd, &drv))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AMX));
+
+        msysCls = (afxClass*)_AmxIcdGetMsysClass(drv);
+        AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
+
     }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-    AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AMX));
+    else
+    {
+        static afxBool clsInited = FALSE;
+        static afxClass staticMsysCls = { 0 };
+
+        if (!clsInited)
+        {
+            AfxMountClass(&staticMsysCls, NIL, NIL, &_AMX_MSYS_CLASS_CONFIG);
+            clsInited = TRUE;
+        }
+
+        msysCls = &staticMsysCls;
+        AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
+    }
 
     // Acquire bridges and queues
     afxUnit totalSqueCnt = 0;
@@ -885,11 +916,10 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
     cfg2.tag = cfg->tag;
     cfg2.dsys = cfg->dsys;
 
-    afxClass* cls = (afxClass*)_AmxIcdGetMsysClass(drv);
-    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
+    AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
 
     afxMixSystem msys;
-    if (AfxAcquireObjects(cls, 1, (afxObject*)&msys, (void const*[]) { drv, &cfg2, &bridgeCfg[0], }))
+    if (AfxAcquireObjects(msysCls, 1, (afxObject*)&msys, (void const*[]) { drv, &cfg2, &bridgeCfg[0], }))
     {
         AfxThrowError();
         return err;

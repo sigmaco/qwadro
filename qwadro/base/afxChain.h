@@ -96,6 +96,10 @@ struct afxChain
 
 // INITIALIZATION AND METADATA
 
+// Statically initializes a chain. The initialized chain does not require afxMakeChain().
+#define AFX_STATIC_CHAIN(_name_) _name_ = \
+    { { .next = &(_name_.anchor), .prev = &(_name_.anchor), .chain = &(_name_) }, { NIL }, 0 }
+
 /*
     The AfxDeplyChain() function initializes a chain. Basically a constructor; makes the list safe for use.
 */

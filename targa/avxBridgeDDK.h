@@ -18,8 +18,8 @@
  // The Qwadro Video Graphics Infrastructure                                 //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_BRIDGE_DDK_H
 #define AVX_BRIDGE_DDK_H
@@ -90,6 +90,7 @@ AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt
 AVX afxError _AvxDexuCohereMappedBuffers(afxDrawBridge dexu, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
 AVX afxError _AvxDexuTransferVideoMemory(afxDrawBridge dexu, avxTransference* ctrl, afxUnit opCnt, void const* ops);
 AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresentation presentations[]);
+AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption captions[]);
 
 AVX afxError _AvxDexuResetQueries(afxDrawBridge dexu, avxQueryPool qryp, afxUnit base, afxUnit cnt);
 AVX afxError _AvxDexuQueryResults(afxDrawBridge dexu, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride);
