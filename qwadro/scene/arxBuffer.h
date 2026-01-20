@@ -7,19 +7,19 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *          Q W A D R O   4 D   R E N D E R I N G   I N F R A S T R U C T U R E
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_BUFFER_H
 #define ARX_BUFFER_H
 
-#include "qwadro/render/arxRenderable.h"
+#include "qwadro/iris/arxIrisDefs.h"
 
 typedef enum arxFormat
 {
@@ -100,49 +100,59 @@ AFX_DEFINE_STRUCT(arxBufferInfo)
 
 AFX_DEFINE_STRUCT(arxBufferCopy)
 {
-    afxSize         srcOffset; // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         dstOffset; // is the starting offset in bytes from the start of dstBuffer.
-    afxUnit         range; // is the number of bytes to copy.
+    // The starting offset in bytes from the start of srcBuffer.
+    afxSize         srcOffset;
+    // The starting offset in bytes from the start of dstBuffer.
+    afxSize         dstOffset;
+    // The number of bytes to copy.
+    afxUnit         range;
 };
 
 AFX_DEFINE_STRUCT(arxBufferIo)
 {
-    afxSize         srcOffset; // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         dstOffset; // is the starting offset in bytes from the start of dstBuffer.
-    afxUnit         srcStride; // [!] only if supported by device, else case it must be 1.
-    afxUnit         dstStride; // [!] only if supported by device, else case it must be 1.
-    afxUnit         rowCnt; // is the number of rows to stream in/out.
+    // The starting offset in bytes from the start of srcBuffer.
+    afxSize         srcOffset;
+    // The starting offset in bytes from the start of dstBuffer.
+    afxSize         dstOffset;
+    // [!] only if supported by device, else case it must be 1.
+    afxUnit         srcStride;
+    // [!] only if supported by device, else case it must be 1.
+    afxUnit         dstStride;
+    // The number of rows to stream in/out.
+    afxUnit         rowCnt;
 };
 
 ARX arxScenario ArxGetBufferHost
 (
-    arxBuffer sbuf
+    arxBuffer rbuf
 );
 
 ARX void* ArxGetBufferUdd
 (
-    arxBuffer sbuf
+    arxBuffer rbuf
 );
 
 ARX afxUnit ArxGetBufferCapacity
 (
-    arxBuffer sbuf, 
+    arxBuffer rbuf, 
     afxUnit from
 );
 
 ARX arxBufferUsage ArxGetBufferUsage
 (
-    arxBuffer sbuf, arxBufferUsage usage);
+    arxBuffer rbuf, 
+    arxBufferUsage usage
+);
 
 ARX arxBufferFlags ArxGetBufferFlags
 (
-    arxBuffer sbuf, 
+    arxBuffer rbuf, 
     arxBufferFlags mask
 );
 
 ARX void* ArxGetBufferData
 (
-    arxBuffer sbuf, 
+    arxBuffer rbuf, 
     afxSize from
 );
 

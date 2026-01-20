@@ -18,7 +18,7 @@
  // VIDEO MEMORY TRANSFERENCE OPERATIONS                                     //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_TRANSFERENCE_H
 #define AVX_TRANSFERENCE_H

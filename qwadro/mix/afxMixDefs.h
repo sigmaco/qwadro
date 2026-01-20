@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 /*
     Media synthesis refers to the use of advanced technologies, including artificial intelligence (AI),

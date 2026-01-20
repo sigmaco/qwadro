@@ -19,8 +19,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // This code is part of Qwadro Draw System <https://sigmaco.org/qwadro>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
+// This software is part of Advanced Video Graphics Extensions.
+// This code is part of SIGMA GL/2.
 
 #ifndef AVX_RASTER_FILE_H
 #define AVX_RASTER_FILE_H

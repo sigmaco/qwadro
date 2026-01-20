@@ -8,14 +8,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_ANIMATION_H
 #define ARX_ANIMATION_H
@@ -32,7 +32,7 @@
 #include "qwadro/anim/arxGesture.h"
 #include "qwadro/cad/arxPose.h"
 #include "qwadro/anim/arxPuppet.h"
-#include "qwadro/anim/arxCapstan.h"
+#include "qwadro/anim/arxPulley.h"
 
 typedef enum arxAnimationFlag
 {
@@ -44,11 +44,49 @@ AFX_DEFINE_STRUCT(arxAnimationBlueprint)
     afxReal         dur;
     afxReal         timeStep;
     afxReal         oversampling;
-    afxUnit         motSlotCnt;
-    arxGesture*      motions;
-    // TODO make motions' names a animation property to ease portability of motions.
+    afxUnit         gesSlotCnt;
+    arxGesture*     gestures;
+    // TODO make gestures' names a animation property to ease portability of gestures.
     afxString32     id;
+
+    void*           udd;
+    afxString       tag;
 };
+
+ARX afxError ArxAssembleAnimations
+(
+    arxScenario scio,
+    afxUnit cnt,
+    arxAnimationBlueprint const blueprints[],
+    arxAnimation animations[]
+);
+
+ARX afxError ArxLoadAnimation
+(
+    arxScenario scio,
+    afxString const* urn,
+    afxUri const* uri,
+    arxAnimation* animation
+);
+
+ARX void ArxTransformAnimations
+(
+    afxM3d const ltm,
+    afxM3d const iltm,
+    afxReal linearTol,
+    afxV4d const atv,
+    afxReal affineTol,
+    afxFlags flags,
+    afxUnit cnt,
+    arxAnimation animations[]
+);
+
+////////////////////////////////////////////////////////////////////////////////
+
+ARX arxScenario ArxGetAnimationHost
+(
+    arxAnimation ani
+);
 
 ARX afxBool ArxGetAnimationUrn
 (
@@ -56,27 +94,27 @@ ARX afxBool ArxGetAnimationUrn
     afxString* id
 );
 
-ARX afxBool ArxFindMotion
+ARX afxBool ArxFindGesture
 (
     arxAnimation ani, 
     afxString const* id, 
-    afxUnit *motIdx
+    afxUnit *gesIdx
 );
 
-ARX afxError ArxGetMotions
+ARX afxUnit ArxGetGestures
 (
     arxAnimation ani, 
     afxUnit first, 
     afxUnit cnt, 
-    arxGesture motions[]
+    arxGesture gestures[]
 );
 
-ARX afxError ArxRelinkMotions
+ARX afxError ArxRelinkGestures
 (
     arxAnimation ani, 
     afxUnit baseSlot, 
     afxUnit slotCnt, 
-    arxGesture motions[]
+    arxGesture gestures[]
 );
 
 ARX afxUnit ArxPerformAnimation
@@ -85,45 +123,14 @@ ARX afxUnit ArxPerformAnimation
     afxReal startTime, 
     afxUnit iterCnt, 
     afxUnit cnt, 
-    arxPuppet bodies[]
+    afxString const gestures[],
+    arxPuppet puppets[]
 );
-
-//ARX afxUnit ArxPerformAnimationBinding(arxAnimation ani, afxReal startTime, afxUnit iterCnt, struct arxInstancedAnimation *binding, afxUnit cnt, arxPuppet bodies[]);
 
 ARX afxError ArxArchiveAnimation
 (
     arxAnimation ani, 
     afxUri const* uri
-);
-
-////////////////////////////////////////////////////////////////////////////////
-
-ARX afxError ArxLoadAnimation
-(
-    arxScenario scio, 
-    afxString const* urn, 
-    afxUri const* uri, 
-    arxAnimation* animation
-);
-
-ARX afxError ArxAssembleAnimations
-(
-    arxScenario scio, 
-    afxUnit cnt, 
-    arxAnimationBlueprint const blueprints[], 
-    arxAnimation animations[]
-);
-
-ARX void ArxTransformAnimations
-(
-    afxM3d const ltm, 
-    afxM3d const iltm, 
-    afxReal linearTol, 
-    afxV4d const atv, 
-    afxReal affineTol, 
-    afxFlags flags, 
-    afxUnit cnt, 
-    arxAnimation animations[]
 );
 
 #endif//ARX_ANIMATION_H

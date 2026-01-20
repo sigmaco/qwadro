@@ -15,7 +15,7 @@
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 /*
     A mix bridge, as well as other bridges and queues in Qwadro, is highly based on Commondore Amiga-way 

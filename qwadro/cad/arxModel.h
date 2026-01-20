@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *          Q W A D R O   4 D   R E N D E R I N G   I N F R A S T R U C T U R E
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_MODEL_H
 #define ARX_MODEL_H
@@ -31,7 +31,7 @@
 
 #include "qwadro/cad/arxMeshIo.h"
 #include "qwadro/cad/arxPose.h"
-#include "qwadro/scene/arxPlacement.h"
+#include "qwadro/scene/arxPosture.h"
 #include "qwadro/cad/arxSkeleton.h"
 
 typedef enum arxModelFlag
@@ -177,7 +177,7 @@ ARX void ArxComputeRiggedMeshMatrices
 (
     arxModel mdl, 
     afxUnit rigIdx, 
-    arxPlacement plce, 
+    arxPosture plce, 
     afxUnit baseBiasIdx, 
     afxUnit biasCnt, 
     afxM4d matrices[]
@@ -203,7 +203,7 @@ ARX void ArxBuildRiggedMeshCompositeMatrices
 (
     arxModel mdl, 
     afxUnit rigIdx, 
-    arxPlacement plce, 
+    arxPosture plce, 
     afxUnit cnt, 
     afxM4d matrices[]
 );
@@ -255,7 +255,7 @@ ARX afxError ArxLoadModel
     arxModel* model
 );
 
-ARX afxBool ArxIdentifyModels
+ARX afxBool ArxFindModels
 (
     arxScenario scio,
     afxUnit cnt,

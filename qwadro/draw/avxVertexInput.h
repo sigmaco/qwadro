@@ -18,7 +18,7 @@
  // QWADRO PIPELINED VERTEX INPUT DECLARATION                                //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_VERTEX_DECL_H
 #define AVX_VERTEX_DECL_H
@@ -108,6 +108,14 @@ AFX_DEFINE_STRUCT(avxVertexLayout)
     // User-defined data (opaque pointer for engine/client use).
     void*           udd;
 };
+
+/*
+    Shall AVX_VERTEX_ATTR specify the stream index?
+    If so, avxVertexLayout should have an explicit attrCnt,
+    and the configurator/acquisitor function should nest the attributes.
+    Doing so, could improve usabiliy of AVX_VERTEX_STREAM(bin, stride, instRate, baseAttr, attrCnt),
+    removing the two last parameters, and using AVX_VERTEX_ATTR(at, bin, offset, fmt).
+*/
 
 AVX afxError    AvxAcquireVertexInputs
 (

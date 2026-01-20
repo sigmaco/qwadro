@@ -7,14 +7,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *          Q W A D R O   4 D   R E N D E R I N G   I N F R A S T R U C T U R E
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_SKELETON_H
 #define ARX_SKELETON_H
@@ -39,7 +39,16 @@
 */
 
 #include "qwadro/cad/arxPose.h"
-#include "qwadro/scene/arxPlacement.h"
+#include "qwadro/scene/arxPosture.h"
+
+typedef enum arxBoneAttr
+{
+    arxBoneAttr_PARENT      = AFX_BITMASK(0),
+    arxBoneAttr_TRANSFORM   = AFX_BITMASK(1),
+    arxBoneAttr_INVERSOR    = AFX_BITMASK(2),
+    arxBoneAttr_LOD_ERROR   = AFX_BITMASK(3),
+    arxBoneAttr_UDD         = AFX_BITMASK(4),
+} arxBoneAttr;
 
 typedef enum arxJointType
 {
@@ -133,7 +142,7 @@ ARX afxUnit ArxEnumerateSkeletons
     arxSkeleton skeletons[]
 );
 
-ARX afxBool ArxIdentifySkeletons
+ARX afxBool ArxFindSkeletons
 (
     arxScenario scio,
     afxUnit cnt,
@@ -177,15 +186,15 @@ ARX afxUnit ArxGetSkeletonDepth
 ARX afxUnit ArxGetBoneTransforms
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     afxTransform transforms[]
 );
 
-ARX afxUnit ArxGetBoneLodErrors
+ARX afxUnit ArxGetBoneNegligence
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     afxReal lodErrors[]
 );
@@ -193,7 +202,7 @@ ARX afxUnit ArxGetBoneLodErrors
 ARX afxUnit ArxGetBoneInversors
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt, 
     void* matrices, 
     afxUnit stride
@@ -202,42 +211,42 @@ ARX afxUnit ArxGetBoneInversors
 ARX afxUnit ArxGetBoneParents
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone, 
     afxUnit boneCnt,
     void* indices, 
     afxUnit stride
 );
 
-ARX afxError ArxReparentBones
+ARX afxError ArxReplaceBoneParents
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     void const* indices, 
     afxUnit stride
 );
 
-ARX afxError ArxResetBoneTransforms
+ARX afxError ArxReplaceBoneTransforms
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     afxTransform const transforms[]
 );
 
-ARX afxError ArxResetBoneInversors
+ARX afxError ArxReplaceBoneInversors
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     void const* matrices, 
     afxUnit stride
 );
 
-ARX afxError ArxResetBoneLodErrors
+ARX afxError ArxReplaceBoneNegligence
 (
     arxSkeleton skl, 
-    afxUnit boneIdx, 
+    afxUnit baseBone,
     afxUnit boneCnt,
     afxReal const lodErrors[]
 );

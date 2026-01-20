@@ -41,40 +41,61 @@
 
 typedef enum afxDof
 {
-    afxDof_POSITION_X   = AFX_BITMASK(0),
-    afxDof_POSITION_Y   = AFX_BITMASK(1),
-    afxDof_POSITION_Z   = AFX_BITMASK(2),
-    afxDof_POSITION     = afxDof_POSITION_X | afxDof_POSITION_Y | afxDof_POSITION_Z,
+    afxDof_NONE,
 
-    afxDof_ROTATION_X   = AFX_BITMASK(3),
-    afxDof_ROTATION_Y   = AFX_BITMASK(4),
-    afxDof_ROTATION_Z   = AFX_BITMASK(5),
-    afxDof_ROTATION     = afxDof_ROTATION_X | afxDof_ROTATION_Y | afxDof_ROTATION_Z,
+    afxDof_T_X      = AFX_BITMASK(0),
+    afxDof_T_Y      = AFX_BITMASK(1),
+    afxDof_T_Z      = AFX_BITMASK(2),
+    afxDof_T_XY     = (afxDof_T_X | afxDof_T_Y),
+    afxDof_T_XZ     = (afxDof_T_X | afxDof_T_Z),
+    afxDof_T_YZ     = (afxDof_T_Y | afxDof_T_Z),
+    afxDof_T        = (afxDof_T_X | afxDof_T_YZ),
+
+    afxDof_R_X      = AFX_BITMASK(3),
+    afxDof_R_Y      = AFX_BITMASK(4),
+    afxDof_R_Z      = AFX_BITMASK(5),
+    afxDof_R_XY     = (afxDof_R_X | afxDof_R_Y),
+    afxDof_R_XZ     = (afxDof_R_X | afxDof_R_Z),
+    afxDof_R_YZ     = (afxDof_R_Y | afxDof_R_Z),
+    afxDof_R        = (afxDof_R_X | afxDof_R_YZ),
 
     // scale/shear
-    afxDof_SCALE_X      = AFX_BITMASK(6),
-    afxDof_SCALE_Y      = AFX_BITMASK(7),
-    afxDof_SCALE_Z      = AFX_BITMASK(8),
-    afxDof_SCALE        = afxDof_SCALE_X | afxDof_SCALE_Y | afxDof_SCALE_Z
+    afxDof_S_X      = AFX_BITMASK(6),
+    afxDof_S_Y      = AFX_BITMASK(7),
+    afxDof_S_Z      = AFX_BITMASK(8),
+    afxDof_S_XY     = (afxDof_S_X | afxDof_S_Y),
+    afxDof_S_XZ     = (afxDof_S_X | afxDof_S_Z),
+    afxDof_S_YZ     = (afxDof_S_Y | afxDof_S_Z),
+    afxDof_S        = (afxDof_S_X | afxDof_S_YZ),
+
+    // DOF of 2D plane-based motion.
+    afxDof_PLANAR   = (afxDof_T_XY | afxDof_R_Z)
+
 } afxDof;
 
 typedef enum afxTransformFlag
 {
-    afxTransformFlag_TRANSLATED = AFX_BITMASK(0), // has non-identity position
-    afxTransformFlag_ROTATED    = AFX_BITMASK(1), // has non-identity orientation
-    afxTransformFlag_RIGID      = afxTransformFlag_TRANSLATED | afxTransformFlag_ROTATED,
-    afxTransformFlag_DEFORMED   = AFX_BITMASK(2), // has non-identity scale/shear
-    afxTransformFlag_UNISCALED  = AFX_BITMASK(3), // has scalar scaling [ 1, ... ]
-    afxTransformFlag_SCALED     = AFX_BITMASK(4), // has vector scaling [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ]
-    afxTransformFlag_ALL =      (afxTransformFlag_TRANSLATED | afxTransformFlag_ROTATED | afxTransformFlag_DEFORMED)
+    // The transform has translation.
+    afxTransformFlag_T          = AFX_BITMASK(0), // has non-identity position
+    // The transform has orientation/rotation.
+    afxTransformFlag_R          = AFX_BITMASK(1), // has non-identity orientation
+    // The transform has rigid transformation.
+    afxTransformFlag_RIGID      = (afxTransformFlag_T | afxTransformFlag_R),
+    // The transform has scaling and/or shearing; it is effectively non-rigid transform.
+    afxTransformFlag_S          = AFX_BITMASK(2), // has non-identity scale/shear
+    // The transform has uniform scaling. [ s, 0, 0, 0, s, 0, 0, 0, s ]
+    afxTransformFlag_UNISCALED  = AFX_BITMASK(3),
+    // The transform has non-uniform scaling. [ sX, 0, 0, 0, sY, 0, 0, 0, sZ ]
+    afxTransformFlag_SCALED     = AFX_BITMASK(4),
+    afxTransformFlag_ALL        = (afxTransformFlag_T | afxTransformFlag_R | afxTransformFlag_S)
 } afxTransformFlags;
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxTransform)
 {
-    afxQuat             orientation;
-    afxV3d              position; // @ 16
+    afxQuat             oq;
+    afxV3d              pv; // @ 16
     afxTransformFlags   flags; // @ 28
-    afxM3d              scaleShear; // @ 32
+    afxM3d              ssm; // @ 32
 };
 
 AFX afxTransform const AFX_TRANSFORM_ZERO;
@@ -82,22 +103,24 @@ AFX afxTransform const AFX_TRANSFORM_IDENTITY;
 
 // You can initialize a afxTransform to the identity transform like this:
 
-AFXINL void     AfxZeroTransform(afxTransform* t); // make zero
-AFXINL void     AfxResetTransform(afxTransform* t); // make identity
+AFXINL afxBool  AfxZeroTransform(afxTransform* t); // make zero
+AFXINL afxBool  AfxResetTransform(afxTransform* t); // make identity
 
-AFXINL void     AfxCopyTransform(afxTransform* t, afxTransform const *in);
+AFXINL afxBool  AfxCopyTransform(afxTransform* t, afxTransform const *in);
 
-AFXINL void     AfxSetTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxM3d const scaleShear, afxBool check);
+AFXINL afxBool  AfxCopyRigidTransform(afxTransform* t, afxTransform const *in);
 
-AFXINL void     AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxBool check);
+AFXINL afxBool  AfxMakeTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxM3d const scaleShear, afxBool check);
 
-AFXINL void     AfxClipTransformDofs(afxTransform* t, afxFlags allowedDOFs);
+AFXINL afxBool  AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxBool check);
+
+AFXINL void     AfxEnforceTransformDofs(afxTransform* t, afxDof allowedDofs);
 
 AFXINL afxReal  AfxDetTransform(afxTransform const* t);
 
 AFXINL void     AfxMixTransform(afxTransform* t, afxTransform const* a, afxTransform const* b, afxReal time);
 
-AFXINL void     AfxInvertTransform(afxTransform const* in, afxTransform* t);
+AFXINL afxBool  AfxInvertTransform(afxTransform const* in, afxTransform* t);
 
 AFXINL void     AfxPreMultiplyTransform(afxTransform* t, afxTransform const* pre);
 AFXINL void     AfxPostMultiplyTransform(afxTransform* t, afxTransform const* post);
@@ -106,6 +129,10 @@ AFXINL void     AfxMultiplyTransform(afxTransform* t, afxTransform const* a, afx
 AFXINL void     AfxTransformArrayedAtv3d(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[]);
 AFXINL void     AfxTransformArrayedLtv3d(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[]);
 AFXINL void     AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[]);
+
+AFXINL void     AfxTransformAtv3d(afxTransform const* t, afxV3d const in, afxV3d out);
+AFXINL void     AfxTransformLtv3d(afxTransform const* t, afxV3d const in, afxV3d out);
+AFXINL void     AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const in, afxV3d out);
 
 AFXINL void     AfxAssimilateTransforms(afxM3d const ltm, afxM3d const iltm, afxV4d const atv, afxUnit cnt, afxTransform const in[], afxTransform out[]);
 

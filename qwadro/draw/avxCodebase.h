@@ -18,7 +18,7 @@
  // DRAWING PIPELINE PROGRAMMABLE FUNCTION LIBRARY                           //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_CODEBASE_H
 #define AVX_CODEBASE_H

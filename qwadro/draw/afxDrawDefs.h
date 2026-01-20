@@ -18,8 +18,8 @@
  // SIGMA Unified High Fidelity Video Graphics Infrastructure                //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 /*
     The Qwadro draw I/O system refers to the overall framework or set of components involved in creating, managing, and rendering graphical content. 

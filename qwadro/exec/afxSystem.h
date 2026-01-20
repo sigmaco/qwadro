@@ -36,6 +36,7 @@
 #include "qwadro/exec/afxThread.h"
 #include "qwadro/exec/afxThreadPool.h"
 #include "qwadro/base/afxVersion.h"
+#include "qwadro/exec/afxConsole.h"
 // io
 #include "qwadro/io/afxData.h"
 #include "qwadro/io/afxIoBridge.h"
@@ -141,7 +142,7 @@ AFX_DEFINE_STRUCT(afxSystemConfig)
     afxChar const*          root;
 
     afxBool                 avxDisabled;
-    afxBool                 asxDisabled;
+    afxBool                 acxDisabled;
     afxBool                 auxDisabled;
     afxUri32                shell;
 
@@ -150,9 +151,10 @@ AFX_DEFINE_STRUCT(afxSystemConfig)
     afxSystemConfigExt*     exts;
 };
 
-AFX void AfxConfigureSystem
+AFX afxError AfxConfigureSystem
 (
-    afxSystemConfig* cfg
+    afxSystemConfig* cfg,
+    afxUri const* ini
 );
 
 AFX afxError AfxBootstrapSystem
@@ -174,7 +176,7 @@ AFX afxBool AfxGetSystem
     afxSystem* system
 );
 
-AFX void AfxDoSystemShutdown
+AFX void AfxAbolishSystem
 (
     afxInt exitCode
 );
@@ -196,36 +198,27 @@ AFX afxUnit AfxGetMemoryPageSize(void);
 /// This function returns 1 if neither value could be determined.
 AFX afxUnit AfxGetThreadingCapacity(void);
 
-AFX afxUri const* AfxGetSystemDirectory
+AFX afxError AfxGetSystemDirectory
 (
     afxUri* dst
 );
 
-AFX afxString const* AfxGetSystemDirectoryString
+AFX afxUnit AfxGetSystemDirectoryString
 (
     afxString* dst
 );
 
-AFX afxUri const* AfxGetPwd
+AFX afxError AfxGetPwd
 (
     afxUri* dst
 );
 
-AFX afxString const* AfxGetPwdString
+AFX afxUnit AfxGetPwdString
 (
     afxString* dst
 );
 
 AFX afxUnit32 AfxGetPrimeTid(void);
-
-// Sends event event directly to receiver receiver, using the notify() function. Returns the value that was returned from the event handler.
-// Adds the event event, with the object receiver as the receiver of the event, to an event queue and returns immediately.
-
-AFX afxBool AfxEmitEvent
-(
-    afxObject receiver, 
-    afxEvent* ev
-);
 
 
 #endif//AFX_SYSTEM_H

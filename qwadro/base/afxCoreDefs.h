@@ -365,6 +365,7 @@ AFX_DEFINE_HANDLE(afxDrawSystem);
 AFX_DEFINE_HANDLE(afxMixSystem);
 AFX_DEFINE_HANDLE(arxSimulation);
 AFX_DEFINE_HANDLE(afxWindow);
+AFX_DEFINE_HANDLE(afxConsole);
 
 AFX_DEFINE_UNION(afxUdd)
 /// Specification for user-defined data

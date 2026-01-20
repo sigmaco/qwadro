@@ -8,14 +8,14 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
+ *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This file is part of Acceleration for RenderWare on Qwadro.
+// This file is part of Advanced RenderWare Extensions.
 
 #ifndef ARX_GESTURE_H
 #define ARX_GESTURE_H
@@ -54,7 +54,25 @@ AFX_DEFINE_STRUCT(arxGestureBlueprint)
     afxReal const*      pivotLodError;
     afxBool             incPivotLodError;
     afxTransform        displacement;
+
+    void*               udd;
+    afxString           tag;
 };
+
+ARX afxError ArxAssembleGestures
+(
+    arxScenario scio,
+    afxUnit cnt,
+    arxGestureBlueprint const blueprints[],
+    arxGesture gestures[]
+);
+
+////////////////////////////////////////////////////////////////////////////////
+
+ARX arxScenario ArxGetGestureHost
+(
+    arxGesture ges
+);
 
 ARX afxMask ArxGetGestureFlags
 (
@@ -103,16 +121,6 @@ ARX void ArxUpdateGestureTransforms
     afxUnit seqCnt, 
     arxPivotalGesture const transforms[], 
     afxUnit fetchRate
-);
-
-////////////////////////////////////////////////////////////////////////////////
-
-ARX afxError ArxCompileGestures
-(
-    arxScenario scio, 
-    afxUnit cnt, 
-    arxGestureBlueprint const blueprints[], 
-    arxGesture motions[]
 );
 
 #endif//ARX_GESTURE_H

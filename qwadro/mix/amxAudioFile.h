@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions & Experiments.
+// This software is part of Advanced Multimedia Extensions.
 
 #ifndef AMX_AUDIO_FILE_H
 #define AMX_AUDIO_FILE_H

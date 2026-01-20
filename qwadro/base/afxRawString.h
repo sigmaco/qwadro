@@ -40,7 +40,9 @@ AFXINL afxInt       AfxTolower(afxInt ch);
 AFXINL afxInt       AfxToupper(afxInt ch);
 
 /// Computes the length of the string str up to but not including the terminating null character.
-AFXINL afxResult    AfxStrlen(afxChar const* str);
+AFXINL afxSize      AfxStrlen(afxChar const* str);
+AFXINL afxSize      AfxStrlenSSE(afxChar const *str);
+
 /// Calculates the length of the initial segment of str1 which consists entirely of characters in str2.
 AFXINL afxSize      AfxStrspn(afxChar const* str, afxChar const* control);
 /// Calculates the length of the initial segment of str1 which consists entirely of characters in str2.
@@ -52,8 +54,12 @@ AFXINL afxSize      AfxStrncspn(afxChar const* str, afxSize strLen, afxChar cons
 
 /// Searches for the first occurrence of the character ch (an unsigned char) in the string pointed to, by the argument str.
 AFXINL afxChar*     AfxStrchr(afxChar const* str, afxInt ch);
+AFXINL afxChar*     AfxStrchrSSE(afxChar const* str, afxInt ch);
+
 /// Searches for the last occurrence of the character c (an unsigned char) in the string pointed to by the argument str.
 AFXINL afxChar*     AfxStrrchr(afxChar const* str, afxInt ch);
+AFXINL afxChar*     AfxStrrchrSSE(afxChar const* str, afxInt ch);
+
 /// Finds the first character in the string str1 that matches any character specified in control.
 AFXINL afxChar*     AfxStrpbrk(afxChar const* str1, afxChar const* control);
 /// Finds the first occurrence of the entire excerpt (not including the terminating null character) which appears in the str.
@@ -63,24 +69,34 @@ AFXINL afxChar*     AfxStrnstr(afxChar const* str, afxUnit strLen, afxChar const
 
 /// Appends the string pointed to, by src to the end of the string pointed to by dst.
 AFXINL afxChar*     AfxStrcat(afxChar* dst, afxChar const* src);
+AFXINL afxChar*     AfxStrcatSSE(afxChar* dst, afxChar const* src);
+
 /// Appends the string pointed to, by src to the end of the string pointed to, by dst up to len characters long.
 AFXINL afxChar*     AfxStrncat(afxChar* dst, afxChar const* src, afxUnit len);
-
+AFXINL afxChar*     AfxStrncatSSE(afxChar* dst, afxChar const* src, afxUnit len);
 
 /// Copies the string pointed to, by src to dst.
 AFXINL afxChar*     AfxStrcpy(afxChar* dst, afxChar const* src);
+AFXINL afxChar*     AfxStrcpySSE(afxChar* dst, afxChar const* src);
+
 /// Copies up to n characters from the string pointed to, by src to dst.
 AFXINL afxChar*     AfxStrncpy(afxChar* dst, afxChar const* src, afxSize len);
-
+AFXINL afxChar*     AfxStrncpySSE(afxChar* dst, afxChar const* src, afxSize len);
 
 /// Compares the string pointed to, by str1 to the string pointed to by str2.
-AFXINL afxResult    AfxStrcmp(afxChar const* str, afxChar const* str2);
+AFXINL afxResult    AfxStrcmp(afxChar const* s1, afxChar const* s2);
+AFXINL afxResult    AfxStrcmpSSE(afxChar const* s1, afxChar const* s2);
+
 /// Compares at most the first len bytes of str1 and str2.
-AFXINL afxResult    AfxStrncmp(afxChar const* str, afxChar const* str2, afxUnit len);
+AFXINL afxResult    AfxStrncmp(afxChar const* s1, afxChar const* s2, afxUnit len);
+AFXINL afxResult    AfxStrncmpSSE(afxChar const* s1, afxChar const* s2, afxUnit len);
 
-AFXINL afxResult    AfxStricmp(afxChar const* str, afxChar const* str2);
+AFXINL afxResult    AfxStricmp(afxChar const* s1, afxChar const* s2);
+AFXINL afxResult    AfxStricmpSSE(afxChar const* s1, afxChar const* s2);
 
-AFXINL afxResult    AfxStrnicmp(afxChar const* str, afxChar const* str2, afxSize len);
+AFXINL afxResult    AfxStrnicmp(afxChar const* s1, afxChar const* s2, afxSize len);
+AFXINL afxResult    AfxStrnicmpSSE(afxChar const* s1, afxChar const* s2, afxSize len);
+
 
 /// Compares string str1 to str2.The result is dependent on the LC_COLLATE setting of the location.
 AFXINL afxInt       AfxStrcoll(afxChar const* str1, afxChar const* str2);

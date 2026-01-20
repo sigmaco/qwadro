@@ -46,7 +46,7 @@ int main(int argc, char const* argv[])
 
     afxUnit drawIcd = 0;
     afxDrawSystem dsys;
-    afxDrawSystemConfig dsyc = { 0 };
+    avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
@@ -63,7 +63,6 @@ int main(int argc, char const* argv[])
     AfxConfigureEnvironment(shIcd, &ecfg);
     AfxAcquireEnvironment(shIcd, &ecfg, &env);
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-    AfxOpenEnvironment(env, NIL, NIL, NIL);
 
     // Acquire a drawable surface
 
@@ -75,6 +74,7 @@ int main(int argc, char const* argv[])
     AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
     AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
     AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
@@ -83,9 +83,9 @@ int main(int argc, char const* argv[])
     afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, 3);
 
     afxDrawContext drawContexts[3];
-    avxContextInfo ctxi = { 0 };
+    avxContextConfig ctxi = { 0 };
     ctxi.caps = avxAptitude_GFX;
-    AvxAcquireDrawContexts(dsys, &ctxi, frameCap, drawContexts);
+    AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
     // Run
@@ -113,15 +113,14 @@ int main(int argc, char const* argv[])
             continue;
 
         afxUnit outBufIdx = 0;
-        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_NONE, NIL, NIL, &outBufIdx))
+        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx))
         {
             continue;
         }
 
         afxDrawContext dctx = drawContexts[outBufIdx];
 
-        afxUnit batchId;
-        if (AvxRecordDrawCommands(dctx, TRUE, FALSE, &batchId))
+        if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
@@ -151,7 +150,7 @@ int main(int argc, char const* argv[])
 
         AvxCmdConcludeDrawScope(dctx);
 
-        if (AvxCompileDrawCommands(dctx, batchId))
+        if (AvxCompileDrawCommands(dctx))
         {
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
@@ -159,11 +158,11 @@ int main(int argc, char const* argv[])
         }
 
         avxFence drawCompletedFence = NIL;
-        avxSubmission subm = { 0 };
-        subm.fence = drawCompletedFence;
-        subm.dctx = dctx;
-        subm.batchId = batchId;
 
+        avxSubmission subm = { 0 };
+        subm.dctx = dctx;
+        subm.signal = drawCompletedFence;
+        
         if (AvxExecuteDrawCommands(dsys, 1, &subm))
         {
             AfxThrowError();
@@ -172,11 +171,12 @@ int main(int argc, char const* argv[])
         }
 
         //AfxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuIdx);
+        AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
 
         avxPresentation pres = { 0 };
+        pres.wait = drawCompletedFence;
         pres.dout = dout;
         pres.bufIdx = outBufIdx;
-        //pres.waitOnDpu = drawCompletedFence;
 
         if (AvxPresentSurfaces(dsys, 1, &pres))
         {

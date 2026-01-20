@@ -18,8 +18,8 @@
  // QWADRO DRAWING DEVICE EXECUTION BUS                                      //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_BUS_H
 #define AVX_BUS_H

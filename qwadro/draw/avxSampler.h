@@ -18,7 +18,7 @@
  // QWADRO FIXED FUNCTION TEXTURE SAMPLER                                    //
 //////////////////////////////////////////////////////////////////////////////
 
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_SAMPLER_H
 #define AVX_SAMPLER_H

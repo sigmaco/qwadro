@@ -18,8 +18,8 @@
  // QWADRO DRAWING DEVICE SYNCHRONIZATION FENCE                              //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 /// Fences are a synchronization primitive that can be used to insert a dependency from a queue to the host.
 /// Fences have two states - signaled and unsignaled. 

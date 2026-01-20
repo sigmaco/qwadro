@@ -18,8 +18,8 @@
  // DRAW DEVICE COMMAND, OPERATION AND COMMUNICATION QUUEUE                  //
 //////////////////////////////////////////////////////////////////////////////
 
-// This code is part of SIGMA GL/2 <https://sigmaco.org/gl>
-// This software is part of Advanced Video Graphics Extensions & Experiments.
+// This code is part of SIGMA GL/2.
+// This software is part of Advanced Video Graphics Extensions.
 
 #ifndef AVX_DRAW_QUEUE_H
 #define AVX_DRAW_QUEUE_H
@@ -91,7 +91,7 @@ AFX_DEFINE_STRUCT(avxPresentation)
     // The number of hint regions.
     afxUnit         hintCnt;
     // Four regions that has changed since the last present to the swapchain.
-    afxRect         hintRcs[4];
+    afxRect         hintRcs[8];
 
     // The frame identifier.
     afxUnit64       frameId;
@@ -114,6 +114,51 @@ AFX_DEFINE_STRUCT(avxPresentation)
     // An array of fences to signal after the presentation is completed. 
     // Once the presentation is done, these fences are signaled, allowing the system to continue processing other tasks 
     // that depend on the completion of the presentation. This is useful for synchronization with other parts of the 
+    // rendering pipeline or application logic.
+    avxFence        signal;
+    afxUnit64       signalValue;
+};
+
+AFX_DEFINE_STRUCT(avxCaption)
+{
+    // A bitmask specifying which bridges can assume this operation.
+    // If NIL, any bridge is allowed to assume this operation.
+    afxMask         exuMask;
+    afxUnit         baseQueIdx;
+    afxUnit         queCnt;
+
+    // An handle to a afxDrawOuput object to be captured.
+    afxSurface      dout;
+    // An index to a swapchain buffer specifying which buffers to capture. 
+    // This indicate which buffer is to be filled.
+    afxUnit         bufIdx;
+
+    // The number of hint regions.
+    afxUnit         hintCnt;
+    // Four regions that has changed since the last capture to the swapchain.
+    afxRect         hintRcs[8];
+
+    // The frame identifier.
+    afxUnit64       frameId;
+    // A application-defined flag combo for the frame.
+    afxFlags        frameFlags;
+    // A application-defined bitmask for the frame.
+    afxMask         frameMask;
+    // A non-zero value specifying the capture id to be associated with the caption of the swapchain.
+    afxUnit64       captureId;
+
+    // A fence that the function will wait on before proceeding with the caption. 
+    // Fences are used to ensure synchronization, especially when working with GPUs. 
+    // The function will wait for this fence to be signaled before beginning the caption. 
+    // This ensures that drawing commands are completed before the output is captured.
+    //avxFence        waitOnDpu;
+    // The semaphore to wait for before issuing the capture request.
+    avxFence        wait;
+    afxUnit64       waitValue;
+
+    // An array of fences to signal after the caption is completed. 
+    // Once the caption is done, these fences are signaled, allowing the system to continue processing other tasks 
+    // that depend on the completion of the caption. This is useful for synchronization with other parts of the 
     // rendering pipeline or application logic.
     avxFence        signal;
     afxUnit64       signalValue;

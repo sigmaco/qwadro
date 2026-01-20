@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced User Experiences Extensions & Experiments.
+// This software is part of Advanced User Experience Extensions.
 
 /*
     Widgets are smaller graphical elements or controls within a window that enable user interaction. 

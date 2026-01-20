@@ -123,6 +123,13 @@ AFX afxError    AfxResolveUris(afxFileFlags const permissions, afxUnit cnt, afxU
 
 AFX afxError    AfxResolveUri2(afxFileFlags permissions, afxUri const *in, afxUri *out, afxUnit* diskId);
 
+AFX_DEFINE_STRUCT(afxFindFileIter)
+{
+    void* udd;
+    afxUnit diskId;
+    afxUnit endpointIdx;
+};
+
 AFX afxUnit     AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*proc)(void* udd, afxUnit diskId, afxUnit endpointIdx, afxUri const* path, afxUri const* osPath), void* udd);
 AFX afxError    AfxForEachUriResolution(afxUri const* pattern, afxFileFlags flags, afxBool(*proc)(void* udd, afxUri const* uri), void* udd);
 
