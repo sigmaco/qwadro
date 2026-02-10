@@ -1,5 +1,5 @@
-﻿..\src\helloWindow.c(96): warning : unused variable 'ct' [-Wunused-variable]
-..\src\helloWindow.c(97): warning : unused variable 'dt' [-Wunused-variable]
+﻿..\src\helloWindow.c(108): warning : unused variable 'ct' [-Wunused-variable]
+..\src\helloWindow.c(109): warning : unused variable 'dt' [-Wunused-variable]
 ..\src\helloWindow.c(35): warning : unused parameter 'argc' [-Wunused-parameter]
 ..\src\helloWindow.c(35): warning : unused parameter 'argv' [-Wunused-parameter]
-  helloWindow.vcxproj -> E:\qwadro\repo\afx\_vs17\..\qwd\w64\helloWindow.exe
+  helloWindow.vcxproj -> E:\qwadro\repo\qwadro_afx\_vs17\..\qwd\w64\helloWindow.exe

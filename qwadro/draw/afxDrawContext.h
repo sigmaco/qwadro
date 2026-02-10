@@ -228,4 +228,14 @@ AVX afxError AvxCompileDrawCommands
     afxDrawContext dctx
 );
 
+AVX afxCmdId AvxGetLastCommandId
+(
+    afxDrawContext dctx
+);
+
+AVX afxCmdId AvxGetNextCommandId
+(
+    afxDrawContext dctx
+);
+
 #endif//AVX_DRAW_CONTEXT_H

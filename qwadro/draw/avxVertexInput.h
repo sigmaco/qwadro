@@ -50,20 +50,12 @@ AFX_DEFINE_STRUCT(avxVertexStream)
     afxUnit32       minStride;
     // Instance rate divisor (0 = per-vertex, >0 = per-instance).
     afxUnit         instRate;
-    // Index into 'attrs' where attributes for this fetch begin.
-    afxUnit         baseAttrIdx;
-    // Number of attributes sourced from this fetch.
-    afxUnit         attrCnt;
     // Misc. flags (e.g., dynamic/static buffer, etc.).
     afxFlags        flags;
 };
 
-#define AVX_VERTEX_STREAM(uPin, uMinStride, uInstRate, uBaseAttrIdx, uAttrCnt) (avxVertexStream){ \
-    .pin = (uPin), \
-    .minStride = (uMinStride), \
-    .instRate = (uInstRate), \
-    .baseAttrIdx = (uBaseAttrIdx), \
-    .attrCnt = (uAttrCnt) }
+#define AVX_VERTEX_STREAM(uPin, uMinStride, uInstRate) (avxVertexStream) \
+    { .pin = (uPin), .minStride = (uMinStride), .instRate = (uInstRate) }
 
 typedef enum avxVertexAttrFlag
 {
@@ -79,20 +71,20 @@ AFX_DEFINE_STRUCT(avxVertexAttr)
 {
     // Location in shader (e.g., layout(location = x) in GLSL).
     afxUnit         location;
+    // Format of the data (e.g., vec3 float, vec2 half, etc.).
+    avxFormat       fmt;
+    // Binding index (matches the vertex buffer bound) which this attribute takes its data from.
+    afxUnit         pin;
     // A byte offset of this attribute relative to the start of an element in the bound vertex buffer.
     afxUnit32       offset;
     // Custom flags for optimization/metadata.
     afxFlags        flags;
-    // Format of the data (e.g., vec3 float, vec2 half, etc.).
-    avxFormat       fmt;
 };
 
-#define AVX_VERTEX_ATTR(uLocation, uOffset, eFmt) (avxVertexAttr){ \
-    .location = (uLocation), \
-    .offset = (uOffset), \
-    .fmt = (eFmt) }
+#define AVX_VERTEX_ATTR(uLocation, uPin, uOffset, eFmt) (avxVertexAttr) \
+    { .location = (uLocation), .pin = (uPin), .offset = (uOffset), .fmt = (eFmt) }
 
-AFX_DEFINE_STRUCT(avxVertexLayout)
+AFX_DEFINE_STRUCT(avxVertexDescription)
 // Represents a complete description of how vertex data is fed into the graphics pipeline.
 {
     // Custom flags for engine-specific usage or optimizations.
@@ -109,6 +101,25 @@ AFX_DEFINE_STRUCT(avxVertexLayout)
     void*           udd;
 };
 
+AFX_DEFINE_STRUCT(avxVertexLayout)
+// Represents a complete description of how vertex data is fed into the graphics pipeline.
+{
+    // Custom flags for engine-specific usage or optimizations.
+    afxFlags        flags;
+    // Number of vertex fetch (binding) sources.
+    afxUnit         binCnt;
+    // An array of fetch sources (bindings).
+    avxVertexStream bins[AVX_MAX_VERTEX_SOURCES];
+    // Number of vertex attributes.
+    afxUnit         attrCnt;
+    // An array of attributes (layout descriptions).
+    avxVertexAttr   attrs[AVX_MAX_VERTEX_ATTRIBS];
+    // Optional string for identifying or tagging the object.
+    afxString       tag;
+    // User-defined data (opaque pointer for engine/client use).
+    void*           udd;
+};
+
 /*
     Shall AVX_VERTEX_ATTR specify the stream index?
     If so, avxVertexLayout should have an explicit attrCnt,
@@ -117,7 +128,7 @@ AFX_DEFINE_STRUCT(avxVertexLayout)
     removing the two last parameters, and using AVX_VERTEX_ATTR(at, bin, offset, fmt).
 */
 
-AVX afxError    AvxAcquireVertexInputs
+AVX afxError AvxAcquireVertexInputs
 (
     afxDrawSystem dsys, 
     afxUnit cnt, 
@@ -127,24 +138,24 @@ AVX afxError    AvxAcquireVertexInputs
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxDrawSystem   AvxGetVertexInputHost
+AVX afxDrawSystem AvxGetVertexInputHost
 (
     avxVertexInput  vin
 );
 
-AVX afxFlags    AvxGetVertexInputFlags
+AVX afxFlags AvxGetVertexInputFlags
 (
     avxVertexInput vin, 
     afxFlags mask
 );
 
-AVX afxUnit     AvxDescribeVertexLayout
+AVX afxUnit AvxDescribeVertexLayout
 (
     avxVertexInput vin, 
-    avxVertexLayout* layout
+    avxVertexDescription* layout
 );
 
-AVX afxUnit     AvxQueryVertexStride
+AVX afxUnit AvxQueryVertexStride
 (
     avxVertexInput vin, 
     afxUnit baseSrcIdx, 

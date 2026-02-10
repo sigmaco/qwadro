@@ -54,7 +54,9 @@
 #   define _AFX_ARRAY_VALIDATION_ENABLED TRUE
 #endif
 
-#define _AFX_USE_TYPEOF TRUE
+#ifndef __INTELLISENSE__
+#   define _AFX_ARRAY_ITERATOR_USE_TYPEOF TRUE
+#endif
 
 typedef enum afxArrayFlag
 {
@@ -370,33 +372,54 @@ AFX afxError        AfxPushArrayUnique
 #define AFX_COPY_ARRAY(cnt_, src_, srcIdx_, srcType_, srcField_, dst_, dstIdx_, dstType_, dstField_) \
     AfxCopyArray((cnt_), sizeof(((srcType_*)0)->srcField, (src_), (srcIdx_), offsetof(srcType_, srcField_), (dst_), (dstIdx_), offsetof(dstType_, dstField_)))
 
-#define AFX_ITERATE_ARRAY_TYPED(TYPE_, varName_, arr_) \
+#define AFX_ITERATE_ARRAY_TYPED(TYPE_, varName_, pArray_) \
     for (afxUnit varName_##Idx = 0; \
-         (arr_) && (varName_##Idx < (arr_)->pop) && \
-         (((varName_) = (TYPE_ *)((afxByte *)(arr_)->bytemap + (varName_##Idx * (arr_)->unitSiz))), TRUE); \
+         (pArray_) && (varName_##Idx < (pArray_)->pop) && \
+         (((varName_) = (TYPE_ *)((afxByte *)(pArray_)->bytemap + (varName_##Idx * (pArray_)->unitSiz))), TRUE); \
          ++varName_##Iter)
 
-#if _AFX_USE_TYPEOF
-#define AFX_ITERATE_ARRAY(var_, arr_) \
-    for (afxUnit var_##Iter = 0; \
-         (var_##Iter < (arr_)->pop) && \
-         (((var_) = (AFX_TYPEOF(var_))((afxByte*)(arr_)->bytemap + (var_##Iter * (arr_)->unitSiz))), TRUE); \
-         ++var_##Iter)
+#if _AFX_ARRAY_ITERATOR_USE_TYPEOF
+
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#   define AFX_ITERATE_ARRAY(VAR_, pArray_) \
+    for (afxUnit VAR_##Iter = 0; \
+         (VAR_##Iter < (pArray_)->pop) && \
+         (((VAR_) = (AFX_TYPEOF(VAR_))((afxByte*)(pArray_)->bytemap + (VAR_##Iter * (pArray_)->unitSiz))), TRUE); \
+         ++VAR_##Iter)
 #else
 // Pure-C99 version that doesn’t rely on __typeof__ at all.
-#define AFX_ITERATE_ARRAY(var_, arr_) \
-    for (afxUnit var_##Iter = 0; \
-         (arr_) && (var_##Iter < (arr_)->pop) && \
-         (((var_) = (void *)((afxByte*)(arr_)->bytemap + (var_##Iter * (arr_)->unitSiz))), TRUE); \
-         ++var_##Idx)
+
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#   define AFX_ITERATE_ARRAY(VAR_, pArray_) \
+    for (afxUnit VAR_##Iter = 0; \
+         (pArray_) && (VAR_##Iter < (pArray_)->pop) && \
+         (((VAR_) = (void*)((afxByte*)(pArray_)->bytemap + (VAR_##Iter * (pArray_)->unitSiz))), TRUE); \
+         ++VAR_##Iter)
 #endif
 
-#if defined(_AFX_USE_TYPEOF)
-#  define AFX_GET_ARRAY_ELEMENT(var_, arr_, idx_) \
-      ((var_) = ((AFX_TYPEOF(var_))((afxByte *)(arr_)->bytemap + ((idx_) * (arr_)->unitSiz))))
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#define AFX_ITERATE_ARRAY_CONST(VAR_, pArray_) \
+    for (afxUnit VAR_##Iter = 0; \
+         (pArray_) && (VAR_##Iter < (pArray_)->pop) && \
+         (((VAR_) = (void const*)((afxByte*)(pArray_)->bytemap + (VAR_##Iter * (pArray_)->unitSiz))), TRUE); \
+         ++VAR_##Iter)
+
+#if defined(_AFX_ARRAY_ITERATOR_USE_TYPEOF)
+
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#  define AFX_GET_ARRAY_ELEMENT(VAR_, pArray_, uElemIdx_) \
+      ((VAR_) = ((AFX_TYPEOF(VAR_))((afxByte *)(pArray_)->bytemap + ((uElemIdx_) * (pArray_)->unitSiz))))
+
 #else
-#  define AFX_GET_ARRAY_ELEMENT(var_, arr_, idx_) \
-      ((var_) = ((void*)((afxByte *)(arr_)->bytemap + ((idx_) * (arr_)->unitSiz)))
+
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#  define AFX_GET_ARRAY_ELEMENT(VAR_, pArray_, uElemIdx_) \
+      ((VAR_) = ((void*)((afxByte *)(pArray_)->bytemap + ((uElemIdx_) * (pArray_)->unitSiz)))
+
 #endif
+
+// VAR_ is a pointer to the element type of the array (i.e., AFX_TYPEOF(VAR_))
+#define AFX_GET_ARRAY_ELEMENT_CONST(VAR_, pArray_, uElemIdx_) \
+      ((VAR_) = ((void const*)((afxByte *)(pArray_)->bytemap + ((uElemIdx_) * (pArray_)->unitSiz)))
 
 #endif//AFX_ARRAY_H

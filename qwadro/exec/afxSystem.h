@@ -82,7 +82,7 @@ AFX_DEFINE_STRUCT(afxSystemConfigExt)
 AFX_DEFINE_STRUCT(afxHostSystemConfigExt)
 {
     afxSystemConfigExt  ext;
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     struct
     {
         /*HINSTANCE*/void* hInst;

@@ -38,7 +38,7 @@
 #include "qwadro/draw/avxQueryPool.h"
 #include "qwadro/draw/avxPipeline.h"
 #include "qwadro/draw/avxSampler.h"
-#include "qwadro/draw/avxCodebase.h"
+#include "qwadro/draw/avxShader.h"
 #include "qwadro/draw/avxVertexInput.h"
 #include "qwadro/draw/avxDrawing.h"
 #include "qwadro/draw/avxFence.h"

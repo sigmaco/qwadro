@@ -46,7 +46,7 @@
 #include "qwadro/base/afxSimd.h"
 //#include <stdalign.h>
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
 /*
     __vectorcall is a Microsoft-specific calling convention introduced to pass vector types via registers,
     not the stack, improve performance for functions involving SIMD types, reduce overhead of copying 128-bit/256-bit vectors.

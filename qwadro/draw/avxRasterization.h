@@ -157,6 +157,10 @@ AFX_DEFINE_STRUCT(avxStencilConfig)
     avxStencilOp        passOp; // avxStencilOp_KEEP
 };
 
+#define AVX_STENCIL_INFO_DEFAULT (avxStencilConfig){ .compareOp = avxCompareOp_ALWAYS, .reference = 0, .compareMask = 1, .writeMask = 1, \
+    .failOp = avxStencilOp_KEEP, .depthFailOp = avxStencilOp_KEEP, .passOp = avxStencilOp_KEEP }
+
+
 /*
     Multisampling.
     he simplified pipeline placement with multisampling:
@@ -389,7 +393,7 @@ AFX_DEFINE_STRUCT(avxRasterization)
     The scissor rectangles taken from element #i of @rect replace the current state for the scissor index @baseIdx + #i, for #i in [0, @cnt).
 */
 
-AVX afxCmdId AvxCmdAdjustScissors
+AVX afxError AvxCmdAdjustScissors
 (
     afxDrawContext dctx,
     // is the index of the first scissor whose state is updated by the command.
@@ -405,7 +409,7 @@ AVX afxCmdId AvxCmdAdjustScissors
     rasterization stage dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchRasterization
+AVX afxError AvxCmdSwitchRasterization
 (
     afxDrawContext dctx,
     // controls whether primitives are discarded immediately before the rasterization stage.
@@ -416,7 +420,7 @@ AVX afxCmdId AvxCmdSwitchRasterization
     The AvxCmdSwitchDepthBias() operation controls whether to bias fragment depth values dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchDepthBias
+AVX afxError AvxCmdSwitchDepthBias
 (
     afxDrawContext dctx,
     // controls whether to bias fragment depth values.
@@ -427,7 +431,7 @@ AVX afxCmdId AvxCmdSwitchDepthBias
     The AvxCmdSetDepthBias() operation sets depth bias factors and clamp dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetDepthBias
+AVX afxError AvxCmdSetDepthBias
 (
     afxDrawContext dctx,
     // is a scalar factor controlling the constant depth value added to each fragment.
@@ -442,7 +446,7 @@ AVX afxCmdId AvxCmdSetDepthBias
     The AvxCmdSetLineWidth() operation sets line width dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetLineWidth
+AVX afxError AvxCmdSetLineWidth
 (
     afxDrawContext dctx,
     // is the width of rasterized line segments.
@@ -453,7 +457,7 @@ AVX afxCmdId AvxCmdSetLineWidth
     The AvxCmdSwitchDepthTesting() operation sets depth test enable dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchDepthTesting
+AVX afxError AvxCmdSwitchDepthTesting
 (
     afxDrawContext dctx,
     // specifies if the depth test is enabled.
@@ -464,7 +468,7 @@ AVX afxCmdId AvxCmdSwitchDepthTesting
     The AvxCmdSetDepthCompareOp() operation sets depth comparison operator dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetDepthCompareOp
+AVX afxError AvxCmdSetDepthCompareOp
 (
     afxDrawContext dctx,
     // A value specifying the comparison operator used for the depth comparison step of the depth test.
@@ -475,7 +479,7 @@ AVX afxCmdId AvxCmdSetDepthCompareOp
     The AvxCmdSwitchDepthWrites() operation sets depth write disable dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchDepthWrites
+AVX afxError AvxCmdSwitchDepthWrites
 (
     afxDrawContext dctx,
     // specifies if depth writes are disabled.
@@ -486,7 +490,7 @@ AVX afxCmdId AvxCmdSwitchDepthWrites
     The AvxCmdSwitchStencilTesting() operation sets stencil test enable dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchStencilTesting
+AVX afxError AvxCmdSwitchStencilTesting
 (
     afxDrawContext dctx,
     // specifies if the stencil test is enabled.
@@ -497,7 +501,7 @@ AVX afxCmdId AvxCmdSwitchStencilTesting
     The AvxCmdSetStencilCompareMask() operation sets stencil compare mask dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetStencilCompareMask
+AVX afxError AvxCmdSetStencilCompareMask
 (
     afxDrawContext dctx,
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to update the compare mask.
@@ -510,7 +514,7 @@ AVX afxCmdId AvxCmdSetStencilCompareMask
     The AvxCmdSetStencilWriteMask() operation sets stencil write mask dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetStencilWriteMask
+AVX afxError AvxCmdSetStencilWriteMask
 (
     afxDrawContext dctx,
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to update the write mask, as described above for vkCmdSetStencilCompareMask.
@@ -523,7 +527,7 @@ AVX afxCmdId AvxCmdSetStencilWriteMask
     The AvxCmdSetStencilReference() operation sets stencil reference value dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetStencilReference
+AVX afxError AvxCmdSetStencilReference
 (
     afxDrawContext dctx,
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to
@@ -536,7 +540,7 @@ AVX afxCmdId AvxCmdSetStencilReference
     The AvxCmdSetStencilOp() operation sets stencil operation dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetStencilOp
+AVX afxError AvxCmdSetStencilOp
 (
     afxDrawContext dctx,
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to
@@ -555,7 +559,7 @@ AVX afxCmdId AvxCmdSetStencilOp
     The AvxCmdSwitchDepthBoundsTesting() operation sets depth bounds test enable dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchDepthBoundsTesting
+AVX afxError AvxCmdSwitchDepthBoundsTesting
 (
     afxDrawContext dctx,
     // specifies if the depth bounds test is enabled.
@@ -566,7 +570,7 @@ AVX afxCmdId AvxCmdSwitchDepthBoundsTesting
     The AvxCmdSetDepthBounds() operation sets depth bounds range dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetDepthBounds
+AVX afxError AvxCmdSetDepthBounds
 (
     afxDrawContext dctx,
     // is the minimum and maximum depth bounds.
@@ -577,7 +581,7 @@ AVX afxCmdId AvxCmdSetDepthBounds
     The AvxCmdSetBlendConstants() operation sets the values of blend constants.
 */
 
-AVX afxCmdId AvxCmdSetBlendConstants
+AVX afxError AvxCmdSetBlendConstants
 (
     afxDrawContext dctx,
     // An array of four values specifying the Rc, Gc, Bc, and Ac components of the 
