@@ -85,54 +85,10 @@ AFX_DEFINE_STRUCT(afxUri2048) { afxUri uri; afxByte buf[2048]; };
     afxChar varName_##Buf[capacity_]; afxUri varName_ = { .s.len = 0, .s.cap = sizeof(varName_##Buf), .s.start = varName_##Buf }; \
 
 
-// Properties
-
-AFXINL afxUnit          AfxGetUriLength(afxUri const* uri);
-AFXINL afxUnit          AfxGetPathLength(afxUri const* uri);
-AFXINL afxUnit          AfxGetUriRequestLength(afxUri const* uri);
-
-AFXINL void const*      AfxGetUriData(afxUri const* uri, afxUnit base);
-AFXINL afxString const* AfxGetUriString(afxUri const* uri);
-AFXINL afxString*       AfxGetUriString2(afxUri* uri);
-
-// Tests
-
-AFXINL afxBool          AfxIsUriBlank(afxUri const* uri);
-AFXINL afxBool          AfxUriIsEditable(afxUri const* uri);
-
-/// Test whether the URI is an absolute URI, which contains a scheme, an authority, and a path. 
-/// Otherwise, the URI is treated as relative and might omit the scheme or other URI components.
-AFXINL afxBool          AfxIsUriAbsolute(afxUri const* uri);
-
-AFXINL afxBool          AfxPathIsRelative(afxUri const* uri);
-
-AFXINL afxBool          AfxIsUriToDevice(afxUri const* uri);
-
-/// Determines whether the current URI is a base of the specified URI.
-AFXINL afxBool          AfxIsBaseOfUri(afxUri const* uri, afxUri const* other);
-
-/// Compares the specified parts of two URIs using the specified comparison rules.
-AFXINL afxResult        AfxCompareUri(afxUri const* uri, afxUri const *other);
-AFXINL afxResult        AfxCompareUriCi(afxUri const* uri, afxUri const *other);
-AFXINL afxResult        AfxCompareUriString(afxUri const* uri, afxString const *str);
-AFXINL afxResult        AfxCompareUriStringCi(afxUri const* uri, afxString const *str);
-
-// Changes
-
 AFXINL void             AfxResetUris(afxUnit cnt, afxUri uris[]); // WARNING string storage is resetted too. Any storage assigned will be nulled.
 AFXINL void             AfxClearUris(afxUnit cnt, afxUri uris[]); // just zero ranges preserving storage.
 
-AFXINL afxError         AfxCopyUri(afxUri* uri, afxUri const *src);
-AFXINL void             AfxReplicateUri(afxUri* uri, afxUri const *in); // pointers and handle same data handled by 'in' without doing any copy or change.
-
-/// Converts the internally stored URI to canonical form.
-AFXINL void             AfxCanonicalizePath(afxUri* uri, afxBool microshit);
-AFXINL void             AfxTransformPathString(afxString* str, afxBool out);
-
-/// Parses the URI to ensure it contains all the parts required for a valid URI.
-AFXINL void             AfxReparseUri(afxUri* uri);
-
-AFXINL void             AfxFormatUri(afxUri* uri, afxChar const *fmt, ...);
+////////////////////////////////////////////////////////////////////////////////
 
 // Deployment
 
@@ -154,12 +110,58 @@ AFXINL afxUri*          AfxFormatUri2048(afxUri2048 *uri, afxChar const *fmt, ..
 // Allocation
 
 AFXINL void             AfxDeallocateUri(afxUri* uri);
-AFXINL afxError         AfxAllocateUri(afxUri* uri, afxUnit cap, void const *start, afxUnit range);
 AFXINL afxError         AfxReallocateUri(afxUri* uri, afxUnit cap, void const *start, afxUnit range);
+AFXINL afxError         AfxAllocateUri(afxUri* uri, afxUnit cap, void const *start, afxUnit range);
 
 AFXINL afxError         AfxDuplicateUri(afxUri* uri, afxUri const *in);
 AFXINL afxError         AfxDuplicateUriPath(afxUri* uri, afxUri const *in);
 AFXINL afxError         AfxDuplicateUriObject(afxUri* uri, afxUri const *in);
+
+// Properties
+
+AFXINL afxUnit          AfxGetUriLength(afxUri const* uri);
+AFXINL afxUnit          AfxGetPathLength(afxUri const* uri);
+AFXINL afxUnit          AfxGetUriRequestLength(afxUri const* uri);
+
+AFXINL void const*      AfxGetUriData(afxUri const* uri, afxUnit base);
+AFXINL afxString const* AfxGetUriString(afxUri const* uri);
+AFXINL afxString*       AfxGetUriString2(afxUri* uri);
+
+// Tests
+
+AFXINL afxBool          AfxIsUriBlank(afxUri const* uri);
+AFXINL afxBool          AfxIsUriMutable(afxUri const* uri);
+
+/// Test whether the URI is an absolute URI, which contains a scheme, an authority, and a path. 
+/// Otherwise, the URI is treated as relative and might omit the scheme or other URI components.
+AFXINL afxBool          AfxIsUriAbsolute(afxUri const* uri);
+
+AFXINL afxBool          AfxIsUriPathRelative(afxUri const* uri);
+
+AFXINL afxBool          AfxIsUriToDevice(afxUri const* uri);
+
+/// Determines whether the current URI is a base of the specified URI.
+AFXINL afxBool          AfxIsUriBase(afxUri const* uri, afxUri const* other);
+
+/// Compares the specified parts of two URIs using the specified comparison rules.
+AFXINL afxResult        AfxCompareUri(afxUri const* uri, afxUri const *other);
+AFXINL afxResult        AfxCompareUriCi(afxUri const* uri, afxUri const *other);
+AFXINL afxResult        AfxCompareUriString(afxUri const* uri, afxString const *str);
+AFXINL afxResult        AfxCompareUriStringCi(afxUri const* uri, afxString const *str);
+
+// Changes
+
+AFXINL afxError         AfxCopyUri(afxUri* uri, afxUri const* src);
+AFXINL void             AfxReflectUri(afxUri* uri, afxUri const* in); // pointers and handle same data handled by 'in' without doing any copy or change.
+
+/// Converts the internally stored URI to canonical form.
+AFXINL void             AfxCanonicalizeUriPath(afxUri* uri, afxBool microshit);
+AFXINL void             AfxTransformPathString(afxString* str, afxBool out);
+
+/// Parses the URI to ensure it contains all the parts required for a valid URI.
+AFXINL void             AfxReparseUri(afxUri* uri);
+
+AFXINL void             AfxFormatUri(afxUri* uri, afxChar const *fmt, ...);
 
 // Extraction
 
@@ -169,21 +171,21 @@ AFXINL afxUnit          AfxExcerptUriSchema(afxUri const* uri, afxUri* schem); /
 /// Gets the Domain Name System (DNS) host name or IP address and the port number for a server.
 AFXINL afxUnit          AfxExcerptUriAuthority(afxUri const* uri, afxUri* user, afxUri* host, afxUri* port);
 
-AFXINL afxUnit          AfxExcerptUriQuery(afxUri const* uri, afxBool skipSep, afxUri* query);
-AFXINL afxUnit          AfxExcerptUriFragment(afxUri const* uri, afxBool skipSep, afxUri* frag);
+AFXINL afxUnit          AfxExcerptUriQuery2(afxUri const* uri, afxBool skipSep, afxUri* query);
+AFXINL afxUnit          AfxExcerptUriFragment2(afxUri const* uri, afxBool skipSep, afxUri* frag);
 
-AFXINL afxUnit          AfxClipUriPath(afxUri* uri, afxUri const* from);
-AFXINL afxUnit          AfxClipPath2(afxUri* uri, afxUri const* from, afxUnit seg);
-AFXINL afxUnit          AfxClipPathDirectory(afxUri* uri, afxUri const* from);
-AFXINL afxUnit          AfxClipPathDirectory2(afxUri* uri, afxUri const* from, afxUnit seg);
-AFXINL afxUnit          AfxClipUriFile(afxUri* uri, afxUri const* from); // file name + extension (if any)
-AFXINL afxUnit          AfxClipUriTarget(afxUri* uri, afxUri const* from); // just file name, without extension
-AFXINL afxUnit          AfxClipUriExtension(afxUri* uri, afxUri const* from, afxBool skipDot);
+AFXINL afxUnit          AfxExcerptUriPath(afxUri* uri, afxUri const* from);
+AFXINL afxUnit          AfxExcerptUriPath2(afxUri* uri, afxUri const* from, afxUnit seg);
+AFXINL afxUnit          AfxExcerptUriPathDirectory(afxUri* uri, afxUri const* from);
+AFXINL afxUnit          AfxExcerptUriPathDirectory2(afxUri* uri, afxUri const* from, afxUnit seg);
+AFXINL afxUnit          AfxExcerptUriFile(afxUri* uri, afxUri const* from); // file name + extension (if any)
+AFXINL afxUnit          AfxExcerptUriTarget(afxUri* uri, afxUri const* from); // just file name, without extension
+AFXINL afxUnit          AfxExcerptUriExtension(afxUri* uri, afxUri const* from, afxBool skipDot);
 
-AFXINL afxUnit          AfxClipUriQuery(afxUri* uri, afxUri const* from, afxBool skipSep);
-AFXINL afxUnit          AfxClipUriFragment(afxUri* uri, afxUri const* from, afxBool skipSep);
+AFXINL afxUnit          AfxExcerptUriQuery(afxUri* uri, afxUri const* from, afxBool skipSep);
+AFXINL afxUnit          AfxExcerptUriFragment(afxUri* uri, afxUri const* from, afxBool skipSep);
 
-AFXINL afxUnit          AfxClipUriDevice(afxUri* uri, afxUri const* from);
+AFXINL afxUnit          AfxExcerptUriDevice(afxUri* uri, afxUri const* from);
 
 AFXINL afxUnit          AfxGetUriTargetString(afxUri const *src, afxString* name);
 AFXINL afxUnit          AfxGetUriQueryString(afxUri const* uri, afxBool skipSep, afxString* query);
@@ -202,8 +204,8 @@ AFXINL afxUnit AfxTrimPath(afxUri const* uri, afxBool root, afxBool dir, afxBool
 AFXINL afxUnit AfxSplitPath(afxUri const* uri, afxUri* root, afxUri* path);
 AFXINL afxUnit AfxPopPathRoot(afxUri* uri);
 
-AFXINL afxUnit AfxExcerptPathBase(afxUri const* uri, afxUri* base); // Excerpts the //./dev/dir/to/
-AFXINL afxUnit AfxExcerptPathSegments(afxUri const* uri, afxUri* root, afxUri* dir, afxUri* file, afxUri* ext);
+AFXINL afxUnit AfxExcerptUriPathBase(afxUri const* uri, afxUri* base); // Excerpts the //./dev/dir/to/
+AFXINL afxUnit AfxExcerptUriPathSegments(afxUri const* uri, afxUri* root, afxUri* dir, afxUri* file, afxUri* ext);
 
 #define AfxUri(_text_) AfxMakeUri((afxUri[]){ 0 }, 0, (_text_), ((sizeof((_text_)) / sizeof((_text_)[0])) - sizeof(afxChar)))
 

@@ -46,7 +46,7 @@ AFX_DEFINE_STRUCT(arxDrawSubpass)
 AFX_OBJECT(arxTechnique)
 {
     afxUnit             shadCnt;
-    avxCodebase*          shaders;
+    avxShader*          shaders;
     afxUnit             pipCnt;
     afxString*          pipUrnMap;
     avxPipeline*        pipelines;

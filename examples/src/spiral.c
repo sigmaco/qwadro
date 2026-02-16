@@ -44,7 +44,7 @@ int main(int argc, char const* argv[])
     // Boot up the Qwadro (if necessary)
 
     afxSystemConfig sysc = { 0 };
-    AfxConfigureSystem(&sysc);
+    AfxConfigureSystem(&sysc, NIL);
     AfxBootstrapSystem(&sysc);
 
     /*
@@ -56,14 +56,14 @@ int main(int argc, char const* argv[])
         setting up graphics capabilities and acceleration settings.
     */
 
-    afxUnit drawIcd = 0;
+    afxUnit avxIcd = 0;
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
-    AvxConfigureDrawSystem(drawIcd, &dsyc);
-    AvxEstablishDrawSystem(drawIcd, &dsyc, &dsys);
+    AvxConfigureDrawSystem(avxIcd, &dsyc);
+    AvxEstablishDrawSystem(avxIcd, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     /*
@@ -72,12 +72,12 @@ int main(int argc, char const* argv[])
         Sets up a window environment to display the graphics (afxWindowConfig).
     */
 
-    afxUnit shIcd = 0;
+    afxUnit auxIcd = 0;
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system
-    AfxConfigureEnvironment(shIcd, &ecfg);
-    AfxAcquireEnvironment(shIcd, &ecfg, &env);
+    AfxConfigureEnvironment(auxIcd, &ecfg);
+    AfxEstablishEnvironment(auxIcd, &ecfg, &env);
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     afxWindow wnd;
@@ -203,7 +203,7 @@ int main(int argc, char const* argv[])
 
         ArxBeginFrame(rctx, NIL);
         ArxBeginScene(rctx, NIL, dctx);
-        ArxAdvanceSceneLayer(rctx, arxSceneMode_WIRE);
+        ArxAdvanceSceneLayer(rctx, arxSceneMode_WIRE_LINES);
 
         //ArxUseCamera(rctx, cam, &area.area);
 
@@ -227,7 +227,10 @@ int main(int argc, char const* argv[])
         */
 
         ArxSetWireframeConstants(rctx, 10, AVX_COLOR(0, 0.5, 0.5, 1), AVX_COLOR(1, 1, 1, 1));
-        ArxPushTransform(rctx, NIL);
+
+        afxM4d ssm;
+        AfxM4dScaling(ssm, AFX_V3D(1.5, 1.5, 1.5));
+        ArxPushTransform(rctx, ssm);
 
         for (afxUnit i = 0; i < 200; i++)
         {
@@ -290,7 +293,7 @@ int main(int argc, char const* argv[])
     AfxDisposeObjects(1, &env);
     AfxDisposeObjects(1, &dsys);
 
-    AfxDoSystemShutdown(0);
+    AfxAbolishSystem(0);
     AfxYield();
 
     return 0;

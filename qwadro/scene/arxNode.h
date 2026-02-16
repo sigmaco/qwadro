@@ -99,7 +99,11 @@ AFX_DEFINE_STRUCT(arxNodular)
     afxMask     mask;
 };
 
-ARX afxError ArxReparentDagNode(arxNode nod, arxNode parent);
+ARX arxNode ArxGetRootNode(arxNode nod);
+ARX arxNode ArxGetParentNode(arxNode nod);
+ARX afxBool ArxGetParentNode2(arxNode nod, arxNode* parent);
+
+ARX afxError ArxSetParentNode(arxNode nod, arxNode parent);
 
 ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t);
 ARX void    ArxGetNodeTransform(arxNode nod, afxTransform* t);

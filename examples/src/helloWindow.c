@@ -39,29 +39,29 @@ int main(int argc, char const* argv[])
     // Boot up the Qwadro (if necessary)
 
     afxSystemConfig sysc = { 0 };
-    AfxConfigureSystem(&sysc);
+    AfxConfigureSystem(&sysc, NIL);
     AfxBootstrapSystem(&sysc);
 
     // Set up the draw system
 
-    afxUnit drawIcd = 0;
+    afxUnit avxIcd = 0;
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxAptitude_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
-    AvxConfigureDrawSystem(drawIcd, &dsyc);
-    AvxEstablishDrawSystem(drawIcd, &dsyc, &dsys);
+    AvxConfigureDrawSystem(avxIcd, &dsyc);
+    AvxEstablishDrawSystem(avxIcd, &dsyc, &dsys);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     // Open a session
 
-    afxUnit shIcd = 0;
+    afxUnit auxIcd = 0;
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system
-    AfxConfigureEnvironment(shIcd, &ecfg);
-    AfxAcquireEnvironment(shIcd, &ecfg, &env);
+    AfxConfigureEnvironment(auxIcd, &ecfg);
+    AfxEstablishEnvironment(auxIcd, &ecfg, &env);
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     // Acquire a drawable surface
@@ -189,7 +189,7 @@ int main(int argc, char const* argv[])
     AfxDisposeObjects(1, &env);
     AfxDisposeObjects(1, &dsys);
 
-    AfxDoSystemShutdown(0);
+    AfxAbolishSystem(0);
     AfxYield();
 
     return 0;

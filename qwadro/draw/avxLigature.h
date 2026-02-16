@@ -46,7 +46,7 @@
     This way, the inner render loops will only be binding descriptor sets 2 and 3, and performance will be high.
 */
 
-#include "qwadro/draw/avxCodebase.h"
+#include "qwadro/draw/avxShader.h"
 
 #define AVX_MAX_LIGAMENT_SETS (8)
 #define AVX_MAX_LIGAMENTS (80) // 80 / 8 = 10 ligaments per set
@@ -138,7 +138,7 @@ AFX_DEFINE_STRUCT(avxLigatureConfig)
 
 /*
     The AvxConfigureLigature() function generates a ligature configuration (avxLigatureConfig) based on the provided shaders.
-    This is a pipeline reflection operation which introspects each avxCodebase to gather declared resource bindings 
+    This is a pipeline reflection operation which introspects each avxShader to gather declared resource bindings 
     (uniforms, buffers, textures, samplers, etc), push constant usage, and their visibility per shader stage.
     Then, it fills out points[] with avxLigament entries (each one representing a binding),
     sets[] with avxLigamentSet entries (groupings, like descriptor sets), and
@@ -149,7 +149,7 @@ AVX afxError AvxConfigureLigature
 (
     afxDrawSystem dsys, 
     avxLigatureConfig* cfg, 
-    avxCodebase codb,
+    avxShader codb,
     afxUnit progCnt,
     afxUnit progs[]
 );

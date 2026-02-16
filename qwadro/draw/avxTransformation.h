@@ -32,7 +32,7 @@
 
 // Specify the vertex input layout for consequent vertex fetching for a draw context.
 
-AVX afxCmdId            AvxCmdUseVertexInput
+AVX afxError            AvxCmdUseVertexInput
 (
     afxDrawContext      dctx,
     avxVertexInput      vin
@@ -53,7 +53,7 @@ AVX afxCmdId            AvxCmdUseVertexInput
     The ranges inside the buffers are not required, but they should be provided to help debugging buffer access and hinting the implementation about usage behavior.
 */
 
-AVX afxCmdId            AvxCmdBindVertexBuffers
+AVX afxError            AvxCmdBindVertexBuffers
 (
     afxDrawContext      dctx,
     // The index of the first vertex input binding whose state is updated by the command.
@@ -70,7 +70,7 @@ AVX afxCmdId            AvxCmdBindVertexBuffers
     The range inside the buffer is not required, but it should be provided to help debugging buffer access and hinting the implementation about usage behavior.
 */
 
-AVX afxCmdId            AvxCmdBindIndexBuffer
+AVX afxError            AvxCmdBindIndexBuffer
 (
     afxDrawContext      dctx,
     // The buffer being bound.
@@ -88,7 +88,7 @@ AVX afxCmdId            AvxCmdBindIndexBuffer
 
 // The viewport parameters taken from element #i of @vp replace the current state for the viewport index @baseIdx + #i, for #i in[0, @cnt).
 
-AVX afxCmdId            AvxCmdAdjustViewports
+AVX afxError            AvxCmdAdjustViewports
 (
     afxDrawContext      dctx,
     // The index of the first viewport whose parameters are updated by the command.
@@ -104,7 +104,7 @@ AVX afxCmdId            AvxCmdAdjustViewports
     This command sets the primitive topology for subsequent drawing commands when drawing using shader objects, or when the graphics pipeline is created without primitive topology set.
 */
 
-AVX afxCmdId            AvxCmdSetPrimitiveTopology
+AVX afxError            AvxCmdSetPrimitiveTopology
 (
     afxDrawContext      dctx,
     // The primitive topology to use for drawing.
@@ -113,7 +113,7 @@ AVX afxCmdId            AvxCmdSetPrimitiveTopology
 
 // Set cull mode dynamically for a draw context.
 
-AVX afxCmdId            AvxCmdChangeCullMode
+AVX afxError            AvxCmdChangeCullMode
 (
     afxDrawContext      dctx,
     // specifies the cull mode property to use for drawing.
@@ -122,7 +122,7 @@ AVX afxCmdId            AvxCmdChangeCullMode
 
 // Set front face orientation dynamically for a draw context.
 
-AVX afxCmdId            AvxCmdSwitchFrontFace
+AVX afxError            AvxCmdSwitchFrontFace
 (
     afxDrawContext      dctx,
     // Specifying if the front-facing triangle orientation to be used for culling is CW otherwise it is CCW.

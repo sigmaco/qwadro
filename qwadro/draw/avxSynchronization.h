@@ -88,14 +88,14 @@ typedef enum avxBusAccess
     avxBusAccess_HOST = (avxBusAccess_HOST_R | avxBusAccess_HOST_W)
 } avxBusAccess;
 
-AVX afxCmdId            AvxCmdDeclareBarrier
+AVX afxError            AvxCmdDeclareBarrier
 (
     afxDrawContext      dctx,
     avxBusStage         dstStage,
     avxBusAccess   dstAcc
 );
 
-AVX afxCmdId            AvxCmdBeginQuery
+AVX afxError            AvxCmdBeginQuery
 /// Begin a query. After beginning a query, that query is considered active within the draw context it was called in until that same query is ended.
 (
     afxDrawContext      dctx,
@@ -104,7 +104,7 @@ AVX afxCmdId            AvxCmdBeginQuery
     afxBool             precise // specifies the precision of occlusion queries.
 ); 
 
-AVX afxCmdId            AvxCmdEndQuery
+AVX afxError            AvxCmdEndQuery
 /// Ends a query. After ending a query, that query is marked as available.
 (
     afxDrawContext      dctx,
@@ -112,7 +112,7 @@ AVX afxCmdId            AvxCmdEndQuery
     afxUnit             slot // the index within the query pool where the result is stored.
 );
 
-AVX afxCmdId            AvxCmdCopyQueryResults
+AVX afxError            AvxCmdCopyQueryResults
 /// Copy the results of queries in a query pool to a buffer.
 (
     afxDrawContext      dctx,
@@ -125,7 +125,7 @@ AVX afxCmdId            AvxCmdCopyQueryResults
     avxQueryResultFlags flags
 );
 
-AVX afxCmdId            AvxCmdResetQueries
+AVX afxError            AvxCmdResetQueries
 /// Reset queries in a query pool. When executed on a queue, this command sets the status of query indices [baseQuery, baseQuery + queryCnt - 1] to unavailable.
 (
     afxDrawContext      dctx,
@@ -134,7 +134,7 @@ AVX afxCmdId            AvxCmdResetQueries
     afxUnit             slotCnt // the number of queries to reset.
 );
 
-AVX afxCmdId            AvxCmdQueryTimestamp
+AVX afxError            AvxCmdQueryTimestamp
 /// Write a device timestamp into a query object. When AvxCmdQueryTimestamp is submitted to a queue, it defines an execution dependency on commands that were submitted before it, and writes a timestamp to a query pool.
 (
     afxDrawContext      dctx,

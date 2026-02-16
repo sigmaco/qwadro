@@ -30,75 +30,100 @@
 #include <float.h>
 #include <intrin.h>
 
+
+////////////////////////////////////////////////////////////////////////////////
+// COMPILATION TOOLSET                                                        //
+////////////////////////////////////////////////////////////////////////////////
+
+
 // Try to determine which is the compiler.
 #if defined(__clang__)
-#   define AFX_COMPILER_CLANG
+#   define AFX_CL_CLANG __clang__
 #elif defined(__GNUC__)
-#   define AFX_COMPILER_GCC
+#   define AFX_CL_GCC __GNUC__
 #elif defined(_MSC_VER)
-#   define AFX_COMPILER_MSVC
+#   define AFX_CL_MSVC _MSC_VER_
 #endif
-#if defined(__MINGW64__) || defined (__MINGW32__)
-#   define AFX_COMPILER_MINGW
+#if defined(__MINGW64__)
+#   define AFX_CL_MINGW __MINGW64__
+#elif defined (__MINGW32__)
+#   define AFX_CL_MINGW __MINGW32__
 #endif
 
-// Detect x64 architecture.
+#ifdef __INTELLISENSE__
+#   define AFX_CL_MSIS 1
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TARGET MACHINE                                                             //
+////////////////////////////////////////////////////////////////////////////////
+
+
+// Detect x86-64 architecture.
 #if defined(_M_X64) || defined(__x86_64__) || defined(__amd64__)
 #   define AFX_ARCH_X64 1
 #   define AFX_ISA_X86 1
-#   define AFX_ISA_X64 1
+#   define AFX_ISA_X86_64 1
 #endif
 
-// Detect 32-bit x86 architecture.
+// Detect x86-32 architecture.
 #if defined(_M_IX86) || defined(__i386__)
+
 #   define AFX_ARCH_X86 1
+#   define AFX_ISA_X86 1
+#   define AFX_ISA_X86_32 1
+
+// Force usage of SSE/SSE2 to pair with 64-bit.
+#   define AFX_ISA_SSE_FORCED
+#endif
+
+#if (defined(AFX_ISA_X86_64)|| defined(AFX_ISA_X86_32))
 #   define AFX_ISA_X86 1
 #endif
 
-#ifdef _WIN64
-#   define AFX_ON_X86_64 1
-#   define AFX_ON_WINDOWS 1
-#elif _WIN32
-#   define AFX_ON_X86_32 1
-#   define AFX_ON_WINDOWS 1
+#ifdef AFX_ISA_X86
+#   define AFX_ARCH_LE
 #else
-#   define AFX_ON_X86_64 1
-#   define AFX_ON_LINUX 1
+#   define AFX_ARCH_BE
 #endif
 
-#if (defined(AFX_ON_X86_64)||defined(AFX_ON_X86_32))
-#   define AFX_ON_X86 1
+#if defined(AFX_ISA_X86_64) || defined(AFX_ISA_SSE_FORCED)
+#   define AFX_ISA_SSE
+#   define AFX_ISA_SSE2
 #endif
 
-#ifdef AFX_ON_WINDOWS
-#   if (defined(AFX_ON_X86_64))
-#       define AFX_ON_WIN64 1
-#   elif defined(AFX_ON_X86_32)
-#       define AFX_ON_WIN32 1
+////////////////////////////////////////////////////////////////////////////////
+// HOST PLATFORM                                                              //
+////////////////////////////////////////////////////////////////////////////////
+
+
+#ifdef _WIN64
+#   define AFX_OS_WINDOWS 1
+#elif _WIN32
+#   define AFX_OS_WINDOWS 1
+#else
+#   define AFX_OS_LINUX 1
+#endif
+
+#ifdef AFX_OS_WINDOWS
+#   if (defined(AFX_ISA_X86_64))
+#       define AFX_OS_WIN64 1
+#   elif defined(AFX_ISA_X86_32)
+#       define AFX_OS_WIN32 1
 #   else
 #       error "Unsupported ISA"
 #   endif
-#elif AFX_ON_LINUX
-#   if (defined(AFX_ON_X86_64))
-#       define AFX_ON_LINUX64 1
-#   elif defined(AFX_ON_X86_32)
-#       define AFX_ON_LINUX32 1
+#elif AFX_OS_LINUX
+#   if (defined(AFX_ISA_X86_64))
+#       define AFX_OS_LINUX64 1
+#   elif defined(AFX_ISA_X86_32)
+#       define AFX_OS_LINUX32 1
 #   else
 #       error "Unsupported ISA"
 #   endif
 #else
 #   error "Unsupported OS"
-#endif
-
-#ifdef AFX_ON_X86
-#   define AFX_LE
-#else
-#   error "Unsupported endianess"
-#endif
-
-#ifdef AFX_ON_X86_64
-#   define AFX_ISA_SSE
-#   define AFX_ISA_SSE2
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -115,7 +140,7 @@
 #endif//_AFX_CORE_C
 
 #if !0
-// Let's shut up MSVC. O que ela quer tá é mole.
+// Let's shut up MSVC. O que ele quer tá é mole.
 #if defined(_MSC_VER) && !defined(__clang__)
  //#   pragma warning (disable : 4054) // 'type cast': from function pointer '' to data pointer ''
 #   pragma warning (disable : 4152) // nonstandard extension, function/data pointer conversion in expression
@@ -129,6 +154,15 @@
 
 #define DLLIMPORT __declspec(dllimport)
 #define DLLEXPORT __declspec(dllexport)
+
+// Hints the compiler that this function should not be inlined.
+#if defined(AFX_CL_CLANG) || defined(AFX_CL_GCC)
+#   define NO_INLINE __attribute__((noinline))
+#elif defined(AFX_CL_MSVC)
+#   define NO_INLINE __declspec(noinline)
+#else
+#   define NO_INLINE
+#endif
 
 #if (defined(_MSC_VER)/* && !defined(__clang__)*/)
 #   define INLINE __forceinline
@@ -154,6 +188,39 @@
 #   else
 #       define AFX_DEPRECATED
 #   endif
+#endif
+
+// Hints the compiler that a variable or function may be unused.
+#if defined(AFX_CL_CLANG) || defined(AFX_CL_GCC)
+#   define AFX_UNUSED __attribute__((unused))
+#elif defined(AFX_CL_MSVC)
+#   define AFX_UNUSED __pragma(warning(suppress : 4100 4101))
+#else
+#   define AFX_UNUSED
+#endif
+
+// Hints the compiler that all function calls should be inlined into this function.
+#if defined(AFX_CL_CLANG) || defined(AFX_CL_GCC)
+#   define AFX_FLATTEN __attribute__((flatten))
+#else
+#   define AFX_FLATTEN 
+#endif
+
+// Hints the compiler that this function does not return.
+#ifdef AFX_CL_MSVC
+#   define AFX_NORETURN __declspec(noreturn)
+#else
+#   define AFX_NORETURN _Noreturn
+#endif
+
+// Hints the compiler if an branch is likely or unlikely to be taken.
+// This helps the compiler determine which parts of the code are hot vs cold.
+#if defined(AFX_CL_CLANG) || defined(AFX_CL_GCC)
+#   define AFX_LIKELY(_COND_) __builtin_expect(!!(_COND_), true)
+#   define AFX_UNLIKELY(_COND_) __builtin_expect(!!(_COND_), false)
+#else
+#   define AFX_LIKELY(_COND_) _COND_
+#   define AFX_UNLIKELY(_COND_) _COND_
 #endif
 
 #ifndef AFX_THREAD_LOCAL
@@ -199,14 +266,14 @@
 #endif//AFX_STATIC_ASSERT
 
 
-// MSC (for surprise of a totally of zero persons) shits on "AFX_PTR_ALIGNMENT sizeof(void*)" and other sizeof() macroes.
+// For surprise of a totally of zero persons, MSVC does shit on "AFX_PTR_ALIGNMENT sizeof(void*)" and other sizeof() macroes.
 #if (defined(_MSC_VER) && !defined(__clang__))
-#ifdef AFX_ON_X86_64
+#ifdef AFX_ISA_X86_64
 #   define AFX_PTR_ALIGNMENT 64
 #   define AFX_ATOMIC_ALIGNMENT 64
-#elif  AFX_ON_X86_32
+#elif  AFX_ISA_X86_32
 #   define AFX_PTR_ALIGNMENT 32
-#   define AFX_ATOMIC_ALIGNMENT 64 // assumes AFX is on WOW64
+#   define AFX_ATOMIC_ALIGNMENT 64 // When in 32-bit, AFX assumes that it is in protected mode, like 32 on 64-bit system (like WOW64)
 #else
 #error ""
 #endif
@@ -220,10 +287,10 @@
 #ifndef AFX_TYPEOF
 #   if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 202311L) // C23 or later: typeof is standard
 #       define AFX_TYPEOF(x) typeof(x)
-#   elif defined(__GNUC__) || defined(__clang__) // GCC and Clang provide __typeof__
-#       define AFX_TYPEOF(x) __typeof__(x)
 #   elif defined(_MSC_VER) // MSVC (C mode) provides __typeof (note: no trailing underscores)
 #       define AFX_TYPEOF(x) __typeof(x)
+#   elif defined(__GNUC__) || defined(__clang__) // GCC and Clang provide __typeof__
+#       define AFX_TYPEOF(x) __typeof__(x)
 #   else
 #       error "Compiler does not support typeof or any known extension"
 #   endif
@@ -452,9 +519,9 @@ typedef sig_atomic_t    afxAtomic;
 // Count the number of bits set in a value.
 static inline afxUnit AfxCountBits(afxUnit32 inValue)
 {
-#if defined(AFX_COMPILER_CLANG) || defined(AFX_COMPILER_GCC)
+#if defined(AFX_CL_CLANG) || defined(AFX_CL_GCC)
     return __builtin_popcount(inValue);
-#elif defined(AFX_COMPILER_MSVC)
+#elif defined(AFX_CL_MSVC)
 #   if defined(AFX_ISA_SSE4_2)
     return _mm_popcnt_u32(inValue);
 #   elif defined(AFX_ISA_NEON) && (_MSC_VER >= 1930) // _CountOneBits not available on MSVC2019
@@ -476,7 +543,7 @@ static inline afxUnit AfxCountLeadingZeros(afxUnit32 inValue)
 #if defined(AFX_ISA_X86) || defined(AFX_ISA_WASM)
 #if defined(AFX_ISA_LZCNT)
     return _lzcnt_u32(inValue);
-#elif defined(AFX_COMPILER_MSVC)
+#elif defined(AFX_CL_MSVC)
     if (inValue == 0) return 32;
     unsigned long result;
     _BitScanReverse(&result, inValue);
@@ -486,7 +553,7 @@ static inline afxUnit AfxCountLeadingZeros(afxUnit32 inValue)
     return __builtin_clz(inValue);
 #endif
 #elif defined(AFX_ISA_ARM)
-#if defined(AFX_COMPILER_MSVC)
+#if defined(AFX_CL_MSVC)
     return _CountLeadingZeros(inValue);
 #else
     return __builtin_clz(inValue);
@@ -504,7 +571,7 @@ static inline afxUnit AfxCountTrailingZeros(afxUnit32 inValue)
 #if defined(AFX_ISA_X86) || defined(AFX_ISA_WASM)
 #if defined(AFX_ISA_TZCNT)
     return _tzcnt_u32(inValue);
-#elif defined(AFX_COMPILER_MSVC)
+#elif defined(AFX_CL_MSVC)
     if (inValue == 0)
         return 32;
     unsigned long result;
@@ -515,7 +582,7 @@ static inline afxUnit AfxCountTrailingZeros(afxUnit32 inValue)
     return __builtin_ctz(inValue);
 #endif
 #elif defined(AFX_ISA_ARM)
-#if defined(AFX_COMPILER_MSVC)
+#if defined(AFX_CL_MSVC)
     if (inValue == 0) return 32;
     unsigned long result;
     _BitScanForward(&result, inValue);

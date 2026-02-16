@@ -27,7 +27,7 @@
 #   define AFX_ATOMIC_ALIGNMENT sizeof(afxUnit64) 
 #endif
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
 typedef AFX_ALIGNED(AFX_ATOMIC_ALIGNMENT) volatile long       afxAtom32;
 typedef AFX_ALIGNED(AFX_ATOMIC_ALIGNMENT) volatile long long  afxAtom64;
 typedef AFX_ALIGNED(AFX_ATOMIC_ALIGNMENT) volatile void*      afxAtomPtr;

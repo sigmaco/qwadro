@@ -14,6 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
+// This code is part of SIGMA Future Storage.
+
 #ifndef AFX_IO_BRIDGE_H
 #define AFX_IO_BRIDGE_H
 

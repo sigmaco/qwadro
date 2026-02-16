@@ -131,6 +131,8 @@ There is some semantics inherited from RenderWare still present. For example, yo
 
 > E no Qwadro é assim: o que funciona está bugado, e o que não está bugado não funciona.
 
+**SIGMA Technology Group** is a legislative arm of SIGMA responsible to decide the future on an wide range of issues in technological efforts, including the Qwadro. **Engitech** is a executive arm of SIGMA responsible to implement some decisions elaborated by **SIGMA Technology Group**, including the Qwadro. There are a lot of premises in papers of this project but that is not yet or may not be implemented because of limitations in budget for the task force carrying the project toward.
+
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated. For details, see the "[Contributing Guidelines][contribute-guide]".
 
 You can also contribute or address to any doubt or difficult although by join the SIGMA's gathering point on Discord.
