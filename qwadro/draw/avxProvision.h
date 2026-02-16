@@ -40,7 +40,7 @@
     All commands recorded after this call will be considered part of this debug region until AvxCmdConcludeDebugScope is called.
 */
 
-AVX afxCmdId AvxCmdCommenceDebugScope
+AVX afxError AvxCmdCommenceDebugScope
 (
     // The draw context being annotated.
     afxDrawContext dctx,
@@ -57,7 +57,7 @@ AVX afxCmdId AvxCmdCommenceDebugScope
 
 */
 
-AVX afxCmdId AvxCmdConcludeDebugScope
+AVX afxError AvxCmdConcludeDebugScope
 (
     // The draw context being annotated.
     afxDrawContext dctx
@@ -69,7 +69,7 @@ AVX afxCmdId AvxCmdConcludeDebugScope
     Shows up as a point marker in profilers or debugging tools.
 */
 
-AVX afxCmdId AvxCmdMarkDebugMilestone
+AVX afxError AvxCmdMarkDebugMilestone
 (
     // The draw context being annotated.
     afxDrawContext dctx,
@@ -101,7 +101,7 @@ AVX afxCmdId AvxCmdMarkDebugMilestone
     This matches Vulkan’s inheriting and nested secondary command buffer support.
 */
 
-AVX afxCmdId AvxCmdExecuteCommands
+AVX afxError AvxCmdExecuteCommands
 (
     // The draw context that will side-load other contexts.
     afxDrawContext dctx,
@@ -147,7 +147,7 @@ AVX afxCmdId AvxCmdExecuteCommands
 
 */
 
-AVX afxCmdId AvxCmdBindPipeline
+AVX afxError AvxCmdBindPipeline
 (
     // The draw context that the pipeline will be bound to. 
     afxDrawContext dctx,
@@ -166,15 +166,15 @@ AVX afxCmdId AvxCmdBindPipeline
 
 */
 
-AVX afxCmdId AvxCmdBindShadersEXT
+AVX afxError AvxCmdBindShadersEXT
 (
     afxDrawContext dctx,
     // The number of the stages to change.
     afxUnit cnt,
     // An array of values specifying the stage for each shader.
     avxShaderType const stages[],
-    // An array of avxCodebase handles describing the shader object to be bound.
-    avxCodebase shaders[]
+    // An array of avxShader handles describing the shader object to be bound.
+    avxShader shaders[]
 );
 
 /*
@@ -189,7 +189,7 @@ AVX afxCmdId AvxCmdBindShadersEXT
     That is, all subsequent draw/dispatch commands use the resources from the currently bound ligature until a different one is bound.
 */
 
-AVX afxCmdId AvxCmdUseLigature
+AVX afxError AvxCmdUseLigature
 (
     afxDrawContext dctx, 
     // A value specifying to which bus the ligature will be bound.
@@ -216,7 +216,7 @@ AVX afxCmdId AvxCmdUseLigature
     - cnt must not exceed the descriptor array length for that binding.
 */
 
-AVX afxCmdId AvxCmdBindBuffers
+AVX afxError AvxCmdBindBuffers
 (
     afxDrawContext dctx,
     // A value specifying to which bus the ligature will be bound.
@@ -246,7 +246,7 @@ AVX afxCmdId AvxCmdBindBuffers
     AvxCmdBindRasters must obey that layout; exactly like Vulkan's descriptor compatibility rules.
 */
 
-AVX afxCmdId AvxCmdBindRasters
+AVX afxError AvxCmdBindRasters
 (
     afxDrawContext dctx,
     // A value specifying to which bus the ligature will be bound.
@@ -274,7 +274,7 @@ AVX afxCmdId AvxCmdBindRasters
     Otherwise, the descriptor update is invalid.
 */
 
-AVX afxCmdId AvxCmdBindSamplers
+AVX afxError AvxCmdBindSamplers
 (
     afxDrawContext dctx,
     // A value specifying to which bus the ligature will be bound.
@@ -336,7 +336,7 @@ AVX afxCmdId AvxCmdBindSamplers
     This makes AvxCmdPushConstants ideal for rapidly changing parameters.
 */
 
-AVX afxCmdId AvxCmdPushConstants
+AVX afxError AvxCmdPushConstants
 (
     afxDrawContext dctx, 
     // The offset where in the push-constant region the data begins.
@@ -347,7 +347,7 @@ AVX afxCmdId AvxCmdPushConstants
     void const* data
 );
 
-AVX afxCmdId AvxCmdBindFontSIG(afxDrawContext dctx, afxUnit first, afxUnit cnt, /*afxTypography*/void* typ[], avxPipeline pip[], avxSampler smp[], avxRaster ras[]);
+AVX afxError AvxCmdBindFontSIG(afxDrawContext dctx, afxUnit first, afxUnit cnt, /*afxTypography*/void* typ[], avxPipeline pip[], avxSampler smp[], avxRaster ras[]);
 AVX afxError AvxCmdStampDebug(afxDrawContext dctx, afxM4d const v, afxV2d const at, afxString const* caption);
 
 /*
@@ -381,7 +381,7 @@ AVX afxError AvxCmdStampDebug(afxDrawContext dctx, afxM4d const v, afxV2d const 
     commands. Any previously bound buffers at binding points greater than or equal to @cnt are unbound.
 */
 
-AVX afxCmdId AvxCmdBindArgumentBuffersSIGMA
+AVX afxError AvxCmdBindArgumentBuffersSIGMA
 (
     afxDrawContext  dctx,
     // the first buffer slot.
@@ -392,7 +392,7 @@ AVX afxCmdId AvxCmdBindArgumentBuffersSIGMA
     avxBufferedMap buffers[]
 );
 
-AVX afxCmdId AvxCmdPushUniformsSIGMA
+AVX afxError AvxCmdPushUniformsSIGMA
 (
     afxDrawContext dctx,
     avxBus bus,

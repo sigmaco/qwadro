@@ -91,7 +91,7 @@ _AFX afxBool AfxSleepNanoseconds(afxUnit64 nsecs, afxUnit64* remaining)
 
 _AFX void AfxSleepUltraseconds(afxUnit usecs)
 {
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     LARGE_INTEGER ft;
     ft.QuadPart = -(long long)(usecs * 10);  // '-' using relative time
     HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
@@ -112,7 +112,7 @@ _AFX void AfxSleepUltraseconds(afxUnit usecs)
 
 _AFX void AfxSleep(afxUnit ms)
 {
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     Sleep(ms);
 #else
     usleep(ms * 1000);
@@ -426,7 +426,7 @@ _AFX afxBool AfxPostEvent(afxThread thr, void(*event)(void* udd), void* udd)
     return PostThreadMessageA(thr->tid, WM_USER, (WPARAM)event, (LPARAM)udd);
 }
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
 typedef struct THREADNAME_INFO
 {
     DWORD dwType;
@@ -535,7 +535,7 @@ _AFX int _AfxExecTxuCb(void** v)
 
     _AfxInitMmu(thr);
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     // When your thread starts running, it should post a message to itself first to create a message queue, then set a signal to indicate that it is ready to receive messages, then finally enter its message loop.
     PostThreadMessageA(thr->tid, WM_USER, NIL, NIL);
 #endif
@@ -698,7 +698,7 @@ _AFX afxError AfxRunThread(afxThread thr, afxInt(*proc)(void* arg), void* arg)
             AFX_ASSERT(thr->osHandle == thr->osHandle);
 
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
             afxString s;
             AfxMakeString(&s, 0, thr->_func_, 0);
             _AfxRenameThreadW32(thr->tid, &s);

@@ -29,11 +29,18 @@
 #include "qwadro/scene/arxPosture.h"
 
 
-AFX_DEFINE_STRUCT(asxQuadrant)
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, asxQuadrant)
 {
-    afxRect     bounds;
-    afxUnit     childIdx[4];
-    afxUnit     parentIdx;
+    // SIMD friendly, data-driven
+    afxReal     minX[4];
+    afxReal     minY[4];
+    afxReal     minZ[4];
+    afxReal     maxX[4];
+    afxReal     maxY[4];
+    afxReal     maxZ[4];
+    afxUnit     childId[4];
+    afxUnit     parentId;
+    afxBool     changed;
     afxChain    contents;
 };
 

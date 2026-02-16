@@ -713,15 +713,20 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
     ter->sliceSecCnt = ter->depth / ter->secDepth;
     ter->secCnt = ter->sliceSecCnt * ter->rowSecCnt;
 
+    ter->sectors = NIL;
+    ter->secAabb = NIL;
+
     afxObjectStash const stashes[] =
     {
         {
             .cnt = ter->secCnt,
+            .align = AFX_SIMD_ALIGNMENT,
             .siz = sizeof(ter->sectors[0]),
             .var = (void**)&ter->sectors
         },
         {
             .cnt = ter->secCnt,
+            .align = AFX_SIMD_ALIGNMENT,
             .siz = sizeof(ter->secAabb[0]),
             .var = (void**)&ter->secAabb
         }
@@ -741,7 +746,9 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
             afxUnit index = (ter->rowSecCnt * gridZ) + gridX;
 
             _arxTerrSec* sec = &ter->sectors[index];
-            *sec = (_arxTerrSec) { 0 };
+            int a = 1;
+            //*sec = (_arxTerrSec) { 0 };
+            AfxZero(sec, sizeof(sec[0]));
 
             sec->gridNode = index;
             sec->gridNodeX = gridX;
@@ -774,26 +781,44 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
         _ArxBuildTerrainCollideShape(ter, i, 1);
     }
 
+    avxShader codb;
+    AvxAcquireShaders(dsys, 1, NIL, &codb);
+    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+
+    avxShaderSpecialization specs0[2] = { 0 };
+    specs0[0].stage = avxShaderType_VERTEX;
+    specs0[0].prog = AFX_STRING("terrainMeshVsh");
+    specs0[1].stage = avxShaderType_FRAGMENT;
+    specs0[1].prog = AFX_STRING("terrainMeshFsh");
+    AvxCompileShaderFromDisk(codb, &specs0[0].prog, AfxUri("../gfx/terrainMeshVsh.glsl"));
+    AvxCompileShaderFromDisk(codb, &specs0[1].prog, AfxUri("../gfx/terrainMeshFsh.glsl"));
+    
+    avxShaderSpecialization specs1[2] = { 0 };
+    specs1[0].stage = avxShaderType_VERTEX;
+    specs1[0].prog = AFX_STRING("terrainAabbVsh");
+    specs1[1].stage = avxShaderType_FRAGMENT;
+    specs1[1].prog = AFX_STRING("terrainAabbFsh");
+    AvxCompileShaderFromDisk(codb, &specs1[0].prog, AfxUri("../gfx/terrainAabbVsh.glsl"));
+    AvxCompileShaderFromDisk(codb, &specs1[1].prog, AfxUri("../gfx/terrainAabbFsh.glsl"));
+    
     avxVertexInput vin[2];
     avxVertexLayout vtxl[2] = { 0 };
+    vtxl[0].tag = AFX_STRING("terrainMesh");
     vtxl[0].binCnt = 1;
-    vtxl[0].bins[0].attrCnt = 5;
-    vtxl[0].attrs[0].fmt = avxFormat_RGB32f;
-    vtxl[0].attrs[1].fmt = avxFormat_RG32f;
-    vtxl[0].attrs[1].location = 1;
-    vtxl[0].attrs[1].offset = 12;
-    vtxl[0].attrs[2].fmt = avxFormat_RGB32f;
-    vtxl[0].attrs[2].location = 2;
-    vtxl[0].attrs[2].offset = 20;
-    vtxl[0].attrs[3].fmt = avxFormat_RGB32f;
-    vtxl[0].attrs[3].location = 3;
-    vtxl[0].attrs[3].offset = 32;
-    vtxl[0].attrs[4].fmt = avxFormat_RGB32f;
-    vtxl[0].attrs[4].location = 4;
-    vtxl[0].attrs[4].offset = 44;
+    vtxl[0].bins[0] = AVX_VERTEX_STREAM(0, 0, 0);
+    vtxl[0].attrCnt = 5;
+    vtxl[0].attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f);
+    vtxl[0].attrs[1] = AVX_VERTEX_ATTR(1, 0, 12, avxFormat_RG32f);
+    vtxl[0].attrs[2] = AVX_VERTEX_ATTR(2, 0, 20, avxFormat_RGB32f);
+    vtxl[0].attrs[3] = AVX_VERTEX_ATTR(3, 0, 32, avxFormat_RGB32f);
+    vtxl[0].attrs[4] = AVX_VERTEX_ATTR(4, 0, 44, avxFormat_RGB32f);
+
+    vtxl[1].tag = AFX_STRING("terrainAabb");
     vtxl[1].binCnt = 1;
-    vtxl[1].bins[0].attrCnt = 1;
-    vtxl[1].attrs[0].fmt = avxFormat_RGB32f;
+    vtxl[1].bins[0] = AVX_VERTEX_STREAM(0, 0, 0);
+    vtxl[1].attrCnt = 1;
+    vtxl[1].attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f);
+
     AvxAcquireVertexInputs(dsys, 2, vtxl, vin);
 
     avxPipeline pip[2];
@@ -802,35 +827,21 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
     pipb[0].vin = vin[0];
     pipb[0].tag = AFX_STRING("terrainMesh");
     pipb[0].primTop = avxTopology_TRI_LIST;
+    pipb[0].codb = codb;
+    pipb[0].progCnt = 2;
+    pipb[0].progSpecs = specs0;
     pipb[1].depthTestEnabled = TRUE;
     pipb[1].vin = vin[1];
     pipb[1].tag = AFX_STRING("terrainAabb");
     pipb[1].primTop = avxTopology_LINE_LIST;
     pipb[1].fillMode = avxFillMode_LINE;
+    pipb[1].codb = codb;
+    pipb[1].progCnt = 2;
+    pipb[1].progSpecs = specs1;
     AvxAssembleGfxPipelines(dsys, 2, pipb, pip);
     AfxDisposeObjects(2, vin);
 
-    avxCodebase codb0, codb1;
-    AvxGetPipelineCodebase(pip[0], &codb0);
-    AvxGetPipelineCodebase(pip[1], &codb1);
-    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb0);
-    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb1);
-    avxShaderSpecialization specs0[2] = { 0 };
-    specs0[0].stage = avxShaderType_VERTEX;
-    specs0[0].prog = AFX_STRING("terrainMeshVsh");
-    specs0[1].stage = avxShaderType_FRAGMENT;
-    specs0[1].prog = AFX_STRING("terrainMeshFsh");
-    AvxCompileShaderFromDisk(codb0, &specs0[0].prog, AfxUri("../gfx/terrainMeshVsh.glsl"));
-    AvxCompileShaderFromDisk(codb0, &specs0[1].prog, AfxUri("../gfx/terrainMeshFsh.glsl"));
-    AvxReprogramPipeline(pip[0], 2, specs0);
-    avxShaderSpecialization specs1[2] = { 0 };
-    specs1[0].stage = avxShaderType_VERTEX;
-    specs1[0].prog = AFX_STRING("terrainAabbVsh");
-    specs1[1].stage = avxShaderType_FRAGMENT;
-    specs1[1].prog = AFX_STRING("terrainAabbFsh");
-    AvxCompileShaderFromDisk(codb1, &specs1[0].prog, AfxUri("../gfx/terrainAabbVsh.glsl"));
-    AvxCompileShaderFromDisk(codb1, &specs1[1].prog, AfxUri("../gfx/terrainAabbFsh.glsl"));
-    AvxReprogramPipeline(pip[1], 2, specs1);
+    AfxDisposeObjects(1, &codb);
 
     ter->dbgAabbPip = pip[1];
     ter->meshPip = pip[0];

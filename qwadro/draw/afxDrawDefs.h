@@ -355,7 +355,7 @@ AFX_DEFINE_HANDLE(afxSurface);
 AFX_DEFINE_HANDLE(avxPipeline);
 AFX_DEFINE_HANDLE(avxRasterizer);
 AFX_DEFINE_HANDLE(avxVertexInput);
-AFX_DEFINE_HANDLE(avxCodebase);
+AFX_DEFINE_HANDLE(avxShader);
 AFX_DEFINE_HANDLE(avxLigature);
 AFX_DEFINE_HANDLE(avxSampler);
 AFX_DEFINE_HANDLE(avxQueryPool);

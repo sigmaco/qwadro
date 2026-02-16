@@ -301,32 +301,33 @@ _ARX void ArxExtractCurveKnotValues(arxCurve c, afxUnit knotIdx, afxUnit knotCnt
     {
         for (afxUnit i = 0; i < c->dimens; i++)
             ctrlRslts[i] = identity[i];
+
+        // Early exit.
+        return;
     }
-    else
+
+    arxCurveFormat fmt = c->fmt;
+
+    switch (fmt)
     {
-        arxCurveFormat fmt = c->fmt;
+    case arxCurveFormat_DaIdentity:
+    {
+        if (knotCnt == 1 && knotResults)
+            knotResults[0] = 0.0;
 
-        switch (fmt)
+        if (ctrlRslts)
         {
-        case arxCurveFormat_DaIdentity:
-        {
-            if (knotCnt == 1 && knotResults)
-                knotResults[0] = 0.0;
-
-            if (ctrlRslts)
-            {
-                for (afxUnit i = c->dimens; i-- > 0;)
-                    ctrlRslts[i] = identity[i];
-            }
-            break;
+            for (afxUnit i = c->dimens; i-- > 0;)
+                ctrlRslts[i] = identity[i];
         }
-        default:
-        {
-            AFX_ASSERT(c->ddi->extractCb);
-            c->ddi->extractCb(c, knotIdx, knotCnt, knotResults, ctrlRslts, identity);
-            break;
-        }
-        }
+        break;
+    }
+    default:
+    {
+        AFX_ASSERT(c->ddi->extractCb);
+        c->ddi->extractCb(c, knotIdx, knotCnt, knotResults, ctrlRslts, identity);
+        break;
+    }
     }
 }
 

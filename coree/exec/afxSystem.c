@@ -21,11 +21,11 @@
 #define _AFX_SYSTEM_C
 #include "../exec/afxSystemDDK.h"
 #define _AVX_DRAW_C
-#include "targa/avxIcd.h"
+#include "../draw/avxIcd.h"
 #define _AMX_MIX_C
-#include "mixva/amxIcd.h"
+#include "../mix/amxIcd.h"
 #define _AUX_UX_C
-#include "mmux/auxIcd.h"
+#include "../ux/auxIcd.h"
 
 _AFX afxChar const _rwBuildDateTime[];
 static afxChar const  _rwBuildDateTime[] = "\nCore built at " __DATE__ " " __TIME__ "\n";
@@ -419,7 +419,7 @@ _AFX afxBool _AfxParseDdevManifestCb(afxUri const* manifestUri, void* udd)
     afxManifest ini;
     AfxDeployManifest(&ini);
     afxUri manifestFile;
-    AfxClipUriFile(&manifestFile, manifestUri);
+    AfxExcerptUriFile(&manifestFile, manifestUri);
     AfxLoadInitializationFile(&ini, &manifestFile);
 
     afxDeviceType devType = afxDeviceType_DRAW;
@@ -451,7 +451,7 @@ _AFX afxBool _AfxParseDriverManifestCb(afxSystem sys, afxUri const* manifestUri)
     afxManifest ini;
     AfxDeployManifest(&ini);
     afxUri manifestFile;
-    AfxClipUriFile(&manifestFile, manifestUri);
+    AfxExcerptUriFile(&manifestFile, manifestUri);
     AfxLoadInitializationFile(&ini, &manifestFile);
 
     afxDeviceType devType = afxDeviceType_DRAW;
@@ -484,7 +484,7 @@ _AFX afxBool _AfxLoadAndAttachIcd(void* udd, afxUnit diskId, afxUnit endpointIdx
     afxString const* platform = udd;
 
     afxUri manifestFile;
-    AfxClipUriPath(&manifestFile, osPath);
+    AfxExcerptUriPath(&manifestFile, osPath);
 
     afxManifest ini;
     AfxDeployManifest(&ini);
@@ -517,7 +517,7 @@ _AFX afxBool _AfxLoadAndAttachIcd(void* udd, afxUnit diskId, afxUnit endpointIdx
             else
             {
                 afxUri basePath, fname, fext;
-                AfxExcerptPathSegments(path, &basePath, &basePath, &fname, &fext);
+                AfxExcerptUriPathSegments(path, &basePath, &basePath, &fname, &fext);
                 AfxFormatUri(&dllFile.uri, "%.*s/%.*s.dll", AfxPushString(&basePath.s), AfxPushString(&fname.s));
 
             }
@@ -555,13 +555,13 @@ _AFX afxError _AfxScanIcdManifests(afxSystem sys, afxString const* platform, afx
             afxManifest ini;
             afxUri manifestFile;
             AfxDeployManifest(&ini);
-            AfxClipUriPath(&manifestFile, &fpath.uri);
+            AfxExcerptUriPath(&manifestFile, &fpath.uri);
             AfxLoadInitializationFile(&ini, &manifestFile);
 
             AfxGetFileUri(file, &fpath.uri);
 
             afxUri fnameOnly;
-            AfxClipUriTarget(&fnameOnly, &fpath.uri);
+            AfxExcerptUriTarget(&fnameOnly, &fpath.uri);
             
             afxUri2048 dllFile;
             AfxMakeUri2048(&dllFile, NIL);
@@ -831,7 +831,7 @@ _AFX afxError AfxBootstrapSystem(afxSystemConfig const *config)
     AfxMakeUri2048(&uri2, NIL);
     AfxMakeUri2048(&uri, NIL);
 
-    //AfxCanonicalizePath(&uri.uri, TRUE);
+    //AfxCanonicalizeUriPath(&uri.uri, TRUE);
 
     AfxFormatUri(&uri.uri, "art://./actor/");
     AfxResolveUri(afxFileFlag_R, &uri.uri, &uri2.uri);

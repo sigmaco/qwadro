@@ -165,7 +165,7 @@ _AFX afxError AfxForEachUriResolution(afxUri const* pattern, afxFileFlags flags,
                         WIN32_FIND_DATAA wfd;
 
                         AfxFormatUri(&out.uri, "%.*s/%.*s\0", AfxPushString(AfxGetUriString(&fsto->rootPath)), AfxPushString(pathStr));
-                        AfxCanonicalizePath(&out.uri, AFX_ON_WINDOWS);
+                        AfxCanonicalizeUriPath(&out.uri, AFX_OS_WINDOWS);
 
                         if (INVALID_HANDLE_VALUE != (fh = FindFirstFileA(AfxGetUriData(&out.uri, 0), &(wfd))))
                         {
@@ -198,7 +198,7 @@ _AFX afxError AfxForEachUriResolution(afxUri const* pattern, afxFileFlags flags,
                     if ((fsto->flags & ioPerms) == ioPerms)
                     {
                         AfxFormatUri(&out.uri, "%.*s/%.*s\0", AfxPushString(AfxGetUriString(&fsto->rootPath)), AfxPushString(pathStr));
-                        AfxCanonicalizePath(&out.uri, AFX_ON_WINDOWS);
+                        AfxCanonicalizeUriPath(&out.uri, AFX_OS_WINDOWS);
                         //AfxReportMessage(dstData);
 
                         if (!stat(dstData, &(st)) || (ioPerms & afxFileFlag_W) || hasWildcard)
@@ -309,7 +309,7 @@ _AFX afxError AfxResolveUris2(afxFileFlags const permissions, afxUnit cnt, afxUr
                     if ((fsto->flags & ioPerms) == ioPerms)
                     {
                         AfxFormatUri(&out[i], "%.*s/%.*s\0", AfxPushString(AfxGetUriString(&fsto->rootPath)), AfxPushString(pathStr));
-                        AfxCanonicalizePath(&out[i], AFX_ON_WINDOWS);
+                        AfxCanonicalizeUriPath(&out[i], AFX_OS_WINDOWS);
                         //AfxReportMessage(dstData);
 
                         if (!stat(dstData, &(st)) || (ioPerms & afxFileFlag_W) || hasWildcard)
@@ -332,7 +332,7 @@ _AFX afxError AfxResolveUris2(afxFileFlags const permissions, afxUnit cnt, afxUr
                     //if ((fsto->flags & ioPerms) == ioPerms)
                     {
                         AfxFormatUri(&out[i], "%.*s/%.*s\0", AfxPushString(AfxGetUriString(&dev)), AfxPushString(pathStr));
-                        AfxCanonicalizePath(&out[i], AFX_ON_WINDOWS);
+                        AfxCanonicalizeUriPath(&out[i], AFX_OS_WINDOWS);
                         //AfxReportMessage(dstData);
 
                         if (!stat(dstData, &(st)) || (ioPerms & afxFileFlag_W) || hasWildcard)
@@ -434,7 +434,7 @@ _AFX afxUnit AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*ca
     AfxMakeUri2048(&baseUrl, NIL);
 
     afxUri dir;
-    AfxClipPathDirectory(&dir, &path);
+    AfxExcerptUriPathDirectory(&dir, &path);
     
     afxUnit diskId = AFX_INVALID_INDEX;
 
@@ -449,7 +449,7 @@ _AFX afxUnit AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*ca
             if ((fsto->flags & ioPerms) == ioPerms)
             {
                 AfxFormatUri(&resolvedUrl.uri, "%.*s/%.*s", AfxPushString(AfxGetUriString(&fsto->rootPath)), AfxPushString(&path.s));
-                AfxCanonicalizePath(&resolvedUrl.uri, AFX_ON_WINDOWS);
+                AfxCanonicalizeUriPath(&resolvedUrl.uri, AFX_OS_WINDOWS);
 
                 if (hasWildcard)
                 {
@@ -473,7 +473,7 @@ _AFX afxUnit AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*ca
                                 AfxFormatUri(&baseUrl.uri, "%.*s", AfxPushString(&found.s));
 
                             AfxFormatUri(&resolvedUrl.uri, "%.*s/%.*s/%.*s", AfxPushString(AfxGetUriString(&fsto->rootPath)), AfxPushString(&dir.s), AfxPushString(&found.s));
-                            AfxCanonicalizePath(&resolvedUrl.uri, AFX_ON_WINDOWS);
+                            AfxCanonicalizeUriPath(&resolvedUrl.uri, AFX_OS_WINDOWS);
 
                             resolved = TRUE;
                             rslt++;
@@ -519,7 +519,7 @@ _AFX afxUnit AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*ca
     {
         afxUri2048 szPattern;
         AfxMakeUri2048(&szPattern, pattern);
-        AfxCanonicalizePath(&szPattern.uri, AFX_ON_WINDOWS);
+        AfxCanonicalizeUriPath(&szPattern.uri, AFX_OS_WINDOWS);
 
         if (hasWildcard)
         {
@@ -551,7 +551,7 @@ _AFX afxUnit AfxFindFiles(afxUri const* pattern, afxFileFlags flags, afxBool(*ca
                     else
                         AfxFormatUri(&resolvedUrl.uri, "%.*s", AfxPushString(&found.s));
 
-                    AfxCanonicalizePath(&resolvedUrl.uri, AFX_ON_WINDOWS);
+                    AfxCanonicalizeUriPath(&resolvedUrl.uri, AFX_OS_WINDOWS);
 
                     rslt++;
 
@@ -635,12 +635,12 @@ _AFX afxError _MountStorageUnit(afxStorage fsys, afxUri const* endpoint, afxFile
 
     afxArchive arc = NIL;
 
-    if (AfxPathIsRelative(endpoint))
+    if (AfxIsUriPathRelative(endpoint))
     {
-        //AfxClipUriPath(&endpoint, &location2);
+        //AfxExcerptUriPath(&endpoint, &location2);
         afxUri archiveNameExtUri;
 
-        if (AfxClipUriExtension(&archiveNameExtUri, endpoint, FALSE))
+        if (AfxExcerptUriExtension(&archiveNameExtUri, endpoint, FALSE))
         {
             fileFlags |= afxFileFlag_D;
 
@@ -648,7 +648,7 @@ _AFX afxError _MountStorageUnit(afxStorage fsys, afxUri const* endpoint, afxFile
             else
             {
                 afxUri path;
-                AfxClipUriPath(&path, endpoint);
+                AfxExcerptUriPath(&path, endpoint);
                 AfxCopyUri(&endpoint2.uri, &path);
             }
         }
@@ -665,13 +665,13 @@ _AFX afxError _MountStorageUnit(afxStorage fsys, afxUri const* endpoint, afxFile
                 //AfxFormatString(&location2.uri.s, "%.*s"
 #if 0
                 AfxFormatUri(&endpoint2.uri, "%.*s"
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
                     "\\"
 #else
                     "/"
 #endif
                     "%.*s"
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
                     "\\"
 #else
                     "/"
@@ -681,14 +681,14 @@ _AFX afxError _MountStorageUnit(afxStorage fsys, afxUri const* endpoint, afxFile
 #endif
                     , AfxPushString(rootUriString), AfxPushString(AfxGetUriString(endpoint)));
                 AfxReparseUri(&endpoint2.uri);
-                AfxCanonicalizePath(&endpoint2.uri, AFX_ON_WINDOWS);
+                AfxCanonicalizeUriPath(&endpoint2.uri, AFX_OS_WINDOWS);
             }
         }
     }
     else
     {
         AfxMakeUri2048(&endpoint2, endpoint);
-        AfxTransformPathString(&endpoint2.uri.s, AFX_ON_WINDOWS);
+        AfxTransformPathString(&endpoint2.uri.s, AFX_OS_WINDOWS);
         AfxReparseUri(&endpoint2.uri);
 
         afxChar const *pathRaw = AfxGetUriData(&endpoint2.uri, 0);

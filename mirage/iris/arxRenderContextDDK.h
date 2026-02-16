@@ -195,6 +195,8 @@ AFX_OBJECT(arxRenderContext)
     avxColor wireCol;
     avxColor fillCol;
 
+    avxShader codb;
+
     struct
     {
         arxModel            mdl;

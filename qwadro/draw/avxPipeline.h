@@ -59,140 +59,12 @@
 #define AVX_MAX_SHADER_SPECIALIZATIONS (16)
 #define AVX_MAX_PROGRAMMABLE_PIPELINE_STAGES (8)
 
-AFX_DEFINE_STRUCT(avxPipelineConfig)
+typedef enum avxPipelineFlag
 {
-    // Bus which this pipeline will be executed.
-    // Probably will be removed by specialized acquision functions.
-    avxBus              bus;
-    // The avxCodebase to be used to assemble programmable functions.
-    avxCodebase         codb;
-    // A optional handle to a avxLigature object.
-    // If NIL, one new avxLigature object will be generated for the pipeline.
-    avxLigature         liga;
-    // A debugging string assigned to the pipeline.
-    afxString           tag;
-    // An user-defined data assigned to the pipeline.
-    void*               udd;
-
-    afxUnit             stageCnt;
-    afxUnit             specializedWorkGrpSiz[3];
-
-    afxBool             transformationDisabled;
-    // NOTE: the following members are ignored if transformationDisabled is TRUE.
-
-    avxVertexInput      vin;
-    // The primitive topology.
-    avxTopology         primTop; // avxTopology_TRI_LIST
-    // Treat a special vertex index value (0xFF, 0xFFFF, 0xFFFFFFFF) as restarting the assembly of primitives.
-    afxBool             primRestartEnabled; // FALSE
-
-    // Enable the programmable primitive tesselation stages in pipeline.
-    afxBool             tesselationEnabled; // FALSE
-    // The number of control points per patch.
-    afxUnit             patchCtrlPoints;
-
-    // Enable the programmable primitive processing stage in pipeline.
-    afxBool             primShaderSupported; // FALSE
-    // The number of viewports used by the pipeline.
-    afxUnit             vpCnt; // At least 1.
-    // The triangle facing direction used for primitive culling.
-    avxCullMode         cullMode; // avxCullMode_BACK
-    // When front facing is inverted, a triangle will be considered front-facing if its vertices are clockwise.
-    afxBool             frontFacingInverted; // FALSE (CCW)
-    // When depth clamp is enabled, the fragment's depth values will be clamped.
-    afxBool             depthClampEnabled; // FALSE    
-
-    // When rasterization is disabled, primitives are discarded immediately before the rasterization stage.
-    afxBool             rasterizationDisabled; // FALSE
-    // NOTE: the following members are ignored if rasterizationDisabled is TRUE.
-#if 0
-    avxPipelineFlags    primFlags;
-    avxDepthStencilFlags    dsFlags;
-    avxMultisamplingFlags   msFlags;
-    avxRasterizationFlags   rasFlags;
-    avxColorOutputFlags     pixelFlags;
-#endif
-    // rasterization
-    // The triangle rendering mode.
-    avxFillMode         fillMode; // avxFillMode_FACE
-    // The width of rasterized line segments.
-    afxReal             lineWidth; // 1.f
-
-    /*
-        I think that we should remove <fmt> from avxColorOutput and place into its own array.
-        Actually, I think it is somehow weird to be in blending ops/color output once <dsFmt> is not.
-        But I have to see that later.
-    */
-
-    // --- Depth Bias Computation
-    // The fragment depth values will be biased.
-    afxBool             depthBiasEnabled; // FALSE
-    // A scalar factor applied to a fragment's slope in depth bias calculations.
-    afxReal             depthBiasSlopeScale; // 0.f
-    // A scalar factor controlling the constant depth value added to each fragment.
-    afxReal             depthBiasConstFactor; // 0.f
-    // The maximum (or minimum) depth bias of a fragment.
-    afxReal             depthBiasClamp; // 0.f
-    // The format of depth/stencil surface this pipeline will be compatible with.
-    avxFormat           dsFmt;
-
-    // fragment & pixel output operations
-    avxMultisampling    ms;
-
-    // stencil test
-    afxBool             stencilTestEnabled;
-    // The configuration values controlling the corresponding parameters of the stencil test.
-    avxStencilConfig    stencilFront;
-    // The configuration controlling the corresponding parameters of the stencil test.
-    avxStencilConfig    stencilBack;
-
-    // depth test
-    // Enable depth testing.
-    afxBool             depthTestEnabled; // FALSE
-    // is a value specifying the comparison operator to use in the Depth Comparison step of the depth test. 
-    avxCompareOp        depthCompareOp; // avxCompareOp_LESS
-    // controls whether depth writes are enabled when depthTestEnabled is TRUE. 
-    // Depth writes are always disabled when depthTestEnabled is FALSE. 
-    afxBool             depthWriteDisabled; // FALSE
-    // depth bounds test
-    // Controls whether depth bounds testing is enabled.
-    afxBool             depthBoundsTestEnabled;
-    // The minimum depth bound used in the depth bounds test.
-    afxV2d              depthBounds; // [ min, max ]
-
-    // color bending, logical op and color writing
-    afxUnit             colorOutCnt;
-    avxColorOutput      colorOuts[AVX_MAX_COLOR_OUTPUTS];
-    avxColor            blendConstants;
-    afxBool             pixelLogicOpEnabled;
-    avxLogicOp          pixelLogicOp;
-};
-
-AVX afxError            AvxAssemblePcxPipelines
-(
-    afxDrawSystem dsys, 
-    afxUnit cnt, 
-    avxPipelineConfig const blueprints[], 
-    avxPipeline pipelines[]
-);
-
-AVX afxError            AvxAssembleGfxPipelines
-(
-    afxDrawSystem dsys, 
-    afxUnit cnt, 
-    avxPipelineConfig const cfg[], 
-    avxPipeline razr[]
-);
-
-AVX afxError            AvxLoadPipeline
-(
-    afxDrawSystem dsys, 
-    avxVertexInput vin, 
-    afxUri const* uri, 
-    avxPipeline* pipeline
-);
-
-////////////////////////////////////////////////////////////////////////////////
+    avxPipelineFlag_USER_CODB   = AFX_BITMASK(0),
+    avxPipelineFlag_USER_LIGA   = AFX_BITMASK(1),
+    avxPipelineFlag_USER_VIN    = AFX_BITMASK(2),
+} avxPipelineFlags;
 
 typedef enum avxPipeDep
 {
@@ -288,7 +160,7 @@ typedef enum avxColorOutputFlag
 AFX_DEFINE_STRUCT(avxPipelineInfo)
 {
     avxBus          bus;
-    afxUnit         stageCnt;
+    afxUnit         progCnt;
     avxLigature     liga;
     avxVertexInput  vin;
     void*           udd;
@@ -324,8 +196,158 @@ AFX_DECLARE_STRUCT(avxRasterizer)
 };
 #endif
 
-AVX avxStencilConfig const AVX_STENCIL_INFO_DEFAULT;
+AFX_DEFINE_STRUCT(avxShaderSpecialization)
+// Structure specifying specialized shader linking into a pipeline.
+{
+    avxShaderType   stage;
+    afxString       prog;
+    afxString       fn;
+    afxString       constants[AVX_MAX_SHADER_SPECIALIZATIONS];
+    union
+    {
+        afxReal     dataf;
+        afxUnit     datau;
+        afxInt      datai;
+    }               constantValues[AVX_MAX_SHADER_SPECIALIZATIONS];
+};
+
+AFX_DEFINE_STRUCT(avxPipelineConfig)
+{
+    // Bus which this pipeline will be executed.
+    // Probably will be removed by specialized acquision functions.
+    avxBus              bus;
+    // The avxShader to be used to assemble programmable functions.
+    avxShader         codb;
+    // A optional handle to a avxLigature object.
+    // If NIL, one new avxLigature object will be generated for the pipeline.
+    avxLigature         liga;
+    // A debugging string assigned to the pipeline.
+    afxString           tag;
+    // An user-defined data assigned to the pipeline.
+    void*               udd;
+
+    afxUnit             progCnt;
+    avxShaderSpecialization const* progSpecs;
+    afxUnit             specializedWorkGrpSiz[3];
+
+    afxBool             transformationDisabled;
+    // NOTE: the following members are ignored if transformationDisabled is TRUE.
+
+    avxVertexInput      vin;
+    // The primitive topology.
+    avxTopology         primTop; // avxTopology_TRI_LIST
+    // Treat a special vertex index value (0xFF, 0xFFFF, 0xFFFFFFFF) as restarting the assembly of primitives.
+    afxBool             primRestartEnabled; // FALSE
+
+    // Enable the programmable primitive tesselation stages in pipeline.
+    afxBool             tesselationEnabled; // FALSE
+    // The number of control points per patch.
+    afxUnit             patchCtrlPoints;
+
+    // Enable the programmable primitive processing stage in pipeline.
+    afxBool             primShaderSupported; // FALSE
+    // The number of viewports used by the pipeline.
+    afxUnit             vpCnt; // At least 1.
+    // The triangle facing direction used for primitive culling.
+    avxCullMode         cullMode; // avxCullMode_BACK
+    // When front facing is inverted, a triangle will be considered front-facing if its vertices are clockwise.
+    afxBool             frontFacingInverted; // FALSE (CCW)
+    // When depth clamp is enabled, the fragment's depth values will be clamped.
+    afxBool             depthClampEnabled; // FALSE    
+
+    // When rasterization is disabled, primitives are discarded immediately before the rasterization stage.
+    afxBool             rasterizationDisabled; // FALSE
+    // NOTE: the following members are ignored if rasterizationDisabled is TRUE.
+#if 0
+    avxPipelineFlags    primFlags;
+    avxDepthStencilFlags    dsFlags;
+    avxMultisamplingFlags   msFlags;
+    avxRasterizationFlags   rasFlags;
+    avxColorOutputFlags     pixelFlags;
+#endif
+    // rasterization
+    // The triangle rendering mode.
+    avxFillMode         fillMode; // avxFillMode_FACE
+    // The width of rasterized line segments.
+    afxReal             lineWidth; // 1.f
+
+    /*
+        I think that we should remove <fmt> from avxColorOutput and place into its own array.
+        Actually, I think it is somehow weird to be in blending ops/color output once <dsFmt> is not.
+        But I have to see that later.
+    */
+
+    // --- Depth Bias Computation
+    // The fragment depth values will be biased.
+    afxBool             depthBiasEnabled; // FALSE
+    // A scalar factor applied to a fragment's slope in depth bias calculations.
+    afxReal             depthBiasSlopeScale; // 0.f
+    // A scalar factor controlling the constant depth value added to each fragment.
+    afxReal             depthBiasConstFactor; // 0.f
+    // The maximum (or minimum) depth bias of a fragment.
+    afxReal             depthBiasClamp; // 0.f
+    // The format of depth/stencil surface this pipeline will be compatible with.
+    avxFormat           dsFmt;
+
+    // fragment & pixel output operations
+    avxMultisampling    ms;
+
+    // stencil test
+    afxBool             stencilTestEnabled;
+    // The configuration values controlling the corresponding parameters of the stencil test.
+    avxStencilConfig    stencilFront;
+    // The configuration controlling the corresponding parameters of the stencil test.
+    avxStencilConfig    stencilBack;
+
+    // depth test
+    // Enable depth testing.
+    afxBool             depthTestEnabled; // FALSE
+    // is a value specifying the comparison operator to use in the Depth Comparison step of the depth test. 
+    avxCompareOp        depthCompareOp; // avxCompareOp_LESS
+    // controls whether depth writes are enabled when depthTestEnabled is TRUE. 
+    // Depth writes are always disabled when depthTestEnabled is FALSE. 
+    afxBool             depthWriteDisabled; // FALSE
+    // depth bounds test
+    // Controls whether depth bounds testing is enabled.
+    afxBool             depthBoundsTestEnabled;
+    // The minimum depth bound used in the depth bounds test.
+    afxV2d              depthBounds; // [ min, max ]
+
+    // color bending, logical op and color writing
+    afxUnit             colorOutCnt;
+    avxColorOutput      colorOuts[AVX_MAX_COLOR_OUTPUTS];
+    avxColor            blendConstants;
+    afxBool             pixelLogicOpEnabled;
+    avxLogicOp          pixelLogicOp;
+};
+
 AVX avxPipelineConfig const AVX_PIPELINE_BLUEPRINT_DEFAULT;
+
+AVX afxError            AvxAssemblePcxPipelines
+(
+    afxDrawSystem dsys, 
+    afxUnit cnt, 
+    avxPipelineConfig const blueprints[], 
+    avxPipeline pipelines[]
+);
+
+AVX afxError            AvxAssembleGfxPipelines
+(
+    afxDrawSystem dsys, 
+    afxUnit cnt, 
+    avxPipelineConfig const cfg[], 
+    avxPipeline razr[]
+);
+
+AVX afxError            AvxLoadPipeline
+(
+    afxDrawSystem dsys, 
+    avxVertexInput vin, 
+    afxUri const* uri, 
+    avxPipeline* pipeline
+);
+
+////////////////////////////////////////////////////////////////////////////////
 
 AVX afxDrawSystem   AvxGetPipelineHost
 (
@@ -368,14 +390,14 @@ AVX afxUnit             AvxGetMultisamplingMasks
 AVX afxBool             AvxGetPipelineCodebase
 (
     avxPipeline pip,
-    avxCodebase* codebase
+    avxShader* codebase
 );
 
 AVX afxBool             AvxGetPipelineShader
 (
     avxPipeline pip, 
     avxShaderType stage, 
-    afxUnit* prog,
+    afxUnit* progId,
     afxString* func
 );
 
@@ -399,21 +421,6 @@ AVX afxBool             AvxGetPipelineVertexInput
     avxPipeline pip, 
     avxVertexInput* input
 );
-
-AFX_DEFINE_STRUCT(avxShaderSpecialization)
-// Structure specifying specialized shader linking into a pipeline.
-{
-    avxShaderType   stage;
-    afxString       prog;
-    afxString       fn;
-    afxString       constants[AVX_MAX_SHADER_SPECIALIZATIONS];
-    union
-    {
-        afxReal     dataf;
-        afxUnit     datau;
-        afxInt      datai;
-    }               constantValues[AVX_MAX_SHADER_SPECIALIZATIONS];
-};
 
 AVX afxError            AvxReprogramPipeline
 (

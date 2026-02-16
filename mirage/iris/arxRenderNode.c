@@ -20,7 +20,7 @@
 #define _ARX_SCENARIO_C
 #define _ARX_NODE_C
 #include "../scene/arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 
 _ARX afxError ArxCmdRenderNode(arxRenderContext rctx, afxUnit cnt, arxNode nodes[])
 {

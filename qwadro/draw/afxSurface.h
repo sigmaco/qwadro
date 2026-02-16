@@ -109,7 +109,7 @@ AFX_DEFINE_STRUCT(afxSurfaceInterop)
     afxString           wsi; // w32, wgl, wgldx9, wgldx10, wgldx11, gdi
     union // WSI
     {
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
         struct
         {
             void*       hInst; // HINSTANCE

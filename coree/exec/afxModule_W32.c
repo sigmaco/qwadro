@@ -55,7 +55,7 @@ _AFX void AfxGetDriverUri(afxModule icd, afxUri* uri)
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
     AFX_ASSERT(uri);
     afxUri name;
-    AfxClipUriTarget(&name, &icd->path.uri);
+    AfxExcerptUriTarget(&name, &icd->path.uri);
     AfxCopyUri(uri, &name);
 }
 
@@ -109,7 +109,7 @@ _AFX afxUnit AfxFindSymbolAddresses(afxModule mdle, afxUnit cnt, afxString const
     BYTE* peImgBase = mdle->osHandle;
     afxBool demangle = mdle->demangle;
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     PIMAGE_NT_HEADERS header = (PIMAGE_NT_HEADERS)(peImgBase + ((PIMAGE_DOS_HEADER)peImgBase)->e_lfanew);
     AFX_ASSERT(header->Signature == IMAGE_NT_SIGNATURE);
     AFX_ASSERT(header->OptionalHeader.NumberOfRvaAndSizes > 0);
@@ -175,7 +175,7 @@ _AFX afxResult AfxFindModuleSymbols(afxModule mdle, afxUnit cnt, afxChar const *
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
         syms[i] = (void*)GetProcAddress(mdle->osHandle, name[i]);
 #else
         syms[i] = dlsym(mdle->osHandle, name[i]);
@@ -214,7 +214,7 @@ _AFX afxUnit AfxGetSymbolAddresses2(afxModule mdle, afxBool demangle, afxUnit cn
     {
         void* osHandle = mdle->osHandle;
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
         PIMAGE_NT_HEADERS header = (PIMAGE_NT_HEADERS)((BYTE *)osHandle + ((PIMAGE_DOS_HEADER)osHandle)->e_lfanew);
         AFX_ASSERT(header->Signature == IMAGE_NT_SIGNATURE);
         AFX_ASSERT(header->OptionalHeader.NumberOfRvaAndSizes > 0);
@@ -288,7 +288,7 @@ _AFX afxUnit AfxGetSymbolAddresses(afxModule mdle, afxUnit cnt, afxString const 
     {
         AfxCopyString(&s.s, 0, &names[i], 0);
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
         addresses[i] = (void*)GetProcAddress((void*)osHandle, s.buf);
 #else
         addresses[i] = dlsym((void*)osHandle, s.buf);
@@ -342,7 +342,7 @@ _AFX afxError _AfxMdleDtorCb(afxModule mdle)
 
     AfxDismantleManifest(&mdle->etc);
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     FreeLibrary(mdle->osHandle);
 #else
     dlclose(mdle->osHandle);
@@ -456,9 +456,9 @@ _AFX afxBool AfxFindModule(afxUri const* uri, afxModule* module)
     afxBool found = FALSE;
     AFX_ASSERT(uri);
     
-#if AFX_ON_WINDOWS
+#if AFX_OS_WINDOWS
     afxUri fname;
-    AfxClipUriFile(&fname, uri);
+    AfxExcerptUriFile(&fname, uri);
     afxUri2048 uriz;
     AfxMakeUri2048(&uriz, &fname); // needed to null-terminate a URI string.
     HMODULE hMod = GetModuleHandleA(AfxGetUriData(&uriz.uri, 0));
@@ -501,7 +501,7 @@ _AFX afxBool _AfxFindAndLoadDllCb(void* udd, afxUnit diskId, afxUnit endpointIdx
 {
     afxError err = { 0 };
     afxBool next = TRUE;
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     HMODULE hMod = LoadLibraryExA(AfxGetUriData(osPath, 0), NIL, NIL);
 #else
     void* hMod = dlopen(AfxGetUriData(&libpath.uri, 0), RTLD_NOW);
@@ -547,7 +547,7 @@ _AFX afxError AfxAcquireModule(afxUri const* uri, afxFlags flags, afxModule* mod
 
     // find for the module file.
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     HMODULE hMod = NIL;
 #else
     void* hMod = NIL;
@@ -608,7 +608,7 @@ _AFX afxError AfxAcquireModule(afxUri const* uri, afxFlags flags, afxModule* mod
         // We must call it out of object acquisition to avoid deadlocks when a module object try to load another module.
 
         afxUri dev;
-        AfxExcerptPathSegments(&mdle->path.uri, NIL, NIL, &dev, NIL);
+        AfxExcerptUriPathSegments(&mdle->path.uri, NIL, NIL, &dev, NIL);
 
         AfxReportMessage("Installing... <%.*s>", AfxPushString(&dev.s));
 

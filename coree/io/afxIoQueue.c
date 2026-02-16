@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2.
+// This code is part of SIGMA Future Storage.
 
 #define _AFX_CORE_C
 #define _AFX_DEVICE_C

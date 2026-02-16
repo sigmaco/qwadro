@@ -229,7 +229,7 @@ AFX_DEFINE_STRUCT(acxExobufferInfo)
 
 ACX afxError        AcxAcquireBuffers
 (
-    afxStepSystem ssys, 
+    afxWarpSystem ssys, 
     afxUnit cnt, 
     acxBufferInfo const infos[], 
     acxBuffer buffers[]
@@ -237,7 +237,7 @@ ACX afxError        AcxAcquireBuffers
 
 ACX afxError        AcxLoadBuffers
 (
-    afxStepSystem ssys, 
+    afxWarpSystem ssys, 
     afxUnit cnt, 
     afxUri const uris[], 
     acxBuffer buffers[]
@@ -267,7 +267,7 @@ ACX afxError        AcxLoadBuffers
 ACX afxError AcxMapBuffers
 (
     // The mix system providing the buffers.
-    afxStepSystem ssys,
+    afxWarpSystem ssys,
     // The number of mapping operations.
     afxUnit cnt,
     // An array of acxBufferedMap describing the mapping operations.
@@ -293,7 +293,7 @@ ACX afxError AcxMapBuffers
 ACX afxError AcxUnmapBuffers
 (
     // The mix system providing the buffers.
-    afxStepSystem ssys,
+    afxWarpSystem ssys,
     // The number of unmapping operations.
     afxUnit cnt,
     // An array of acxBufferedMap describing the unmapping operations.
@@ -315,7 +315,7 @@ ACX afxError AcxUnmapBuffers
 ACX afxError AcxCohereMappedBuffers
 (
     // The mix system providing the buffers.
-    afxStepSystem   ssys,
+    afxWarpSystem   ssys,
     // A boolean specifying that any host modification must be discarded.
     afxBool         discard,
     // The number of buffered maps.
@@ -326,7 +326,7 @@ ACX afxError AcxCohereMappedBuffers
 
 ACX afxError AcxCopyBuffers
 (
-    afxStepSystem ssys, 
+    afxWarpSystem ssys, 
     afxMask exuMask, 
     afxUnit cnt, 
     acxBufferedCopy const ops[]
@@ -334,7 +334,7 @@ ACX afxError AcxCopyBuffers
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ACX afxStepSystem   AcxGetBufferHost(acxBuffer buf);
+ACX afxWarpSystem   AcxGetBufferHost(acxBuffer buf);
 
 ACX void*           AcxGetBufferUdd(acxBuffer buf);
 

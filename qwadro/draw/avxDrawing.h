@@ -70,7 +70,7 @@ AFX_DEFINE_STRUCT(avxDispatchIndirect)
     If flags includes resuming then this draw scope is resumed from a drawing scope that has been suspended earlier in submission order.
 */
 
-AVX afxCmdId AvxCmdCommenceDrawScope
+AVX afxError AvxCmdCommenceDrawScope
 (
     afxDrawContext dctx,
     // Structure specifying details of the draw scope instance to begin.
@@ -85,7 +85,7 @@ AVX afxCmdId AvxCmdCommenceDrawScope
    After transitioning to the next pass, the application can record the commands for that pass.
 */
 
-AVX afxCmdId AvxCmdNextPass
+AVX afxError AvxCmdNextPass
 (
     afxDrawContext dctx,
     // specifies how the commands in the next subpass will be provided, in the same fashion as the corresponding parameter of vkCmdBeginRenderPass.
@@ -99,7 +99,7 @@ AVX afxCmdId AvxCmdNextPass
     then this render canvas is suspended and will be resumed later in submission order.
 */
 
-AVX afxCmdId AvxCmdConcludeDrawScope
+AVX afxError AvxCmdConcludeDrawScope
 (
     afxDrawContext dctx
 );
@@ -108,7 +108,7 @@ AVX afxCmdId AvxCmdConcludeDrawScope
     The AvxCmdClearCanvas() operations clears a number of areas in every canvas' annex listed.
 */
 
-AVX afxCmdId AvxCmdClearCanvas
+AVX afxError AvxCmdClearCanvas
 (
     afxDrawContext dctx,
     // The number of annexes to clear.
@@ -129,7 +129,7 @@ AVX afxCmdId AvxCmdClearCanvas
 /// The primitives are drawn @instCnt times with @instIdx starting with @firstInst and increasing sequentially for each instance.
 /// The assembled primitives execute the bound graphics pipeline.
 
-AVX afxCmdId AvxCmdDraw
+AVX afxError AvxCmdDraw
 (
     afxDrawContext dctx,
     afxUnit vtxCnt, // is the number of vertices to draw.
@@ -144,7 +144,7 @@ AVX afxCmdId AvxCmdDraw
 /// The parameters of each draw are encoded in an array of afxDrawIndirectCmd structures.
 /// If @drawCnt is less than or equal to one, @stride is ignored.
 
-AVX afxCmdId AvxCmdDrawIndirect
+AVX afxError AvxCmdDrawIndirect
 (
     afxDrawContext dctx,
     avxBuffer buf, // is the buffer containing draw parameters.
@@ -157,7 +157,7 @@ AVX afxCmdId AvxCmdDrawIndirect
 /// AvxCmdDrawIndirect2 behaves similarly to AvxCmdDrawIndirect except that the draw count is read by the device from a buffer during execution.
 /// The command will read an unsigned 32-bit integer from @cntBuf located at @cntBufOff and use this as the draw count.
 
-AVX afxCmdId AvxCmdDrawIndirect2
+AVX afxError AvxCmdDrawIndirect2
 (
     afxDrawContext dctx,
     avxBuffer buf, // is the buffer containing draw parameters.
@@ -179,7 +179,7 @@ AVX afxCmdId AvxCmdDrawIndirect2
 /// The primitives are drawn @instCnt times with @instIdx starting with @firstInst and increasing sequentially for each instance.
 /// The assembled primitives execute the bound graphics pipeline.
 
-AVX afxCmdId AvxCmdDrawIndexed
+AVX afxError AvxCmdDrawIndexed
 (
     afxDrawContext dctx,
     afxUnit idxCnt, // is the number of vertices to draw.
@@ -194,7 +194,7 @@ AVX afxCmdId AvxCmdDrawIndexed
 /// @drawCnt draws are executed by the command, with parameters taken from @buf starting at @offset and increasing by @stride bytes for each successive draw.
 /// The parameters of each draw are encoded in an array of afxDrawIndexedIndirectCmd structures. If @drawCnt is less than or equal to one, @stride is ignored.
 
-AVX afxCmdId AvxCmdDrawIndexedIndirect
+AVX afxError AvxCmdDrawIndexedIndirect
 (
     afxDrawContext dctx,
     avxBuffer buf, // is the buffer containing draw parameters.
@@ -207,7 +207,7 @@ AVX afxCmdId AvxCmdDrawIndexedIndirect
 /// AvxCmdDrawIndexedIndirect2 behaves similarly to AvxCmdDrawIndexedIndirect except that the draw count is read by the device from a buffer during execution.
 /// The command will read an unsigned 32-bit integer from @cntBuf located at @cntBufOff and use this as the draw count.
 
-AVX afxCmdId AvxCmdDrawIndexedIndirect2
+AVX afxError AvxCmdDrawIndexedIndirect2
 (
     afxDrawContext dctx,
     avxBuffer buf, // is the buffer containing draw parameters.
@@ -218,7 +218,7 @@ AVX afxCmdId AvxCmdDrawIndexedIndirect2
     afxUnit32 stride // is the byte stride between successive sets of draw parameters.
 );
 
-AVX afxCmdId AvxCmdDispatch
+AVX afxError AvxCmdDispatch
 /// Dispatch compute work items.
 (
     afxDrawContext dctx,
@@ -227,7 +227,7 @@ AVX afxCmdId AvxCmdDispatch
     afxUnit d // the number of local workgroups to dispatch in the Z dimension.
 );
 
-AVX afxCmdId AvxCmdDispatchIndirect
+AVX afxError AvxCmdDispatchIndirect
 /// Dispatch compute work items with indirect parameters.
 (
     afxDrawContext dctx,

@@ -28,7 +28,7 @@
     If the same rectangle is used for both the scissor and curtain tests, the curtain test will pass if and only if the scissor test fails.
 */
 
-AVX afxCmdId AvxCmdAdjustCurtainsSIGMA
+AVX afxError AvxCmdAdjustCurtainsSIGMA
 (
     afxDrawContext      dctx, 
     // the first curtain rectangle whose state is updated by the command.
@@ -43,7 +43,7 @@ AVX afxCmdId AvxCmdAdjustCurtainsSIGMA
     The AvxCmdSetRasterizationSamplesEXT() operation specifies the rasterization samples dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetRasterizationSamplesEXT
+AVX afxError AvxCmdSetRasterizationSamplesEXT
 (
     afxDrawContext      dctx,
     afxUnit             sampleLvl
@@ -53,7 +53,7 @@ AVX afxCmdId AvxCmdSetRasterizationSamplesEXT
     The AvxCmdSetSampleMaskEXT() operation specifies the sample mask dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetSampleMaskEXT
+AVX afxError AvxCmdSetSampleMaskEXT
 (
     afxDrawContext      dctx,
     afxUnit             sampleLvl,
@@ -65,7 +65,7 @@ AVX afxCmdId AvxCmdSetSampleMaskEXT
     The AvxCmdSwitchAlphaToCoverageEXT() operation specifies the alpha to coverage enable state dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchAlphaToCoverageEXT
+AVX afxError AvxCmdSwitchAlphaToCoverageEXT
 (
     afxDrawContext      dctx,
     afxBool             enable
@@ -75,7 +75,7 @@ AVX afxCmdId AvxCmdSwitchAlphaToCoverageEXT
     The AvxCmdSwitchAlphaToOneEXT() operation specifies the alpha to one enable state dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchAlphaToOneEXT
+AVX afxError AvxCmdSwitchAlphaToOneEXT
 (
     afxDrawContext      dctx,
     afxBool             enable
@@ -85,7 +85,7 @@ AVX afxCmdId AvxCmdSwitchAlphaToOneEXT
     The AvxCmdSwitchColorBlendingEXT() operation specifies the blend state for each attachment dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchColorBlendingEXT
+AVX afxError AvxCmdSwitchColorBlendingEXT
 (
     afxDrawContext      dctx,
     afxUnit             first,
@@ -97,7 +97,7 @@ AVX afxCmdId AvxCmdSwitchColorBlendingEXT
     The AvxCmdChangeColorBlendEquationEXT() operation specifies the blend factors and operations dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdChangeColorBlendEquationEXT
+AVX afxError AvxCmdChangeColorBlendEquationEXT
 (
     afxDrawContext      dctx,
     afxUnit             first,
@@ -109,7 +109,7 @@ AVX afxCmdId AvxCmdChangeColorBlendEquationEXT
     The AvxCmdSetColorWriteMaskEXT() operation specifies the color write masks for each attachment dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdSetColorWriteMaskEXT
+AVX afxError AvxCmdSetColorWriteMaskEXT
 (
     afxDrawContext      dctx,
     afxUnit             first,
@@ -121,7 +121,7 @@ AVX afxCmdId AvxCmdSetColorWriteMaskEXT
     The AvxCmdSwitchLogicOpEXT() operation specifies dynamically whether logical operations are enabled for a draw context.
 */
 
-AVX afxCmdId AvxCmdSwitchLogicOpEXT
+AVX afxError AvxCmdSwitchLogicOpEXT
 (
     afxDrawContext      dctx,
     afxBool             enabled
@@ -131,7 +131,7 @@ AVX afxCmdId AvxCmdSwitchLogicOpEXT
     The AvxCmdSetDepthClampEnableEXT() operation specifies dynamically whether depth clamping is enabled in the draw context.
 */
 
-AVX afxCmdId AvxCmdSetDepthClampEnableEXT
+AVX afxError AvxCmdSetDepthClampEnableEXT
 (
     afxDrawContext      dctx,
     afxBool             enabled
@@ -141,7 +141,7 @@ AVX afxCmdId AvxCmdSetDepthClampEnableEXT
     The AvxCmdDiscardRectanglesEXT() operation discards rectangles dynamically for a draw context.
 */
 
-AVX afxCmdId AvxCmdDiscardRectanglesEXT
+AVX afxError AvxCmdDiscardRectanglesEXT
 (
     afxDrawContext      dctx,
     // The first discard rectangle whose state is updated by the command.

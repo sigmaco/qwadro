@@ -23,7 +23,7 @@
 #include "qwadro/draw/avxFormat.h"
 #include "qwadro/math/afxVector.h"
 
-#ifdef AFX_LE
+#ifdef AFX_ARCH_LE
 #   define AVX_ARGB(a, r, g, b) (afxUnit32)(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #else
 #   define AVX_ARGB(a, r, g, b) (afxUnit32)(((b) << 24) | ((g) << 16) | ((r) << 8) | (a))

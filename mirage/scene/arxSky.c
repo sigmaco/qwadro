@@ -19,7 +19,7 @@
 #define _ARX_SCENE_C
 #define _ARX_SKY_C
 #include "arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 
 afxV3d const skyboxVertices[] =
 {
@@ -247,8 +247,9 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
         avxVertexLayout skyVtxl =
         {
             .binCnt = 1,
-            .bins = { AVX_VERTEX_STREAM(0, 0, 0, 0, 1) },
-            .attrs = { AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f) }
+            .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+            .attrCnt = 1,
+            .attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f)
         };
 
         AvxAcquireVertexInputs(dsys, 1, &skyVtxl, &sky->sky.skyVin);
@@ -272,14 +273,10 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
         AvxMakeColor(sky->apexCol, 0.f, 0.15f, 0.66f, 1.f);
         AvxMakeColor(sky->centreCol, 0.81f, 0.38f, 0.66f, 1.f);
 
-        avxPipeline pip;
-        avxPipelineConfig pipb = { 0 };
-        AvxAssembleGfxPipelines(dsys, 1, &pipb, &pip);
-        AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
-
-        avxCodebase codb;
-        AvxGetPipelineCodebase(pip, &codb);
+        avxShader codb;
+        AvxAcquireShaders(dsys, 1, NIL, &codb);
         AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+
         avxShaderSpecialization specs[2] = { 0 };
         specs[0].stage = avxShaderType_VERTEX;
         specs[0].prog = AFX_STRING("skydomeVs");
@@ -287,7 +284,14 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
         specs[1].prog = AFX_STRING("skydomeFs");
         AvxCompileShaderFromDisk(codb, &specs[0].prog, AfxUri("../src/skydome/skydomeVs.glsl"));
         AvxCompileShaderFromDisk(codb, &specs[1].prog, AfxUri("../src/skydome/skydomeFs.glsl"));
-        AvxReprogramPipeline(pip, 2, specs);
+        
+        avxPipeline pip;
+        avxPipelineConfig pipb = { 0 };
+        pipb.codb = codb;
+        pipb.progCnt = 2;
+        pipb.progSpecs = specs;
+        AvxAssembleGfxPipelines(dsys, 1, &pipb, &pip);
+        AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
 
         struct
         {

@@ -93,6 +93,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +107,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,6 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +141,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..;$(ProjectDir)..;$(ProjectDir)..\..\..\qwadro;$(SolutionDir)..\..;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +153,7 @@
     <ClCompile Include="..\..\..\qwadro\examples\src\spiral.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\icd_kinee\_vs17\e2kinee\e2kinee.vcxproj">
+    <ProjectReference Include="..\..\..\icd_kurwa\_vs17\e2kurwa\e2kurwa.vcxproj">
       <Project>{04be7ac2-63a3-43ac-9dc6-01076e6ff8ae}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\icd_tarzgl4\_vs17\e2tarzgl4\e2tarzgl4.vcxproj">
@@ -161,7 +165,7 @@
     <ProjectReference Include="..\e2coree\e2coree.vcxproj">
       <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\e2iridee\e2iridee.vcxproj">
+    <ProjectReference Include="..\e2mirage\e2mirage.vcxproj">
       <Project>{0f78f3c8-d287-4a15-a69b-208b85c038f4}</Project>
     </ProjectReference>
   </ItemGroup>

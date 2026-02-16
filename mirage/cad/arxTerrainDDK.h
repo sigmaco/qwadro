@@ -26,7 +26,7 @@ AFX_DEFINE_STRUCT(_arxDdiTer);
 AFX_DEFINE_STRUCT(_arxIddTer);
 
 #ifdef _ARX_TERRAIN_C
-AFX_DEFINE_STRUCT(_arxTerrSec)
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, _arxTerrSec)
 {
     afxUnit     gridNode, gridNodeX, gridNodeZ;
 

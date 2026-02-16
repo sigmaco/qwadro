@@ -19,7 +19,7 @@
 #ifndef ACX_FORMAT_H
 #define ACX_FORMAT_H
 
-#include "qwadro/pro/afxStepDefs.h"
+#include "qwadro/pro/afxWarpDefs.h"
 
 #define ACX_BASE_VIDEO_FORMAT 100
 

@@ -23,7 +23,7 @@
 #define _ARX_SKELETON_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 
 afxChar const mtlVshCode[] = R"(
 // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP

@@ -24,7 +24,7 @@
 #define _ARX_SCENARIO_C
 #define _ARX_RENDER_CONTEXT_C
 #include "../scene/arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 
 AFX_DEFINE_STRUCT(_arxVisualTechnique)
 {
@@ -1036,12 +1036,28 @@ _ARX afxError _ArxRctxDtorCb(arxRenderContext rctx)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
 
+    if (rctx->codb)
+    {
+        AfxDisposeObjects(1, &rctx->codb);
+    }
+
     AvxDismantleBufferedPump(&rctx->dynVtxAlloc);
     AvxDismantleBufferedPump(&rctx->dynIdxAlloc);
     AvxDismantleBufferedPump(&rctx->dynUnfmAlloc);
 
+    // TODO: Elimitate visual instances.
+
+    AfxExhaustPool(&rctx->visualPuppets, FALSE);
+    AfxExhaustPool(&rctx->visualMeshes, FALSE);
+    AfxExhaustPool(&rctx->visualModels, FALSE);
+    AfxExhaustPool(&rctx->visualMaterials, FALSE);
+
     if (AfxDeallocate((void**)&rctx->frames, AfxHere()))
+    {
         AfxThrowError();
+    }
+
+    AfxExhaustArena(&rctx->cmdArena);
 
     return err;
 }
@@ -1122,6 +1138,10 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
     AvxDeployBufferedPump(&rctx->dynIdxAlloc, avxBufferUsage_INDEX, rcfg->iboFlags, rcfg->minIdxPagSiz, rcfg->idxBlockAlign, rctx->frameCnt, dsys);
     AvxDeployBufferedPump(&rctx->dynUnfmAlloc, avxBufferUsage_UNIFORM, rcfg->uboFlags, rcfg->minUniPagSiz, rcfg->uniBlockAlign, rctx->frameCnt, dsys);
     
+    avxShader codb;
+    AvxAcquireShaders(dsys, 1, NIL, &codb);
+    rctx->codb = codb;
+
     return err;
 }
 

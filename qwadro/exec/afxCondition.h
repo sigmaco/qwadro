@@ -30,8 +30,8 @@
 
 AFX_DEFINE_STRUCT(afxCondition)
 {
-#ifdef AFX_ON_WINDOWS
-#   ifdef AFX_ON_X86_64
+#ifdef AFX_OS_WINDOWS
+#   ifdef AFX_ISA_X86_64
     // must at least 64 bytes
     afxByte     data[AFX_ALIGN_SIZE(64, AFX_ATOMIC_ALIGNMENT)]; // 64 bytes
 #else

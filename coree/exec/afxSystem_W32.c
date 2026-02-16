@@ -56,6 +56,91 @@ AFX afxError _AfxDeinitMmu(afxThread thr);
 
 // READ ONLY METHODS //////////////////////////////////////////////////////////
 
+// On Windows 7 (or other before 8), we implement GetCurrentThreadStackLimits() as it is not provided by Win7 Kernel32 DLL.
+// Check if we're on Windows 7 or older (before Windows 8)
+#if 1//_WIN32_WINNT < 0x0602
+_AFX WINBASEAPI VOID WINAPI GetCurrentThreadStackLimits(_Out_ PULONG_PTR LowLimit, _Out_ PULONG_PTR HighLimit)
+{
+    // https://stackoverflow.com/questions/28708213/can-i-get-the-limits-of-the-stack-in-c-c
+    // Joe Duffy, 2006, https://joeduffyblog.com/2006/07/15/checking-for-sufficient-stack-space/
+
+    // Access the current thread's TIB
+    NT_TIB *tib = (NT_TIB *)NtCurrentTeb();
+#if 0
+    // The stack limit (where the stack starts to grow downwards)
+    *StackLimit = tib->StackLimit;
+#else
+    // On x86 (32-bit), DeallocationStack is at FS:[0xE0C]
+    // On x64 (64-bit), DeallocationStack is at GS:[0x1478]
+
+    // We use the known offset based on the system architecture
+#if defined(_WIN64)
+    LPVOID deallocationStack = *(LPVOID *)((BYTE *)tib + 0x1478);  // x64 offset
+#else
+    LPVOID deallocationStack = *(LPVOID *)((BYTE *)tib + 0xE0C);  // x86 offset
+#endif
+
+    *HighLimit = (UINT_PTR)deallocationStack;  // Use DeallocationStack as StackLimit
+#endif
+    // The stack base (where the stack grows upwards)
+    *LowLimit = (UINT_PTR)tib->StackBase;
+}
+#endif
+
+
+/*
+  Implementing GetSystemTimePreciseAsFileTime in Windows 7 (or on any system that doesn’t provide it natively),
+  mimicking the functionality that would typically be provided in Windows 8.1 and later.
+  Since Windows 7 doesn't support GetSystemTimePreciseAsFileTime, we implement a high-precision alternative by combining existing Windows APIs.
+
+  The idea is that we can simulate high-precision system time by combining GetSystemTimeAsFileTime (to get a baseline system time)
+  with QueryPerformanceCounter (to add sub-millisecond precision). The performance counter provides high-resolution time that can be
+  used to approximate the precise time value.
+*/
+
+#if 1//_WIN32_WINNT < 0x0602
+// Implementing GetSystemTimePreciseAsFileTime for systems that don't provide it (like Windows 7)
+_AFX VOID WINAPI GetSystemTimePreciseAsFileTime(LPFILETIME lpSystemTimeAsFileTime)
+{
+    // Step 1: Get system time as FILETIME (100-nanosecond intervals)
+    FILETIME ft;
+    GetSystemTimeAsFileTime(&ft);
+
+    // Step 2: Get high-resolution performance counter
+    LARGE_INTEGER counter;
+    LARGE_INTEGER frequency;
+
+    // Query the performance frequency and counter
+    if (QueryPerformanceFrequency(&frequency) == 0)
+    {
+        //std::cerr << "QueryPerformanceFrequency failed!" << std::endl;
+        return;
+    }
+
+    QueryPerformanceCounter(&counter);
+
+    // Step 3: Calculate the fraction of time (in nanoseconds)
+    // Frequency is the number of counter increments per second.
+    // Counter value is the number of counter increments since the system started.
+    double fraction = (double)(counter.QuadPart) / frequency.QuadPart;
+
+    // Convert fraction to nanoseconds
+    long long nanoSeconds = (long long)(fraction * 1000000000); // nano seconds
+
+    // Step 4: Add the nanoSeconds to the current FILETIME (which is in 100-nanosecond units)
+    // Since FILETIME is in 100-nanosecond units, we'll convert nanoSeconds to that scale
+    long long additional100ns = nanoSeconds / 10;
+
+    // Add the additional 100-nanoseconds to the FILETIME
+    long long totalFileTime = ((long long)(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+    totalFileTime += additional100ns;
+
+    // Store the final result in lpSystemTimeAsFileTime
+    lpSystemTimeAsFileTime->dwLowDateTime = (DWORD)(totalFileTime & 0xFFFFFFFF);
+    lpSystemTimeAsFileTime->dwHighDateTime = (DWORD)((totalFileTime >> 32) & 0xFFFFFFFF);
+}
+#endif
+
 typedef LONG(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 
 void Win32GetWindowsVersion(afxUnit* verMajor, afxUnit* verMinor, afxUnit* verBuild, afxUnit* platId)
@@ -265,8 +350,8 @@ _AFX afxError _AfxSysMountDefaultFileStorages(afxSystem sys)
         if (AfxMountStorageUnit('z', &location.uri, afxFileFlag_RX)) AfxThrowError();
         else
         {
-#ifdef AFX_ON_X86_64
-#   ifdef AFX_ON_WINDOWS
+#ifdef AFX_ISA_X86_64
+#   ifdef AFX_OS_WINDOWS
             AfxMakeUri(&location.uri, 0, "w64", 0);
 
             if (AfxMountStorageUnit('z', &location.uri, afxFileFlag_RWX)) AfxThrowError();
@@ -283,7 +368,7 @@ _AFX afxError _AfxSysMountDefaultFileStorages(afxSystem sys)
 
             if (AfxMountStorageUnit('c', &location.uri, afxFileFlag_RX))
                 AfxThrowError();
-#   elif defined(AFX_ON_LINUX)
+#   elif defined(AFX_OS_LINUX)
             AfxMakeUri(&location.uri, 0, "x64", 0);
 
             if (AfxMountStorageUnit('z', &location.uri, afxFileFlag_RWX)) AfxThrowError();
@@ -297,8 +382,8 @@ _AFX afxError _AfxSysMountDefaultFileStorages(afxSystem sys)
             }
 #       endif
 #   endif
-#elif defined(AFX_ON_X86_32)
-#   ifdef AFX_ON_WINDOWS
+#elif defined(AFX_ISA_X86_32)
+#   ifdef AFX_OS_WINDOWS
             AfxMakeUri(&location.uri, 0, "w32", 0);
 
             if (AfxMountStorageUnit('z', &location.uri, afxFileFlag_RWX)) AfxThrowError();
@@ -316,7 +401,7 @@ _AFX afxError _AfxSysMountDefaultFileStorages(afxSystem sys)
 
             if (AfxMountStorageUnit('c', &location.uri, afxFileFlag_RX))
                 AfxThrowError();
-#   elif defined(AFX_ON_LINUX)
+#   elif defined(AFX_OS_LINUX)
             AfxMakeUri(&location.uri, 0, "x32", 0);
 
             if (AfxMountStorageUnit('z', &location.uri, afxFileFlag_RWX)) AfxThrowError();
@@ -418,13 +503,13 @@ _AFX afxError _AfxSysCtorCb(afxSystem sys, void** args, afxUnit invokeNo)
     AfxStrrchr(buf, '\\')[1] = '\0';
     AfxMakeUri(&uri, 0, buf, 0);
     AfxMakeUri2048(&sys->pwd, &uri);
-    AfxCanonicalizePath(&sys->pwd.uri, TRUE);
+    AfxCanonicalizeUriPath(&sys->pwd.uri, TRUE);
     GetModuleFileNameA(GetModuleHandleA("e2coree"), buf, sizeof(buf));    
     AfxStrrchr(buf, '\\')[1] = '\0';
     AfxStrcat(buf, "..\\");
     AfxMakeUri(&uri, 0, buf, 0);
     AfxMakeUri2048(&sys->qwd, &uri);
-    AfxCanonicalizePath(&sys->qwd.uri, TRUE);
+    AfxCanonicalizeUriPath(&sys->qwd.uri, TRUE);
     SetCurrentDirectoryA(AfxGetUriData(&sys->pwd.uri, 0));
 
     sys->primeTid = AfxGetTid();
@@ -569,7 +654,7 @@ _AFX afxError AfxConfigureSystem(afxSystemConfig* config, afxUri const* ini)
         AfxLoadInitializationFile(&ini2, &uri2);
     }
 
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
     SYSTEM_INFO si;
     GetSystemInfo(&si);
 #endif
@@ -589,7 +674,7 @@ _AFX afxError AfxConfigureSystem(afxSystemConfig* config, afxUri const* ini)
     if (!AfxGetInitializationNat(&ini2, &sSystem, &AFX_STRING("nHwThreadingCapacity"), &cfg.hwThreadingCap) || !cfg.hwThreadingCap)
     {
         cfg.hwThreadingCap =
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
             si.dwNumberOfProcessors;
 #else
             1;
@@ -599,7 +684,7 @@ _AFX afxError AfxConfigureSystem(afxSystemConfig* config, afxUri const* ini)
     if (!AfxGetInitializationNat(&ini2, &sSystem, &AFX_STRING("nMemoryPageSize"), &cfg.memPageSiz) || !cfg.memPageSiz)
     {
         cfg.memPageSiz =
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
             si.dwPageSize;
 #else
             4096;
@@ -609,7 +694,7 @@ _AFX afxError AfxConfigureSystem(afxSystemConfig* config, afxUri const* ini)
     if (!AfxGetInitializationNat(&ini2, &sSystem, &AFX_STRING("nAllocationGranularity"), &cfg.allocGranularity) || !cfg.allocGranularity)
     {
         cfg.allocGranularity =
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
             si.dwAllocationGranularity;
 #else
             4096;
@@ -625,7 +710,7 @@ _AFX afxError AfxConfigureSystem(afxSystemConfig* config, afxUri const* ini)
 
     //if (platform)
     {
-#ifdef AFX_ON_WINDOWS
+#ifdef AFX_OS_WINDOWS
         static afxHostSystemConfigExt hostSysExt = { 0 };
 
         AfxZero(&hostSysExt.w32, sizeof(hostSysExt.w32));

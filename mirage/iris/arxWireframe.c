@@ -24,7 +24,7 @@
 #define _ARX_RENDER_CONTEXT_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 #include "arxWireframeShaders.h"
 
 // AFX_V4D_CLOUDFLARE --- 1, 1, 1, 1
@@ -42,35 +42,9 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
         
         if (mode == arxSceneMode_WIRE_FACES)
         {
-            avxVertexInput vin;
-            avxVertexLayout vtxLay = { 0 };
-            vtxLay.binCnt = 1;
-            vtxLay.bins[0].attrCnt = 2;
-            vtxLay.attrs[0].location = 0;
-            vtxLay.attrs[0].fmt = avxFormat_RGB32f;
-            vtxLay.attrs[1].offset = sizeof(afxV3d);
-            vtxLay.attrs[1].location = 1;
-            vtxLay.attrs[1].fmt = avxFormat_RGB32f;
-            if (AvxAcquireVertexInputs(dsys, 1, &vtxLay, &vin))
-            {
-                AfxThrowError();
-            }
-
-            avxPipeline pip;
-            avxPipelineConfig pipc = { 0 };
-            pipc = wirePipc;
-            pipc.vin = vin;
-            if (AvxAssembleGfxPipelines(dsys, 1, &pipc, &pip))
-            {
-                AfxThrowError();
-                return err;
-            }
-
-            AfxDisposeObjects(1, &vin);
-
-            avxCodebase codb;
-            AvxGetPipelineCodebase(pip, &codb);
+            avxShader codb = rctx->codb;
             AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+
             afxUnit stageCnt = 2;
             avxShaderSpecialization specs[2] = { 0 };
             specs[0].stage = avxShaderType_VERTEX;
@@ -79,34 +53,75 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireBaryFshCode");
 
             afxString s;
-            AfxMakeString(&s, 0, wireBaryVshCode, 0);
-            if (AvxCompileShader(codb, &AFX_STRING("wireBaryVshCode"), &s))
+            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireBaryVshCode, 0)))
             {
                 AfxThrowError();
             }
 
-            AfxMakeString(&s, 0, wireBaryFshCode, 0);
-            if (AvxCompileShader(codb, &AFX_STRING("wireBaryFshCode"), &s))
+            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireBaryFshCode, 0)))
             {
                 AfxThrowError();
             }
 
-            if (AvxReprogramPipeline(pip, stageCnt, specs))
+            avxVertexInput vin;
+            avxVertexLayout vtxLay = { 0 };
+            vtxLay.binCnt = 1;
+            vtxLay.bins[0] = AVX_VERTEX_STREAM(0, 0, 0);
+            vtxLay.attrCnt = 2;
+            vtxLay.attrs[0] = AVX_VERTEX_ATTR(0, 0,              0, avxFormat_RGB32f);
+            vtxLay.attrs[1] = AVX_VERTEX_ATTR(1, 0, sizeof(afxV3d), avxFormat_RGB32f);
+            if (AvxAcquireVertexInputs(dsys, 1, &vtxLay, &vin))
             {
                 AfxThrowError();
             }
+
+            avxPipeline pip;
+            avxPipelineConfig pipc = { 0 };
+            pipc = wireBaryPipc;
+            pipc.vin = vin;
+            pipc.codb = codb;
+            pipc.progCnt = stageCnt;
+            pipc.progSpecs = specs;
+            if (AvxAssembleGfxPipelines(dsys, 1, &pipc, &pip))
+            {
+                AfxThrowError();
+                return err;
+            }
+
+            AfxDisposeObjects(1, &vin);
 
             AFX_ASSERT(pipeline);
             *pipeline = pip;
         }
         else
         {
+            avxShader codb = rctx->codb;
+            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+
+            afxUnit stageCnt = 2;
+            avxShaderSpecialization specs[2] = { 0 };
+            specs[0].stage = avxShaderType_VERTEX;
+            specs[0].prog = AFX_STRING("wireVshCode");
+            specs[1].stage = avxShaderType_FRAGMENT;
+            specs[1].prog = AFX_STRING("wireFshCode");
+
+            afxString s;
+            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireVshCode, 0)))
+            {
+                AfxThrowError();
+            }
+
+            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireFshCode, 0)))
+            {
+                AfxThrowError();
+            }
+
             avxVertexInput vin;
             avxVertexLayout vtxLay = { 0 };
             vtxLay.binCnt = 1;
-            vtxLay.bins[0].attrCnt = 1;
-            vtxLay.attrs[0].location = 0;
-            vtxLay.attrs[0].fmt = avxFormat_RGB32f;
+            vtxLay.bins[0] = AVX_VERTEX_STREAM(0, 0, 0);
+            vtxLay.attrCnt = 1;
+            vtxLay.attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f);
             if (AvxAcquireVertexInputs(dsys, 1, &vtxLay, &vin))
             {
                 AfxThrowError();
@@ -116,6 +131,9 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             avxPipelineConfig pipc = { 0 };
             pipc = wirePipc;
             pipc.vin = vin;
+            pipc.codb = codb;
+            pipc.progCnt = stageCnt;
+            pipc.progSpecs = specs;
             if (AvxAssembleGfxPipelines(dsys, 1, &pipc, &pip))
             {
                 AfxThrowError();
@@ -123,34 +141,6 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             }
 
             AfxDisposeObjects(1, &vin);
-
-            avxCodebase codb;
-            AvxGetPipelineCodebase(pip, &codb);
-            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
-            afxUnit stageCnt = 2;
-            avxShaderSpecialization specs[2] = { 0 };
-            specs[0].stage = avxShaderType_VERTEX;
-            specs[0].prog = AFX_STRING("wireVshCode");
-            specs[1].stage = avxShaderType_FRAGMENT;
-            specs[1].prog = AFX_STRING("wireFshCode");
-
-            afxString s;
-            AfxMakeString(&s, 0, wireVshCode, 0);
-            if (AvxCompileShader(codb, &AFX_STRING("wireVshCode"), &s))
-            {
-                AfxThrowError();
-            }
-
-            AfxMakeString(&s, 0, wireFshCode, 0);
-            if (AvxCompileShader(codb, &AFX_STRING("wireFshCode"), &s))
-            {
-                AfxThrowError();
-            }
-
-            if (AvxReprogramPipeline(pip, stageCnt, specs))
-            {
-                AfxThrowError();
-            }
 
             AFX_ASSERT(pipeline);
             *pipeline = pip;

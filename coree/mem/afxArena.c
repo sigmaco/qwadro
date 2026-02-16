@@ -34,7 +34,7 @@ AFX_DEFINE_STRUCT(afxArenaRecycleItem)
     afxArenaRecycleItem* next;
 };
 
-AFX_DEFINE_STRUCT(afxArenaLargeItem)
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxArenaLargeItem)
 {
     afxArenaLargeItem* next;
     afxArenaLargeItem* prev;
@@ -867,7 +867,7 @@ _AFX afxError AfxMakeArena(afxArena* aren, afxArenaInfo const *spec, afxHere con
     afxUnit sysPagSiz = AfxGetMemoryPageSize();
     afxUnit pageSiz = spec && spec->chunkSiz ? spec->chunkSiz : sysPagSiz;
     afxUnit initCleanupSiz = spec && spec->initialCleanupSiz ? spec->initialCleanupSiz : 16;
-    afxUnit largeItemSiz = spec && spec->largeItemSiz ? spec->largeItemSiz : pageSiz / 8;
+    afxUnit largeItemSiz = spec && spec->largeItemSiz ? spec->largeItemSiz : pageSiz/* / 8*/;
     afxBool recycle = spec && spec->recycle ? spec->recycle : TRUE;
 
     AfxZero(aren, sizeof(*aren));

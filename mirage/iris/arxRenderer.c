@@ -22,7 +22,7 @@
 #define _ARX_BODY_C
 #define _ARX_MATERIAL_C
 #define _ARX_VERTEX_BUFFER_C
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 #include "../scene/arxIcd.h"
 
 #if 0
@@ -708,14 +708,9 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
         avxVertexLayout vtxl = 
         { 
             .binCnt = 1,
-            .bins =
-            {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 1)
-            },
-            .attrs =
-            {
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f)
-            }
+            .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+            .attrCnt = 1,
+            .attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f)
         };
 
         AvxAcquireVertexInputs(dsys, 1, &vtxl, &vin);
@@ -729,18 +724,16 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
     avxVertexLayout skinVtxl =
     {
         .binCnt = 2,
-        .bins =        
-        {
-            AVX_VERTEX_STREAM(0, 0, 0, 0, 3),
-            AVX_VERTEX_STREAM(1, 0, 0, 3, 2)
-        },
+        .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+        .bins[1] = AVX_VERTEX_STREAM(1, 0, 0),
+        .attrCnt = 5,
         .attrs =
         {
-            AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-            AVX_VERTEX_ATTR(1, 12, avxFormat_RGBA8un),
-            AVX_VERTEX_ATTR(2, 16, avxFormat_RGBA32f),
-            AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-            AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f)
+            AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+            AVX_VERTEX_ATTR(1, 0, 12, avxFormat_RGBA8un),
+            AVX_VERTEX_ATTR(2, 0, 16, avxFormat_RGBA32f),
+            AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+            AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f)
         }
     };
 
@@ -752,17 +745,12 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
     avxVertexLayout rigidVtxl =
     {
         .binCnt = 2,
-        .bins =
-        {
-            AVX_VERTEX_STREAM(0, 0, 0, 0, 1),
-            AVX_VERTEX_STREAM(1, 0, 0, 1, 2)
-        },
-        .attrs =
-        {
-            AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-            AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-            AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f)
-        }
+        .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+        .bins[1] = AVX_VERTEX_STREAM(1, 0, 0),
+        .attrCnt = 3,
+        .attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+        .attrs[1] = AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+        .attrs[2] = AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f)
     };
 
     avxVertexInput rigidVin;
@@ -774,24 +762,19 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
         avxVertexLayout vtxl_p3n3t2_bi_mtl_mtx_jnt =
         {
             .binCnt = 3,
-            .bins =
-            {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 1),
-                AVX_VERTEX_STREAM(1, 0, 0, 1, 2),
-                AVX_VERTEX_STREAM(2, 0, 1, 3, 4)
-            },
-            .attrs =
-            {
-                // per-vertex fetch
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f),
-                // per-instance fetch
-                AVX_VERTEX_ATTR(10, 0, avxFormat_R32u),
-                AVX_VERTEX_ATTR(11, 4, avxFormat_R32u),
-                AVX_VERTEX_ATTR(12, 8, avxFormat_R32u),
-                AVX_VERTEX_ATTR(13, 12, avxFormat_R32u)
-            }
+            .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+            .bins[1] = AVX_VERTEX_STREAM(1, 0, 0),
+            .bins[2] = AVX_VERTEX_STREAM(2, 0, 1),
+            .attrCnt = 7,
+            // per-vertex fetch
+            .attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+            .attrs[1] = AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+            .attrs[2] = AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f),
+            // per-instance fetch
+            .attrs[3] = AVX_VERTEX_ATTR(10, 2, 0, avxFormat_R32u),
+            .attrs[4] = AVX_VERTEX_ATTR(11, 2, 4, avxFormat_R32u),
+            .attrs[5] = AVX_VERTEX_ATTR(12, 2, 8, avxFormat_R32u),
+            .attrs[6] = AVX_VERTEX_ATTR(13, 2, 12, avxFormat_R32u)
         };
 
         avxVertexInput vin_p3n3t2_bi_mtl_mtx_jnt;
@@ -802,25 +785,20 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
         avxVertexLayout vtxl_p3j1n3t2_bi_mtl_mtx_jnt =
         {
             .binCnt = 3,
-            .bins =
-            {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 2),
-                AVX_VERTEX_STREAM(1, 0, 0, 2, 2),
-                AVX_VERTEX_STREAM(2, 0, 1, 4, 4)
-            },
-            .attrs =
-            {
-                // per-vertex fetch
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(1, 12, avxFormat_R8u),
-                AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f),
-                // per instance
-                AVX_VERTEX_ATTR(10, 0, avxFormat_R32u),
-                AVX_VERTEX_ATTR(11, 4, avxFormat_R32u),
-                AVX_VERTEX_ATTR(12, 8, avxFormat_R32u),
-                AVX_VERTEX_ATTR(13, 12, avxFormat_R32u),
-            }
+            .bins[0] = AVX_VERTEX_STREAM(0, 0, 0),
+            .bins[1] = AVX_VERTEX_STREAM(1, 0, 0),
+            .bins[2] = AVX_VERTEX_STREAM(2, 0, 1),
+            .attrCnt = 8,
+            // per-vertex fetch
+            .attrs[0] = AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+            .attrs[1] = AVX_VERTEX_ATTR(1, 0, 12, avxFormat_R8u),
+            .attrs[2] = AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+            .attrs[3] = AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f),
+            // per instance
+            .attrs[4] = AVX_VERTEX_ATTR(10, 2, 0, avxFormat_R32u),
+            .attrs[5] = AVX_VERTEX_ATTR(11, 2, 4, avxFormat_R32u),
+            .attrs[6] = AVX_VERTEX_ATTR(12, 2, 8, avxFormat_R32u),
+            .attrs[7] = AVX_VERTEX_ATTR(13, 2, 12, avxFormat_R32u)
         };
 
         avxVertexInput vin_p3j1n3t2_bi_mtl_mtx_jnt;
@@ -833,23 +811,24 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
             .binCnt = 3,
             .bins =
             {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 3),
-                AVX_VERTEX_STREAM(1, 0, 0, 3, 2),
-                AVX_VERTEX_STREAM(2, 0, 1, 5, 4)
+                AVX_VERTEX_STREAM(0, 0, 0),
+                AVX_VERTEX_STREAM(1, 0, 0),
+                AVX_VERTEX_STREAM(2, 0, 1)
             },
+            .attrCnt = 9,
             .attrs =
             {
                 // per-vertex fetch
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(1, 12, avxFormat_RG32f),
-                AVX_VERTEX_ATTR(2, 20, avxFormat_RG8u),
-                AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f),
+                AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(1, 0, 12, avxFormat_RG32f),
+                AVX_VERTEX_ATTR(2, 0, 20, avxFormat_RG8u),
+                AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f),
                 // per-instance fetch
-                AVX_VERTEX_ATTR(10, 0, avxFormat_R32u),
-                AVX_VERTEX_ATTR(11, 4, avxFormat_R32u),
-                AVX_VERTEX_ATTR(12, 8, avxFormat_R32u),
-                AVX_VERTEX_ATTR(13, 12, avxFormat_R32u)
+                AVX_VERTEX_ATTR(10, 2, 0, avxFormat_R32u),
+                AVX_VERTEX_ATTR(11, 2, 4, avxFormat_R32u),
+                AVX_VERTEX_ATTR(12, 2, 8, avxFormat_R32u),
+                AVX_VERTEX_ATTR(13, 2, 12, avxFormat_R32u)
             }
         };
 
@@ -863,23 +842,24 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
             .binCnt = 3,
             .bins =
             {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 3),
-                AVX_VERTEX_STREAM(1, 0, 0, 3, 2),
-                AVX_VERTEX_STREAM(2, 0, 1, 5, 4)
+                AVX_VERTEX_STREAM(0, 0, 0),
+                AVX_VERTEX_STREAM(1, 0, 0),
+                AVX_VERTEX_STREAM(2, 0, 1)
             },
+            .attrCnt = 9,
             .attrs =
             {
                 // per-vertex fetch
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(1, 12, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(2, 24, avxFormat_RGB8u),
-                AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f),
+                AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(1, 0, 12, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(2, 0, 24, avxFormat_RGB8u),
+                AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f),
                 // per-instance fetch
-                AVX_VERTEX_ATTR(10, 0, avxFormat_R32u),
-                AVX_VERTEX_ATTR(11, 4, avxFormat_R32u),
-                AVX_VERTEX_ATTR(12, 8, avxFormat_R32u),
-                AVX_VERTEX_ATTR(13, 12, avxFormat_R32u),
+                AVX_VERTEX_ATTR(10, 2, 0, avxFormat_R32u),
+                AVX_VERTEX_ATTR(11, 2, 4, avxFormat_R32u),
+                AVX_VERTEX_ATTR(12, 2, 8, avxFormat_R32u),
+                AVX_VERTEX_ATTR(13, 2, 12, avxFormat_R32u),
             }
         };
 
@@ -893,24 +873,24 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
             .binCnt = 3,
             .bins =
             {
-                AVX_VERTEX_STREAM(0, 0, 0, 0, 3),
-                AVX_VERTEX_STREAM(1, 0, 0, 3, 2),
-                AVX_VERTEX_STREAM(2, 0, 1, 5, 4)
+                AVX_VERTEX_STREAM(0, 0, 0),
+                AVX_VERTEX_STREAM(1, 0, 0),
+                AVX_VERTEX_STREAM(2, 0, 1)
             },
             //.bins[0].attrCnt = 9,
             .attrs =
             {
                 // per-vertex fetch
-                AVX_VERTEX_ATTR(0, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(1, 12, avxFormat_RGBA32f),
-                AVX_VERTEX_ATTR(2, 28, avxFormat_RGBA8u),
-                AVX_VERTEX_ATTR(3, 0, avxFormat_RGB32f),
-                AVX_VERTEX_ATTR(6, 12, avxFormat_RG32f),
+                AVX_VERTEX_ATTR(0, 0, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(1, 0, 12, avxFormat_RGBA32f),
+                AVX_VERTEX_ATTR(2, 0, 28, avxFormat_RGBA8u),
+                AVX_VERTEX_ATTR(3, 1, 0, avxFormat_RGB32f),
+                AVX_VERTEX_ATTR(6, 1, 12, avxFormat_RG32f),
                 // per-instance fetch
-                AVX_VERTEX_ATTR(10, 0, avxFormat_R32u),
-                AVX_VERTEX_ATTR(11, 4, avxFormat_R32u),
-                AVX_VERTEX_ATTR(12, 8, avxFormat_R32u),
-                AVX_VERTEX_ATTR(13, 12, avxFormat_R32u),
+                AVX_VERTEX_ATTR(10, 2, 0, avxFormat_R32u),
+                AVX_VERTEX_ATTR(11, 2, 4, avxFormat_R32u),
+                AVX_VERTEX_ATTR(12, 2, 8, avxFormat_R32u),
+                AVX_VERTEX_ATTR(13, 2, 12, avxFormat_R32u),
             }
         };
 

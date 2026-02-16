@@ -48,7 +48,7 @@
 #endif
 
 #if 0
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 #   define _AFX_COPY_WITH_SSE
 #   define _AFX_ZERO_WITH_SSE
 #   define _AFX_FILL_WITH_SSE
@@ -72,7 +72,7 @@
 #define _AFX_USE_MEMCHR_FAST_PATH TRUE
 
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFXINL void* AfxFillSSE(void* start, afxSize range, void const* pattern, afxSize patternSiz)
 /*
     AfxFillSSE()
@@ -191,7 +191,7 @@ _AFXINL void* AfxFillSSE(void* start, afxSize range, void const* pattern, afxSiz
 
     return start;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFXINL void AfxFillPattern(void* start, afxSize range, void const* pattern, afxSize patternSiz)
 {
@@ -226,7 +226,7 @@ _AFX void AfxFill(void* start, afxInt value, afxSize range)
     AfxFillPattern(start, range, (afxInt[]) { 0 }, sizeof(afxInt));
 }
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFXINL void AfxZeroSSE(void* start, afxSize range)
 {
     afxByte* p = (afxByte*)start;
@@ -247,7 +247,7 @@ _AFXINL void AfxZeroSSE(void* start, afxSize range)
     for (afxSize i = 0; i < range; ++i)
         p[i] = 0;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFX void AfxZero(void* start, afxSize range)
 {
@@ -268,7 +268,7 @@ _AFX void AfxZero(void* start, afxSize range)
 #endif
 }
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFXINL void AfxCopySSE(void* dst, void const* src, afxSize size)
 {
     if (size == 0 || dst == src) return;
@@ -379,7 +379,7 @@ _AFXINL void AfxCopySSE(void* dst, void const* src, afxSize size)
 
     return;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFX void AfxCopy(void* dst, void const* src, afxSize size)
 {
@@ -407,7 +407,7 @@ _AFX void AfxCopy(void* dst, void const* src, afxSize size)
 #endif
 }
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFXINL void AfxMoveSSE(void* dst, void const* src, afxSize size)
 {
     if (size == 0 || dst == src)
@@ -570,7 +570,7 @@ _AFXINL void AfxMoveSSE(void* dst, void const* src, afxSize size)
 
     return;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFX void AfxMove(void* dst, void const* src, afxSize size)
 {
@@ -607,7 +607,7 @@ _AFX void AfxMove(void* dst, void const* src, afxSize size)
 #endif
 }
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFX afxInt AfxCompareSSE(void const* a, void const* b, afxSize siz)
 {
     afxByte const* pa = (afxByte const*)a;
@@ -663,7 +663,7 @@ _AFX afxInt AfxCompareSSE(void const* a, void const* b, afxSize siz)
 
     return 0;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFX afxInt AfxCompare(void const* a, void const* b, afxSize siz)
 {
@@ -709,7 +709,7 @@ _AFX afxInt AfxCompare(void const* a, void const* b, afxSize siz)
     return rslt;
 }
 
-#ifdef AFX_ON_X86
+#ifdef AFX_ISA_X86
 _AFX void* AfxFindSSE(void const* start, afxSize range, afxInt c)
 {
     afxByte const*p = (afxByte const*)start;
@@ -765,7 +765,7 @@ _AFX void* AfxFindSSE(void const* start, afxSize range, afxInt c)
 
     return NULL;
 }
-#endif//AFX_ON_X86
+#endif//AFX_ISA_X86
 
 _AFX void* AfxFind(void const* start, afxSize range, afxInt c)
 {

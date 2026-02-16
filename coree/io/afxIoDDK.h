@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA GL/2.
+// This code is part of SIGMA Future Storage.
 
 #ifndef AFX_IO_DDK_H
 #define AFX_IO_DDK_H

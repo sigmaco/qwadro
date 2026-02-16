@@ -23,7 +23,7 @@
 #define _ARX_SKELETON_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../qwadro_afx/targa/avxIcd.h"
+#include "../qwadro_afx/coree/draw/avxIcd.h"
 
 #define AFX_R(_raw_string_literal_) "\n" #_raw_string_literal_
 //#define AFX_R(_raw_string_literal_) _Pragma (#_raw_string_literal_)

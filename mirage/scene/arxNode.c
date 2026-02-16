@@ -77,7 +77,35 @@ _ARX afxError ArxMakeNodulation(arxNodular* nodu, arxNode nod, void(*sync)(arxNo
     return err;
 }
 
-_ARX afxError ArxReparentDagNode(arxNode nod, arxNode parent)
+_ARX arxNode ArxGetRootNode(arxNode nod)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+    arxNode root = nod->root;
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &root);
+    return root;
+}
+
+_ARX arxNode ArxGetParentNode(arxNode nod)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+    arxNode parent = AfxGetLinker(&nod->parent);
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &parent);
+    return parent;
+}
+
+_ARX afxBool ArxGetParentNode2(arxNode nod, arxNode* parent)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+    arxNode par = AfxGetLinker(&nod->parent);
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_NOD, 1, &par);
+    *parent = par;
+    return !!par;
+}
+
+_ARX afxError ArxSetParentNode(arxNode nod, arxNode parent)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
@@ -99,9 +127,11 @@ _ARX afxError ArxReparentDagNode(arxNode nod, arxNode parent)
             else
             {
                 AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &curr);
+                AFX_ASSERT(nod->root == ArxGetParentNode(curr)->root);
                 curr->ltaCnt -= nod->taCnt;
                 AfxPopLink(&nod->parent);
                 nod->root = nod;
+                nod->flags |= arxNodeFlag_ROOT;
             }
         }
 
@@ -111,6 +141,7 @@ _ARX afxError ArxReparentDagNode(arxNode nod, arxNode parent)
             parent->ltaCnt += nod->taCnt;
             AfxPushLink(&nod->parent, &parent->children);
             nod->root = parent->root;
+            nod->flags &= ~arxNodeFlag_ROOT;
         }
         else
         {
@@ -605,10 +636,10 @@ _ARXINL afxError _AsxNodDtorCb(arxNode nod)
     AFX_ITERATE_CHAIN(child, parent, &nod->children)
     {
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &child);
-        ArxReparentDagNode(child, NIL);
+        ArxSetParentNode(child, NIL);
     }
 
-    ArxReparentDagNode(nod, NIL);
+    ArxSetParentNode(nod, NIL);
 
     switch (nod->type)
     {
@@ -647,14 +678,14 @@ _ARXINL afxError _AsxNodCtorCb(arxNode nod, void** args, afxUnit invokeNo)
     arxScenario scio = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
 
+    nod->flags = NIL;
+
     nod->root = NIL;
     AfxResetLink(&nod->parent);
     AfxMakeChain(&nod->children, nod);
     AfxMakeChain(&nod->nodulars, nod);
     
-    afxChain* dags = (afxChain*)_ArxScioGetDagRoots(AfxGetHost(nod));
-    AfxPushLink(&nod->parent, dags);
-    nod->flags = arxNodeFlag_ROOT;
+    ArxSetParentNode(nod, NIL);
 
     nod->ownedTrackMask = FALSE;
     nod->trackMask = NIL;
@@ -710,7 +741,7 @@ _ARX afxError ArxAcquireJunctionNode(arxScenario scio, arxNode parent, arxModel 
     nod->quatMode = blendOp;
     nod->fillThreshold = fillThreshold;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;
@@ -730,12 +761,12 @@ _ARX afxError ArxAcquireCrossfadeNode(arxScenario scio, arxNode parent, arxNode 
 
     if (a)
     {
-        ArxReparentDagNode(a, nod);
+        ArxSetParentNode(a, nod);
     }
 
     if (b)
     {
-        ArxReparentDagNode(b, nod);
+        ArxSetParentNode(b, nod);
     }
 
     nod->weightNone = weightNone;
@@ -743,7 +774,7 @@ _ARX afxError ArxAcquireCrossfadeNode(arxScenario scio, arxNode parent, arxNode 
     nod->trackMask = trackMask;
     nod->ownedTrackMask = FALSE;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;
@@ -766,7 +797,7 @@ _ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(
     nod->motionVectorsCb = motionVectors;
     nod->udd = udd;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;
@@ -788,7 +819,7 @@ _ARX afxError ArxAcquirePoseNode(arxScenario scio, arxNode parent, arxPose pose,
     nod->pose = pose;
     //nod->pose.owned = TRUE;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;
@@ -811,7 +842,7 @@ _ARX afxError ArxAcquireAnimationNode(arxScenario scio, arxNode parent, arxPuppe
     nod->fillThreshold = fillThreshold; // 0.2
     //nod->animBlend.owned = TRUE;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;
@@ -841,7 +872,7 @@ _ARX afxError ArxAcquirePostureNode(arxScenario scio, arxNode parent, arxPosture
     //nod->plce = plce;
     //nod->pose.owned = TRUE;
 
-    ArxReparentDagNode(nod, parent);
+    ArxSetParentNode(nod, parent);
 
     AFX_ASSERT(node);
     *node = nod;

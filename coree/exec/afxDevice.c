@@ -369,7 +369,7 @@ _AFX afxBool AfxFindDevice(afxDeviceType type, afxUri const* urn, afxDevice* dev
     afxResult rslt = FALSE;
     
     afxUri target;
-    AfxClipUriFile(&target, urn);
+    AfxExcerptUriFile(&target, urn);
 
     afxUnit i = 0;
     afxDevice dev;
@@ -379,7 +379,7 @@ _AFX afxBool AfxFindDevice(afxDeviceType type, afxUri const* urn, afxDevice* dev
         AFX_ASSERT(!type || (dev->type == type));
 
         afxUri tmp;
-        AfxClipUriFile(&tmp, &dev->urn.uri);
+        AfxExcerptUriFile(&tmp, &dev->urn.uri);
 
         if (0 == AfxCompareUri(&target, &tmp))
         {

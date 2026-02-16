@@ -14,6 +14,8 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
+// This code is part of SIGMA Future Storage.
+
 #include "../exec/afxSystemDDK.h"
 
 /* The implementation here was originally done by Gary S. Brown.  I have

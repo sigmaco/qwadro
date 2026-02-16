@@ -875,7 +875,7 @@ _AFXINL afxString* AfxGetUriString2(afxUri* uri)
 
 // TESTING
 
-_AFXINL afxBool AfxUriIsEditable(afxUri const* uri)
+_AFXINL afxBool AfxIsUriMutable(afxUri const* uri)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1004,7 +1004,7 @@ _AFXINL afxUnit AfxWrapUriStringRange(afxUri* uri, afxString const* src, afxUnit
     return AfxGetUriLength(uri);
 }
 
-_AFXINL void AfxReplicateUri(afxUri* uri, afxUri const *in)
+_AFXINL void AfxReflectUri(afxUri* uri, afxUri const* in)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1027,7 +1027,7 @@ _AFXINL afxError AfxCopyUri(afxUri* uri, afxUri const *src)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
-    AFX_ASSERT(AfxUriIsEditable(uri));
+    AFX_ASSERT(AfxIsUriMutable(uri));
     AFX_ASSERT(src);
     afxUnit clampedOff = 0;
 
@@ -1043,7 +1043,7 @@ _AFXINL void AfxFormatUriArg(afxUri* uri, afxChar const *fmt, va_list args)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
-    AFX_ASSERT(AfxUriIsEditable(uri));
+    AFX_ASSERT(AfxIsUriMutable(uri));
 
     if (!fmt) AfxClearUris(1, uri);
     else
@@ -1054,7 +1054,7 @@ _AFXINL void AfxFormatUriArg(afxUri* uri, afxChar const *fmt, va_list args)
         AfxFormatStringArg(s, fmt, args);
         //AfxTransformPathString(s, FALSE);
         AfxReparseUri(uri);
-        //AfxCanonicalizePath(uri, FALSE);
+        //AfxCanonicalizeUriPath(uri, FALSE);
     }
 }
 
@@ -1062,7 +1062,7 @@ _AFXINL void AfxFormatUri(afxUri* uri, afxChar const *fmt, ...)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
-    AFX_ASSERT(AfxUriIsEditable(uri));
+    AFX_ASSERT(AfxIsUriMutable(uri));
 
     if (!fmt) AfxClearUris(1, uri);
     else
@@ -1133,7 +1133,7 @@ _AFXINL afxUnit AfxExcerptUriAuthority(afxUri const* uri, afxUri* user, afxUri* 
     return totalLen;
 }
 
-_AFXINL afxUnit AfxExcerptUriQuery(afxUri const* uri, afxBool skipSep, afxUri* query)
+_AFXINL afxUnit AfxExcerptUriQuery2(afxUri const* uri, afxBool skipSep, afxUri* query)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1144,7 +1144,7 @@ _AFXINL afxUnit AfxExcerptUriQuery(afxUri const* uri, afxBool skipSep, afxUri* q
     return query->qry;
 }
 
-_AFXINL afxUnit AfxExcerptUriFragment(afxUri const* uri, afxBool skipSep, afxUri* frag)
+_AFXINL afxUnit AfxExcerptUriFragment2(afxUri const* uri, afxBool skipSep, afxUri* frag)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1155,7 +1155,7 @@ _AFXINL afxUnit AfxExcerptUriFragment(afxUri const* uri, afxBool skipSep, afxUri
     return frag->frag;
 }
 
-_AFXINL afxUnit AfxClipPathDirectory(afxUri* uri, afxUri const* from)
+_AFXINL afxUnit AfxExcerptUriPathDirectory(afxUri* uri, afxUri const* from)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1171,7 +1171,7 @@ _AFXINL afxUnit AfxClipPathDirectory(afxUri* uri, afxUri const* from)
     return len;
 }
 
-_AFXINL afxUnit AfxClipPathDirectory2(afxUri* uri, afxUri const* from, afxUnit seg)
+_AFXINL afxUnit AfxExcerptUriPathDirectory2(afxUri* uri, afxUri const* from, afxUnit seg)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1205,7 +1205,7 @@ _AFXINL afxUnit AfxClipPathDirectory2(afxUri* uri, afxUri const* from, afxUnit s
     return len2;
 }
 
-_AFXINL afxUnit AfxExcerptPathBase(afxUri const* uri, afxUri* base)
+_AFXINL afxUnit AfxExcerptUriPathBase(afxUri const* uri, afxUri* base)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1221,7 +1221,7 @@ _AFXINL afxUnit AfxExcerptPathBase(afxUri const* uri, afxUri* base)
     return len;
 }
 
-_AFXINL afxUnit AfxExcerptPathSegments(afxUri const* uri, afxUri* root, afxUri* dir, afxUri* file, afxUri* ext)
+_AFXINL afxUnit AfxExcerptUriPathSegments(afxUri const* uri, afxUri* root, afxUri* dir, afxUri* file, afxUri* ext)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
@@ -1320,7 +1320,7 @@ _AFXINL afxUnit AfxSplitPath(afxUri const* uri, afxUri* root, afxUri* path)
     return len;
 }
 
-_AFXINL afxUnit AfxClipUriTarget(afxUri* uri, afxUri const* from)
+_AFXINL afxUnit AfxExcerptUriTarget(afxUri* uri, afxUri const* from)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1342,12 +1342,12 @@ _AFXINL afxUnit AfxGetUriTargetString(afxUri const* uri, afxString* name)
     AFX_ASSERT(uri);
     AFX_ASSERT(name);
     afxUri tmp;
-    AfxClipUriTarget(&tmp, uri);
+    AfxExcerptUriTarget(&tmp, uri);
     *name = *AfxGetUriString(&tmp);
     return name->len;
 }
 
-_AFXINL afxUnit AfxClipUriExtension(afxUri* uri, afxUri const* from, afxBool skipDot)
+_AFXINL afxUnit AfxExcerptUriExtension(afxUri* uri, afxUri const* from, afxBool skipDot)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1362,7 +1362,7 @@ _AFXINL afxUnit AfxClipUriExtension(afxUri* uri, afxUri const* from, afxBool ski
     return len;
 }
 
-_AFXINL afxUnit AfxClipUriFile(afxUri* uri, afxUri const* from)
+_AFXINL afxUnit AfxExcerptUriFile(afxUri* uri, afxUri const* from)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1376,7 +1376,7 @@ _AFXINL afxUnit AfxClipUriFile(afxUri* uri, afxUri const* from)
     return len;
 }
 
-_AFXINL afxUnit AfxClipUriPath(afxUri* uri, afxUri const* from)
+_AFXINL afxUnit AfxExcerptUriPath(afxUri* uri, afxUri const* from)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1388,7 +1388,7 @@ _AFXINL afxUnit AfxClipUriPath(afxUri* uri, afxUri const* from)
     return len;
 }
 
-_AFX afxUnit AfxClipPath2(afxUri* uri, afxUri const* from, afxUnit seg)
+_AFX afxUnit AfxExcerptUriPath2(afxUri* uri, afxUri const* from, afxUnit seg)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1434,7 +1434,7 @@ _AFXINL afxUnit AfxGetUriQueryString(afxUri const* uri, afxBool skipSep, afxStri
     AFX_ASSERT(uri);
     AFX_ASSERT(query);
     afxUri tmp;
-    AfxExcerptUriQuery(uri, skipSep, &tmp);
+    AfxExcerptUriQuery2(uri, skipSep, &tmp);
     *query = *AfxGetUriString(&tmp);
     return query->len;
 }
@@ -1445,7 +1445,7 @@ _AFXINL afxUnit _AfxGetPathDriveNo_W32(afxUri const* uri)
     AFX_ASSERT(uri);
 
     afxUri path;
-    AfxClipUriPath(&path, uri);
+    AfxExcerptUriPath(&path, uri);
     afxByte const* p = AfxGetUriData(&path, 0);
 
     if (p && p[0] && p[1] == ':')
@@ -1477,7 +1477,7 @@ _AFXINL afxBool AfxPathIsNetwork_W32(afxUri const* uri)
     afxBool rslt = FALSE;
 
     afxUri path;
-    AfxClipUriPath(&path, uri);
+    AfxExcerptUriPath(&path, uri);
     afxByte const* p = AfxGetUriData(&path, 0);
 
     if (p)
@@ -1496,19 +1496,19 @@ _AFXINL afxBool _AfxPathIsRelative_W32(afxUri const* uri)
     AFX_ASSERT(uri);
 
     afxUri path;
-    afxUnit len = AfxClipUriPath(&path, uri);
+    afxUnit len = AfxExcerptUriPath(&path, uri);
     afxByte const* data = AfxGetUriData(&path, 0);
 
     return !len || !data[0] || (data[0] != '\\' && AFX_INVALID_INDEX == AfxGetPathDriveNo(&path));
 }
 
-_AFXINL afxBool AfxPathIsRelative(afxUri const* uri)
+_AFXINL afxBool AfxIsUriPathRelative(afxUri const* uri)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
 
     afxUri path;
-    afxUnit len = AfxClipUriPath(&path, uri);
+    afxUnit len = AfxExcerptUriPath(&path, uri);
     afxByte const* data = AfxGetUriData(&path, 0);
 
     return !len || !data[0] || (data[0] != '/' && (data[0] != '\\' && AFX_INVALID_INDEX == AfxGetPathDriveNo(&path)));
@@ -1671,9 +1671,9 @@ _AFXINL afxBool AfxPathIsDevice(afxUri const* uri)
     afxBool rslt = FALSE;
     
     afxUri host, path, dev;
-    AfxClipUriPath(&host, uri);
-    AfxClipUriPath(&path, uri);
-    AfxClipPathDirectory(&dev, uri);
+    AfxExcerptUriPath(&host, uri);
+    AfxExcerptUriPath(&path, uri);
+    AfxExcerptUriPathDirectory(&dev, uri);
     afxChar const* h = AfxGetUriData(&host, 0);
     afxChar const* p = AfxGetUriData(&path, 0);
 
@@ -1693,7 +1693,7 @@ _AFXINL afxBool AfxPathIsDevice(afxUri const* uri)
     return rslt;
 }
 
-_AFXINL afxUnit AfxClipUriDevice(afxUri* uri, afxUri const* from)
+_AFXINL afxUnit AfxExcerptUriDevice(afxUri* uri, afxUri const* from)
 {
     afxError err = { 0 };
     AFX_ASSERT(from);
@@ -1705,7 +1705,7 @@ _AFXINL afxUnit AfxClipUriDevice(afxUri* uri, afxUri const* from)
 
     afxUnit devLen = 0;
 
-    if (!(devLen = AfxClipPathDirectory2(&dev, from, 3))) AfxResetUris(1, uri);
+    if (!(devLen = AfxExcerptUriPathDirectory2(&dev, from, 3))) AfxResetUris(1, uri);
     else
     {
         if (!AfxCompareSubstrings(&AFX_STRING("//./"), 0, 4, FALSE, 1, &dev.s, NIL)) AfxResetUris(1, uri);
@@ -1755,7 +1755,7 @@ _AFXINL afxBool AfxIsUriAbsolute(afxUri const* uri)
 {
     afxError err = { 0 };
     AFX_ASSERT(uri);
-    return !AfxPathIsRelative(uri);
+    return !AfxIsUriPathRelative(uri);
 }
 
 _AFXINL afxBool AfxIsUriToDevice(afxUri const* uri)
@@ -1765,11 +1765,11 @@ _AFXINL afxBool AfxIsUriToDevice(afxUri const* uri)
     afxUri hostPort;
     AfxExcerptUriAuthority(uri, NIL, &hostPort, &hostPort);
     AfxCompareUriString(&hostPort, &AFX_STRING("//."));
-    //AfxClipPathDirectory();
+    //AfxExcerptUriPathDirectory();
     return AfxCompareString(&uri->s, uri->sch, "//.", 0, TRUE) && AfxCompareString(&uri->s, uri->sch + uri->h, "/", 0, TRUE);
 }
 
-_AFXINL afxBool AfxIsBaseOfUri(afxUri const* uri, afxUri const* other)
+_AFXINL afxBool AfxIsUriBase(afxUri const* uri, afxUri const* other)
 {
     afxError err = { 0 };
     AFX_ASSERT(other);
@@ -1805,7 +1805,7 @@ _AFXINL afxResult AfxUriForEachQueryKey(afxUri const* uri, afxResult(*f)(afxStri
     afxResult cnt = 0;
 
     afxUri query2;
-    AfxExcerptUriQuery(uri, FALSE, &query2);
+    AfxExcerptUriQuery2(uri, FALSE, &query2);
     afxChar const* query = AfxGetUriData(&query2,0);
 #if 0
     afxString64 attr;
@@ -1858,7 +1858,7 @@ _AFXINL afxResult AfxUriMapQueryPairs(afxUri const* uri, afxUnit base, afxUnit c
     afxResult rslt = 0;
 
     afxUri query2;
-    AfxExcerptUriQuery(uri, FALSE, &query2);
+    AfxExcerptUriQuery2(uri, FALSE, &query2);
     afxChar const* start = AfxGetUriData(&query2,0);
     afxChar const *chr = start;
 
@@ -2036,20 +2036,20 @@ _AFXINL void AfxTransformPathString(afxString* s, afxBool out)
     }
 }
 
-_AFXINL void AfxCanonicalizePath(afxUri* uri, afxBool microshit)
+_AFXINL void AfxCanonicalizeUriPath(afxUri* uri, afxBool microshit)
 {
     // c:\shit\\\by\\M$\foo.poo -> /c/shit/by/M$/unshitted/foo.poo
 
     //return;
     afxError err = { 0 };
     AFX_ASSERT(uri);
-    AFX_ASSERT(AfxUriIsEditable(uri));
+    AFX_ASSERT(AfxIsUriMutable(uri));
     afxUri path, query, frag;
     
-    if (AfxClipUriPath(&path, uri))
+    if (AfxExcerptUriPath(&path, uri))
     {
-        AfxExcerptUriQuery(uri, FALSE, &query);
-        AfxExcerptUriFragment(uri, FALSE, &frag);
+        AfxExcerptUriQuery2(uri, FALSE, &query);
+        AfxExcerptUriFragment2(uri, FALSE, &frag);
 
         afxString* pathStr = AfxGetUriString2(&path);
 

@@ -42,7 +42,7 @@ AFX_DEFINE_STRUCT(avxRasterBlit)
 // COMMANDOS
 
 
-AVX afxCmdId                AvxCmdClearBuffer
+AVX afxError                AvxCmdClearBuffer
 // Fill a region of a avxBuffer with zeroes.
 (
     afxDrawContext          dctx,
@@ -55,7 +55,7 @@ AVX afxCmdId                AvxCmdClearBuffer
     afxUnit                 range
 );
 
-AVX afxCmdId                AvxCmdFillBuffer
+AVX afxError                AvxCmdFillBuffer
 // Fill a region of a avxBuffer with a fixed value.
 (
     afxDrawContext          dctx,
@@ -71,7 +71,7 @@ AVX afxCmdId                AvxCmdFillBuffer
     afxUnit                 value
 );
 
-AVX afxCmdId                AvxCmdUpdateBuffer
+AVX afxError                AvxCmdUpdateBuffer
 // Update a avxBuffer's contents from host memory.
 (
     afxDrawContext          dctx,
@@ -85,7 +85,7 @@ AVX afxCmdId                AvxCmdUpdateBuffer
     void const*             src
 );
 
-AVX afxCmdId                AvxCmdCopyBuffer
+AVX afxError                AvxCmdCopyBuffer
 // Copy data between avxBuffer regions.
 (
     afxDrawContext          dctx,
@@ -99,7 +99,7 @@ AVX afxCmdId                AvxCmdCopyBuffer
     avxBuffer               src
 );
 
-AVX afxCmdId                AvxCmdClearRaster
+AVX afxError                AvxCmdClearRaster
 // Clear regions of a color avxRaster or fill regions of a combined depth/stencil avxRaster.
 (
     afxDrawContext          dctx,
@@ -113,7 +113,7 @@ AVX afxCmdId                AvxCmdClearRaster
     afxUnit                 layerCnt
 );
 
-AVX afxCmdId                AvxCmdCopyRaster
+AVX afxError                AvxCmdCopyRaster
 // Copy data between avxRaster's.
 (
     afxDrawContext          dctx,
@@ -127,7 +127,7 @@ AVX afxCmdId                AvxCmdCopyRaster
     avxRaster               src
 );
 
-AVX afxCmdId                AvxCmdResolveRaster
+AVX afxError                AvxCmdResolveRaster
 // Resolve regions of an avxRaster.
 (
     afxDrawContext          dctx,
@@ -141,7 +141,7 @@ AVX afxCmdId                AvxCmdResolveRaster
     avxRaster               src
 );
 
-AVX afxCmdId                AvxCmdBlitRaster
+AVX afxError                AvxCmdBlitRaster
 // Copy regions of an avxRaster, potentially performing format conversion.
 (
     afxDrawContext          dctx,
@@ -157,7 +157,7 @@ AVX afxCmdId                AvxCmdBlitRaster
     avxTexelFilter          flt
 );
 
-AVX afxCmdId                AvxCmdPackRaster
+AVX afxError                AvxCmdPackRaster
 // Copy avxRaster data into a avxBuffer.
 (
     afxDrawContext          dctx,
@@ -171,7 +171,7 @@ AVX afxCmdId                AvxCmdPackRaster
     avxBuffer               buf
 );
 
-AVX afxCmdId                AvxCmdUnpackRaster
+AVX afxError                AvxCmdUnpackRaster
 // Copy data from a avxBuffer into an avxRaster.
 (
     afxDrawContext          dctx,
@@ -187,7 +187,7 @@ AVX afxCmdId                AvxCmdUnpackRaster
 
 
 
-AVX afxCmdId                AvxCmdRegenerateMipmapsSIGMA
+AVX afxError                AvxCmdRegenerateMipmapsSIGMA
 // Regenerate mipmaps for an array of avxRaster.
 (
     afxDrawContext          dctx,

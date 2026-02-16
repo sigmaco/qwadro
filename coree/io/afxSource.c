@@ -50,7 +50,7 @@ _AFXINL void AfxMakeSourceFromUri(afxSource *src, afxUri const* uri, afxUnit ext
     // specify source by streaming file name.
     src->iExternalSrcCookie = extlSrcCookie;
     src->idCodec = idCodec;
-    AfxReplicateUri(&src->uri, uri);
+    AfxReflectUri(&src->uri, uri);
     src->buf = NIL;
     src->siz = 0;
     src->file = NIL;

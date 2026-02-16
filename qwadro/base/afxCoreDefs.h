@@ -89,9 +89,8 @@
 
 #define AFX_CAST(_type_, _var_) ((_type_)(_var_))
 
-#define AFX_REBASE(p_, type_, field_) ((type_*)((void const*)(((afxByte const*)(p_)) - offsetof(type_, field_))))
-#define AFX_REBASE2(type_, p_, field_) ((type_*)((void const*)(((afxByte const*)(p_)) - offsetof(type_, field_))))
-#define AfxRebase(p_,s_,m_) ((s_)(void*)(((afxByte*)p_) - offsetof(s_, m_)))
+#define AFX_REBASE(pBase_, STRUCT_, FIELD_) ((STRUCT_*)((void const*)(((afxByte const*)(pBase_)) - offsetof(STRUCT_, FIELD_))))
+#define AFX_REBASE2(STRUCT_, pBase_, FIELD_) ((STRUCT_*)((void const*)(((afxByte const*)(pBase_)) - offsetof(STRUCT_, FIELD_))))
 
 #ifndef container_of
 #   define container_of AFX_REBASE

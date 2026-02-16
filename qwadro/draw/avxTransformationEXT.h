@@ -27,13 +27,13 @@
 
 // Specify polygon mode dynamically for a draw context.
 
-AVX afxCmdId            AvxCmdChangeFillModeEXT
+AVX afxError            AvxCmdChangeFillModeEXT
 (
     afxDrawContext      dctx,
     avxFillMode         mode
 );
 
-AFX afxCmdId AvxCmdBeginTransformFeedbackEXT
+AFX afxError AvxCmdBeginTransformFeedbackEXT
 (
     afxDrawContext dctx,
     afxUnit firstCntBuf,
@@ -42,7 +42,7 @@ AFX afxCmdId AvxCmdBeginTransformFeedbackEXT
     afxSize const cntBufOffsets[]
 );
 
-AFX afxCmdId AvxCmdEndTransformFeedbackEXT
+AFX afxError AvxCmdEndTransformFeedbackEXT
 (
     afxDrawContext dctx,
     afxUnit firstCntBuf,
@@ -51,7 +51,7 @@ AFX afxCmdId AvxCmdEndTransformFeedbackEXT
     afxSize const cntBufOffsets[]
 );
 
-AFX afxCmdId AvxCmdBeginQueryIndexedEXT
+AFX afxError AvxCmdBeginQueryIndexedEXT
 (
     afxDrawContext dctx,
     avxQueryPool qryp,
@@ -60,7 +60,7 @@ AFX afxCmdId AvxCmdBeginQueryIndexedEXT
     afxUnit index
 );
 
-AFX afxCmdId AvxCmdEndQueryIndexedEXT
+AFX afxError AvxCmdEndQueryIndexedEXT
 (
     afxDrawContext dctx,
     avxQueryPool qryp,
@@ -68,7 +68,7 @@ AFX afxCmdId AvxCmdEndQueryIndexedEXT
     afxUnit index
 );
 
-AFX afxCmdId AvxCmdBindTransformFeedbackBuffersEXT
+AFX afxError AvxCmdBindTransformFeedbackBuffersEXT
 (
     afxDrawContext dctx,
     afxUnit first,
@@ -78,7 +78,7 @@ AFX afxCmdId AvxCmdBindTransformFeedbackBuffersEXT
     afxSize const ranges[]
 );
 
-AFX afxCmdId AvxCmdDrawIndirectByteCountEXT
+AFX afxError AvxCmdDrawIndirectByteCountEXT
 (
     afxDrawContext dctx,
     afxUnit instCnt,
@@ -93,7 +93,7 @@ AFX afxCmdId AvxCmdDrawIndirectByteCountEXT
     AvxCmdDrawMeshTasksEXT() issues mesh task work items.
 */
 
-AVX afxCmdId AvxCmdDrawMeshTasksEXT
+AVX afxError AvxCmdDrawMeshTasksEXT
 (
     afxDrawContext dctx,
     // The number of local workgroups to dispatch in the X dimension.
@@ -123,7 +123,7 @@ AFX_DEFINE_STRUCT(avxDrawMeshTasksIndirectEXT)
     @stride is ignored.
 */
 
-AVX afxCmdId AvxCmdDrawMeshTasksIndirectEXT
+AVX afxError AvxCmdDrawMeshTasksIndirectEXT
 (
     afxDrawContext dctx,
     // The buffer containing draw parameters.
@@ -142,7 +142,7 @@ AVX afxCmdId AvxCmdDrawMeshTasksIndirectEXT
     @cntBufOffset and use this as the draw count.
 */
 
-AVX afxCmdId AvxCmdDrawMeshTasksIndirectCountEXT
+AVX afxError AvxCmdDrawMeshTasksIndirectCountEXT
 (
     afxDrawContext dctx,
     // The buffer containing draw parameters.

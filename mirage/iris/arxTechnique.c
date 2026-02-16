@@ -105,7 +105,7 @@ _ARX afxError ArxLoadRenderTechnique(arxScenario scio, afxUri const* uri, arxTec
     afxXml xml;
     afxUri fpath;
     afxString query;
-    AfxClipUriPath(&fpath, uri);
+    AfxExcerptUriPath(&fpath, uri);
     AfxGetUriQueryString(uri, TRUE, &query);
 
     if (AfxLoadXml(&xml, &fpath))
@@ -147,19 +147,16 @@ _ARX afxError ArxLoadRenderTechnique(arxScenario scio, afxUri const* uri, arxTec
             avxPipelineConfig config = { 0 };
             _AvxParseXmlPipelineBlueprint(passNode, 0, &config, shaderStages, shaderUris, shaderFns);
 
-            ArxUpdateRasterizationPass(*technique, passIdx, &config);
-
-            avxPipeline pip = (*technique)->passes[passIdx].pip;
-
-            avxCodebase codb;
-            AvxGetPipelineCodebase(pip, &codb);
+            avxShader codb;
+            AvxAcquireShaders(ArxGetScenarioDrawSystem(scio), 1, NIL, &codb);
             AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+
             avxShaderSpecialization specs[8] = { 0 };
 
-            for (afxUnit i = 0; i < config.stageCnt; i++)
+            for (afxUnit i = 0; i < config.progCnt; i++)
             {
                 afxUri fileExt;
-                AfxExcerptPathSegments(&shaderUris[i], NIL, NIL, &fileExt, &fileExt);
+                AfxExcerptUriPathSegments(&shaderUris[i], NIL, NIL, &fileExt, &fileExt);
 
                 if (AvxCompileShaderFromDisk(codb, &fileExt.s, &shaderUris[i]))
                     AfxThrowError();
@@ -169,8 +166,13 @@ _ARX afxError ArxLoadRenderTechnique(arxScenario scio, afxUri const* uri, arxTec
                 specs[i].fn = shaderFns[i];
             }
 
-            if (AvxReprogramPipeline(pip, config.stageCnt, specs))
-                AfxThrowError();
+            config.codb = codb;
+            config.progSpecs = specs;
+            ArxUpdateRasterizationPass(*technique, passIdx, &config);
+
+            avxPipeline pip = (*technique)->passes[passIdx].pip;
+
+            AfxDisposeObjects(1, &codb);
 
             ++passIdx;
         }

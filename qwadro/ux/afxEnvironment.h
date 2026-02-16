@@ -190,7 +190,7 @@ AUX afxError AfxConfigureEnvironment
     afxEnvironmentConfig const* cfg
 );
 
-AUX afxError AfxAcquireEnvironment
+AUX afxError AfxEstablishEnvironment
 (
     afxUnit icd,
     afxEnvironmentConfig const* cfg, 

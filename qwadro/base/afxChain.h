@@ -61,6 +61,10 @@
 
 // std::list meets the requirements of Container, MemoryAwareContainer, SequenceContainer and ReversibleContainer.
 
+#ifndef __INTELLISENSE__
+#   define _AFX_CHAIN_ITERATOR_USE_TYPEOF TRUE
+#endif
+
 typedef struct afxChain afxChain;
 typedef struct afxChain2 afxChain2;
 typedef struct afxLink afxLink;
@@ -272,34 +276,31 @@ AFXINL afxLink*         AfxGetPrevLink(afxLink const *lnk);
 */
 
 #define AFX_ITERATE_TYPED_CHAIN(TYPE_, iterator_, link_, pChain_) \
-    for (afxLink const* _next##iterator_ = (pChain_)->anchor.next, \
-                      * _curr##iterator_ = _next##iterator_; \
+    for (afxLink const* _next##iterator_ = (pChain_)->anchor.next, * _curr##iterator_ = _next##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
          ((iterator_) = (TYPE_*)AFX_REBASE(_curr##iterator_, TYPE_, link_), \
           _next##iterator_ = _curr##iterator_->next, 1); \
          _curr##iterator_ = _next##iterator_)
 
 #define AFX_ITERATE_TYPED_CHAIN_B(TYPEB_, iteratorB_, linkB_, pChainB_) \
-    for (afxLink const* _next##iteratorB_ = (pChainB_)->anchor.next, \
-                      * _curr##iteratorB_ = _next##iteratorB_; \
+    for (afxLink const* _next##iteratorB_ = (pChainB_)->anchor.next, * _curr##iteratorB_ = _next##iteratorB_; \
          (_curr##iteratorB_ != &(pChainB_)->anchor) && \
          ((iteratorB_) = (TYPEB_*)AFX_REBASE(_curr##iteratorB_, TYPEB_, linkB_), \
           _next##iteratorB_ = _curr##iteratorB_->next, 1); \
          _curr##iteratorB_ = _next##iteratorB_)
 
+
 #define AFX_ITERATE_CHAIN(iterator_, link_, pChain_) \
-    for (afxLink const* _next##iterator_ = (pChain_)->anchor.next, \
-                      * _curr##iterator_ = _next##iterator_; \
+    for (afxLink const* _next##iterator_ = (pChain_)->anchor.next, * _curr##iterator_ = _next##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
-         ((iterator_) = (AFX_TYPEOF(iterator_))AFX_REBASE(_curr##iterator_, __typeof__(*iterator_), link_), \
+         ((iterator_) = (AFX_TYPEOF(iterator_))AFX_REBASE(_curr##iterator_, AFX_TYPEOF(*iterator_), link_), \
           _next##iterator_ = _curr##iterator_->next, 1); \
          _curr##iterator_ = _next##iterator_)
 
 #define AFX_ITERATE_CHAIN_B(iteratorB_, linkB_, pChainB_) \
-    for (afxLink const* _next##iteratorB_ = (pChainB_)->anchor.next, \
-                      * _curr##iteratorB_ = _next##iteratorB_; \
+    for (afxLink const* _next##iteratorB_ = (pChainB_)->anchor.next, * _curr##iteratorB_ = _next##iteratorB_; \
          (_curr##iteratorB_ != &(pChainB_)->anchor) && \
-         ((iteratorB_) = (AFX_TYPEOF(iteratorB_))AFX_REBASE(_curr##iteratorB_, __typeof__(*iteratorB_), linkB_), \
+         ((iteratorB_) = (AFX_TYPEOF(iteratorB_))AFX_REBASE(_curr##iteratorB_, AFX_TYPEOF(*iteratorB_), linkB_), \
           _next##iteratorB_ = _curr##iteratorB_->next, 1); \
          _curr##iteratorB_ = _next##iteratorB_)
 
@@ -313,66 +314,58 @@ AFXINL afxLink*         AfxGetPrevLink(afxLink const *lnk);
 */
 
 #define AFX_ITERATE_TYPED_CHAIN_B2F(TYPE_, iterator_, link_, pChain_) \
-    for (afxLink const* _prev##iterator_ = (pChain_)->anchor.prev, \
-                      * _curr##iterator_ = _prev##iterator_; \
+    for (afxLink const* _prev##iterator_ = (pChain_)->anchor.prev, * _curr##iterator_ = _prev##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
          ((iterator_) = (TYPE_*)AFX_REBASE(_curr##iterator_, TYPE_, link_), \
           _prev##iterator_ = _curr##iterator_->prev, 1); \
          _curr##iterator_ = _prev##iterator_)
 
 #define AFX_ITERATE_TYPED_CHAIN_B2F_B(TYPEB_, iteratorB_, linkB_, pChainB_) \
-    for (afxLink const* _prev##iteratorB_ = (pChainB_)->anchor.prev, \
-                      * _curr##iteratorB_ = _prev##iteratorB_; \
+    for (afxLink const* _prev##iteratorB_ = (pChainB_)->anchor.prev, * _curr##iteratorB_ = _prev##iteratorB_; \
          (_curr##iteratorB_ != &(pChainB_)->anchor) && \
          ((iteratorB_) = (TYPEB_*)AFX_REBASE(_curr##iteratorB_, TYPEB_, linkB_), \
           _prev##iteratorB_ = _curr##iteratorB_->prev, 1); \
          _curr##iteratorB_ = _prev##iteratorB_)
 
 #define AFX_ITERATE_TYPED_CHAIN_B2F_C(TYPEC_, iteratorC_, linkC_, pChainC_) \
-    for (afxLink const* _prev##iteratorC_ = (pChainC_)->anchor.prev, \
-                      * _curr##iteratorC_ = _prev##iteratorC_; \
+    for (afxLink const* _prev##iteratorC_ = (pChainC_)->anchor.prev, * _curr##iteratorC_ = _prev##iteratorC_; \
          (_curr##iteratorC_ != &(pChainC_)->anchor) && \
          ((iteratorC_) = (TYPEC_*)AFX_REBASE(_curr##iteratorC_, TYPEC_, linkC_), \
           _prev##iteratorC_ = _curr##iteratorC_->prev, 1); \
          _curr##iteratorC_ = _prev##iteratorC_)
 
 #define AFX_ITERATE_TYPED_CHAIN_B2F_D(TYPED_, iteratorD_, linkD_, pChainD_) \
-    for (afxLink const* _prev##iteratorD_ = (pChainD_)->anchor.prev, \
-                      * _curr##iteratorD_ = _prev##iteratorD_; \
+    for (afxLink const* _prev##iteratorD_ = (pChainD_)->anchor.prev, * _curr##iteratorD_ = _prev##iteratorD_; \
          (_curr##iteratorD_ != &(pChainD_)->anchor) && \
          ((iteratorD_) = (TYPED_*)AFX_REBASE(_curr##iteratorD_, TYPED_, linkD_), \
           _prev##iteratorD_ = _curr##iteratorD_->prev, 1); \
          _curr##iteratorD_ = _prev##iteratorD_)
 
 #define AFX_ITERATE_CHAIN_B2F(iterator_, link_, pChain_) \
-    for (afxLink const* _prev##iterator_ = (pChain_)->anchor.prev, \
-                      * _curr##iterator_ = _prev##iterator_; \
+    for (afxLink const* _prev##iterator_ = (pChain_)->anchor.prev, * _curr##iterator_ = _prev##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
-         ((iterator_) = (AFX_TYPEOF(iterator_))AFX_REBASE(_curr##iterator_, __typeof__(*iterator_), link_), \
+         ((iterator_) = (AFX_TYPEOF(iterator_))AFX_REBASE(_curr##iterator_, AFX_TYPEOF(*iterator_), link_), \
           _prev##iterator_ = _curr##iterator_->prev, 1); \
          _curr##iterator_ = _prev##iterator_)
 
 #define AFX_ITERATE_CHAIN_B2F_B(iteratorB_, linkB_, pChainB_) \
-    for (afxLink const* _prev##iteratorB_ = (pChainB_)->anchor.prev, \
-                      * _curr##iteratorB_ = _prev##iteratorB_; \
+    for (afxLink const* _prev##iteratorB_ = (pChainB_)->anchor.prev, * _curr##iteratorB_ = _prev##iteratorB_; \
          (_curr##iteratorB_ != &(pChainB_)->anchor) && \
-         ((iteratorB_) = (AFX_TYPEOF(iteratorB_))AFX_REBASE(_curr##iteratorB_, __typeof__(*iteratorB_), linkB_), \
+         ((iteratorB_) = (AFX_TYPEOF(iteratorB_))AFX_REBASE(_curr##iteratorB_, AFX_TYPEOF(*iteratorB_), linkB_), \
           _prev##iteratorB_ = _curr##iteratorB_->prev, 1); \
          _curr##iteratorB_ = _prev##iteratorB_)
 
 #define AFX_ITERATE_CHAIN_B2F_C(iteratorC_, linkC_, pChainC_) \
-    for (afxLink const* _prev##iteratorC_ = (pChainC_)->anchor.prev, \
-                      * _curr##iteratorC_ = _prev##iteratorC_; \
+    for (afxLink const* _prev##iteratorC_ = (pChainC_)->anchor.prev, * _curr##iteratorC_ = _prev##iteratorC_; \
          (_curr##iteratorC_ != &(pChainC_)->anchor) && \
-         ((iteratorC_) = (AFX_TYPEOF(iteratorC_))AFX_REBASE(_curr##iteratorC_, __typeof__(*iteratorC_), linkC_), \
+         ((iteratorC_) = (AFX_TYPEOF(iteratorC_))AFX_REBASE(_curr##iteratorC_, AFX_TYPEOF(*iteratorC_), linkC_), \
           _prev##iteratorC_ = _curr##iteratorC_->prev, 1); \
          _curr##iteratorC_ = _prev##iteratorC_)
 
 #define AFX_ITERATE_CHAIN_B2F_D(iteratorD_, linkD_, pChainD_) \
-    for (afxLink const* _prev##iteratorD_ = (pChainD_)->anchor.prev, \
-                      * _curr##iteratorD_ = _prev##iteratorD_; \
+    for (afxLink const* _prev##iteratorD_ = (pChainD_)->anchor.prev, * _curr##iteratorD_ = _prev##iteratorD_; \
          (_curr##iteratorD_ != &(pChainD_)->anchor) && \
-         ((iteratorD_) = (AFX_TYPEOF(iteratorD_))AFX_REBASE(_curr##iteratorD_, __typeof__(*iteratorD_), linkD_), \
+         ((iteratorD_) = (AFX_TYPEOF(iteratorD_))AFX_REBASE(_curr##iteratorD_, AFX_TYPEOF(*iteratorD_), linkD_), \
           _prev##iteratorD_ = _curr##iteratorD_->prev, 1); \
          _curr##iteratorD_ = _prev##iteratorD_)
 
@@ -388,8 +381,7 @@ AFXINL afxLink*         AfxGetPrevLink(afxLink const *lnk);
 */
 
 #define AFX_ITERATE_ATOMIC_CHAIN(TYPE_, iterator_, link_, pChain_, mem_order_) \
-    for (afxLink const* _curr##iterator_ = atomic_load_explicit(&(pChain_)->anchor.nextA, mem_order_), \
-                      * _next##iterator_; \
+    for (afxLink const* _curr##iterator_ = atomic_load_explicit(&(pChain_)->anchor.nextA, mem_order_), * _next##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
          ((iterator_) = (TYPE_*)AFX_REBASE(_curr##iterator_, TYPE_, link_), \
           _next##iterator_ = atomic_load_explicit(&_curr##iterator_->nextA, mem_order_), 1); \
@@ -399,8 +391,7 @@ AFXINL afxLink*         AfxGetPrevLink(afxLink const *lnk);
     AFX_ITERATE_ATOMIC_CHAIN(TYPE_, iterator_, link_, pChain_, memory_order_relaxed)
 
 #define AFX_ITERATE_ATOMIC_CHAIN_B2F(TYPE_, iterator_, link_, pChain_, mem_order_) \
-    for (afxLink const* _curr##iterator_ = atomic_load_explicit(&(pChain_)->anchor.prevA, mem_order_), \
-                      * _prev##iterator_; \
+    for (afxLink const* _curr##iterator_ = atomic_load_explicit(&(pChain_)->anchor.prevA, mem_order_), * _prev##iterator_; \
          (_curr##iterator_ != &(pChain_)->anchor) && \
          ((iterator_) = (TYPE_*)AFX_REBASE(_curr##iterator_, TYPE_, link_), \
           _prev##iterator_ = atomic_load_explicit(&_curr##iterator_->prevA, mem_order_), 1); \

@@ -433,8 +433,8 @@ _ARX afxError ArxLoadMtd(arxScenario scio, afxUri const* uri, arxMtd* pMtd)
     afxString query;
     afxUri fpath, fext;
     AfxGetUriQueryString(uri, TRUE, &query);
-    AfxClipUriExtension(&fext, uri, FALSE);
-    AfxClipUriPath(&fpath, uri);
+    AfxExcerptUriExtension(&fext, uri, FALSE);
+    AfxExcerptUriPath(&fpath, uri);
 
     if (AfxIsUriBlank(&fext)) AfxThrowError();
     else if (0 != AfxCompareString(AfxGetUriString(&fext), 0, ".xml", 4, TRUE))
@@ -453,7 +453,7 @@ _ARX afxError ArxLoadMtd(arxScenario scio, afxUri const* uri, arxMtd* pMtd)
         {
             arxMtd mtd;
             afxUri fname;
-            AfxClipUriFile(&fname, uri);
+            AfxExcerptUriFile(&fname, uri);
             if (ArxAcquireMtds(scio, 1, &fname.s, NIL, &mtd))
                 AfxThrowError();
 

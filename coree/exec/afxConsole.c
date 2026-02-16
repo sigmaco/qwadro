@@ -17,7 +17,7 @@
 #define _AFX_CORE_C
 #define _AFX_CONSOLE_C
 #include "../exec/afxSystemDDK.h"
-#include "../../xss/xss.h"
+#include "../../coree/xss/xss.h"
 #include "qwadro/exec/afxConsole.h"
 
 #ifdef _AFX_CORE_C
