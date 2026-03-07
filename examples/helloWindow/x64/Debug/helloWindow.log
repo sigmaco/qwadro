@@ -1,2 +1,6 @@
-﻿lld-link : warning : /debug:fastlink unsupported; using /debug:full
+﻿..\src\helloWindow.c(108): warning : unused variable 'ct' [-Wunused-variable]
+..\src\helloWindow.c(109): warning : unused variable 'dt' [-Wunused-variable]
+..\src\helloWindow.c(35): warning : unused parameter 'argc' [-Wunused-parameter]
+..\src\helloWindow.c(35): warning : unused parameter 'argv' [-Wunused-parameter]
+lld-link : warning : /debug:fastlink unsupported; using /debug:full
   helloWindow.vcxproj -> E:\qwadro\repo\qwadro_afx\_vs17\..\qwd\w64d\helloWindow.exe

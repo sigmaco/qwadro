@@ -67,10 +67,10 @@
 #define AFX_DEFINE_STRUCT(struct_) typedef struct struct_ struct_; struct struct_ 
 #define AFX_DEFINE_STRUCT_ALIGNED(align_, struct_) typedef struct AFX_ALIGNED(align_) struct_ AFX_ALIGNED(align_) struct_; struct AFX_ALIGNED(align_) struct_ 
 #define AFX_DEFINE_UNION(union_) typedef union union_ union_; union union_ 
-#define AFX_DEFINE_UNION_ALIGNED(align_, union_) typedef  AFX_ALIGNED(align_)  union union_ union_ ; union union_ 
+#define AFX_DEFINE_UNION_ALIGNED(align_, union_) typedef union AFX_ALIGNED(align_) union_ union_ ; union AFX_ALIGNED(align_) union_ 
 
 #define AFX_DECLARE_STRUCT(struct_) typedef struct struct_ struct_ 
-#define AFX_DECLARE_STRUCT_ALIGN(align_, struct_) typedef struct AFX_ALIGNED(align_) struct_ AFX_ALIGNED(align_) struct_ 
+#define AFX_DECLARE_STRUCT_ALIGNED(align_, struct_) typedef struct AFX_ALIGNED(align_) struct_ AFX_ALIGNED(align_) struct_ 
 #define AFX_DECLARE_UNION(union_) typedef union union_ union_ 
 #define AFX_DECLARE_UNION_ALIGNED(align_, union_) typedef union AFX_ALIGNED(align_) union_ AFX_ALIGNED(align_) union_ 
 
@@ -184,6 +184,16 @@ typedef afxMask32   afxMask;
 
 #define AFX_MASK_LAST AFX_BITMASK(31)
 #define AFX_MASK_FIRST AFX_BITMASK(0)
+
+#ifdef AFX_ARCH_LE
+#   define AFX_WORD16(a, b) (afxUnit16)(((b) << 8) | (a))
+#   define AFX_WORD32(a, b, c, d) (afxUnit32)(((d) << 24) | ((c) << 16) | ((b) << 8) | (a))
+#   define AFX_WORD64(a, b, c, d, e, f, g, h) (afxUnit32)(((h) << 56) | ((g) << 48) | ((f) << 40) | ((e) << 32) | ((d) << 24) | ((c) << 16) | ((b) << 8) | (a))
+#else
+#   define AFX_WORD16(a, b, c, d) (afxUnit16)(((b) << 8) | (a))
+#   define AFX_WORD32(a, b, c, d) (afxUnit32)(((d) << 24) | ((c) << 16) | ((b) << 8) | (a))
+#   define AFX_WORD64(a, b, c, d, e, f, g, h) (afxUnit32)(((h) << 56) | ((g) << 48) | ((f) << 40) | ((e) << 32) | ((d) << 24) | ((c) << 16) | ((b) << 8) | (a))
+#endif
 
 typedef afxInt8     afxI8;
 typedef afxInt16    afxI16;

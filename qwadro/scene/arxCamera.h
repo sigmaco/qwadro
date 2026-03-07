@@ -86,7 +86,7 @@ typedef enum afxCameraFlag
 } afxCameraFlags;
 
 /// Reset a camera to its default configuration.
-ARX void ArxResetCamera(arxCamera cam);
+ARX void ArxRestoreCamera(arxCamera cam);
 
 /*
     The ArxGetCameraMatrices() method retrieves the view matrix and its inverse from the given arxCamera.
@@ -555,18 +555,13 @@ ARX void ArxComputeCameraRelativePlanarBases
 
 ARX afxError ArxAdjustCamera(arxCamera cam, avxViewport const* vp);
 
-ARX afxError ArxAttachCamera
+ARX afxError ArxSetCameraNode
 (
     arxCamera cam, 
     arxNode nod, 
     void(*sync)(arxNodular*), 
     afxFlags dagFlags, 
     afxMask dagMask
-);
-
-ARX afxError ArxDetachCamera
-(
-    arxCamera cam
 );
 
 ARX afxBool ArxGetCameraNode
@@ -579,19 +574,24 @@ ARX afxBool ArxGetCameraNode
 
 AFX_DEFINE_STRUCT(arxCameraConfig)
 {
-    avxClipSpaceDepth   csd;
-    avxCanvasConfig     ccfg;
+    avxClipSpaceDepth csd;
+    avxCanvasConfig ccfg;
+    arxNode dagNod;
+    void(*dagSync)(arxNodular*);
+    afxFlags dagFlags;
+    afxMask dagMask;
 };
 
-ARX afxError        ArxAcquireCameras
+ARX afxError ArxAcquireCameras
 (
-    arxScenario     scio, 
-    afxUnit         cnt, 
-    arxCamera       cameras[]
+    arxScenario scio, 
+    afxUnit cnt, 
+    arxCameraConfig const cfg[],
+    arxCamera cameras[]
 );
 
 /*
-    The ArxFindAllowedCameraLodError() function converts an acceptable LOD error measured in screen 
+    The ArxFindAllowedLodErrorForCamera() function converts an acceptable LOD error measured in screen 
     pixels into an equivalent world-space geometric error allowed at a given distance from the camera.
     This is used for:
         mesh LOD selection
@@ -612,7 +612,7 @@ ARX afxError        ArxAcquireCameras
     error <= 0.08 will be visually indistinguishable within the desired pixel tolerance.
 */
 
-ARX afxReal64 ArxFindAllowedCameraLodError
+ARX afxReal64 ArxFindAllowedLodErrorForCamera
 // Returns the allowed world-space geometric error at 'distanceFromCam'.
 (
     // Maximum pixel deviation allowed on screen.

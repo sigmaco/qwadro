@@ -54,7 +54,8 @@ AFX_DEFINE_STRUCT(afxCapsule)
     afxReal length;
 };
 
-#define AFX_CAPSULE(radius_, length_) (afxCapsule){ .radius = (radius_), .length = (length_) }
+#define AFX_CAPSULE(radius_, length_) \
+    (afxCapsule){ .radius = (radius_), .length = (length_) }
 
 
 // Compute Total Height

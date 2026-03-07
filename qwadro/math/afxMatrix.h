@@ -16,6 +16,61 @@
 
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
 
+/*
+    Qwadro uses its own matrix denominated as Qwatrix, it is the same matrix layout as do OpenGL. Forget about column-major vs row-major.
+    Confusions around this subject is mostly from concepts came from mathemetics, not natural and pertaining to computer science.
+
+    As OpenGL, Qwadro matrix has position in m[3][0], m[3][1], m[3][2], and m[3][3],
+    then it is stored in columns laid out horizontally (aka "transposed"), what makes it looks like row-major order while it is in fact column-major.
+
+    Column-major is thing emerged from mathematics. In programming, we are effectively working with rows, what is counterintuitive.
+
+    In OpenGL, the convention for matrices is to store them in a column-major order,
+    meaning that the matrix is stored column by column,
+    but when you look at the matrix elements like m[3][0], m[3][1], m[3][2], and m[3][3],
+    you're indexing into it as if it were a row-major matrix.
+    It is so because C 2D-array stores each column laid out horizontally, aka "transposed".
+
+    To clarify, row-major order means that the elements of each row are stored in contiguous memory locations,
+    and column-major means that the elements of each column are stored in contiguous memory locations.
+    Example, for a 4x4 matrix:
+
+    In row-major order:
+        00 ~ 16, 16 ~ 32, 32 ~ 48, 48 ~ 64
+
+        m[0][0], m[0][1], m[0][2], m[0][3]
+        m[1][0], m[1][1], m[1][2], m[1][3]
+        m[2][0], m[2][1], m[2][2], m[2][3]
+        m[3][0], m[3][1], m[3][2], m[3][3]
+
+        Laid out in a C 2D array memory:
+
+        m[0][0], m[1][0], m[2][0], m[3][0],
+        m[0][1], m[1][1], m[2][1], m[3][1]
+        m[0][2], m[1][2], m[2][2], m[3][2]
+        m[0][3], m[1][3], m[2][3], m[3][3]
+
+    In column-major order (used by OpenGL):
+        00 ~ 16, 16 ~ 32, 32 ~ 48, 48 ~ 64
+
+        m[0][0], m[1][0], m[2][0], m[3][0]
+        m[0][1], m[1][1], m[2][1], m[3][1]
+        m[0][2], m[1][2], m[2][2], m[3][2]
+        m[0][3], m[1][3], m[2][3], m[3][3]
+
+        Laid out in a C 2D array memory:
+
+        m[0][0], m[0][1], m[0][2], m[0][3]
+        m[1][0], m[1][1], m[1][2], m[1][3]
+        m[2][0], m[2][1], m[2][2], m[2][3]
+        m[3][0], m[3][1], m[3][2], m[3][3]
+
+    So, if OpenGL places values in m[3][0], m[3][1], m[3][2], and m[3][3],
+    it implies that those values are being indexed from a matrix that is stored column-major.
+    But if you are treating it as a typical array of arrays in code (e.g., C-style 2D array),
+    that would look like row-major memory storage.
+*/
+
 /**
     RenderWare uses 4x3, row-major affine matrices.
     
@@ -77,13 +132,66 @@
 #include "qwadro/math/afxQuaternion.h"
 #include "qwadro/coll/afxPlane.h"
 
-AFX afxM2d const AFX_M2D_ZERO;
-AFX afxM3d const AFX_M3D_ZERO;
-AFX afxM4d const AFX_M4D_ZERO;
+#define AFX_M2D(c0r0, c0r1, \
+                c1r0, c1r1) \
+    (afxM2d) {  { (c0r0), (c0r1) }, \
+                { (c1r0), (c1r1) } }
 
-AFX afxM2d const AFX_M2D_IDENTITY;
-AFX afxM3d const AFX_M3D_IDENTITY;
-AFX afxM4d const AFX_M4D_IDENTITY;
+#define AFX_M3D(c0r0, c0r1, c0r2, \
+                c1r0, c1r1, c1r2, \
+                c2r0, c2r1, c2r2) \
+    (afxM3d) {  { (c0r0), (c0r1), (c0r2) }, \
+                { (c1r0), (c1r1), (c1r2) }, \
+                { (c2r0), (c2r1), (c2r2) } }
+
+#define AFX_M4D(c0r0, c0r1, c0r2, c0r3, \
+                c1r0, c1r1, c1r2, c1r3, \
+                c2r0, c2r1, c2r2, c2r3, \
+                c3r0, c3r1, c3r2, c3r3) \
+    (afxM4d) {  { (c0r0), (c0r1), (c0r2), (c0r3) }, \
+                { (c1r0), (c1r1), (c1r2), (c1r3) }, \
+                { (c2r0), (c2r1), (c2r2), (c2r3) }, \
+                { (c3r0), (c3r1), (c3r2), (c3r3) } }
+
+#define AFX_M4D_LINEAR( c0r0, c0r1, c0r2, \
+                        c1r0, c1r1, c1r2, \
+                        c2r0, c2r1, c2r2) \
+    AFX_M4D((c0r0), (c0r1), (c0r2), 0, \
+            (c1r0), (c1r1), (c1r2), 0, \
+            (c2r0), (c2r1), (c2r2), 0, \
+            0, 0, 0, 1)
+
+#define AFX_M4D_AFFINE( c0r0, c0r1, c0r2, \
+                        c1r0, c1r1, c1r2, \
+                        c2r0, c2r1, c2r2, \
+                        c3r0, c3r1, c3r2) \
+    AFX_M4D((c0r0), (c0r1), (c0r2), 0, \
+            (c1r0), (c1r1), (c1r2), 0, \
+            (c2r0), (c2r1), (c2r2), 0, \
+            (c3r0), (c3r1), (c3r2), 1)
+
+#define AFX_M2D_DIAGONAL(c0r0, c1r1) \
+    AFX_M2D((c0r0), 0, \
+            0, (c1r1))
+
+#define AFX_M3D_DIAGONAL(c0r0, c1r1, c2r2) \
+    AFX_M3D((c0r0), 0, 0, \
+            0, (c1r1), 0, \
+            0, 0, (c2r2))
+
+#define AFX_M4D_DIAGONAL(c0r0, c1r1, c2r2, c3r3) \
+    AFX_M4D((c0r0), 0, 0, 0, \
+            0, (c1r1), 0, 0, \
+            0, 0, (c2r2), 0, \
+            0, 0, 0, (c3r3))
+
+#define AFX_M2D_IDENTITY AFX_M2D_DIAGONAL(1, 1)
+#define AFX_M3D_IDENTITY AFX_M3D_DIAGONAL(1, 1, 1)
+#define AFX_M4D_IDENTITY AFX_M4D_DIAGONAL(1, 1, 1, 1)
+
+#define AFX_M2D_ZERO AFX_M2D(0, 0, 0, 0)
+#define AFX_M3D_ZERO AFX_M3D(0, 0, 0, 0, 0, 0, 0, 0, 0)
+#define AFX_M4D_ZERO AFX_M4D(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 AFXINL void     AfxM2dZero(afxM2d m);
 AFXINL void     AfxM3dZero(afxM3d m);
@@ -99,15 +207,15 @@ AFXINL void     AfxM4dSet(afxM4d m, afxV4d const cx, afxV4d const cy, afxV4d con
 AFXINL void     AfxM4dSetLinear(afxM4d m, afxV3d const cx, afxV3d const cy, afxV3d const cz, afxV3d const cw);
 AFXINL void     AfxM4dSetAffine(afxM4d m, afxV3d const cx, afxV3d const cy, afxV3d const cz, afxV3d const cw);
 
-AFXINL void     AfxM2dSetDiagonal(afxM2d m, afxReal xx, afxReal yy);
-AFXINL void     AfxM3dSetDiagonal(afxM3d m, afxReal xx, afxReal yy, afxReal zz);
-AFXINL void     AfxM4dSetDiagonal(afxM4d m, afxReal xx, afxReal yy, afxReal zz, afxReal ww);
+AFXINL void     AfxM2dDiagonal(afxM2d m, afxReal xx, afxReal yy);
+AFXINL void     AfxM3dDiagonal(afxM3d m, afxReal xx, afxReal yy, afxReal zz);
+AFXINL void     AfxM4dDiagonal(afxM4d m, afxReal xx, afxReal yy, afxReal zz, afxReal ww);
 
 AFXINL void     AfxM2dSetTransposed(afxM2d m, afxV2d const rx, afxV2d const ry); // Be carefull using it in Qwadro
 AFXINL void     AfxM3dSetTransposed(afxM3d m, afxV3d const rx, afxV3d const ry, afxV3d const rz); // Be carefull using it in Qwadro
 AFXINL void     AfxM4dSetTransposed(afxM4d m, afxV4d const rx, afxV4d const ry, afxV4d const rz, afxV4d const rw);  // Be carefull using it in Qwadro
-AFXINL void     AfxM4dSetTransposedLinear(afxM4d m, afxV3d const rx, afxV3d const ry, afxV3d const rz, afxV3d const rw);
-AFXINL void     AfxM4dSetTransposedAffine(afxM4d m, afxV3d const rx, afxV3d const ry, afxV3d const rz, afxV3d const rw);
+AFXINL void     AfxM4dSetLinearTransposed(afxM4d m, afxV3d const rx, afxV3d const ry, afxV3d const rz, afxV3d const rw);
+AFXINL void     AfxM4dSetAffineTransposed(afxM4d m, afxV3d const rx, afxV3d const ry, afxV3d const rz, afxV3d const rw);
 
 AFXINL void     AfxM4dEnsureLinear(afxM4d m); // make affine and zero translation.
 AFXINL void     AfxM4dEnsureAffine(afxM4d m); // make affine.
@@ -127,17 +235,17 @@ AFXINL void     AfxM4dCopyLtm(afxM4d m, afxM4d const in); // copy only the 3x3
 AFXINL void     AfxM4dCopyAtm(afxM4d m, afxM4d const in); // copy only the 4x3
 AFXINL void     AfxM3dCopyM4d(afxM3d m, afxM4d const in);
 
-AFXINL void     AfxM4rCopy(afxM4r m, afxM4r const in);
-AFXINL void     AfxM4rCopyM3d(afxM4r m, afxM3d const in);
-AFXINL void     AfxM4rCopyM4d(afxM4r m, afxM4d const in);
+AFXINL void     AfxV3d4Copy(afxV3d4 m, afxV3d4 const in);
+AFXINL void     AfxV3d4CopyM3d(afxV3d4 m, afxM3d const in);
+AFXINL void     AfxV3d4CopyM4d(afxV3d4 m, afxM4d const in);
 
-AFXINL void     AfxM2dTranspose(afxM2d m, afxM2d const in);
-AFXINL void     AfxM3dTranspose(afxM3d m, afxM3d const in);
-AFXINL void     AfxM4dTranspose(afxM4d m, afxM4d const in);
-AFXINL void     AfxM4dTransposeAtm(afxM4d m, afxM4d const in); // only consider 4x3; ignore W components.
-AFXINL void     AfxM3dTransposeM4d(afxM3d m, afxM4d const in); // ltm will be transposed
-AFXINL void     AfxM4dTransposeLtm(afxM4d m, afxM4d const in); // only consider 3x3; ignore W components and the W row.
-AFXINL void     AfxM4dTransposeM3d(afxM4d m, afxM3d const ltm, afxV4d const atv);
+AFXINL void     AfxM2dCopyTransposed(afxM2d m, afxM2d const in);
+AFXINL void     AfxM3dCopyTransposed(afxM3d m, afxM3d const in);
+AFXINL void     AfxM4dCopyTransposed(afxM4d m, afxM4d const in);
+AFXINL void     AfxM4dCopyAtmTransposed(afxM4d m, afxM4d const in); // only consider 4x3; ignore W components.
+AFXINL void     AfxM3dCopyM4dTransposed(afxM3d m, afxM4d const in); // ltm will be transposed
+AFXINL void     AfxM4dCopyLtmTransposed(afxM4d m, afxM4d const in); // only consider 3x3; ignore W components and the W row.
+AFXINL void     AfxM4dCopyM3dTransposed(afxM4d m, afxM3d const ltm, afxV4d const atv);
 
 AFXINL afxReal  AfxM3dInvert(afxM3d m, afxM3d const in); // im = inverse of m
 AFXINL afxReal  AfxM4dInvert(afxM4d m, afxM4d const in); // im = inverse of m
@@ -171,32 +279,6 @@ AFXINL void     AfxM4dScale(afxM4d m, afxM4d const in, afxReal scale);
 AFXINL void     AfxM2dMads(afxM2d m, afxM2d const add, afxM2d const mul, afxReal scale);
 AFXINL void     AfxM3dMads(afxM3d m, afxM3d const add, afxM3d const mul, afxReal scale);
 AFXINL void     AfxM4dMads(afxM4d m, afxM4d const add, afxM4d const mul, afxReal scale);
-
-// Mix
-// The MIX function is conceptually similar to LERP but may involve additional functionality, such as more complex blending modes or different blending parameters. 
-// It is often used in shader programming and graphics.
-// v = x * (1 - t) + y * t
-
-AFXINL void     AfxM2dMix(afxM2d v, afxM2d const x, afxM2d const y, afxReal t);
-AFXINL void     AfxM3dMix(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dMix(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
-
-AFXINL void     AfxM3dMixAtm(afxM3d m, afxM3d const a, afxM3d const b, afxReal t);
-AFXINL void     AfxM4dMixAtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t);
-AFXINL void     AfxM4dMixLtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t);
-
-// Lerp
-// LERP is a method to interpolate linearly between two values. 
-// In the context of 4D vectors, it calculates the intermediate vector between a start and end vector based on a factor t ranging from 0.0 to 1.0.
-// x + t * (y - x)
-
-AFXINL void     AfxM2dLerp(afxM2d v, afxM2d const x, afxM2d const y, afxReal t);
-AFXINL void     AfxM3dLerp(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dLerp(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
-
-AFXINL void     AfxM3dLerpAtm(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dLerpAtm(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
-AFXINL void     AfxM4dLerpLtm(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Affine transformation matrix methods                                       //
@@ -272,71 +354,6 @@ AFXINL void         AfxM4dComposeAffineTransformation
     // Translation offsets.
     afxV3d const    translation
 );
-
-////////////////////////////////////////////////////////////////////////////////
-// MATRIX TRANSFORMATION METHODS                                              //
-////////////////////////////////////////////////////////////////////////////////
-
-//  --- default layout
-//  in[n][0] * by[0][0],  in[n][1] * by[1][0],  in[n][2] * by[2][0],  in[n][3] * by[3][0]
-//  in[n][0] * by[0][1],  in[n][1] * by[1][1],  in[n][2] * by[2][1],  in[n][3] * by[3][1]
-//  in[n][0] * by[0][2],  in[n][1] * by[1][2],  in[n][2] * by[2][2],  in[n][3] * by[3][2]
-//  in[n][0] * by[0][3],  in[n][1] * by[1][3],  in[n][2] * by[2][3],  in[n][3] * by[3][3]
-
-//  --- transposed layout
-//  in[0][0] * by[0][n],  in[0][1] * by[1][n],  in[0][2] * by[2][n],  in[0][3] * by[3][n]
-//  in[1][0] * by[0][n],  in[1][1] * by[1][n],  in[1][2] * by[2][n],  in[1][3] * by[3][n]
-//  in[2][0] * by[0][n],  in[2][1] * by[1][n],  in[2][2] * by[2][n],  in[2][3] * by[3][n]
-//  in[3][0] * by[0][n],  in[3][1] * by[1][n],  in[3][2] * by[2][n],  in[3][3] * by[3][n]
-
-// Computes the product of two matrices.
-
-AFXINL void     AfxM2dMultiply(afxM2d m, afxM2d const in, afxM2d const by);
-AFXINL void     AfxM3dMultiply(afxM3d m, afxM3d const in, afxM3d const by);
-AFXINL void     AfxM4dMultiply(afxM4d m, afxM4d const in, afxM4d const by);
-
-AFXINL void     AfxM3dMultiplyAtm(afxM3d m, afxM3d const in, afxM3d const by); // 2x2 subset only
-AFXINL void     AfxM4dMultiplyLtm(afxM4d m, afxM4d const in, afxM4d const by); // 3x3 subset only
-AFXINL void     AfxM4dMultiplyAtm(afxM4d m, afxM4d const in, afxM4d const by); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
-
-AFXINL void     TransposeMatrixMultiply3x3(afxM3d IntoMatrix, afxM3d const TransposedMatrix, afxM3d const ByMatrix);
-
-// Computes the transpose of the product of two matrices.
-
-AFXINL void     AfxM2dMultiplyTransposed(afxM2d m, afxM2d const in, afxM2d const by);
-AFXINL void     AfxM3dMultiplyTransposed(afxM3d m, afxM3d const in, afxM3d const by);
-AFXINL void     AfxM4dMultiplyTransposed(afxM4d m, afxM4d const in, afxM4d const by);
-
-AFXINL void     AfxM3dMultiplyTransposedAtm(afxM3d m, afxM3d const in, afxM3d const by); // 2x2 subset only
-AFXINL void     AfxM4dMultiplyTransposedLtm(afxM4d m, afxM4d const in, afxM4d const by); // 3x3 subset only of an affine transformation matrix
-AFXINL void     AfxM4dMultiplyTransposedAtm(afxM4d m, afxM4d const in, afxM4d const by); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
-
-// Matrix vs Vector
-
-AFXINL void     AfxM2dPostMultiplyV2d(afxM2d const m, afxUnit cnt, afxV2d const in[], afxV2d out[]);
-AFXINL void     AfxM3dPostMultiplyV3d(afxM3d const m, afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxM4dPostMultiplyV4d(afxM4d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-AFXINL void     AfxM3dPostMultiplyLtv4d(afxM3d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-AFXINL void     AfxM4dPostMultiplyAtv3d(afxM4d const m, afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxM4dPostMultiplyAtv4d(afxM4d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-AFXINL void     AfxM2dPreMultiplyV2d(afxM2d const m, afxUnit cnt, afxV2d const in[], afxV2d out[]);
-AFXINL void     AfxM3dPreMultiplyV3d(afxM3d const m, afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxM4dPreMultiplyV4d(afxM4d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-AFXINL void     AfxM3dPreMultiplyLtv4d(afxM3d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-AFXINL void     AfxM4dPreMultiplyAtv3d(afxM4d const m, afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxM4dPreMultiplyAtv4d(afxM4d const m, afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-
-AFXINL void     AfxM2dPostMultiplyV2dSerialized(afxM2d const m, afxUnit cnt, afxV2d const in[], afxUnit inStride, afxV2d out[], afxUnit outStride);
-AFXINL void     AfxM3dPostMultiplyV3dSerialized(afxM3d const m, afxUnit cnt, afxV3d const in[], afxUnit inStride, afxV3d out[], afxUnit outStride);
-AFXINL void     AfxM4dPostMultiplyV4dSerialized(afxM4d const m, afxUnit cnt, afxV4d const in[], afxUnit inStride, afxV4d out[], afxUnit outStride);
-
-AFXINL void     AfxM4dPostMultiplyAtv3dSerialized(afxM4d const m, afxUnit cnt, afxV3d const in[], afxUnit inStride, afxV3d out[], afxUnit outStride);
-AFXINL void     AfxM3dPostMultiplyLtv4dSerialized(afxM3d const m, afxUnit cnt, afxV4d const in[], afxUnit inStride, afxV4d out[], afxUnit outStride);
-AFXINL void     AfxM4dPostMultiplyAtv4dSerialized(afxM4d const m, afxUnit cnt, afxV4d const in[], afxUnit inStride, afxV4d out[], afxUnit outStride);
 
 // Assimilate
 

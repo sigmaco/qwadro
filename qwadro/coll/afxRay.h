@@ -51,10 +51,10 @@ AFX_STATIC_ASSERT(offsetof(afxRay, near) == 12, "");
 // afxRay.far is expected to be physically packed with afxRay.normal as an afxV4d.
 AFX_STATIC_ASSERT(offsetof(afxRay, far) == 28, "");
 
-#define AFX_RAY() (afxRay){ \
-    .origin[0] = from[0], .origin[1] = from[1], .origin[2] = from[2], .near = tnear, \
-    .normal[0] = to[0], .normal[1] = to[1], .normal[2] = to[2], .far = tfar, \
-    .t = time, .id = id, .mask = mask, .flags = flags };
+#define AFX_RAY(from, tnear, to, tfar, time, id, mask, flags) \
+    (afxRay){   .origin[0] = from[0], .origin[1] = from[1], .origin[2] = from[2], .near = tnear, \
+                .normal[0] = to[0], .normal[1] = to[1], .normal[2] = to[2], .far = tfar, \
+                .t = time, .id = id, .mask = mask, .flags = flags };
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRayHit)
 {

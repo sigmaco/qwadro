@@ -28,6 +28,8 @@
 
 AFXINL afxSphere*   AfxMakeSphere(afxSphere* sph, afxV3d const centre, afxReal radius);
 
+AFXINL afxReal      AfxGetSphereRadius(afxSphere const sph);
+
 AFXINL void         AfxGetSphereOrigin(afxSphere const sph, afxV4d centre);
 
 AFXINL afxBox       AfxGetSphereAabb(afxSphere const sph);

@@ -103,25 +103,26 @@
 typedef afxReal afxV2d[2];
 typedef afxReal afxV3d[3];
 typedef afxV3d  afxM3d[3]; // 3D Linear Transform (3x3 Matrix)
-typedef afxV3d  afxM4r[4]; // A 4x3 matrix has 4 rows and 3 columns.
+typedef afxV3d  afxV3d4[4]; // A 4x3 matrix has 4 rows and 3 columns.
 #else
 typedef afxReal AFX_SIMD afxV2d[2];
 typedef afxReal AFX_SIMD afxV3d[3];
 typedef afxV3d  AFX_SIMD afxM3d[3]; // 3D Linear Transform (3x3 Matrix)
-typedef afxV3d  AFX_SIMD afxM4r[4]; // A 4x3 matrix has 4 rows and 3 columns.
+typedef afxV3d  AFX_SIMD afxV3d4[4]; // A 4x3 matrix has 4 rows and 3 columns.
 #endif
 
 typedef afxReal AFX_SIMD afxV4d[4];
 typedef afxV2d  AFX_SIMD afxM2d[2]; // 2D Linear Transform (2x2 Matrix)
 typedef afxV4d  AFX_SIMD afxM4d[4]; // 4x4
 
-typedef afxV4d  AFX_SIMD afxM4c[3]; // A 3x4 matrix has 3 rows and 4 columns.
+typedef afxV4d  AFX_SIMD afxV4d3[3]; // A 3x4 matrix has 3 rows and 4 columns.
 
 typedef afxV4d  AFX_SIMD afxQuat; // 0,1,2 = imaginary, 3 = real
 typedef afxV4d  AFX_SIMD afxRotor; // 0,1,2 = imaginary, 3 = real
 typedef afxV4d  AFX_SIMD afxVector;
 typedef afxV4d  AFX_SIMD afxPoint;
 typedef afxM4d  AFX_SIMD afxMatrix;
+typedef afxQuat AFX_SIMD afxQuaternion;
 
 //typedef  afxUnit afxWarp[3];
 
