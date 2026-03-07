@@ -26,6 +26,61 @@
 #include "qwadro/draw/avxViewport.h"
 
 /*
+    Qwadro uses its own matrix denominated as Qwatrix, it is the same matrix layout as do OpenGL. Forget about column-major vs row-major.
+    Confusions around this subject is mostly from concepts came from mathemetics, not natural and pertaining to computer science.
+
+    As OpenGL, Qwadro matrix has position in m[3][0], m[3][1], m[3][2], and m[3][3], 
+    then it is stored in columns laid out horizontally (aka "transposed"), what makes it looks like row-major order while it is in fact column-major.
+
+    Column-major is thing emerged from mathematics. In programming, we are effectively working with rows, what is counterintuitive.
+
+    In OpenGL, the convention for matrices is to store them in a column-major order, 
+    meaning that the matrix is stored column by column, 
+    but when you look at the matrix elements like m[3][0], m[3][1], m[3][2], and m[3][3], 
+    you're indexing into it as if it were a row-major matrix.
+    It is so because C 2D-array stores each column laid out horizontally, aka "transposed".
+
+    To clarify, row-major order means that the elements of each row are stored in contiguous memory locations, 
+    and column-major means that the elements of each column are stored in contiguous memory locations.
+    Example, for a 4x4 matrix:
+
+    In row-major order:
+        00 ~ 16, 16 ~ 32, 32 ~ 48, 48 ~ 64
+
+        m[0][0], m[0][1], m[0][2], m[0][3]
+        m[1][0], m[1][1], m[1][2], m[1][3]
+        m[2][0], m[2][1], m[2][2], m[2][3]
+        m[3][0], m[3][1], m[3][2], m[3][3]
+
+        Laid out in a C 2D array memory:
+
+        m[0][0], m[1][0], m[2][0], m[3][0],
+        m[0][1], m[1][1], m[2][1], m[3][1]
+        m[0][2], m[1][2], m[2][2], m[3][2]
+        m[0][3], m[1][3], m[2][3], m[3][3]
+
+    In column-major order (used by OpenGL):
+        00 ~ 16, 16 ~ 32, 32 ~ 48, 48 ~ 64
+
+        m[0][0], m[1][0], m[2][0], m[3][0]
+        m[0][1], m[1][1], m[2][1], m[3][1]
+        m[0][2], m[1][2], m[2][2], m[3][2]
+        m[0][3], m[1][3], m[2][3], m[3][3]
+
+        Laid out in a C 2D array memory:
+
+        m[0][0], m[0][1], m[0][2], m[0][3]
+        m[1][0], m[1][1], m[1][2], m[1][3]
+        m[2][0], m[2][1], m[2][2], m[2][3]
+        m[3][0], m[3][1], m[3][2], m[3][3]
+
+    So, if OpenGL places values in m[3][0], m[3][1], m[3][2], and m[3][3], 
+    it implies that those values are being indexed from a matrix that is stored column-major. 
+    But if you are treating it as a typical array of arrays in code (e.g., C-style 2D array), 
+    that would look like row-major memory storage.
+*/
+
+/*
     Reversed Z (Inverted Z) Depth Range:
     In standard depth mapping (ZERO_TO_ONE), the near plane typically corresponds to a depth of 0 and the far plane corresponds to a depth of 1. 
     

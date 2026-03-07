@@ -956,10 +956,11 @@ AFX_OBJECT(afxDrawContext)
 {
     _avxDdiDctx const*  ddi;
     _avxIddDctx*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
+
     avxLimits const* devLimits; // dbg copies
     avxFeatures const*enabledFeatures; // dbg copies
 

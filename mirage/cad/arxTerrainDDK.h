@@ -74,10 +74,10 @@ AFX_OBJECT(arxTerrain)
 {
     _arxIddTer*         idd;
     _arxDdiTer const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxDrawSystem dsys;
     avxBuffer   vbo;
@@ -100,8 +100,11 @@ AFX_OBJECT(arxTerrain)
     afxUnit     secDepth; // sector depth
     afxUnit     rowSecCnt; // row-sectors
     afxUnit     sliceSecCnt; // slice-sectors
-    afxReal     heightScale;
+    //afxReal     heightScale;
     afxUri      heightmap;
+
+    afxV3d displace;
+    afxV3d scale;
 
     afxUnit     secCnt;
     _arxTerrSec*sectors;

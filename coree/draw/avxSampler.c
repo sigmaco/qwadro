@@ -495,7 +495,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_SAMP =
 {
     .fcc = afxFcc_SAMP,
     .name = "Sampler",
-    .desc = "Texture Sampler State Object",
+    .desc = "Fixed-Function Texture Sampler",
     .fixedSiz = sizeof(AFX_OBJECT(avxSampler)),
     .ctor = (void*)_AvxSampCtorCb,
     .dtor = (void*)_AvxSampDtorCb

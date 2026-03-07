@@ -61,10 +61,10 @@ AFX_OBJECT(afxMixDevice)
     AFX_OBJ(afxDevice)  dev;
     _amxDdiMdev const*  ddi;
     _amxIddMdev*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxAcceleration     acceleration;
     amxAptitude         capabilities;

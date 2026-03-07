@@ -20,6 +20,34 @@
 #define _ARX_CURVE_C
 #include "../scene/arxIcd.h"
 
+_ARX afxError ArxBufferizeCurve(arxCurve c, arxBufferedMap const* mmap)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_CUR, 1, &c);
+
+    if (c->mmap.buf != mmap->buf)
+    {
+        if (c->mmap.buf)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RBUF, 1, &c->mmap.buf);
+            AfxDisposeObjects(1, &c->mmap.buf);
+        }
+
+        if (mmap->buf)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RBUF, 1, &mmap->buf);
+            AfxReacquireObjects(1, &mmap->buf);
+            c->mmap.buf = mmap->buf;
+        }
+    }
+
+    c->mmap.offset = mmap->offset;
+    c->mmap.range = mmap->range;
+    c->mmap.flags = mmap->flags;
+
+    return err;
+}
+
 _ARXINL afxUnit ArxCountCurveKnots(arxCurve c)
 {
     afxError err = { 0 };
@@ -181,13 +209,17 @@ _ARXINL afxReal* ArxGetCurveKnots(arxCurve c)
     case arxCurveFormat_D3Constant32f:
     case arxCurveFormat_D4Constant32f:
     {
-        AFX_ASSERT(!c->knots);
+        AFX_ASSERT(!c->knots_);
         break;
     }
     default:break;
     }
 #endif
+#if !0
+    return ArxGetBufferData(c->mmap.buf, c->mmap.offset);
+#else
     return c->knots;
+#endif
 }
 
 _ARXINL afxReal* ArxGetCurveControls(arxCurve c)
@@ -202,7 +234,11 @@ _ARXINL afxReal* ArxGetCurveControls(arxCurve c)
     case arxCurveFormat_D4Constant32f: return c->ctrls4;
     default: break;
     }
+#if !0
+    return ArxGetBufferData(c->mmap.buf, c->mmap.offset + c->ctrlOffset);
+#else
     return c->ctrls;
+#endif
 }
 
 _ARX afxUnit ArxFindCurveKnot(arxCurve c, afxReal t)
@@ -371,9 +407,9 @@ _ARX void ArxMakeCurveDaKC32f(arxCurve c, afxUnit degree, afxUnit dim, afxUnit k
     c->degree = degree;
     c->dimens = dim; // unused
     c->knotCnt = knotCnt;
-    c->knots = (afxReal*)knots;
+    c->knots_ = (afxReal*)knots;
     c->ctrlCnt = dim * knotCnt;
-    c->ctrls = (afxReal*)ctrls;
+    c->ctrls_ = (afxReal*)ctrls;
 }
 
 // BLUEPRINT
@@ -430,6 +466,9 @@ _ARX afxError _ArxCurDtorCb(arxCurve c)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CUR, 1, &c);
 
+#if !0
+    ArxBufferizeCurve(c, &ARX_BUFFERED_MAP(0, 0, 0, 0));
+#else
     switch (c->fmt)
     {
     case arxCurveFormat_DaK32fC32f:
@@ -458,6 +497,7 @@ _ARX afxError _ArxCurDtorCb(arxCurve c)
     }
     default: break;
     }
+#endif
     return err;
 }
 
@@ -480,22 +520,26 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
     c->degree = info->degree;
     c->flags = NIL;
 
+    c->mmap = (arxBufferedMap) { 0 };
+    c->ctrlOffset = 0;
+
     switch (fmt)
     {
-    
     case arxCurveFormat_DaK32fC32f:
     {
         c->dimens = info->dimens; // unused        
         c->knotCnt = info->knotCnt;
-        c->knots = NIL;
+        c->knots_ = NIL;
         c->ctrlCnt = info->knotCnt * info->dimens;
-        c->ctrls = NIL;
+        c->ctrls_ = NIL;
 
+#if 0
         if (c->knotCnt && AfxAllocate(c->knotCnt * sizeof(c->knots[0]), 0, AfxHere(), (void**)&c->knots))
             AfxThrowError();
 
         if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
             AfxThrowError();
+#endif
 
         if (!c->knotCnt)
         {
@@ -514,9 +558,9 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
     {
         c->dimens = info->dimens;
         c->knotCnt = 0; // unused
-        c->knots = NIL; // unused
+        c->knots_ = NIL; // unused
         c->ctrlCnt = 0; // unused
-        c->ctrls = NIL; // unused
+        c->ctrls_ = NIL; // unused
         c->flags |= arxCurveFlag_IDENTITY | arxCurveFlag_CONSTANT;
         break;
     }
@@ -525,12 +569,14 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
         c->dimens = info->dimens; // unused
         c->knotCnt = info->knotCnt; // unused
         AFX_ASSERT(c->knotCnt == 1);
-        c->knots = NIL; // unused
+        c->knots_ = NIL; // unused
         c->ctrlCnt = info->dimens;
-        c->ctrls = NIL;
+        c->ctrls_ = NIL;
 
+#if 0
         if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
             AfxThrowError();
+#endif
 
         c->flags |= arxCurveFlag_CONSTANT;
         break;
@@ -540,9 +586,9 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
     {
         c->dimens = info->dimens; // unused
         c->knotCnt = 1; // unused
-        c->knots = NIL; // unused
+        c->knots_ = NIL; // unused
         c->ctrlCnt = 0; // unused
-        c->ctrls = NIL; // unused
+        c->ctrls_ = NIL; // unused
         c->flags |= arxCurveFlag_CONSTANT;
         break;
     }
@@ -551,14 +597,16 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
         c->dimens = info->dimens;
         c->flags |= arxCurveFlag_KEYFRAMED;
         c->knotCnt = info->knotCnt; // unused
-        c->knots = NIL; // unused
+        c->knots_ = NIL; // unused
         c->ctrlCnt = info->dimens * info->knotCnt;
-        c->ctrls = NIL;
+        c->ctrls_ = NIL;
 
         AFX_ASSERT(c->knotCnt == c->ctrlCnt / c->dimens);
 
+#if 0
         if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
             AfxThrowError();
+#endif
 
         break;
     }
@@ -580,6 +628,96 @@ _ARX afxClassConfig const _ARX_CUR_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
+_ARXINL afxUnit CurveCalcBufferSize(arxCurve c)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_CUR, 1, &c);
+    afxUnit size = 0;
+
+    switch (c->fmt)
+    {
+    case arxCurveFormat_DaK32fC32f:
+    {
+        size += AFX_ALIGN_SIZE(c->knotCnt * sizeof(afxReal), AFX_SIMD_ALIGNMENT);
+
+        c->ctrlOffset = size;
+
+        size += AFX_ALIGN_SIZE(c->ctrlCnt * sizeof(afxReal), AFX_SIMD_ALIGNMENT);
+        break;
+    }
+    case arxCurveFormat_DaConstant32f:
+    {
+        size += AFX_ALIGN_SIZE(c->ctrlCnt * sizeof(afxReal), AFX_SIMD_ALIGNMENT);
+        break;
+    }
+    case arxCurveFormat_DaKeyframes32f:
+    {
+        size += AFX_ALIGN_SIZE(c->ctrlCnt * sizeof(afxReal), AFX_SIMD_ALIGNMENT);
+        break;
+    }
+    default: break;
+    }
+    return size;
+}
+
+_ARX afxError ArxAllocateCurves(arxScenario scio, afxBool monolith, afxUnit cnt, arxCurve curves[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+
+    arxBufferInfo bufi = { 0 };
+    bufi.usage = arxBufferUsage_CURVE;
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        arxCurve c = curves[i];
+
+        bufi.size += CurveCalcBufferSize(c);
+
+        if (monolith) continue;
+
+        arxBuffer buf;
+        if (ArxAcquireBuffers(scio, 1, &bufi, &buf))
+        {
+            AfxThrowError();
+            // TODO: release buffers previously acquired.
+        }
+        else
+        {
+            ArxBufferizeCurve(c, &ARX_BUFFERED_MAP(buf, 0, bufi.size, NIL));
+            AfxDisposeObjects(1, &buf);
+
+            // zero to the next buffer
+            bufi.size = 0;
+        }
+    }
+
+    if (monolith)
+    {
+        arxBuffer buf;
+        if (ArxAcquireBuffers(scio, 1, &bufi, &buf))
+        {
+            AfxThrowError();
+            
+            // Early exit.
+            return err;
+        }
+
+        afxSize base = 0;
+        for (afxUnit i = 0; i < cnt; i++)
+        {
+            arxCurve c = curves[i];
+
+            afxUnit range = CurveCalcBufferSize(c);
+            ArxBufferizeCurve(c, &ARX_BUFFERED_MAP(buf, base, range, NIL));
+            base += range;
+        }
+
+        AfxDisposeObjects(1, &buf);
+    }
+    return err;
+}
+
 _ARX afxError ArxAcquireCurves(arxScenario scio, afxUnit cnt, arxCurveInfo const infos[], arxCurve curves[])
 {
     afxError err = { 0 };
@@ -591,58 +729,62 @@ _ARX afxError ArxAcquireCurves(arxScenario scio, afxUnit cnt, arxCurveInfo const
     if (AfxAcquireObjects(cls, cnt, (afxObject*)curves, (void const*[]) { scio, infos }))
     {
         AfxThrowError();
+        return err;
     }
-    else
+
+    if (err) return err;
+
+    if (ArxAllocateCurves(scio, TRUE, cnt, curves))
     {
+        AfxDisposeObjects(cnt, curves);
+        return err;
+    }
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        arxCurve c = curves[i];
+        arxCurveFormat fmt = c->fmt;
+        arxCurveInfo const* info = &infos[i];
+        afxReal const* ctrlArray = info->ctrls;
+
+        if (!info->src)
+        {
+            if (!ctrlArray)
+            {
+                if (info->knotCnt)
+                    AfxThrowError();
+            }
+            else
+            {
+                if (!info->knots)
+                {
+                    if (info->knotCnt != 1 && (info->degree || fmt))
+                        AfxThrowError();
+                }
+            }
+        }
+
         if (!err)
         {
-            for (afxUnit i = 0; i < cnt; i++)
+            if ((info->sampleCnt != (afxUnit)-1) && info->origSamples)
             {
-                arxCurve c = curves[i];
-                arxCurveFormat fmt = c->fmt;
-                arxCurveInfo const* info = &infos[i];
-                afxReal const* ctrlArray = info->ctrls;
+                AfxThrowError();
+                //((void(__cdecl *)(arxCurve*, int, int, const float *))*(f))(c, sampleCnt, info->sampleDimension, info->originalSamples);
+            }
 
-                if (!info->src)
+            if (info->src)
+            {
+                ArxCopyCurve(c, info->src);
+            }
+            else
+            {
+                if (fmt != arxCurveFormat_DaKeyframes32f)
                 {
-                    if (!ctrlArray)
-                    {
-                        if (info->knotCnt)
-                            AfxThrowError();
-                    }
-                    else
-                    {
-                        if (!info->knots)
-                        {
-                            if (info->knotCnt != 1 && (info->degree || fmt))
-                                AfxThrowError();
-                        }
-                    }
+                    ArxUpdateCurveKnots(c, info->knotCnt, info->dimens, info->knots, info->ctrls);
                 }
-
-                if (!err)
+                else
                 {
-                    if ((info->sampleCnt != (afxUnit)-1) && info->origSamples)
-                    {
-                        AfxThrowError();
-                        //((void(__cdecl *)(arxCurve*, int, int, const float *))*(f))(c, sampleCnt, info->sampleDimension, info->originalSamples);
-                    }
-
-                    if (info->src)
-                    {
-                        ArxCopyCurve(c, info->src);
-                    }
-                    else
-                    {
-                        if (fmt != arxCurveFormat_DaKeyframes32f)
-                        {
-                            ArxUpdateCurveKnots(c, info->knotCnt, info->dimens, info->knots, info->ctrls);
-                        }
-                        else
-                        {
-                            ArxUpdateCurveKnots(c, info->knotCnt, info->dimens, info->knots ? info->knots : (afxReal const[]) { 0.f }, info->ctrls);
-                        }
-                    }
+                    ArxUpdateCurveKnots(c, info->knotCnt, info->dimens, info->knots ? info->knots : (afxReal const[]) { 0.f }, info->ctrls);
                 }
             }
         }

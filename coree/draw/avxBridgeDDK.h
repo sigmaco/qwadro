@@ -55,10 +55,10 @@ AFX_OBJECT(afxDrawBridge)
 {
     _avxDdiDexu const*  ddi;
     _avxIddDexu*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxDrawDevice       ddev;
     //afxUnit         portId;

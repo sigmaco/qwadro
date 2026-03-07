@@ -57,10 +57,10 @@ AFX_OBJECT(afxWarpDevice)
     AFX_OBJ(afxDevice)  dev;
     _acxDdiSdev const*  ddi;
     _acxIddSdev*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxAcceleration     acceleration;
     acxAptitude         capabilities;

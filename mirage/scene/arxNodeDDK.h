@@ -45,6 +45,7 @@ AFX_OBJECT(arxNode)
     afxLink         parent;
     afxChain        children;
     afxChain        nodulars;
+    afxAabb         aabb;
 
     // ARX
     // Unlike RenderWare, Qwadro uses a afxTransform to work with node transformation to avoid orthonormalizations required in RW.

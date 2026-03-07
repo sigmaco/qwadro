@@ -38,6 +38,9 @@
 #include "qwadro/math/afxVector.h"
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/math/afxQuaternion.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
+#include "qwadro/math/afxTransformation.h"
 
 typedef enum afxDof
 {
@@ -92,14 +95,22 @@ typedef enum afxTransformFlag
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxTransform)
 {
+    // WARN: When I replace oq by pv and flags, there is a issue deforming geometries. I can not identify why.
     afxQuat             oq;
     afxV3d              pv; // @ 16
     afxTransformFlags   flags; // @ 28
     afxM3d              ssm; // @ 32
 };
 
-AFX afxTransform const AFX_TRANSFORM_ZERO;
-AFX afxTransform const AFX_TRANSFORM_IDENTITY;
+typedef struct afxTransform afxXform;
+
+#define AFX_TRANSFORM_ZERO (afxTransform) { \
+    .pv = { 0.f, 0.f, 0.f }, .flags = NIL, .oq = { 0.f, 0.f, 0.f, 0.f }, \
+    .ssm = { { 0.f, 0.f, 0.f}, { 0.f, 0.f, 0.f}, { 0.f, 0.f, 0.f } } }
+
+#define AFX_TRANSFORM_IDENTITY (afxTransform) { \
+    .pv = { 0.f, 0.f, 0.f }, .flags = NIL, .oq = { 0.f, 0.f, 0.f, 1.f }, \
+    .ssm = { { 1.f, 0.f, 0.f}, { 0.f, 1.f, 0.f}, { 0.f, 0.f, 1.f } } }
 
 // You can initialize a afxTransform to the identity transform like this:
 
@@ -113,6 +124,12 @@ AFXINL afxBool  AfxCopyRigidTransform(afxTransform* t, afxTransform const *in);
 AFXINL afxBool  AfxMakeTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxM3d const scaleShear, afxBool check);
 
 AFXINL afxBool  AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxBool check);
+AFXINL afxBool  AfxMakeRigidTransformScaled(afxTransform* t, afxV3d const pos, afxQuat const orient, afxV3d const scale, afxBool check);
+
+AFXINL afxBool  AfxSetPosition(afxTransform* t, afxV3d const pos, afxBool check);
+AFXINL afxBool  AfxSetOrientation(afxTransform* t, afxQuat const orient, afxBool check);
+AFXINL afxBool  AfxSetScale(afxTransform* t, afxV3d const scale, afxBool check);
+AFXINL afxBool  AfxSetScaleShearing(afxTransform* t, afxM3d const ssm, afxBool check);
 
 AFXINL void     AfxEnforceTransformDofs(afxTransform* t, afxDof allowedDofs);
 
@@ -136,14 +153,15 @@ AFXINL void     AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const 
 
 AFXINL void     AfxAssimilateTransforms(afxM3d const ltm, afxM3d const iltm, afxV4d const atv, afxUnit cnt, afxTransform const in[], afxTransform out[]);
 
+AFXINL void     AfxComputeCompositeTransformM3d(afxTransform const* t, afxM3d m);
 AFXINL void     AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m); // build composite transform 4x4
-AFXINL void     AfxComputeCompositeTransformM4dc(afxTransform const* t, afxM4r m); // build composite transform 4x3 (compact matrix)
+AFXINL void     AfxComputeCompositeTransformM4dc(afxTransform const* t, afxV3d4 m); // build composite transform 4x3 (compact matrix)
 
 AFXINL void BuildIdentityWorldPoseOnly_Generic(afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionWorldPoseOnly_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildFullWorldPoseOnly_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix);
 AFXINL void BuildSingleCompositeFromWorldPose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4d ResultComposite);
-AFXINL void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4r ResultComposite3x4);
+AFXINL void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxV3d4 ResultComposite3x4);
 AFXINL void BuildIdentityWorldPoseComposite_Generic(afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
 AFXINL void BuildPositionWorldPoseComposite_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);
 AFXINL void BuildFullWorldPoseComposite_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix);

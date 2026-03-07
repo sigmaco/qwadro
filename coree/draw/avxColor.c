@@ -33,7 +33,7 @@ _AVXINL void AvxResetColor(avxColor c)
 {
     afxError err = { 0 };
     AFX_ASSERT(c);
-    AfxResetV4d(c);
+    AfxV4dReset(c);
 }
 
 _AVXINL void AvxMakeColor(avxColor c, afxReal r, afxReal g, afxReal b, afxReal a)

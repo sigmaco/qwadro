@@ -83,10 +83,10 @@ AFX_OBJECT(avxLigature)
 {
     _avxDdiLiga const*  ddi;
     _avxIddLiga*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxFlags            flags;
     afxUnit             pushCnt;

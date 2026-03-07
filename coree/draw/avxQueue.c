@@ -827,7 +827,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DQUE =
 {
     .fcc = afxFcc_DQUE,
     .name = "DrawQueue",
-    .desc = "Draw Device Queue",
+    .desc = "Device-Execution Queue",
     .fixedSiz = sizeof(AFX_OBJECT(afxDrawQueue)),
     .ctor = (void*)_AvxDqueCtorCb,
     .dtor = (void*)_AvxDqueDtorCb

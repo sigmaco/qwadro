@@ -37,10 +37,17 @@
 #define AFX_NUM_BOX_EDGE_VERTICES (24)
 #define AFX_NUM_BOX_FACE_VERTICES (36)
 
-#define AFX_AABB(minX_, minY_, minZ_, maxX_, maxY_, maxZ_) \
-    (afxBox){ .min = { (minX_), (minY_), (minZ_) }, .max = { (maxX_), (maxY_), (maxZ_) } }
+#define AFX_AABB(   minX_, minY_, minZ_, \
+                    maxX_, maxY_, maxZ_) \
+    (afxBox){   .min = { (minX_), (minY_), (minZ_), 1 }, \
+                .max = { (maxX_), (maxY_), (maxZ_), 1 } }
 
-AFX afxBox const    AFX_AABB_IDENTITY;
+#define AFX_AABB_EMPTY AFX_AABB(0, 0, 0, 0, 0, 0)
+#define AFX_AABB_IDENTITY AFX_AABB_EMPTY
+
+// A "void AABB" is a axis-aligned bounding box initialized with extreme values meaning no volume. 
+// A AABB is valid only if min is less or equal to max.
+#define AFX_AABB_VOID AFX_AABB(AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX)
 
 /// Automaticallly constructs an AABB from a list of vertex positions only.
 AFXINL void         AfxMakeAabb(afxBox* bb, afxUnit cnt, afxV3d const points[]);

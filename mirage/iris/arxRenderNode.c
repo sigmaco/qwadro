@@ -33,6 +33,15 @@ _ARX afxError ArxCmdRenderNode(arxRenderContext rctx, afxUnit cnt, arxNode nodes
         if (!nod) continue;
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
 
+        arxNodular* nodu;
+        AFX_ITERATE_CHAIN(nodu, nod, &nod->nodulars)
+        {
+            if (nodu->mask)
+            {
+
+            }
+        }
+
         if (nod->type == arxNodeType_Leaf_AnimBlend)
         {
             arxPuppet pup = nod->pup;

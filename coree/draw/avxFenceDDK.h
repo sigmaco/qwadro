@@ -46,10 +46,10 @@ AFX_OBJECT(avxFence)
 {
     _avxDdiFenc const*  ddi;
     _avxIddFenc*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     avxFenceFlags       flags;
     afxAtom32           signaled;

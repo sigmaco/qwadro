@@ -38,7 +38,7 @@ _ARX void ArxQuadrantSet(asxQuadrant* q, afxBool isChanged)
 
     q->changed = isChanged;
 
-    for (afxUnit i = 0; i < /* it is always a quadtree*/ 4; i++)
+    for (afxUnit i = 0; i < AFX_QUADTREE_QUADRANTS; i++)
     {
         q->minX[i] = AFX_R32_MAX;
         q->minY[i] = AFX_R32_MAX;
@@ -48,6 +48,21 @@ _ARX void ArxQuadrantSet(asxQuadrant* q, afxBool isChanged)
         q->maxZ[i] = -AFX_R32_MAX;
         q->childId[i] = AFX_INVALID_INDEX;
     }
+}
+
+_ARX void ArxQuadrantMergeChildBounds(asxQuadrant* q, afxUnit idx, afxBox const* bounds)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(q);
+
+    q->maxZ[idx] = AFX_MIN(q->maxZ[idx], bounds->max[2]);
+    q->maxY[idx] = AFX_MIN(q->maxY[idx], bounds->max[1]);
+    q->maxX[idx] = AFX_MIN(q->maxX[idx], bounds->max[0]);
+
+    q->minZ[idx] = AFX_MIN(q->minZ[idx], bounds->min[2]);
+    q->minY[idx] = AFX_MIN(q->minY[idx], bounds->min[1]);
+    q->minX[idx] = AFX_MIN(q->minX[idx], bounds->min[0]);
+
 }
 
 _ARX void ArxQuadrantSetChildBounds(asxQuadrant* q, afxUnit idx, afxBox const* bounds)
@@ -90,7 +105,7 @@ _ARX void ArxQuadrantGetBounds(asxQuadrant* q, afxBox* bounds)
 
     ArxQuadrantGetChildBounds(q, 0, bounds);
 
-    for (afxUnit i = 1; i < /* it is always a quadtree*/ 4; i++)
+    for (afxUnit i = 1; i < AFX_QUADTREE_QUADRANTS; i++)
     {
         afxBox aabb;
         ArxQuadrantGetChildBounds(q, i, &aabb);
@@ -98,18 +113,30 @@ _ARX void ArxQuadrantGetBounds(asxQuadrant* q, afxBox* bounds)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 _ARX void ArxDeployQuadtree(asxQuadtree* tree, afxRect* bounds)
 {
+    afxError err = { 0 };
+    AFX_ASSERT(tree);
     //tree->root.bounds = *bounds;
     //tree->root.parentIdx = AFX_INVALID_INDEX;
 
-    for (afxUnit i = 0; i < /* it is always a quadtree*/ 4; i++)
+    for (afxUnit i = 0; i < AFX_QUADTREE_QUADRANTS; i++)
     {
         //tree->
         //tree->root.childId[i] = AFX_INVALID_INDEX;
     }
 
+    ArxQuadrantSet(&tree->root, TRUE);
     AfxMakeChain(&tree->root.contents, tree);
-    AfxSetUpPool(&tree->quadrants, sizeof(asxQuadtree), /* it is always a quadtree*/ 4, AFX_SIMD_ALIGNMENT);
+    AfxSetUpPool(&tree->quadrants, sizeof(asxQuadtree), AFX_QUADTREE_QUADRANTS * 4, AFX_SIMD_ALIGNMENT);
 }
 
+_ARX afxError ArxExhaustQuadtree(asxQuadtree* tree)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(tree);
+    AfxExhaustPool(&tree->quadrants, FALSE);
+    return err;
+}

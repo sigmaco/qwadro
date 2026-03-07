@@ -234,9 +234,9 @@ _ARX afxUnit ArxGetBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit bone
         }
         break;
     }
-    case sizeof(afxM4r) :
+    case sizeof(afxV3d4) :
     {
-        afxM4r* dst = (afxM4r*)matrices;
+        afxV3d4* dst = (afxV3d4*)matrices;
 
         for (afxUnit i = 0; i < boneCnt; i++)
         {
@@ -297,9 +297,9 @@ _ARX afxError ArxReplaceBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit
         }
         break;
     }
-    case sizeof(afxM4r) :
+    case sizeof(afxV3d4) :
     {
-        afxM4r const* src = (afxM4r const*)matrices;
+        afxV3d4 const* src = (afxV3d4 const*)matrices;
 
         for (afxUnit i = 0; i < boneCnt; i++)
         {

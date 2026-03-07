@@ -116,7 +116,7 @@ ARX afxBool ArxGetPuppetPose
     arxPosture* placement
 );
 
-ARX afxError ArxAttachPuppet
+ARX afxError ArxSetPuppetNode
 (
     arxPuppet pup, 
     arxNode nod, 
@@ -125,10 +125,8 @@ ARX afxError ArxAttachPuppet
     afxMask dagMask
 );
 
-ARX afxError ArxDetachPuppet
-(
-    arxPuppet pup
-);
+
+ARX afxBool ArxGetPuppetNode(arxPuppet pup, arxNode* node);
 
 ////////////////////////////////////////////////////////////////////////////////
 

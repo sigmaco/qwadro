@@ -25,10 +25,9 @@ AFX_DEFINE_STRUCT(arxTerrainConfig)
 {
     afxUnit width;
     afxUnit depth;
-    afxUnit secWidth;
-    afxUnit secHeight;
-    afxUri  heightmap;
-    afxReal heightScale;
+    afxUnit blockSiz;
+    afxV3d displace;
+    afxV3d scale;
 };
 
 ARX afxError ArxResetTerrainSector

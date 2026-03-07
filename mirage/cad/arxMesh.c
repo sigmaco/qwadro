@@ -465,6 +465,7 @@ _ARXINL void* ArxAccessVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
     return data;
 }
 
+#if !0
 _ARXINL afxError ArxInvertVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, afxUnit baseVtx, afxUnit vtxCnt)
 {
     afxError err = { 0 };
@@ -560,6 +561,7 @@ _ARXINL afxError ArxNormalizeVertexData(arxMesh msh, afxUnit attrIdx, afxUnit mo
     msh->attrInfo[attrIdx].aabbUpdReq = TRUE;
     return err;
 }
+#endif
 
 _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit baseSecIdx, afxUnit cnt, afxUnit posAttrIdx)
 {
@@ -720,6 +722,19 @@ _ARXINL afxError ArxRecomputeMeshTangents(arxMesh msh, afxUnit morphIdx, afxUnit
 
     ArxComputeTriangleTangents(mshi.triCnt, indices, sizeof(indices[0]), pos, sizeof(pos[0]), uv, sizeof(uv), FALSE, tan, sizeof(tan), bit, sizeof(bit));
     
+    return err;
+}
+
+_ARX afxError ArxBindMeshBuffer(arxMesh msh, afxUnit base, afxUnit cnt, arxBufferedMap buffers[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MSH, 1, &msh);
+
+    // vertices
+    // indices
+    // edges/trianges
+    // aabbs
+
     return err;
 }
 

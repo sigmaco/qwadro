@@ -42,8 +42,9 @@ AFX_DEFINE_STRUCT(afxDesktop) // DWM
 
 AFX_DEFINE_STRUCT(_auxEnvAcq)
 {
-    void*               udd;
     afxString           tag;
+    void*               udd;
+
     afxString           name;
     afxUnit             seatCnt;
     afxSeatConfig const*seats;
@@ -135,10 +136,10 @@ AFX_OBJECT(afxEnvironment)
 {
     _auxIddEnv*         idd;
     _auxDdiEnv const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxString512        name;
 

@@ -88,7 +88,10 @@ typedef enum arxNodeFlag
     arxNodeFlag_CROSS   = AFX_BITMASK(8),
 
     // Node is a pose blending node.
-    arxNodeFlag_BLEND   = AFX_BITMASK(9)
+    arxNodeFlag_BLEND   = AFX_BITMASK(9),
+
+    // requires recalculation of bounds
+    arxNodeFlag_FIT     = AFX_BITMASK(10)
 } arxNodeFlag;
 
 AFX_DEFINE_STRUCT(arxNodular)
@@ -97,7 +100,10 @@ AFX_DEFINE_STRUCT(arxNodular)
     void        (*sync)(arxNodular*);
     afxFlags    flags;
     afxMask     mask;
+    afxAabb     aabb;
 };
+
+ARX afxError ArxDamageNode(arxNode nod);
 
 ARX arxNode ArxGetRootNode(arxNode nod);
 ARX arxNode ArxGetParentNode(arxNode nod);
@@ -105,18 +111,22 @@ ARX afxBool ArxGetParentNode2(arxNode nod, arxNode* parent);
 
 ARX afxError ArxSetParentNode(arxNode nod, arxNode parent);
 
+// Node-Transformation operations
+
 ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t);
 ARX void    ArxGetNodeTransform(arxNode nod, afxTransform* t);
 
-ARX afxError ArxStepDag(arxNode nod, afxReal /* NOT delta*/ time);
-
-ARX afxError ArxSampleDag(arxNode nod, afxReal allowedErr, arxPose pose, afxUnit jntCnt, afxUnit const sparseJntMap[], void* cache);
+ARX void    ArxGetNodeMatrix(arxNode nod, afxM4d m);
 
 ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d translation, afxV3d rotation);
 
 ARX afxError ArxComputeDagMotionMatrix(arxNode nod, afxReal secsElapsed, afxBool inv, afxM4d const mm, afxM4d m);
 
-ARX void    ArxGetNodeMatrix(arxNode nod, afxM4d m);
+// 
+
+ARX afxError ArxStepDag(arxNode nod, afxReal /* NOT delta*/ time);
+
+ARX afxError ArxSampleDag(arxNode nod, afxReal allowedErr, arxPose pose, afxUnit jntCnt, afxUnit const sparseJntMap[], void* cache);
 
 ARX afxError ArxRelinkDagPose(arxNode nod, arxPose pose);
 

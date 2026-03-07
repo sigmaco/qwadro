@@ -68,10 +68,10 @@ AFX_OBJECT(arxGesture)
 {
     _arxIddGes*         idd;
     _arxDdiGes const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // Gesture? Motion of body
 

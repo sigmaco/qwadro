@@ -39,10 +39,10 @@ AFX_OBJECT(avxQueryPool)
 {
     _avxDdiQryp const*  ddi;
     _avxIddQryp*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     avxQueryType        type;
     afxUnit             slotCnt;

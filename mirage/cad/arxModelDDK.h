@@ -39,10 +39,10 @@ AFX_OBJECT(arxMeshLinkage)
 {
     _arxIddMshl*         idd;
     _arxDdiMshl const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     arxMesh         msh;
     arxModel        mdl; // arxModel.rigs;

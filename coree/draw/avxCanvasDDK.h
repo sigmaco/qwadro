@@ -54,10 +54,10 @@ AFX_OBJECT(avxCanvas)
 {
     _avxDdiCanv const*  ddi;
     _avxIddCanv*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     avxCanvasFlags      flags;
     avxRange            whdMin; // when a user-provided raster are attached

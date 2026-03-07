@@ -124,10 +124,10 @@ AFX_OBJECT(afxDrawSystem)
 
     _avxDdiDsys const*  ddi;
     _avxIddDsys*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxBool             running;
     afxUnit             bridgeCnt; // one per bridge

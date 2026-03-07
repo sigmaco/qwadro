@@ -38,10 +38,10 @@ AFX_OBJECT(avxRaster)
 {
     _avxDdiRas const*   ddi;
     _avxIddRas*         idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     avxRaster           base; // sub
     avxRasterFlags      flags;

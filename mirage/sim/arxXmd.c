@@ -112,7 +112,7 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
     afxTransform locals[256];
     afxUnit parents[256];
     afxReal lodErrors[256];
-    afxM4r iws[256];
+    afxV3d4 iws[256];
     afxUri meshes[256];
 
     afxXmlNode const* child;
@@ -131,7 +131,7 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
             afxV3d scale = { 1, 1, 1 };
             afxReal lodError = -1.0;
             afxUnit parentIdx = AFX_INVALID_INDEX;
-            afxM4r iw = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0 } };
+            afxV3d4 iw = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0 } };
             afxString id = { 0 };
 
             AFX_ITERATE_CHAIN_B2F_B(a, elem, &xml->attributes)
@@ -184,7 +184,7 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
             afxM3d ss;
             AfxM3dScaling(ss, scale);
             AfxMakeTransform(&locals[jointCnt], position, orientation, ss, TRUE);
-            AfxM4rCopy(iws[jointCnt], iw);
+            AfxV3d4Copy(iws[jointCnt], iw);
             lodErrors[jointCnt] = lodError;
             parents[jointCnt] = parentIdx;
             joints[jointCnt] = id;

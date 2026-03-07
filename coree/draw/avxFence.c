@@ -113,7 +113,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_FENC =
 {
     .fcc = afxFcc_FENC,
     .name = "Fence",
-    .desc = "Synchronization Fence",
+    .desc = "Device-Synchronization Fence",
     .fixedSiz = sizeof(AFX_OBJECT(avxFence)),
     .ctor = (void*)_AvxFencCtorCb,
     .dtor = (void*)_AvxFencDtorCb

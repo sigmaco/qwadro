@@ -39,10 +39,10 @@ AFX_OBJECT(avxSampler)
 {
     _avxDdiSamp const*  ddi;
     _avxIddSamp*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxUnit32           crc;
     afxFlags            flags;

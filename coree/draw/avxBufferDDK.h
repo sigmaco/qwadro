@@ -38,10 +38,10 @@ AFX_OBJECT(avxBuffer)
 {
     _avxDdiBuf const*   ddi;
     _avxIddBuf*         idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     avxBuffer           base; // handle used by subacquision of another buffer
     afxSize             from; // offset used by subacquision of another buffer

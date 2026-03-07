@@ -49,10 +49,10 @@ AFX_OBJECT(arxMesh)
 {
     _arxIddMsh*         idd;
     _arxDdiMsh const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // TOPOLOGY DATA
     arxMeshFlags        flags;

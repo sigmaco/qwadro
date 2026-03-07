@@ -46,10 +46,10 @@ AFX_OBJECT(afxDrawQueue)
 {
     _avxDdiDque const*  ddi;
     _avxIddDque*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxDrawDevice       ddev;
     //afxUnit           portId;

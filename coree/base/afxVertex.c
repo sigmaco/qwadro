@@ -17,6 +17,10 @@
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
 
 #include "qwadro/math/afxVertex.h"
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
+
 
 _AFXINL afxReal AfxGetDistanceBetweenV3d(afxV3d const v, afxV3d const other)
 {
@@ -61,157 +65,6 @@ _AFXINL void AfxExtractNormalV3dComponents(afxV3d const v, afxV3d const normal, 
     AfxV3dSub(perpendicular, v, parallel);
 }
 
-// Hermite
-
-_AFXINL void AfxHermiteV2d(afxV2d v, afxV2d const posA, afxV2d const tanA, afxV2d const posB, afxV2d const tanB, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
-
-    // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV2d pa, ta, pb, tb;
-    AfxFillV2d(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxFillV2d(ta, t3 - 2.f * t2 + t);
-    AfxFillV2d(pb, -2.f * t3 + 3.f * t2);
-    AfxFillV2d(tb, t3 - t2);
-
-    AfxV2dMultiply(v, pa, posA);
-    AfxV2dMad(v, v, ta, ta);
-    AfxV2dMad(v, v, pb, pb);
-    AfxV2dMad(v, v, tb, tb);
-}
-
-_AFXINL void AfxHermiteV3d(afxV3d v, afxV3d const posA, afxV3d const tanA, afxV3d const posB, afxV3d const tanB, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
-
-    // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV3d pa, ta, pb, tb;
-    AfxFillV3d(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxFillV3d(ta, t3 - 2.f * t2 + t);
-    AfxFillV3d(pb, -2.f * t3 + 3.f * t2);
-    AfxFillV3d(tb, t3 - t2);
-
-    AfxV3dMultiply(v, pa, posA);
-    AfxV3dMad(v, v, ta, ta);
-    AfxV3dMad(v, v, pb, pb);
-    AfxV3dMad(v, v, tb, tb);
-}
-
-_AFXINL void AfxHermiteV4d(afxV4d v, afxV4d const posA, afxV4d const tanA, afxV4d const posB, afxV4d const tanB, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
-
-    // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV4d pa, ta, pb, tb;
-    AfxFillV4d(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxFillV4d(ta, t3 - 2.f * t2 + t);
-    AfxFillV4d(pb, -2.f * t3 + 3.f * t2);
-    AfxFillV4d(tb, t3 - t2);
-
-    AfxV4dMultiply(v, pa, posA);
-    AfxV4dMad(v, v, ta, ta);
-    AfxV4dMad(v, v, pb, pb);
-    AfxV4dMad(v, v, tb, tb);
-}
-
-/// Catmull-Rom splines are a family of cubic interpolating splines formulated such that the tangent at each point Pi is calculated using the previous and next point on the spline, T(Pi + 1 - Pi - 1).
-/// The geometry matrix.
-
-// CatmullRom
-
-_AFXINL void AfxCatmullV2d(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const d, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
-    // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV2d pa, pb, pc, pd;
-    AfxFillV2d(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxFillV2d(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxFillV2d(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxFillV2d(pd, (t3 - t2) * 0.5f);
-
-    AfxV2dMultiply(v, pa, a);
-    AfxV2dMad(v, v, pb, b);
-    AfxV2dMad(v, v, pc, c);
-    AfxV2dMad(v, v, pd, d);
-}
-
-_AFXINL void AfxCatmullV3d(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const d, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
-    // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV3d pa, pb, pc, pd;
-    AfxFillV3d(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxFillV3d(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxFillV3d(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxFillV3d(pd, (t3 - t2) * 0.5f);
-
-    AfxV3dMultiply(v, pa, a);
-    AfxV3dMad(v, v, pb, b);
-    AfxV3dMad(v, v, pc, c);
-    AfxV3dMad(v, v, pd, d);
-}
-
-_AFXINL void AfxCatmullV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const d, afxReal t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
-    // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
-
-    afxReal t2 = t * t, t3 = t * t2;
-    afxV4d pa, pb, pc, pd;
-    AfxFillV4d(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxFillV4d(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxFillV4d(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxFillV4d(pd, (t3 - t2) * 0.5f);
-
-    AfxV4dMultiply(v, pa, a);
-    AfxV4dMad(v, v, pb, b);
-    AfxV4dMad(v, v, pc, c);
-    AfxV4dMad(v, v, pd, d);
-}
-
 // Reflect
 
 _AFXINL void AfxReflectV2d(afxV2d v, afxV2d const incident, afxV2d const normal)
@@ -223,7 +76,7 @@ _AFXINL void AfxReflectV2d(afxV2d v, afxV2d const incident, afxV2d const normal)
 
     // v = incident - (2 * dot(incident, normal)) * normal
 
-    AfxFillV2d(v, AfxV2dDot(incident, normal));
+    AfxV2dFill(v, AfxV2dDot(incident, normal));
     AfxV2dAdd(v, v, v);
     AfxV2dResub(v, v, normal, incident);
 }
@@ -237,7 +90,7 @@ _AFXINL void AfxReflectV3d(afxV3d v, afxV3d const incident, afxV3d const normal)
 
     // v = incident - (2 * dot(incident, normal)) * normal
 
-    AfxFillV3d(v, AfxV3dDot(incident, normal));
+    AfxV3dFill(v, AfxV3dDot(incident, normal));
     AfxV3dAdd(v, v, v);
     AfxV3dResub(v, v, normal, incident);
 }
@@ -251,7 +104,7 @@ _AFXINL void AfxReflectV4d(afxV4d v, afxV3d const incident, afxV3d const normal)
 
     // v = incident - (2 * dot(incident, normal)) * normal
 
-    AfxFillV4d(v, AfxV3dDot(incident, normal));
+    AfxV4dFill(v, AfxV3dDot(incident, normal));
     AfxV4dAdd(v, v, v);
     AfxV4dResub(v, v, normal, incident);
 }
@@ -268,7 +121,7 @@ _AFXINL void AfxRefractV2d(afxV2d v, afxV2d const incident, afxV2d const normal,
     // v = refracIdx * incident - normal * (refracIdx * dot(incident, normal) + sqrt(1 - refracIdx * refracIdx * (1 - dot(incident, normal) * dot(incident, normal))))
 
     afxV2d dot;
-    AfxFillV2d(dot, AfxV2dDot(incident, normal));
+    AfxV2dFill(dot, AfxV2dDot(incident, normal));
 
     // R = 1.0f - refracIdx * refracIdx * (1.0f - IDotN * IDotN)
 
@@ -306,7 +159,7 @@ _AFXINL void AfxRefractV3d(afxV3d v, afxV3d const incident, afxV3d const normal,
     // v = refracIdx * incident - normal * (refracIdx * dot(incident, normal) + sqrt(1 - refracIdx * refracIdx * (1 - dot(incident, normal) * dot(incident, normal))))
 
     afxV3d dot;
-    AfxFillV3d(dot, AfxV3dDot(incident, normal));
+    AfxV3dFill(dot, AfxV3dDot(incident, normal));
 
     // R = 1.0f - refracIdx * refracIdx * (1.0f - IDotN * IDotN)
 
@@ -344,7 +197,7 @@ _AFXINL void AfxRefractV4d(afxV4d v, afxV3d const incident, afxV3d const normal,
     // v = refracIdx * incident - normal * (refracIdx * dot(incident, normal) + sqrt(1 - refracIdx * refracIdx * (1 - dot(incident, normal) * dot(incident, normal))))
 
     afxV4d dot;
-    AfxFillV4d(dot, AfxV3dDot(incident, normal));
+    AfxV4dFill(dot, AfxV3dDot(incident, normal));
 
     // R = 1.0f - refracIdx * refracIdx * (1.0f - IDotN * IDotN)
 

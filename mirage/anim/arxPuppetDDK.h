@@ -114,8 +114,8 @@ AFX_OBJECT(arxPuppet)
 {
     _arxDdiPup const*   ddi;
     _arxIddPup*         idd;
-    void*               udd;
     afxString           tag;
+    void*               udd;
 
     arxModel            mdl;
     afxUnit             partCnt;

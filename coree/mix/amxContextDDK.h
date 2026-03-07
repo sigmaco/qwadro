@@ -69,10 +69,11 @@ AFX_OBJECT(afxMixContext)
 {
     _amxDdiMctx const*  ddi;
     _amxIddMctx*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
+
     amxLimits const* devLimits; // dbg copies
     amxFeatures const*enabledFeatures; // dbg copies
 

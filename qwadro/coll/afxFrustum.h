@@ -59,15 +59,15 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxFrustum)
     afxV4d      origin;
 };
 
-AFX afxV4d const AFX_V4D_LBN;
-AFX afxV4d const AFX_V4D_RBN;
-AFX afxV4d const AFX_V4D_RTN;
-AFX afxV4d const AFX_V4D_LTN;
+#define AFX_V4D_LBN AFX_V4D(-1,-1,-1, 1) // left-bottom-near
+#define AFX_V4D_RBN AFX_V4D( 1,-1,-1, 1) // right-bottom-near
+#define AFX_V4D_RTN AFX_V4D( 1, 1,-1, 1) // right-top-near
+#define AFX_V4D_LTN AFX_V4D(-1, 1,-1, 1) // left-top-near
 
-AFX afxV4d const AFX_V4D_LBF;
-AFX afxV4d const AFX_V4D_RBF;
-AFX afxV4d const AFX_V4D_RTF;
-AFX afxV4d const AFX_V4D_LTF;
+#define AFX_V4D_LBF AFX_V4D(-1,-1, 1, 1) // left-bottom-far
+#define AFX_V4D_RBF AFX_V4D( 1,-1, 1, 1) // right-bottom-far
+#define AFX_V4D_RTF AFX_V4D( 1, 1, 1, 1) // right-top-far
+#define AFX_V4D_LTF AFX_V4D(-1, 1, 1, 1) // left-top-far
 
 // frustrum and matrix must be in same space
 AFXINL void     AfxMakeFrustum(afxFrustum* f, afxM4d const pv, afxM4d const ipv);
