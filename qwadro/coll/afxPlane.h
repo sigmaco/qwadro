@@ -24,7 +24,8 @@
 #define AFX_PLANE_DIST (3)
 
 typedef enum afxFloorPlane
-// The orientation of the the floor plane with respect to the X,Y,Z axes, and which axes represent the side, front and up vectors as a basis for rotations.
+// The orientation of the the floor plane with respect to the X,Y,Z axes, 
+// and which axes represent the side, front and up vectors as a basis for rotations.
 {
     // The floor is oriented along the ZX-plane. The default value.
     // The front vector points towards +Z, the up vector towards +Y, and the side vector towards +X.
@@ -39,7 +40,8 @@ typedef enum afxFloorPlane
     afxFloorPlane_YZ
 } afxFloorPlane;
 
-#define AFX_PLANE(u_, v_, w_, d_) (afxPlane){ .uvwd = { (u_), (v_), (w_), (d_) } }
+#define AFX_PLANE(u_, v_, w_, d_) \
+    (afxPlane){ .uvwd = { (u_), (v_), (w_), (d_) } }
 
 AFXINL afxBool      AfxPlaneIsEqual(afxPlane a, afxPlane b);
 AFXINL afxBool      AfxPlaneIsNearEqual(afxPlane a, afxPlane b, afxV4d epsilon);

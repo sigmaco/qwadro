@@ -122,6 +122,22 @@ AFX_DEFINE_STRUCT(arxBufferIo)
     afxUnit         rowCnt;
 };
 
+AFX_DEFINE_STRUCT(arxBufferedMap)
+// Structure specifying a arxBuffer-backed memory map.
+{
+    // A buffer handle.
+    arxBuffer       buf;
+    // The start of buffer.
+    afxSize         offset;
+    // The size in bytes of data from buffer.
+    afxUnit         range;
+    // A bitmask of flags specifying additional parameters of the memory map operation.
+    afxFlags        flags;
+};
+
+#define ARX_BUFFERED_MAP(hBuf, uOffset, uRange, uFlags) \
+    (arxBufferedMap){ .buf = (hBuf), .offset = (uOffset), .range = (uRange), .flags = (uFlags) }
+
 ARX arxScenario ArxGetBufferHost
 (
     arxBuffer rbuf

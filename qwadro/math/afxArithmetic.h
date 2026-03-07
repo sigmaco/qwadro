@@ -39,21 +39,21 @@
 
 // v = a + b
 
-AFXINL void     AfxV2dAdd(afxV2d v, afxV2d const a, afxV2d const b);
-AFXINL void     AfxV3dAdd(afxV3d v, afxV3d const a, afxV3d const b);
-AFXINL void     AfxV4dAdd(afxV4d v, afxV4d const a, afxV4d const b);
+AFXINL void     AfxV2dAdd(afxV2d v, afxV2d const a, afxV2d const add);
+AFXINL void     AfxV3dAdd(afxV3d v, afxV3d const a, afxV3d const add);
+AFXINL void     AfxV4dAdd(afxV4d v, afxV4d const a, afxV4d const add);
 
 // v = a - b
 
-AFXINL void     AfxV2dSub(afxV2d v, afxV2d const a, afxV2d const b); // v = a - b
-AFXINL void     AfxV3dSub(afxV3d v, afxV3d const a, afxV3d const b); // v = a - b
-AFXINL void     AfxV4dSub(afxV4d v, afxV4d const a, afxV4d const b); // v = a - b
+AFXINL void     AfxV2dSub(afxV2d v, afxV2d const a, afxV2d const sub); // v = a - sub
+AFXINL void     AfxV3dSub(afxV3d v, afxV3d const a, afxV3d const sub); // v = a - sub
+AFXINL void     AfxV4dSub(afxV4d v, afxV4d const a, afxV4d const sub); // v = a - sub
 
 // v = a / b
 
-AFXINL void     AfxV2dDiv(afxV2d v, afxV2d const a, afxV2d const b); // v = a / b
-AFXINL void     AfxV3dDiv(afxV3d v, afxV3d const a, afxV3d const b); // v = a / b
-AFXINL void     AfxV4dDiv(afxV4d v, afxV4d const a, afxV4d const b); // v = a / b
+AFXINL void     AfxV2dDiv(afxV2d v, afxV2d const a, afxV2d const div); // v = a / div
+AFXINL void     AfxV3dDiv(afxV3d v, afxV3d const a, afxV3d const div); // v = a / div
+AFXINL void     AfxV4dDiv(afxV4d v, afxV4d const a, afxV4d const div); // v = a / div
 
 
 // v = a / div
@@ -70,15 +70,15 @@ AFXINL void     AfxV4dHalf(afxV4d v, afxV4d const in);
 
 // v = a % b
 
-AFXINL void     AfxV2dMod(afxV2d v, afxV2d const a, afxV2d const b); // v = a % b
-AFXINL void     AfxV3dMod(afxV3d v, afxV3d const a, afxV3d const b); // v = a % b
-AFXINL void     AfxV4dMod(afxV4d v, afxV4d const a, afxV4d const b); // v = a % b
+AFXINL void     AfxV2dMod(afxV2d v, afxV2d const a, afxV2d const div); // v = a % div
+AFXINL void     AfxV3dMod(afxV3d v, afxV3d const a, afxV3d const div); // v = a % div
+AFXINL void     AfxV4dMod(afxV4d v, afxV4d const a, afxV4d const div); // v = a % div
 
 // v = a * b
 
-AFXINL void     AfxV2dMultiply(afxV2d v, afxV2d const a, afxV2d const b); // v = a * b
-AFXINL void     AfxV3dMultiply(afxV3d v, afxV3d const a, afxV3d const b); // v = a * b
-AFXINL void     AfxV4dMultiply(afxV4d v, afxV4d const a, afxV4d const b); // v = a * b
+AFXINL void     AfxV2dMultiply(afxV2d v, afxV2d const a, afxV2d const mul); // v = a * mul
+AFXINL void     AfxV3dMultiply(afxV3d v, afxV3d const a, afxV3d const mul); // v = a * mul
+AFXINL void     AfxV4dMultiply(afxV4d v, afxV4d const a, afxV4d const mul); // v = a * mul
 
 // Scales (or multiplies) a vector or scalar by a constant factor.
 // Resizing objects, scaling forces, enlarging or shrinking vectors.
@@ -110,13 +110,39 @@ AFXINL void     AfxV2dMads(afxV2d v, afxV2d const add, afxV2d const mul, afxReal
 AFXINL void     AfxV3dMads(afxV3d v, afxV3d const add, afxV3d const mul, afxReal lambda); // v = add + (mul * lambda)
 AFXINL void     AfxV4dMads(afxV4d v, afxV4d const add, afxV4d const mul, afxReal lambda); // v = add + (mul * lambda)
 
+
+// Vector-Multiply-Accumulate
+
+AFXINL void AfxV2dMad2(afxV2d v, afxV2d const a, afxV2d const mul, afxV2d const add); // v = add + (a * mul)
+AFXINL void AfxV3dMad2(afxV3d v, afxV3d const a, afxV3d const mul, afxV3d const add); // v = add + (a * mul)
+AFXINL void AfxV4dMad2(afxV4d v, afxV4d const a, afxV4d const mul, afxV4d const add); // v = add + (a * mul)
+
+// Scalar-Multiply-Accumulate
+
+AFXINL void AfxV2dMads2(afxV2d v, afxV2d const a, afxReal lambda, afxV2d const add); // v = add + (a * lambda)
+AFXINL void AfxV3dMads2(afxV3d v, afxV3d const a, afxReal lambda, afxV3d const add); // v = add + (a * lambda)
+AFXINL void AfxV4dMads2(afxV4d v, afxV4d const a, afxReal lambda, afxV4d const add); // v = add + (a * lambda)
+
 // reverse subtract
-// v = c - (a * b)
+// v = sub - (a * mul)
 
-AFXINL void     AfxV2dResub(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c); // v = c - (a * b)
-AFXINL void     AfxV3dResub(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c); // v = c - (a * b)
-AFXINL void     AfxV4dResub(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c); // v = c - (a * b)
+AFXINL void     AfxV2dResub(afxV2d v, afxV2d const a, afxV2d const mul, afxV2d const sub); // v = sub - (a * mul)
+AFXINL void     AfxV3dResub(afxV3d v, afxV3d const a, afxV3d const mul, afxV3d const sub); // v = sub - (a * mul)
+AFXINL void     AfxV4dResub(afxV4d v, afxV4d const a, afxV4d const mul, afxV4d const sub); // v = sub - (a * mul)
 
+// Musub
+
+AFXINL void AfxV2dMusub(afxV2d v, afxV2d const a, afxV2d const mul, afxV2d const sub); // v = sub - (a * mul)
+AFXINL void AfxV3dMusub(afxV3d v, afxV3d const a, afxV3d const mul, afxV3d const sub); // v = sub - (a * mul)
+AFXINL void AfxV4dMusub(afxV4d v, afxV4d const a, afxV4d const mul, afxV4d const sub); // v = sub - (a * mul)
+
+// Musubs
+
+AFXINL void AfxV2dMusubs(afxV2d v, afxV2d const a, afxReal lambda, afxV2d const sub);
+AFXINL void AfxV3dMusubs(afxV3d v, afxV3d const a, afxReal lambda, afxV3d const sub);
+AFXINL void AfxV4dMusubs(afxV4d v, afxV4d const a, afxReal lambda, afxV4d const sub);
+
+// Recip
 
 AFXINL void     AfxV2dRecip(afxV2d v, afxV2d const in); // v = 1 / in
 AFXINL void     AfxV3dRecip(afxV3d v, afxV3d const in); // v = 1 / in
