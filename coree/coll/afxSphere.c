@@ -28,6 +28,13 @@ _AFXINL afxSphere* AfxMakeSphere(afxSphere* sph, afxV3d const centre, afxReal ra
     return sph;
 }
 
+_AFXINL afxReal AfxGetSphereRadius(afxSphere const sph)
+{
+    afxError err = { 0 };
+    //AFX_ASSERT(sph);
+    return sph.xyzr[AFX_SPHERE_RADIUS];
+}
+
 _AFXINL void AfxGetSphereOrigin(afxSphere const sph, afxV4d centre)
 {
     afxError err = { 0 };

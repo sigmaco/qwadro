@@ -86,10 +86,10 @@ AFX_OBJECT(afxMixSystem)
     AFX_OBJECT(afxDevLink) ctx;
     _amxDdiMsys const*      ddi;
     _amxIddMsys*            idd;
-    // User-defined data.
-    void*                   udd;
     // Debugging tag.
     afxString               tag;
+    // User-defined data.
+    void*                   udd;
 
     afxDrawSystem       dsys;
 

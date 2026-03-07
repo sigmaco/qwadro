@@ -20,16 +20,9 @@
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/coll/afxPlane.h"
 #include "qwadro/mem/afxMemory.h"
-
-_AFX afxV4d const AFX_V4D_LBN = { -1, -1, -1, 1 };
-_AFX afxV4d const AFX_V4D_RBN = { 1, -1, -1, 1 };
-_AFX afxV4d const AFX_V4D_RTN = { 1, 1, -1, 1 };
-_AFX afxV4d const AFX_V4D_LTN = { -1, 1, -1, 1 };
-
-_AFX afxV4d const AFX_V4D_LBF = { -1, -1, 1, 1 };
-_AFX afxV4d const AFX_V4D_RBF = { 1, -1, 1, 1 };
-_AFX afxV4d const AFX_V4D_RTF = { 1, 1, 1, 1 };
-_AFX afxV4d const AFX_V4D_LTF = { -1, 1, 1, 1 };
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
 
 _AFXINL void AfxGetFrustumCorners(afxFrustum* f, afxV3d vertices[AFX_NUM_BOX_CORNERS])
 {

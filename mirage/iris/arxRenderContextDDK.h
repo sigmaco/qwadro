@@ -161,8 +161,9 @@ AFX_OBJECT(arxRenderContext)
 {
     _arxDdiRctx const*  ddi;
     _arxIddRctx*        idd;
-    void*               udd;
     afxString           tag;
+    void*               udd;
+
     arxSimulation       sim;
     afxDrawSystem       dsys;
     afxBool             nonRhcs;

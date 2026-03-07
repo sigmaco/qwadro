@@ -101,10 +101,10 @@ AFX_OBJECT(afxSurface)
 {
     _avxDdiDout const*  ddi;
     _avxIddDout*        idd; // alloc'ed by the driver
-    // User-defined data.
-    void*               udd[4];
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd[4];
 
     // ENDPOINT
     afxVideoEndpoint    endp;

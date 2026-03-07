@@ -41,10 +41,10 @@ AFX_OBJECT(arxMaterial)
 {
     _arxIddMtl*         idd;
     _arxDdiMtl const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // Used by rendering and shading:
     // PBR-compatible parameters

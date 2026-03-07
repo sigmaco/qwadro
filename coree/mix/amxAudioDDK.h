@@ -44,6 +44,9 @@ AFX_OBJECT(_amxAudio)
 AFX_OBJECT(amxAudio)
 #endif
 {
+    afxString       tag;
+    void*           udd;
+
     amxFormat       fmt; // type and bits per sample
     afxUnit         sampCnt; // Number of samples (e.g., time slots)
     // its length, meaning the number of sample frames inside the buffer.
@@ -56,8 +59,6 @@ AFX_OBJECT(amxAudio)
     
     afxUnit64 current_sample_time;
 
-    afxString       tag;
-    void*           udd;
     
     amxBufferFlags  bufFlags;
     afxUnit         bufCap; // with any alignment

@@ -99,6 +99,10 @@ AFX_OBJECT(_arxScenario)
 AFX_OBJECT(arxScenario)
 #endif
 {
+    struct _afxDinIdd*  idd;
+    afxString           tag;
+    void*               udd; // user-defined data
+
     afxChain            classes;
     afxClass            dtecCls;
     afxClass            texCls;
@@ -172,8 +176,6 @@ AFX_OBJECT(arxScenario)
 
     afxDrawInputProc    procCb;
 
-    struct _afxDinIdd*  idd;
-    void*               udd; // user-defined data
 };
 #endif//_ARX_SCENARIO_C
 

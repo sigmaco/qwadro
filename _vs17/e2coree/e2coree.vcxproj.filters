@@ -786,6 +786,18 @@
     <ClInclude Include="..\..\coree\draw\avxShaderDDK.h">
       <Filter>qwadro\draw</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\qwadro\etc\afxNotation.h">
+      <Filter>qwadro\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\math\afxMultiplication.h">
+      <Filter>qwadro\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\math\afxTransformation.h">
+      <Filter>qwadro\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\math\afxInterpolation.h">
+      <Filter>qwadro\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md">
@@ -1439,6 +1451,18 @@
     </ClCompile>
     <ClCompile Include="..\..\coree\draw\avxShaderDDK.c">
       <Filter>qwadro\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\etc\afxNotation.c">
+      <Filter>qwadro\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\base\afxMultiplication.c">
+      <Filter>qwadro\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\base\afxInterpolation.c">
+      <Filter>qwadro\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\base\afxTransformation.c">
+      <Filter>qwadro\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -74,10 +74,10 @@ AFX_OBJECT(afxWarpSystem)
     AFX_OBJECT(afxDevLink) ctx;
     _acxDdiSsys const*      ddi;
     _acxIddSsys*            idd;
-    // User-defined data.
-    void*                   udd;
     // Debugging tag.
     afxString               tag;
+    // User-defined data.
+    void*                   udd;
 
     afxDrawSystem       dsys;
 

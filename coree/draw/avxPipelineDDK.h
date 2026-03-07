@@ -50,10 +50,10 @@ AFX_OBJECT(avxPipeline)
 {
     _avxDdiPip const*   ddi;
     _avxIddPip*         idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxFlags            flags;
     avxBus              bus;

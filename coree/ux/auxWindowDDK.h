@@ -56,10 +56,10 @@ AFX_OBJECT(afxWindow)
 {
     _auxIddWnd*         idd;
     _auxDdiWnd const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxDesktop*         dwm;
     afxChain            classes;

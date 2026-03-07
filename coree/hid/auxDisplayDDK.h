@@ -46,10 +46,10 @@ AFX_OBJECT(_auxDisplayPort)
 AFX_OBJECT(afxDisplayPort)
 #endif
 {
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // desktop coordinates.
     afxRect workArea;
@@ -91,10 +91,10 @@ AFX_OBJECT(afxDisplay)
     AFX_OBJ(afxDevice)  dev;
     _auxIddDisp*        idd;
     _auxDdiDisp const*  ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxClass            portCls;
 

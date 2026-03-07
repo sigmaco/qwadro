@@ -18,7 +18,7 @@ Inevitably the user would be required to set up its event loops with Qwadro meth
 Qwadro is low-level, hardcore, and is highly experimental in this phase (this project is actually bootstrapping its own specification). 
 Any and every user will be forced to be familiar with how computers work. 
 It is by nature a middleware doing its way to provide a virtualized host platform. 
-An user looking for ways of making games without a game engine (or game engines/frameworks written in C) should proceed to look for [Raylib](https://github.com/raysan5/raylib) or any similar project.
+An user looking for ways of making games without a game engine (or game engines/frameworks written in C) should proceed to look for [Raylib](https://github.com/raysan5/raylib) or any similar project. If you want a stable multimedia API, you should proceed to look for [SDL](https://github.com/libsdl-org/SDL).
 
 Qwadro started inside the RenderWare as part of a discontinued project of public, open game engine. 
 At some point, the RenderWare platform has been hooked inside Qwadro. 
@@ -27,10 +27,10 @@ This new, independent phase is called "Engineering Phase II".
 Because of this initial entanglement, certain names are kept familiar to RenderWare, and a new project of ammendment to the Qwadro, called ARX, is being developed to fulfill the total decouplement of RenderWare from Qwadro ecosystem.
 
 ## Advanced Video Graphics Extensions (AVX)
-A modern, sanitized, redefined, orthogonal architectural Vulkan-flavored refactory of OpenGL Core.
+A modern, sanitized, redefined, orthogonal architectural Vulkan-flavored refactory of OpenGL Core capabilities.
 
 **Advanced Video Graphics Extensions** (**AVX**) is an amendment to the **Acceleration Framework Experimental** (**AFX**) extending the **Qwadro Execution Ecosystem** with a complete, scalable, hardware-accelerated video graphics foundation.
-AVX is designed by SIGMA Technology Group to redefine and stabilize the OpenGL Core API. Part of this has been previously known as SIGMA GL/2.
+AVX is designed by SIGMA Technology Group to redefine and stabilize the capabilities of OpenGL Core API. Part of this has been previously known as SIGMA GL/2.
 
 Instead of introducing an entirely new graphics API, AVX reorganizes, sanitizes, and future-proofs the existing GL model by providing:
 - A unified low-level graphics foundation (Qwadro Video Graphics Infrastructure)
@@ -38,11 +38,10 @@ Instead of introducing an entirely new graphics API, AVX reorganizes, sanitizes,
 - A consistent, deterministic context-handling layer via the AUX project
 - A standardized, ICD-compatible driver interface model
 
-AVX is not "another Vulkan" wrapper. Instead, it is what OpenGL Core 5 should have been; a modernized, strict, predictable environment that preserves GL's strengths while eliminating decades of historical design debt.
+AVX is not "another Vulkan" wrapper. Instead, it is what, under the vision of software engineering collectives on SIGMA, OpenGL Core 5 should have been; a modernized, strict, predictable environment that preserves GL's strengths while eliminating decades of historical design debt.
 
-### Motivation
-
-OpenGL Core has faced long-standing issues:
+The main motivation is to avoid wrapping newer APIs. One wanting more power shall just use Vulkan. That is it.
+Other motivations emerge from long-standing issues faced in OpenGL Core, such as:
 - Inconsistent or proprietary context creation
 - Undefined behavior across vendors
 - Extension fragmentation

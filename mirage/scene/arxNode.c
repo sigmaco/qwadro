@@ -77,6 +77,21 @@ _ARX afxError ArxMakeNodulation(arxNodular* nodu, arxNode nod, void(*sync)(arxNo
     return err;
 }
 
+_ARX afxError ArxDamageNode(arxNode nod)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+
+    nod->dirty = TRUE;
+
+    arxNode ch;
+    AFX_ITERATE_CHAIN(ch, parent, &nod->children)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &ch);
+        ArxDamageNode(ch);
+    }
+}
+
 _ARX arxNode ArxGetRootNode(arxNode nod)
 {
     afxError err = { 0 };
@@ -111,7 +126,9 @@ _ARX afxError ArxSetParentNode(arxNode nod, arxNode parent)
     AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
     arxNode curr = AfxGetLinker(&nod->parent);
 
-    if (curr != parent)
+    if ((curr != parent) ||
+        // This is required to allow us to use it inside the constructor method.
+        (!nod->root))
     {
         if (curr)
         {
@@ -153,7 +170,7 @@ _ARX afxError ArxSetParentNode(arxNode nod, arxNode parent)
 
         // TODO set flags
 
-        nod->dirty = TRUE;
+        ArxDamageNode(nod);
     }
     return err;
 }
@@ -191,38 +208,6 @@ _ARX arxTrackMask* ArxResetDagMask(arxNode nod, arxTrackMask* mask)
     // TODO reacquire/dispose
 
     return curr;
-}
-
-_ARX void ArxGetNodeTransform(arxNode nod, afxTransform* t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
-    AFX_ASSERT(t);
-    *t = nod->t;
-}
-
-_ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
-
-    afxBool shouldUpdate = !!(nod->t.flags);
-
-    if (!t)
-    {
-        shouldUpdate = !!(nod->t.flags);
-        AfxResetTransform(&nod->t);
-    }
-    else
-    {
-        shouldUpdate = TRUE;
-        AfxCopyTransform(&nod->t, t);
-    }
-
-    if (shouldUpdate)
-        nod->dirty = TRUE;
-
-    return err;
 }
 
 _ARX void _ArxNodUpdateMatrix(arxNode nod)
@@ -291,6 +276,39 @@ _ARX void ArxGetNodeMatrix(arxNode nod, afxM4d m)
     AFX_ASSERT(m);
     if (nod->dirty) ArxUpdateNode(nod);
     AfxM4dCopy(m, nod->w);
+}
+
+_ARX void ArxGetNodeTransform(arxNode nod, afxTransform* t)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+    AFX_ASSERT(t);
+    *t = nod->t;
+}
+
+_ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+
+    afxBool shouldUpdate = !!(nod->t.flags);
+
+    if (!t)
+    {
+        shouldUpdate = !!(nod->t.flags);
+        AfxResetTransform(&nod->t);
+    }
+    else
+    {
+        shouldUpdate = TRUE;
+        AfxCopyTransform(&nod->t, t);
+    }
+
+    if (shouldUpdate)
+    {
+        ArxDamageNode(nod);
+    }
+    return err;
 }
 
 _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d translation, afxV3d rotation)
@@ -692,6 +710,8 @@ _ARXINL afxError _AsxNodCtorCb(arxNode nod, void** args, afxUnit invokeNo)
     nod->weight = 1.f;
     nod->type = 6;
 
+    nod->aabb = AFX_AABB_VOID;
+    
     ///////////
     AfxResetTransform(&nod->t);
     AfxM4dCopy(nod->m, AFX_M4D_IDENTITY);
@@ -707,7 +727,7 @@ _ARX afxClassConfig const _ARX_NOD_CLASS_CONFIG =
 {
     .fcc = afxFcc_NOD,
     .name = "Node",
-    .desc = "Node",
+    .desc = "DAG Node",
     .fixedSiz = sizeof(AFX_OBJECT(arxNode)),
     .ctor = (void*)_AsxNodCtorCb,
     .dtor = (void*)_AsxNodDtorCb

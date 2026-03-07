@@ -17,6 +17,9 @@
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
 
 #include "qwadro/math/afxTrigonometry.h"
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
 
 /*********************************************************************************
  * ANGLE AND TRIGONOMETRY FUNCTIONS                                              *
@@ -346,13 +349,13 @@ _AFXINL void AfxBarycentricV2d(afxV2d v, afxV2d const a, afxV2d const b, afxV2d 
     AfxV2dSub(p10, b, a);
 
     afxV2d fv;
-    AfxFillV2d(fv, f);
+    AfxV2dFill(fv, f);
 
     afxV2d p20;
     AfxV2dSub(p20, c, a);
 
     afxV2d gv;
-    AfxFillV2d(gv, g);
+    AfxV2dFill(gv, g);
 
     afxV2d tmp;
     AfxV2dMad(tmp, a, p10, fv);
@@ -369,13 +372,13 @@ _AFXINL void AfxBarycentricV3d(afxV3d v, afxV3d const a, afxV3d const b, afxV3d 
     AfxV3dSub(p10, b, a);
 
     afxV3d fv;
-    AfxFillV3d(fv, f);
+    AfxV3dFill(fv, f);
 
     afxV3d p20;
     AfxV3dSub(p20, c, a);
 
     afxV3d gv;
-    AfxFillV3d(gv, g);
+    AfxV3dFill(gv, g);
 
     afxV3d tmp;
     AfxV3dMad(tmp, a, p10, fv);
@@ -392,13 +395,13 @@ _AFXINL void AfxBarycentricV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d 
     AfxV4dSub(p10, b, a);
 
     afxV4d fv;
-    AfxFillV4d(fv, f);
+    AfxV4dFill(fv, f);
 
     afxV4d p20;
     AfxV4dSub(p20, c, a);
 
     afxV4d gv;
-    AfxFillV4d(gv, g);
+    AfxV4dFill(gv, g);
 
     afxV4d tmp;
     AfxV4dMad(tmp, a, p10, fv);
@@ -453,4 +456,30 @@ _AFXINL void AfxBarycentricV4d2(afxV4d v, afxV4d const a, afxV4d const b, afxV4d
     afxV4d tmp;
     AfxV4dMad(tmp, a, p10, f);
     AfxV4dMad(v, tmp, p20, g);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// QUATERNION (aka QWATERNION)                                                //
+////////////////////////////////////////////////////////////////////////////////
+
+_AFXINL void AfxQuatBarycentric(afxQuat q, afxQuat const a, afxQuat const b, afxQuat const c, afxReal f, afxReal g)
+{
+    // Should be compatible with  XMVECTOR XMQuaternionBaryCentric(FXMVECTOR Q0, FXMVECTOR Q1, FXMVECTOR Q2, float f, float g)
+
+    afxError err = { 0 };
+    AFX_ASSERT(q);
+    AFX_ASSERT(a);
+    AFX_ASSERT(b);
+    AFX_ASSERT(c);
+
+    afxReal s = f + g;
+
+    if ((s < 0.00001f) && (s > -0.00001f)) AfxQuatCopy(q, a);
+    else
+    {
+        afxQuat ab, ac;
+        AfxQuatSlerp(ab, a, b, s);
+        AfxQuatSlerp(ac, a, c, s);
+        AfxQuatSlerp(q, ab, ac, g / s);
+    }
 }

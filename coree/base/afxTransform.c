@@ -16,27 +16,39 @@
 
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
 
+/*
+    A rigid transform (also called a rigid body transformation) preserves distances and angles. 
+    That means it can only include:
+
+        Translation
+        Rotation
+        (Optionally) Reflection
+
+    It cannot include:
+
+        Scaling (changes size; distances no longer preserved)
+        Shearing (changes angles; angles no longer preserved)
+
+    Mathematically, in 2D or 3D a rigid transform has the form:
+
+        x' = Rx + t
+    
+    Where:
+        R is an orthogonal matrix ((R^T) R = I )
+        t is a translation vector
+
+    If scaling were present, R would no longer be orthogonal.
+    If shearing were present, angles would not be preserved.
+
+    If a transformation includes scaling but still preserves angles, 
+    it's called a similarity transform, not a rigid transform.
+*/
+
 #include "qwadro/math/afxTransform.h"
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/math/afxVector.h"
 #include "qwadro/math/afxQuaternion.h"
 #include "qwadro/io/afxStream.h"
-
-afxTransform const AFX_TRANSFORM_ZERO =
-{
-    .flags = NIL,
-    .pv = { 0.f, 0.f, 0.f },
-    .oq = { 0.f, 0.f, 0.f, 0.f },
-    .ssm = { { 0.f, 0.f, 0.f}, { 0.f, 0.f, 0.f}, { 0.f, 0.f, 0.f } }
-};
-
-afxTransform const AFX_TRANSFORM_IDENTITY =
-{
-    .flags = NIL,
-    .pv = { 0.f, 0.f, 0.f },
-    .oq = { 0.f, 0.f, 0.f, 1.f },
-    .ssm = { { 1.f, 0.f, 0.f}, { 0.f, 1.f, 0.f}, { 0.f, 0.f, 1.f } }
-};
 
 _AFXINL afxReal AfxDetTransform(afxTransform const* t)
 {
@@ -53,7 +65,7 @@ _AFXINL afxBool AfxCopyTransform(afxTransform *t, afxTransform const* in)
     afxTransformFlags dstRigidFlags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
     afxTransformFlags srcRigidFlags = (in->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
     *t = *in;
-    return (srcRigidFlags || dstRigidFlags);
+    return (srcRigidFlags || dstRigidFlags); // if has diff
 }
 
 _AFXINL afxBool AfxCopyRigidTransform(afxTransform *t, afxTransform const* in)
@@ -67,7 +79,7 @@ _AFXINL afxBool AfxCopyRigidTransform(afxTransform *t, afxTransform const* in)
     AfxV3dCopy(t->pv, in->pv);
     AfxQuatCopy(t->oq, in->oq);
     //AfxM3dReset(t->ssm);
-    return (srcRigidFlags || dstRigidFlags);
+    return (srcRigidFlags || dstRigidFlags); // if has diff
 }
 
 _AFXINL afxBool AfxResetTransform(afxTransform* t)
@@ -115,7 +127,7 @@ _AFXINL afxBool AfxMakeTransform(afxTransform* t, afxV3d const pv, afxQuat const
     }
     else t->flags = (afxTransformFlag_RIGID | afxTransformFlag_S);
 
-    return (srcFlags || t->flags);
+    return (srcFlags || t->flags); // if has diff
 }
 
 _AFXINL afxBool AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat const orient, afxBool check)
@@ -146,7 +158,114 @@ _AFXINL afxBool AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat
 
     AfxM3dCopy(t->ssm, AFX_M3D_IDENTITY);
 
-    return (srcFlags || t->flags);
+    return (srcFlags || t->flags); // if has diff
+}
+
+_AFXINL afxBool AfxMakeRigidTransformScaled(afxTransform* t, afxV3d const pos, afxQuat const orient, afxV3d const scale, afxBool check)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+
+    afxTransformFlags srcFlags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
+    t->flags = NIL;
+
+    AfxSetPosition(t, pos, check);
+    AfxSetOrientation(t, orient, check);
+    AfxSetScale(t, scale, check);
+
+    return (srcFlags || t->flags); // if has diff
+}
+
+_AFXINL afxBool AfxSetOrientation(afxTransform* t, afxQuat const orient, afxBool check)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+
+    if (!orient)
+    {
+        AfxQuatReset(t->oq);
+        t->flags &= ~afxTransformFlag_R;
+    }
+    else
+    {
+        AfxQuatCopy(t->oq, orient);
+
+        if (!check || !AfxQuatIsIdentity(orient))
+        {
+            t->flags |= afxTransformFlag_R;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+_AFXINL afxBool AfxSetPosition(afxTransform* t, afxV3d const pos, afxBool check)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+
+    if (!pos)
+    {
+        AfxV3dZero(t->pv);
+        t->flags &= ~afxTransformFlag_T;
+    }
+    else
+    {
+        AfxV3dCopy(t->pv, pos);
+
+        if (!check || !AfxV3dIsZero(pos))
+        {
+            t->flags |= afxTransformFlag_T;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+_AFXINL afxBool AfxSetScale(afxTransform* t, afxV3d const scale, afxBool check)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+
+    if (!scale)
+    {
+        AfxM3dReset(t->ssm);
+        t->flags &= ~afxTransformFlag_S;
+    }
+    else
+    {
+        AfxM3dScaling(t->ssm, scale);
+
+        if (!check || !AfxM3dIsIdentity(t->ssm))
+        {
+            t->flags |= afxTransformFlag_S;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+_AFXINL afxBool AfxSetScaleShearing(afxTransform* t, afxM3d const ssm, afxBool check)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+
+    if (!ssm)
+    {
+        AfxM3dReset(t->ssm);
+        t->flags &= ~afxTransformFlag_S;
+    }
+    else
+    {
+        AfxM3dCopy(t->ssm, ssm);
+
+        if (!check || !(AfxM3dIsIdentity(ssm)))
+        {
+            t->flags |= afxTransformFlag_S;
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 _AFXINL void AfxMultiplyTransform(afxTransform *t, afxTransform const* a, afxTransform const* b)
@@ -277,7 +396,7 @@ _AFXINL afxDof AfxV3dEnforceDofs(afxV3d pos, afxDof allowedDofs)
     AFX_ASSERT(pos);
     allowedDofs = (allowedDofs & afxDof_T);
 
-    if (!allowedDofs) AfxResetV4d(pos);
+    if (!allowedDofs) AfxV4dReset(pos);
     else
     {
         switch (allowedDofs)
@@ -431,7 +550,30 @@ _AFXINL void AfxEnforceTransformDofs(afxTransform* t, afxDof allowedDofs)
         t->flags &= ~afxTransformFlag_S;
 }
 
-_AFX void AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m)
+_AFX void AfxComputeCompositeTransformM3d(afxTransform const* t, afxM3d m)
+{
+    // Based on AfxComputeCompositeTransformM4d
+
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+    AFX_ASSERT(m);
+
+    if (t->flags & afxTransformFlag_S)
+    {
+        afxM3d tmp, tmp2;
+        AfxM3dRotationQuat(tmp2, t->oq);
+        AfxM3dMultiply(tmp, tmp2, t->ssm);
+        AfxM3dCopyTransposed(m, tmp);
+    }
+    else
+    {
+        afxM3d tmp;
+        AfxM3dRotationQuat(tmp, t->oq);
+        AfxM3dCopyTransposed(m, tmp);
+    }
+}
+
+_AFXINL void AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m)
 {
     // Should be compatible with void BuildCompositeTransform4x4
 
@@ -444,17 +586,17 @@ _AFX void AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m)
         afxM3d tmp, tmp2;
         AfxM3dRotationQuat(tmp2, t->oq);
         AfxM3dMultiply(tmp, tmp2, t->ssm);
-        AfxM4dTransposeM3d(m, tmp, t->pv);
+        AfxM4dCopyM3dTransposed(m, tmp, t->pv);
     }
     else
     {
         afxM3d tmp;
         AfxM3dRotationQuat(tmp, t->oq);
-        AfxM4dTransposeM3d(m, tmp, t->pv);
+        AfxM4dCopyM3dTransposed(m, tmp, t->pv);
     }
 }
 
-_AFX void AfxComputeCompositeTransformM4dc(afxTransform const* t, afxM4r m)
+_AFXINL void AfxComputeCompositeTransformM4dc(afxTransform const* t, afxV3d4 m)
 {
     // Should be compatible with void BuildCompositeTransform4x3
 
@@ -483,8 +625,8 @@ _AFXINL void AfxTransformAtv3d(afxTransform const* t, afxV3d const in, afxV3d ou
     AFX_ASSERT(in);
     AFX_ASSERT(out);
 
-    AfxM3dPostMultiplyV3d(t->ssm, 1, in, out);
-    AfxQuatRotateV3dArray(t->oq, 1, out, out);
+    AfxV3dPostMultiplyM3d(out, t->ssm, in);
+    AfxV3dRotate(out, out, t->oq);
     AfxV3dAdd(out, t->pv, out);
 }
 
@@ -497,7 +639,7 @@ _AFXINL void AfxTransformArrayedAtv3d(afxTransform const* t, afxUnit cnt, afxV3d
     AFX_ASSERT(out);
 
     AfxM3dPostMultiplyV3d(t->ssm, cnt, in, out);
-    AfxQuatRotateV3dArray(t->oq, cnt, out, out);
+    AfxQuatRotateV3d(t->oq, cnt, out, out);
 
     for (afxUnit i = 0; i < cnt; i++)
         AfxV3dAdd(out[i], t->pv, out[i]);
@@ -512,8 +654,8 @@ _AFXINL void AfxTransformLtv3d(afxTransform const* t, afxV3d const in, afxV3d ou
 
     // Compatible with TransformVectorInPlace()
 
-    AfxM3dPostMultiplyV3d(t->ssm, 1, in, out);
-    AfxQuatRotateV3dArray(t->oq, 1, out, out);
+    AfxV3dPostMultiplyM3d(out, t->ssm, in);
+    AfxV3dRotate(out, out, t->oq);
 }
 
 _AFXINL void AfxTransformArrayedLtv3d(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[])
@@ -527,7 +669,7 @@ _AFXINL void AfxTransformArrayedLtv3d(afxTransform const* t, afxUnit cnt, afxV3d
     // Compatible with TransformVectorInPlace()
 
     AfxM3dPostMultiplyV3d(t->ssm, cnt, in, out);
-    AfxQuatRotateV3dArray(t->oq, cnt, out, out);
+    AfxQuatRotateV3d(t->oq, cnt, out, out);
 }
 
 _AFXINL void AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const in, afxV3d out)
@@ -541,8 +683,8 @@ _AFXINL void AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const in,
 
     afxQuat iq;
     AfxQuatConj(iq, t->oq);
-    AfxQuatRotateV3dArray(iq, 1, in, out);
-    AfxM3dPreMultiplyV3d(t->ssm, 1, out, out);
+    AfxV3dRotate(out, in, iq);
+    AfxV3dPreMultiplyM3d(out, out, t->ssm);
 }
 
 _AFXINL void AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[])
@@ -557,7 +699,7 @@ _AFXINL void AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUnit c
 
     afxQuat iq;
     AfxQuatConj(iq, t->oq);
-    AfxQuatRotateV3dArray(iq, cnt, in, out);
+    AfxQuatRotateV3d(iq, cnt, in, out);
     AfxM3dPreMultiplyV3d(t->ssm, cnt, out, out);
 }
 
@@ -584,7 +726,7 @@ static inline void BuildSingleCompositeFromWorldPose_Generic(afxM4d const Invers
     AfxM4dMultiplyAtm(ResultComposite, InverseWorld4x4, WorldMatrix);
 }
 
-static inline void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4r ResultComposite3x4)
+static inline void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxV3d4 ResultComposite3x4)
 {
     //ColumnMatrixMultiply4x3Transpose(ResultComposite3x4, InverseWorld4x4, WorldMatrix);
     // 0 4 8 12

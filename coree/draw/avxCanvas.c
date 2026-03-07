@@ -751,7 +751,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_CANV =
 {
     .fcc = afxFcc_CANV,
     .name = "Canvas",
-    .desc = "Buffered Drawing Canvas",
+    .desc = "Fixed-Function Buffered Canvas",
     .fixedSiz = sizeof(AFX_OBJECT(avxCanvas)),
     .ctor = (void*)_AvxCanvCtorCb,
     .dtor = (void*)_AvxCanvDtorCb

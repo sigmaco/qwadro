@@ -129,6 +129,7 @@
 /// Vertex components are one or more vertex elements stored contiguously (interleaved per vertex) in a single memory buffer.
 
 #include "qwadro/cad/arxMeshFactory.h"
+#include "qwadro/scene/arxBuffer.h"
 
 typedef enum arxMeshFlag
 {

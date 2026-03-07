@@ -624,7 +624,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_CODB =
 {
     .fcc = afxFcc_SHD,
     .name = "Shader",
-    .desc = "Programmable Pipeline Module",
+    .desc = "Pipeline-Execution Shader",
     .fixedSiz = sizeof(AFX_OBJECT(avxShader)),
     .ctor = (void*)_AvxShdCtorCb,
     .dtor = (void*)_AvxShdDtorCb

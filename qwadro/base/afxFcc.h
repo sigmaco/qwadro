@@ -365,6 +365,7 @@ typedef enum afxFcc
     afxFcc_PAWN     = AFX_MAKE_FCC('p', 'a', 'w', 'n'), // apxPawn
     afxFcc_COL      = AFX_MAKE_FCC('c', 'o', 'l', '\0'), // apxCollidable
     afxFcc_COLL     = AFX_MAKE_FCC('c', 'o', 'l', 'l'), // akxCollider
+    afxFcc_VOL      = AFX_MAKE_FCC('v', 'o', 'l', '\0'), // arxVolume
 
     //afxFcc_RCTX     = AFX_MAKE_FCC('d', 'i', 'n', '\0'), // arxRenderContext
     

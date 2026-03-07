@@ -416,7 +416,7 @@ void* const hidVmtPtrs[] =
 void _XsCamReset(xssVm vm)
 {
     arxCamera cam = XssPullInstance(vm, 0);
-    ArxResetCamera(cam);
+    ArxRestoreCamera(cam);
 }
 
 void _XsCamApplyMotion(xssVm vm)

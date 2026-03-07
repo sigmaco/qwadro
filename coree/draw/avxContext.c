@@ -319,7 +319,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DCTX =
 {
     .fcc = afxFcc_DCTX,
     .name = "DrawContext",
-    .desc = "AVX Operation Context",
+    .desc = "Device-Execution Context",
     .fixedSiz = sizeof(AFX_OBJECT(afxDrawContext)),
     .unitsPerPage = 4,
     .ctor = (void*)_AvxDctxCtorCb,

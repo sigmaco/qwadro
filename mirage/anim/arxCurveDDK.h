@@ -41,8 +41,8 @@ AFX_OBJECT(arxCurve)
 {
     _arxDdiCur const*   ddi;
     _arxIddCur*         idd;
-    void*               udd;
     afxString           tag;
+    void*               udd;
 
     arxCurveFormat      fmt;
     afxUnit             degree;
@@ -51,7 +51,7 @@ AFX_OBJECT(arxCurve)
     afxUnit             knotCnt;
     union
     {
-        afxReal*        knots; // 32f
+        afxReal*        knots_; // 32f
         afxReal         knot0;
     };
     afxUnit             ctrlCnt;
@@ -59,8 +59,10 @@ AFX_OBJECT(arxCurve)
     {
         afxV4d          ctrls4; // D4, Constant32f
         afxV3d          ctrls3;
-        afxReal*        ctrls; // 32f
+        afxReal*        ctrls_; // 32f
     };
+    arxBufferedMap      mmap;
+    afxUnit             ctrlOffset;
 };
 #endif//_ARX_CURVE_C
 

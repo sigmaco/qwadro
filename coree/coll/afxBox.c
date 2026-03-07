@@ -22,10 +22,9 @@
 #include "qwadro/math/afxVector.h"
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/mem/afxMemory.h"
-
-_AFX afxBox const AFX_AABB_IDENTITY = { .min = { 0, 0, 0, 1 }, .max = { 0, 0, 0, 1 } };
-// Void AABB is a box initialized with extreme values meaning no volume. A AABB is valid only if min is less or equal to max.
-_AFX afxBox const AFX_AABB_VOID = { .min = { AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX, 1 }, .max = { -AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX, 1 } };
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
 
 _AFXINL void AfxMakeAabb(afxBox* bb, afxUnit cnt, afxV3d const points[])
 {
@@ -34,9 +33,9 @@ _AFXINL void AfxMakeAabb(afxBox* bb, afxUnit cnt, afxV3d const points[])
     AFX_ASSERT(!cnt || points);
 
     // Initialize the AABB with extreme values
-    AfxFillV4d(bb->min, AFX_R32_MAX);
+    AfxV4dFill(bb->min, AFX_R32_MAX);
     bb->min[3] = 1;
-    AfxFillV4d(bb->max, -AFX_R32_MAX);
+    AfxV4dFill(bb->max, -AFX_R32_MAX);
     bb->max[3] = 1;
 
     if (cnt)
@@ -524,8 +523,8 @@ _AFXINL void AfxTransformObbs(afxM3d const ltm, afxV4d const atv, afxUnit cnt, a
     for (afxUnit i = 0; i < cnt; i++)
     {
         afxV3d max, min, pos;
-        AfxFillV3d(max, -3.4028235e38);
-        AfxFillV3d(min, 3.4028235e38);
+        AfxV3dFill(max, -3.4028235e38);
+        AfxV3dFill(min, 3.4028235e38);
 
         for (afxUnit z = 0; z < 2; z++)
         {

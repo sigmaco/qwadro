@@ -65,10 +65,10 @@ AFX_OBJECT(avxShader)
 {
     _avxDdiCodb const*  ddi;
     _avxIddCodb*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // Optional base URL for file lookup.
     afxUri128           url;

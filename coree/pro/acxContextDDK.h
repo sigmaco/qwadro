@@ -69,10 +69,11 @@ AFX_OBJECT(afxWarpContext)
 {
     _acxDdiSctx const*  ddi;
     _acxIddSctx*        idd;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
+
     acxLimits const*    devLimits; // dbg copies
     acxFeatures const*  enabledFeatures; // dbg copies
 

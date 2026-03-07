@@ -753,8 +753,7 @@ _ARX afxError ArxBuildSphereMesh(arxScenario scio, afxReal radius, afxUnit stack
         slices = 20;
 
     afxUnit numVertices = (stacks + 1) * (slices + 1);
-    afxUnit numIndices = stacks * slices * 2 * 3; // 2 triangles per quad, 3 indices per triangle
-    //afxUnit numIndices = stacks * slices * 6; // 6 indices per quad (2 triangles, 3 indices per triangle)
+    afxUnit numIndices = stacks * slices * 6; // 6 indices per quad (2 triangles, 3 indices per triangle)
 
     arxMeshBlueprint mshb = { 0 };
     mshb.vtxCnt = numVertices;
@@ -775,102 +774,75 @@ _ARX afxError ArxBuildSphereMesh(arxScenario scio, afxReal radius, afxUnit stack
     afxV2d* uv = ArxAccessVertexData(msh, 2, 0, 0);
     afxUnit index = 0;
 
+    // Generate vertices
     for (afxUnit i = 0; i <= stacks; ++i)
     {
-        afxReal stackAngle = AFX_PI * i / stacks; // angle from top
-        afxReal xy = radius * AfxSinf(stackAngle); // radius of current stack
-        afxReal z = radius * AfxCosf(stackAngle);  // height of current stack
+        afxReal stackAngle = AFX_PI * i / stacks; // angle from top to bottom
+        afxReal xy = radius * AfxSinf(stackAngle); // radius at this height
+        afxReal z = radius * AfxCosf(stackAngle);  // height at this latitude
 
         for (afxUnit j = 0; j <= slices; ++j)
         {
-            afxReal sectorAngle = 2 * AFX_PI * j / slices; // angle around the stack
+            afxReal sectorAngle = 2 * AFX_PI * j / slices; // angle around the stack (longitude)
             afxReal x = xy * AfxCosf(sectorAngle);
             afxReal y = xy * AfxSinf(sectorAngle);
 
+            // Set position
             AfxV3dSet(pos[index], x, y, z);
 
-            // Normal vector (normalized vertex position)
+            // Normal vector (normalize the vertex position)
             afxReal length = AfxSqrtf(x * x + y * y + z * z);
             AfxV3dSet(nrm[index], x / length, y / length, z / length);
+
+            // Set UV coordinates
             AfxV2dSet(uv[index], (afxReal)j / slices, (afxReal)i / stacks);
+
             index++;
         }
     }
 
+    // Apply pivot translation if provided
     if (pivot)
-        for (afxUnit i = 0; i < numVertices; i++)
+    {
+        for (afxUnit i = 0; i < numVertices; ++i)
+        {
             AfxV3dAdd(pos[i], pos[i], pivot);
-
-    // we couldn't use trip strip at the time this code was written.
-    afxBool strip = FALSE;
-
-    if (strip)
-    {
-        afxUnit* indices = ArxGetMeshIndices(msh, 0);
-
-        // Generate indices for triangle strips
-        afxUnit idx = 0;
-
-        for (afxUnit i = 0; i < stacks; ++i)
-        {
-            for (afxUnit j = 0; j < slices; ++j)
-            {
-                afxUnit topLeft = i * (slices + 1) + j;
-                afxUnit topRight = topLeft + 1;
-                afxUnit bottomLeft = (i + 1) * (slices + 1) + j;
-                afxUnit bottomRight = bottomLeft + 1;
-
-                // First triangle
-                indices[idx + 0] = topLeft;
-                indices[idx + 1] = bottomLeft;
-                indices[idx + 2] = topRight;
-                idx++;
-
-                // Second triangle
-                indices[idx + 0] = topRight;
-                indices[idx + 1] = bottomLeft;
-                indices[idx + 2] = bottomRight;
-                idx++;
-            }
-        }
-    }
-    else
-    {
-        afxUnit* indices = ArxGetMeshIndices(msh, 0);
-
-        // Generate indices for triangles
-        afxUnit idx = 0;
-
-        for (afxUnit i = 0; i < stacks; ++i)
-        {
-            for (afxUnit j = 0; j < slices; ++j)
-            {
-                afxUnit topLeft = i * (slices + 1) + j;
-                afxUnit topRight = topLeft + 1;
-                afxUnit bottomLeft = (i + 1) * (slices + 1) + j;
-                afxUnit bottomRight = bottomLeft + 1;
-
-                // First triangle
-                indices[idx + 0] = topLeft;
-                indices[idx + 1] = bottomLeft;
-                indices[idx + 2] = topRight;
-                idx++;
-
-                // Second triangle
-                indices[idx + 0] = topRight;
-                indices[idx + 1] = bottomLeft;
-                indices[idx + 2] = bottomRight;
-                idx++;
-            }
         }
     }
 
+    // Generate indices for triangles
+    afxUnit* indices = ArxGetMeshIndices(msh, 0);
+    afxUnit idx = 0;
+
+    for (afxUnit i = 0; i < stacks; ++i)
+    {
+        for (afxUnit j = 0; j < slices; ++j)
+        {
+            afxUnit topLeft = i * (slices + 1) + j;
+            afxUnit topRight = topLeft + 1;
+            afxUnit bottomLeft = (i + 1) * (slices + 1) + j;
+            afxUnit bottomRight = bottomLeft + 1;
+
+            // First triangle (top-left, bottom-left, top-right)
+            indices[idx++] = topLeft;
+            indices[idx++] = bottomLeft;
+            indices[idx++] = topRight;
+
+            // Second triangle (top-right, bottom-left, bottom-right)
+            indices[idx++] = topRight;
+            indices[idx++] = bottomLeft;
+            indices[idx++] = bottomRight;
+        }
+    }
+
+    // Invert mesh topology and vertex data if requested
     if (inv)
     {
         ArxInvertMeshTopology(msh);
         ArxInvertVertexData(msh, 1, 0, 0, numVertices);
     }
 
+    // Assign the generated mesh to the output
     AFX_ASSERT(mesh);
     *mesh = msh;
     return err;

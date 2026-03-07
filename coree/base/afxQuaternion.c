@@ -20,9 +20,9 @@
 #include "qwadro/math/afxQuaternion.h"
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/math/afxVector.h"
-
-_AFX afxQuat const AFX_QUAT_ZERO = { AFX_REAL(0), AFX_REAL(0), AFX_REAL(0), AFX_REAL(0) };
-_AFX afxQuat const AFX_QUAT_IDENTITY = { AFX_REAL(0), AFX_REAL(0), AFX_REAL(0), AFX_REAL(1) };
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxInterpolation.h"
+#include "qwadro/math/afxMultiplication.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization                                                             //
@@ -65,207 +65,6 @@ _AFXINL void AfxQuatReconstructV3d(afxQuat q, afxV3d const in)
     q[3] = t < 0.f ? 0.f : -AfxSqrtf(t);
 }
 
-_AFXINL void AfxQuatRotationM3d(afxQuat q, afxM3d const m)
-{
-    // Should be compatible with XMVECTOR XMQuaternionRotationMatrix(FXMMATRIX M)
-
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(m);
-    AFX_ASSERT_DIFF(q, m);
-
-    afxReal r22 = m[2][2];
-
-    if (r22 <= 0.f)  // x^2 + y^2 >= z^2 + w^2
-    {
-        afxReal dif10 = m[1][1] - m[0][0];
-        afxReal omr22 = 1.f - r22;
-
-        if (dif10 <= 0.f)  // x^2 >= y^2
-        {
-            afxReal fourXSqr = omr22 - dif10;
-            afxReal inv4x = 0.5f / AfxSqrtf(fourXSqr);
-
-            q[0] = fourXSqr * inv4x;
-            q[1] = (m[0][1] + m[1][0]) * inv4x;
-            q[2] = (m[0][2] + m[2][0]) * inv4x;
-            q[3] = (m[1][2] - m[2][1]) * inv4x;
-        }
-        else  // y^2 >= x^2
-        {
-            afxReal fourYSqr = omr22 + dif10;
-            afxReal inv4y = 0.5f / AfxSqrtf(fourYSqr);
-
-            q[0] = (m[0][1] + m[1][0]) * inv4y;
-            q[1] = fourYSqr * inv4y;
-            q[2] = (m[1][2] + m[2][1]) * inv4y;
-            q[3] = (m[2][0] - m[0][2]) * inv4y;
-        }
-    }
-    else  // z^2 + w^2 >= x^2 + y^2
-    {
-        afxReal sum10 = m[1][1] + m[0][0];
-        afxReal opr22 = 1.f + r22;
-
-        if (sum10 <= 0.f)  // z^2 >= w^2
-        {
-            afxReal fourZSqr = opr22 - sum10;
-            afxReal inv4z = 0.5f / AfxSqrtf(fourZSqr);
-
-            q[0] = (m[0][2] + m[2][0]) * inv4z;
-            q[1] = (m[1][2] + m[2][1]) * inv4z;
-            q[2] = fourZSqr * inv4z;
-            q[3] = (m[0][1] - m[1][0]) * inv4z;
-        }
-        else  // w^2 >= z^2
-        {
-            afxReal fourWSqr = opr22 + sum10;
-            afxReal inv4w = 0.5f / AfxSqrtf(fourWSqr);
-
-            q[0] = (m[1][2] - m[2][1]) * inv4w;
-            q[1] = (m[2][0] - m[0][2]) * inv4w;
-            q[2] = (m[0][1] - m[1][0]) * inv4w;
-            q[3] = fourWSqr * inv4w;
-        }
-    }
-}
-
-_AFXINL void AfxQuatRotationM4d(afxQuat q, afxM4d const m)
-{
-    // Should be compatible with XMVECTOR XMQuaternionRotationMatrix(FXMMATRIX M)
-
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(m);
-    AFX_ASSERT_DIFF(q, m);
-
-    afxReal r22 = m[2][2];
-
-    if (r22 <= 0.f)  // x^2 + y^2 >= z^2 + w^2
-    {
-        afxReal dif10 = m[1][1] - m[0][0];
-        afxReal omr22 = 1.f - r22;
-
-        if (dif10 <= 0.f)  // x^2 >= y^2
-        {
-            afxReal fourXSqr = omr22 - dif10;
-            afxReal inv4x = 0.5f / AfxSqrtf(fourXSqr);
-
-            q[0] = fourXSqr * inv4x;
-            q[1] = (m[0][1] + m[1][0]) * inv4x;
-            q[2] = (m[0][2] + m[2][0]) * inv4x;
-            q[3] = (m[1][2] - m[2][1]) * inv4x;
-        }
-        else  // y^2 >= x^2
-        {
-            afxReal fourYSqr = omr22 + dif10;
-            afxReal inv4y = 0.5f / AfxSqrtf(fourYSqr);
-
-            q[0] = (m[0][1] + m[1][0]) * inv4y;
-            q[1] = fourYSqr * inv4y;
-            q[2] = (m[1][2] + m[2][1]) * inv4y;
-            q[3] = (m[2][0] - m[0][2]) * inv4y;
-        }
-    }
-    else  // z^2 + w^2 >= x^2 + y^2
-    {
-        afxReal sum10 = m[1][1] + m[0][0];
-        afxReal opr22 = 1.f + r22;
-
-        if (sum10 <= 0.f)  // z^2 >= w^2
-        {
-            afxReal fourZSqr = opr22 - sum10;
-            afxReal inv4z = 0.5f / AfxSqrtf(fourZSqr);
-
-            q[0] = (m[0][2] + m[2][0]) * inv4z;
-            q[1] = (m[1][2] + m[2][1]) * inv4z;
-            q[2] = fourZSqr * inv4z;
-            q[3] = (m[0][1] - m[1][0]) * inv4z;
-        }
-        else  // w^2 >= z^2
-        {
-            afxReal fourWSqr = opr22 + sum10;
-            afxReal inv4w = 0.5f / AfxSqrtf(fourWSqr);
-
-            q[0] = (m[1][2] - m[2][1]) * inv4w;
-            q[1] = (m[2][0] - m[0][2]) * inv4w;
-            q[2] = (m[0][1] - m[1][0]) * inv4w;
-            q[3] = fourWSqr * inv4w;
-        }
-    }
-}
-
-_AFXINL void AfxQuatRotationAxial(afxQuat q, afxV3d const axis, afxReal phi)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(axis); // radians
-    
-    afxReal s, c;
-    AfxCosSinf(phi * AFX_REAL(0.5), &c, &s);
-    q[0] = axis[0] * s;
-    q[1] = axis[1] * s;
-    q[2] = axis[2] * s;
-    q[3] = c;
-    AfxQuatNormalize(q, q); // reduz erros causados por AfxSinf() e AfxCosf().
-}
-
-_AFXINL void AfxQuatRotationEuler(afxQuat q, afxV3d const pitchYawRoll)
-{
-    // Should be compatible with XMVECTOR XMQuaternionRotationRollPitchYawFromVector(FXMVECTOR Angles)
-    /*
-        WARNING:
-
-        Qwadro assumes pitchYawRoll vector -> [pitch, yaw, roll], which typically means:
-            pitch -> rotation around X-axis (elevation)
-            yaw -> rotation around Y-axis (azimuth)
-            roll -> rotation around Z-axis
-
-        This is the standard aeronautical convention, and it matches Yaw-Pitch-Roll rotation order if applied as:
-        Q = Q_roll * Q_pitch * Q_yaw
-
-        This uses the well-established formula for composing a quaternion from Euler angles in Y-X-Z rotation order, assuming:
-            First rotate about Y (azimuth)
-            Then rotate about X (elevation)
-            Then rotate about Z (roll)
-        Which is exactly what works for a spherical camera system with orientation driven by azimuth, elevation, and roll.
-
-        But DirectXMath (XMQuaternionRotationRollPitchYawFromVector) assumes a Roll-Pitch-Yaw (Z-X-Y) vector,
-        and parameters are passed as:
-        XMQuaternionRotationRollPitchYaw(roll, pitch, yaw)
-        So if you're feeding [pitch, yaw, roll] into a DXMath function that expects [roll, pitch, yaw], 
-        you'll get completely wrong orientations.
-
-
-    */
-
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(pitchYawRoll);
-
-    afxReal const halfpitch = pitchYawRoll[0] * 0.5f; // rotation around X
-    afxReal cp = AfxCosf(halfpitch);
-    afxReal sp = AfxSinf(halfpitch);
-    afxReal const halfyaw = pitchYawRoll[1] * 0.5f; // rotation around Y
-    afxReal cy = AfxCosf(halfyaw);
-    afxReal sy = AfxSinf(halfyaw);
-    afxReal const halfroll = pitchYawRoll[2] * 0.5f; // rotation around Z
-    afxReal cr = AfxCosf(halfroll);
-    afxReal sr = AfxSinf(halfroll);
-
-#if 0 // DXMath wrong way
-    q[0] = cr * sp * cy + sr * cp * sy;
-    q[1] = cr * cp * sy - sr * sp * cy;
-    q[2] = sr * cp * cy - cr * sp * sy;
-    q[3] = cr * cp * cy + sr * sp * sy;
-#endif
-    // Quaternion composition: Q = Q_yaw * Q_pitch * Q_roll
-    q[0] = sp * cy * cr + cp * sy * sr; // x
-    q[1] = cp * sy * cr - sp * cy * sr; // y
-    q[2] = cp * cy * sr - sp * sy * cr; // z
-    q[3] = cp * cy * cr + sp * sy * sr; // w
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Logic                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
@@ -275,12 +74,34 @@ _AFXINL afxBool AfxQuatIsIdentity(afxQuat const q)
     return AfxV4dIsIdentity(q);
 }
 
+_AFXINL afxBool AfxQuatIsNan(afxQuat const q)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(q);
+    return AfxV4dIsNan(q);
+}
+
+_AFXINL afxBool AfxQuatIsInfinite(afxQuat const q)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(q);
+    return AfxV4dIsInfinite(q);
+}
+
 _AFXINL afxBool AfxQuatIsEqual(afxQuat const q, afxQuat const other)
 {
     afxError err = { 0 };
     AFX_ASSERT(q);
     AFX_ASSERT(other);
-    return AfxV4dAreEquals(q, other);
+    return AfxV4dIsEqual(q, other);
+}
+
+_AFXINL afxBool AfxQuatIsDifferent(afxQuat const q, afxQuat const other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(q);
+    AFX_ASSERT(other);
+    return AfxV4dIsDiff(q, other);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -293,7 +114,7 @@ _AFXINL void AfxQuatSwap(afxQuat q, afxQuat other)
     AFX_ASSERT(q);
     AFX_ASSERT(other);
     AFX_ASSERT(q != other);
-    AfxSwapV4d(q, other);
+    AfxV4dSwap(q, other);
 }
 
 _AFXINL void AfxQuatCopy(afxQuat q, afxQuat const in)
@@ -363,39 +184,6 @@ AFXINL void AfxQuatDiv(afxQuat q, afxQuat const in, afxReal dividend)
     AFX_ASSERT(in);
     AFX_ASSERT(q);
     AfxV4dDiv(q, in, (afxV4d) { dividend, dividend, dividend, dividend });
-}
-
-_AFXINL void AfxQuatMultiply(afxQuat q, afxQuat const a, afxQuat const b)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(q != a);
-    AFX_ASSERT(q);
-
-#if 0
-
-    // Should be compatible with XMVECTOR XMQuaternionMultiply(FXMVECTOR Q1, FXMVECTOR Q2)
-
-    // The result represents the rotation A followed by the rotation B to be consistent with MatrixMulplity concatenation since this function is typically used to concatenate quaternions that represent rotations (i.e. it returns B*A).
-
-    // Returns the product B*A (which is the concatenation of a rotation A followed by the rotation B)
-
-    afxQuat const t = { b[0], b[1], b[2], b[3] };
-    q[0] = (t[3] * a[0]) + (t[0] * a[3]) + (t[1] * a[2]) - (t[2] * a[1]);
-    q[1] = (t[3] * a[1]) - (t[0] * a[2]) + (t[1] * a[3]) + (t[2] * a[0]);
-    q[2] = (t[3] * a[2]) + (t[0] * a[1]) - (t[1] * a[0]) + (t[2] * a[3]);
-    q[3] = (t[3] * a[3]) - (t[0] * a[0]) - (t[1] * a[1]) - (t[2] * a[2]);
-#else
-
-    // Compatible with QuaternionMultiply4(q, a, b)
-
-    afxQuat const t = { b[0], b[1], b[2], b[3] };
-    q[0] = (t[3] * a[0]) + ((t[0] * a[3]) +  (t[2] * a[1]) - (t[1] * a[2]));
-    q[1] =                  (t[1] * a[3]) +                  (t[0] * a[2]) -  (t[2] * a[0]) + (t[3] * a[1]);
-    q[2] = (t[3] * a[2]) + ((t[2] * a[3]) + ((t[1] * a[0]) - (t[0] * a[1])));
-    q[3] = (t[3] * a[3]) - ((t[2] * a[2]) +  (t[1] * a[1]) + (t[0] * a[0]));
-#endif
 }
 
 _AFXINL void AfxQuatMad(afxQuat q, afxQuat const add, afxQuat const mul, afxQuat const f)
@@ -556,214 +344,9 @@ _AFXINL afxReal AfxQuatAngle2(afxQuat const q, afxQuat const other)
     return AfxAcosf(AfxQuatDot(q, other)) * 2.0;
 }
 
-_AFXINL void AfxQuatLerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal percent)
-{
-    // Should be compatible with physicsforgames.blogspot.com/2010/02/quaternions.html
-
-    afxError err = { 0 };
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(q);
-
-    afxReal f = AFX_REAL(1) - percent;
-    
-    if (AfxQuatDot(a, b) < 0.f)
-    {
-        q[3] = f * a[0] + percent * -b[3];
-        q[0] = f * a[0] + percent * -b[0];
-        q[1] = f * a[1] + percent * -b[1];
-        q[2] = f * a[2] + percent * -b[2];
-    }
-    else
-    {
-        // mul & add
-        q[3] = f * a[3] + percent * b[3];
-        q[0] = f * a[0] + percent * b[0];
-        q[1] = f * a[1] + percent * b[1];
-        q[2] = f * a[2] + percent * b[2];
-    }
-    AfxQuatNormalize(q, q);
-}
-
-_AFXINL void AfxQuatSlerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal percent)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(q);
-
-    if (AfxRealIsEquivalent(percent, AFX_REAL(0))) AfxQuatCopy(q, a);
-    else
-    {
-        if (AfxRealIsEquivalent(percent, AFX_REAL(1))) AfxQuatCopy(q, b);
-        else
-        {
-            // if they are close q parallel, use LERP, This avoids div/0. At small angles, the slerp a lerp are the same.
-            afxReal dot = AfxQuatDot(a, b);
-
-            if (AfxRealIsEquivalent(dot, AFX_REAL(1))) AfxQuatLerp(q, a, q, percent);
-            else
-            {
-                // if dot is negative, they are "pointing" away from one another, use the shortest arc instead (reverse end a start)
-                // This has the effect of changing the direction of travel around the sphere beginning with "end" a going the b way around the sphere.
-
-                if (dot < AFX_REAL(0))
-                {
-                    afxQuat neg;
-                    AfxQuatNeg(neg, a);
-                    AfxQuatSlerp(q, a, neg, percent);
-                    AfxQuatNeg(q, q);
-                }
-                else
-                {
-                    // keep the dot product in the range that acos canv handle (shouldn't get here)
-                    dot = AfxClampd(dot, AFX_REAL(-1), AFX_REAL(1));
-                    afxReal theta = AfxAcosf(dot); // the angle between start a end in radians
-                    afxReal s = AfxSinf(theta), f1 = AfxSinf((AFX_REAL(1) - percent) * theta) / s, f2 = AfxSinf(percent * theta) / s; // compute negative a positive
-
-                    // mul & add
-                    q[3] = f1 * a[3] + f2 * b[3];
-                    q[0] = f1 * a[0] + f2 * b[0];
-                    q[1] = f1 * a[1] + f2 * b[1];
-                    q[2] = f1 * a[2] + f2 * b[2];
-                }
-            }
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Affine transformation                                                      //
-////////////////////////////////////////////////////////////////////////////////
-
-_AFXINL void AfxAssimilateQuat(afxM3d const ltm, afxM3d const iltm, afxUnit cnt, afxQuat const in[], afxQuat out[])
-{
-    // Should be compatible with void InPlaceSimilarityTransformOrientation
-
-    afxError err = { 0 };
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(in);
-    AFX_ASSERT(out);
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        afxReal len = AfxQuatMag(in[i]);
-        AfxQuatScale(out[i], in[i], 1.f / len);
-
-        afxM3d rm, tmp;
-        AfxM3dRotationQuat(rm, out[i]);
-        AfxM3dMultiply(tmp, ltm, rm);
-        AfxM3dMultiply(rm, tmp, iltm);
-        AfxQuatRotationM3d(out[i], rm);
-
-        AfxQuatScale(out[i], out[i], len);
-    }
-}
-
-_AFXINL void AfxQuatRotateV3dArray(afxQuat const q, afxUnit cnt, afxV3d const in[], afxV3d out[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(in);
-    AFX_ASSERT(out);
-    AFX_ASSERT(q != in[0]);
-    AFX_ASSERT(q != out[0]);
-
-    // Transform a vector using a rotation expressed as a unit quaternion
-
-#if 0
-
-    // Compatible with out = XMVector3Rotate(in, q)
-
-    afxQuat b, c;
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        afxQuat a = { in[i][0], in[i][1], in[i][2], 0 };
-        AfxQuatConj(b, q);
-        AfxQuatMultiply(c, b, a);
-        AfxQuatMultiply(out[i], c, q);
-    }
-#else
-
-    // Compatible with NormalQuaternionTransform3(in/out, q)
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        afxReal v2 = q[0] * q[0];
-        afxReal v3 = q[1] * q[1];
-        afxReal v4 = q[2] * q[2];
-        afxReal v5 = q[1] * q[0];
-        afxReal ac = q[2] * q[0];
-        afxReal ad = q[3] * q[0];
-        afxReal bc = q[2] * q[1];
-        afxReal bd = q[1] * q[3];
-        afxReal v10 = q[2] * q[3];
-        afxReal v12 = in[i][0];
-        afxReal v13 = in[i][2];
-        afxReal z2 = in[i][1];
-        afxReal x2 = v12 + v12;
-        afxReal y2 = z2 + z2;
-        afxReal Vector3a = v13 + v13;
-        out[i][0] = (1.0 - (v4 + v3 + v4 + v3)) * v12 + (v5 - v10) * y2 + (bd + ac) * Vector3a;
-        out[i][1] = (1.0 - (v4 + v2 + v4 + v2)) * z2 + (bc - ad) * Vector3a + (v10 + v5) * x2;
-        out[i][2] = (1.0 - (v3 + v2 + v3 + v2)) * v13 + (ac - bd) * x2 + (bc + ad) * y2;
-    }
-
-#endif
-}
-
-_AFXINL void AfxQuatRotateInv(afxQuat const q, afxV3d const in, afxV3d out)
-{
-    afxReal const vx = 2.0 * in[0];
-    afxReal const vy = 2.0 * in[1];
-    afxReal const vz = 2.0 * in[2];
-    afxReal const w2 = q[3] * q[3] - 0.5;
-    afxReal const dot2 = (q[0] * vx + q[1] * vy + q[2] * vz);
-    AfxV3dSet(out,  (vx * w2 - (q[1] * vz - q[2] * vy) * q[3] + q[0] * dot2), 
-                    (vy * w2 - (q[2] * vx - q[0] * vz) * q[3] + q[1] * dot2),
-                    (vz * w2 - (q[0] * vy - q[1] * vx) * q[3] + q[2] * dot2));
-}
-
-_AFXINL void AfxQuatExtractAxialRotation(afxQuat const q, afxV3d axis, afxReal *radians)
-{
-    // Should be compatible with void XMQuaternionToAxisAngle(XMVECTOR* pAxis, float* pAngle, FXMVECTOR Q)
-
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(axis);
-    AfxV3dCopy(axis, q);
-    *radians = 2.f * AfxAcosf(q[3]);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Trigonometry                                                               //
 ////////////////////////////////////////////////////////////////////////////////
-
-_AFXINL void AfxQuatBarycentric(afxQuat q, afxQuat const a, afxQuat const b, afxQuat const c, afxReal f, afxReal g)
-{
-    // Should be compatible with  XMVECTOR XMQuaternionBaryCentric(FXMVECTOR Q0, FXMVECTOR Q1, FXMVECTOR Q2, float f, float g)
-
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-
-    afxReal s = f + g;
-
-    if ((s < 0.00001f) && (s > -0.00001f)) AfxQuatCopy(q, a);
-    else
-    {
-        afxQuat ab, ac;
-        AfxQuatSlerp(ab, a, b, s);
-        AfxQuatSlerp(ac, a, c, s);
-        AfxQuatSlerp(q, ab, ac, g / s);
-    }
-}
 
 _AFXINL void AfxQuatTangentM3d(afxQuat q, afxM3d const tbn)
 {
@@ -820,132 +403,6 @@ _AFXINL void AfxQuatTangentFrame(afxQuat q, afxV3d const normal, afxV3d const ta
     afxM3d tbn;
     AfxM3dSet(tbn, normal, tangent, bitangent);
     AfxQuatTangentM3d(q, tbn);
-}
-
-_AFXINL void AfxQuatLookTo(afxQuat q, afxV3d const from, afxV3d const to)
-{
-    // Should be compatible with physicsforgames.blogspot.com/2010/03/quaternion-tricks.html
-    
-    afxV3d h;
-    AfxV3dAdd(h, from, to);
-    AfxV3dNormalize(h, h);
-
-    q[3] = AfxV3dDot(from, h);
-    q[0] = from[1] * h[2] - from[2] * h[1];
-    q[1] = from[2] * h[0] - from[0] * h[2];
-    q[2] = from[0] * h[1] - from[1] * h[0];
-}
-
-_AFXINL void AfxQuatFromAngularVelocity(afxQuat q, afxV3d const vel)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(vel);
-    AFX_ASSERT(q);
-
-    // Compatible with AngularVelocityToQuaternion(q, rot)
-
-    afxV4d n;
-    afxReal mag = AfxV3dMag(vel);
-    AfxV3dScale(n, vel, 1.0 / mag);
-    afxReal halfSq = mag * 0.5f;
-    AfxV3dScale(q, n, AfxSinf(halfSq));
-    q[3] = AfxCosf(halfSq);
-}
-
-/*
-    The AfxQuatIntegrate function uses exponential map to compute deltaq = exp(0.5 w dt).
-    This is a closed-form integration.The code computes rotation magnitude and forms a quaternion exponential.
-    This is the exact solution of the quaternion ODE for constant angular velocity during dt.
-    
-    Pros:
-    Much more accurate
-    Stable even for large dt
-    No need to normalize each step
-
-    Cons:
-    Slightly slower
-    More code
-
-    This function should be prefered over EULER variant when:
-        dt is moderate or irregular
-        angular velocities are high
-        you want numerically stable integration (e.g., rigid-body sims, spacecraft attitude)
-        you want physically correct results regardless of step size
-*/
-
-_AFXINL void AfxQuatIntegrate(afxQuat q, afxQuat const in, afxV3d const omega, afxReal dt)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(in);
-    AFX_ASSERT(omega);
-
-    afxV3d theta;
-    AfxV3dScale(theta, omega, dt * 0.5f);
-    afxReal thetaMagSq = AfxV3dSq(theta);
-    afxReal w, s;
-
-    if (thetaMagSq * thetaMagSq / 24.f < AFX_EPSILON)
-    {
-        // small-angle Taylor series
-        w = 1.0f - thetaMagSq * 0.5f;
-        s = 1.0f - thetaMagSq / 6.0f;
-    }
-    else
-    {
-        afxReal thetaMag = AfxSqrt(thetaMagSq);
-        w = AfxCos(thetaMag);
-        s = AfxSinf(thetaMag) / thetaMag;
-    }
-
-    afxQuat deltaQ;
-    // delta quaternion (rotation over this timestep)
-    AfxV3dScale(deltaQ, theta, s);
-    deltaQ[3] = w;
-
-    // Integrate.
-    AfxQuatMultiply(q, deltaQ, in);
-}
-
-/*
-    The AfxQuatIntegrateEULER function for first-order (explicit Euler) quaternion integration.
-    This uses the quaternion differential equation and integrates it using explicit Euler.
-    This is the simplest possible method.
-
-    Pros: fast, small code
-    Cons: low accuracy for large rotations or large dt, 
-    not stable for high angular velocities (requires normalization).
-
-    This method is accurate only when: |w|dt<<1
-
-    This function is mathematically equivalent to AfxQuatIntegrate using exponential map for small dt.
-
-    This function should be prefered over EXP-MAP variant when:
-        dt is very small (e.g., physics running at 1000 Hz)
-        angular velocities are small
-        you want maximum speed
-        some accuracy loss is acceptable
-*/
-
-_AFXINL void AfxQuatIntegrateEULER(afxQuat q, afxQuat const in, afxV3d const omega, afxReal dt)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(in);
-    AFX_ASSERT(omega);
-
-    afxQuat wq;
-    AfxQuatSet(wq, omega[0], omega[1], omega[2], 0);
-    // dq = 0.5 * (wq * q)
-    afxQuat dq;
-    AfxQuatMultiply(dq, wq, q);
-    AfxQuatScale(dq, dq, 0.5);
-
-    // integrate
-    AfxV4dMads(q, q, dq, dt);
-
-    // renormalize
-    AfxQuatNormalize(q, q);
 }
 
 // Utils

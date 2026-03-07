@@ -189,17 +189,7 @@ _ARX void ArxAccumulatePuppetAnimations(arxPose rslt, arxPuppet pup, afxUnit bas
     pup->ddi->accumAnimsCb(rslt, pup, basePivotIdx, pivotCnt, allowedErr, sparseJntMap);
 }
 
-_ARX afxError ArxDetachPuppet(arxPuppet pup)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
-
-    ArxBreakNodulation(&pup->nodu);
-
-    return err;
-}
-
-_ARX afxError ArxAttachPuppet(arxPuppet pup, arxNode nod, void(*sync)(arxNodular*), afxFlags dagFlags, afxMask dagMask)
+_ARX afxError ArxSetPuppetNode(arxPuppet pup, arxNode nod, void(*sync)(arxNodular*), afxFlags dagFlags, afxMask dagMask)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
@@ -207,6 +197,19 @@ _ARX afxError ArxAttachPuppet(arxPuppet pup, arxNode nod, void(*sync)(arxNodular
     ArxMakeNodulation(&pup->nodu, nod, sync, dagFlags, dagMask);
 
     return err;
+}
+
+_ARX afxBool ArxGetPuppetNode(arxPuppet pup, arxNode* node)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
+
+    arxNode nod;
+    ArxGetNode(&pup->nodu, &nod);
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
+    AFX_ASSERT(node);
+    *node = nod;
+    return !!nod;
 }
 
 _ARX afxError _ArxRigModelToPuppet(arxPuppet pup, arxModel mdl, afxUnit rigIdxCnt, afxUnit const rigIdxLut[])
@@ -287,7 +290,7 @@ _ARX afxError _ArxPupDtorCb(arxPuppet pup)
         AfxDisposeObjects(1, &intk);
     }
 
-    ArxDetachPuppet(pup);
+    ArxSetPuppetNode(pup, NIL, NIL, NIL, NIL);
 
     _ArxRigModelToPuppet(pup, NIL, 0, NIL);
 
@@ -358,7 +361,7 @@ _ARX afxError _ArxPupCtorCb(arxPuppet pup, void** args, afxUnit invokeNo)
     _ArxRigModelToPuppet(pup, mdl, 0, NIL);
 
     pup->nodu = (arxNodular) { 0 };
-    ArxAttachPuppet(pup, NIL, NIL, NIL, NIL);
+    ArxSetPuppetNode(pup, NIL, NIL, NIL, NIL);
 
     //arxScenario scio = ArxGetSimulationDrawInput(scio);
 

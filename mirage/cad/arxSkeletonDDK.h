@@ -35,10 +35,10 @@ AFX_OBJECT(arxSkeleton)
 {
     _arxIddSkl*         idd;
     _arxDdiSkl const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // In the past, skeleton (as arxSkeleton) was separated from model.
     // Mainly to simplify serialization, they were merged.

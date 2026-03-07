@@ -724,7 +724,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DDEV =
 {
     .fcc = afxFcc_DDEV,
     .name = "DrawDevice",
-    .desc = "Draw Device Driver Interface",
+    .desc = "Video Graphics Device",
     .fixedSiz = sizeof(AFX_OBJECT(afxDrawDevice)),
     .ctor = (void*)_AvxDdevCtorCb,
     .dtor = (void*)_AvxDdevDtorCb

@@ -193,10 +193,10 @@ AFX_OBJECT(afxWidget)
 {
     _auxIddWid*         idd;
     _auxDdiWid const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxLink parent;
     afxChain children;

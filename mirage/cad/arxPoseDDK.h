@@ -52,10 +52,10 @@ AFX_OBJECT(arxPose)
 {
     _arxIddPose*        idd;
     _arxDdiPose const*  ddi;
-    // User-defined data, custom info for the pose.
-    void*               udd;
     // A tag for debugging or identifying the pose.
     afxString           tag;
+    // User-defined data, custom info for the pose.
+    void*               udd;
 
     // Number of articulations (joints/bones) in the pose.
     afxUnit             artCnt;

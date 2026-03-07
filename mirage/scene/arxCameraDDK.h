@@ -39,6 +39,8 @@ AFX_OBJECT(_arxCamera)
 AFX_OBJECT(arxCamera)
 #endif
 {
+    afxString           tag; // debug
+    void*               udd;
     afxCameraFlags      flags;
     afxReal             wpOverHp; // physical w/h
     afxReal             wrOverHr; // resolution w/h
@@ -47,7 +49,7 @@ AFX_OBJECT(arxCamera)
     afxReal             nearClipPlane;
     afxReal             farClipPlane;
     afxReal             depthRangeEpsilon;
-    avxClipSpaceDepth     depthRange;
+    avxClipSpaceDepth   depthRange;
     afxBool             useQuatOrient;
     afxQuat             orient;
     afxM3d              orientM3d;

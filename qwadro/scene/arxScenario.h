@@ -20,7 +20,9 @@
 #ifndef ARX_SCENARIO_H
 #define ARX_SCENARIO_H
 
-// arxScenario devices operates like device submission queues grouping sets of draw streams and present their result to the connected draw output devices.
+// arxScenario is object holding a collection of objects used to produce and capture scenes.
+
+// Draw input devices operates like device submission queues grouping sets of draw streams and present their result to the connected draw output devices.
 
 // No QWADRO, há um conceito de uma fila de submissão de trabalho para a GPU. Porém, diferentemente do Vulkan, no QWADRO esta "fila" é separada em dois.
 // A primeira parte contém a demanda e a segunda parte o estado da fila junto a ponte.

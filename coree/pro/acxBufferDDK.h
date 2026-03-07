@@ -30,6 +30,7 @@ AFX_OBJECT(acxBuffer)
 {
     afxString       tag;
     void*           udd;
+
     acxBuffer       base; // handle used by subacquision of another buffer
     afxSize         from; // offset used by subacquision of another buffer
     //afxUnit         size; // capacity

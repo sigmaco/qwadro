@@ -55,10 +55,10 @@ AFX_OBJECT(afxFont)
 {
     _auxIddFnt*         idd;
     _auxDdiFnt const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxUnit         pagCnt;
     _auxFontPage*   pages;

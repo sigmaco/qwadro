@@ -20,7 +20,7 @@
 #define _ARX_CAMERA_C
 #include "arxIcd.h"
 
-_ARX afxReal64 ArxFindAllowedCameraLodError(afxReal64 errInPixels, afxInt vpHeightInPixels, afxReal64 fovY, afxReal64 distanceFromCam)
+_ARX afxReal64 ArxFindAllowedLodErrorForCamera(afxReal64 errInPixels, afxInt vpHeightInPixels, afxReal64 fovY, afxReal64 distanceFromCam)
 {
 
     afxReal64 halfFov = fovY * 0.5;
@@ -104,7 +104,7 @@ _ARXINL void _ArxComputeCameraMatrices(arxCamera cam, afxM4d v, afxM4d iv)
     at[2] = -(at[2] + cam->displace[2]);
     at[3] = 1.f;
     AfxM4dCopyM3d(v, c, at);
-    AfxM4dTransposeAtm(iv, v);
+    AfxM4dCopyAtmTransposed(iv, v);
     AfxM4dEnsureAffine(iv);
     AfxV3dPostMultiplyM3d(at, c, cam->displace);
     AfxV3dAdd(iv[3], at, cam->pos);
@@ -759,7 +759,7 @@ _ARX afxBool _AvxCamEventFilter(afxObject *obj, afxObject *watched, afxEvent *ev
 }
 #endif
 
-_ARXINL void ArxResetCamera(arxCamera cam)
+_ARXINL void ArxRestoreCamera(arxCamera cam)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
@@ -795,22 +795,12 @@ _ARXINL void ArxResetCamera(arxCamera cam)
     _ArxRecomputeCameraMatrices(cam);
 }
 
-_ARX afxError ArxAttachCamera(arxCamera cam, arxNode nod, void(*sync)(arxNodular*), afxFlags dagFlags, afxMask dagMask)
+_ARX afxError ArxSetCameraNode(arxCamera cam, arxNode nod, void(*sync)(arxNodular*), afxFlags dagFlags, afxMask dagMask)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
 
     ArxMakeNodulation(&cam->nodu, nod, sync, dagFlags, dagMask);
-
-    return err;
-}
-
-_ARX afxError ArxDetachCamera(arxCamera cam)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-
-    ArxBreakNodulation(&cam->nodu);
 
     return err;
 }
@@ -833,7 +823,7 @@ _ARX afxError _ArxCamDtorCb(arxCamera cam)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
 
-    ArxDetachCamera(cam);
+    ArxSetCameraNode(cam, NIL, NIL, NIL, NIL);
 
     return err;
 }
@@ -845,6 +835,8 @@ _ARX afxError _ArxCamCtorCb(arxCamera cam, void** args, afxUnit invokeNo)
 
     arxScenario scio = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    AFX_ASSERT(args[1]);
+    arxCameraConfig const* cfg = &(AFX_CAST(arxCameraConfig const*, args[1])[invokeNo]);
 
     afxDrawSystem dsys = ArxGetScenarioDrawSystem(scio);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -861,10 +853,10 @@ _ARX afxError _ArxCamCtorCb(arxCamera cam, void** args, afxUnit invokeNo)
     AfxM4dReset(m2);
     AfxMakeFrustum(&cam->frustum, m, m2);
     
-    ArxResetCamera(cam);
+    ArxRestoreCamera(cam);
 
     cam->nodu = (arxNodular) { 0 };
-    ArxAttachCamera(cam, NIL, NIL, NIL, NIL);
+    ArxSetCameraNode(cam, NIL, NIL, NIL, NIL);
 
     return err;
 }
@@ -873,7 +865,7 @@ _ARX afxClassConfig const _ARX_CAM_CLASS_CONFIG =
 {
     .fcc = afxFcc_CAM,
     .name = "Camera",
-    .desc = "Device-aware Camera",
+    .desc = "Device-Aware Camera",
     .fixedSiz = sizeof(AFX_OBJECT(arxCamera)),
     .ctor = (void*)_ArxCamCtorCb,
     .dtor = (void*)_ArxCamDtorCb,
@@ -884,7 +876,7 @@ _ARX afxClassConfig const _ARX_CAM_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_ARX afxError ArxAcquireCameras(arxScenario scio, afxUnit cnt, arxCamera cameras[])
+_ARX afxError ArxAcquireCameras(arxScenario scio, afxUnit cnt, arxCameraConfig const cfg[], arxCamera cameras[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
@@ -892,7 +884,7 @@ _ARX afxError ArxAcquireCameras(arxScenario scio, afxUnit cnt, arxCamera cameras
     afxClass* cls = (afxClass*)_ArxScioGetCamClassCb_SW(scio);
     AFX_ASSERT_CLASS(cls, afxFcc_CAM);
 
-    if (AfxAcquireObjects(cls, cnt, (afxObject*)cameras, (void const*[]) { scio }))
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)cameras, (void const*[]) { scio, cfg }))
     {
         AfxThrowError();
         return err;

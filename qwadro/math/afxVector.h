@@ -25,51 +25,87 @@
 #include "qwadro/math/afxArithmetic2.h"
 #include "qwadro/math/afxTrigonometry.h"
 
-AFX afxV2d const AFX_V2D_X;
-AFX afxV3d const AFX_V3D_X;
-AFX afxV4d const AFX_V4D_X;
+#define AFX_V2D(x_, y_) (afxV2d){ (afxReal)(x_), (afxReal)(y_) } 
+#define AFX_V3D(x_, y_, z_) (afxV3d){ (afxReal)(x_), (afxReal)(y_), (afxReal)(z_) } 
+#define AFX_V4D(x_, y_, z_, w_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)(z_), (afxReal)(w_) } 
+#define AFX_ATV3D(x_, y_) (afxV3d){ (afxReal)(x_), (afxReal)(y_), (afxReal)1 } 
+#define AFX_ATV4D(x_, y_, z_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)1 } 
+#define AFX_LTV4D(x_, y_, z_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)0 } 
 
-AFX afxV2d const AFX_V2D_X_NEG;
-AFX afxV3d const AFX_V3D_X_NEG;
-AFX afxV4d const AFX_V4D_X_NEG;
+#define AFX_V2D_S(x_) (afxV2d){ (afxReal)(x_), (afxReal)(x_) } 
+#define AFX_V3D_S(x_) (afxV3d){ (afxReal)(x_), (afxReal)(x_), (afxReal)(x_) } 
+#define AFX_V4D_S(x_) (afxV4d){ (afxReal)(x_), (afxReal)(x_), (afxReal)(x_), (afxReal)(x_) } 
+#define AFX_ATV3D_S(x_) (afxV3d){ (afxReal)(x_), (afxReal)(x_), (afxReal)1 } 
+#define AFX_ATV4D_S(x_) (afxV4d){ (afxReal)(x_), (afxReal)(x_), (afxReal)(x_), (afxReal)1 } 
+#define AFX_LTV4D_S(x_) (afxV4d){ (afxReal)(x_), (afxReal)(x_), (afxReal)(x_), (afxReal)0 } 
 
-AFX afxV2d const AFX_V2D_Y;
-AFX afxV3d const AFX_V3D_Y;
-AFX afxV4d const AFX_V4D_Y;
+#define AFX_V2D_X AFX_V2D(1, 0)
+#define AFX_V2D_Y AFX_V2D(0, 1)
 
-AFX afxV2d const AFX_V2D_Y_NEG;
-AFX afxV3d const AFX_V3D_Y_NEG;
-AFX afxV4d const AFX_V4D_Y_NEG;
+#define AFX_V2D_X_NEG AFX_V4D(-1, 0)
+#define AFX_V2D_Y_NEG AFX_V2D( 0,-1)
 
-AFX afxV3d const AFX_V3D_Z;
-AFX afxV4d const AFX_V4D_Z;
+#define AFX_V3D_X AFX_V3D(1, 0, 0)
+#define AFX_V3D_Y AFX_V3D(0, 1, 0)
+#define AFX_V3D_Z AFX_V3D(0, 0, 1)
 
-AFX afxV3d const AFX_V3D_Z_NEG;
-AFX afxV4d const AFX_V4D_Z_NEG;
+#define AFX_V3D_X_NEG AFX_V4D(-1, 0, 0)
+#define AFX_V3D_Y_NEG AFX_V3D( 0,-1, 0)
+#define AFX_V3D_Z_NEG AFX_V3D( 0, 0,-1)
 
-AFX afxV4d const AFX_V4D_W; // W Axis
-AFX afxV4d const AFX_V4D_W_NEG;
+#define AFX_V4D_X AFX_V4D(1, 0, 0, 0)
+#define AFX_V4D_Y AFX_V4D(0, 1, 0, 0)
+#define AFX_V4D_Z AFX_V4D(0, 0, 1, 0)
+#define AFX_V4D_W AFX_V4D(0, 0, 0, 1)
 
-AFX afxV4d const AFX_V4D_YXZ;
+#define AFX_V4D_X_NEG AFX_V4D(-1, 0, 0, 0)
+#define AFX_V4D_Y_NEG AFX_V4D( 0,-1, 0, 0)
+#define AFX_V4D_Z_NEG AFX_V4D( 0, 0,-1, 0)
+#define AFX_V4D_W_NEG AFX_V4D( 0, 0, 0,-1)
 
-AFX afxV2d const AFX_V2D_ZERO;
-AFX afxV3d const AFX_V3D_ZERO;
-AFX afxV4d const AFX_V4D_ZERO;
+#define AFX_V2D_ONE AFX_V2D(1, 1)
+#define AFX_V3D_ONE AFX_V3D(1, 1, 1)
+#define AFX_V4D_ONE AFX_V4D(1, 1, 1, 1)
+#define AFX_V4D_ONE_NEG AFX_V4D(-1,-1,-1,-1)
+#define AFX_V4D_XYZ AFX_V4D(1, 1, 1, 0)
 
-AFX afxV2d const AFX_V2D_ONE;
-AFX afxV3d const AFX_V3D_ONE;
-AFX afxV4d const AFX_V4D_ONE;
+#define AFX_V2D_ZERO AFX_V2D(0, 0)
+#define AFX_V3D_ZERO AFX_V3D(0, 0, 0)
+#define AFX_V4D_ZERO AFX_V4D(0, 0, 0, 0)
 
-AFX afxV4d const AFX_V4D_ONE_NEG;
+#define AFX_V2D_HALF AFX_V2D(0.5, 0.5)
+#define AFX_V3D_HALF AFX_V3D(0.5, 0.5, 0.5)
+#define AFX_V4D_HALF AFX_V4D(0.5, 0.5, 0.5, 0.5)
 
-AFX afxV2d const AFX_V2D_IDENTITY;
-AFX afxV3d const AFX_V3D_IDENTITY;
-AFX afxV4d const AFX_V4D_IDENTITY;
+#define AFX_V2D_MAX AFX_V2D(AFX_R32_MAX, AFX_R32_MAX)
+#define AFX_V3D_MAX AFX_V3D(AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX)
+#define AFX_V4D_MAX AFX_V4D(AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX)
 
-#define AFX_V2D(x_, y_) (afxV2d const){ (afxReal)(x_), (afxReal)(y_) }
-#define AFX_V3D(x_, y_, z_) (afxV3d const){ (afxReal)x_, (afxReal)y_, (afxReal)z_ }
-#define AFX_V4D(x_, y_, z_, w_) (afxV4d const){ (afxReal)x_, (afxReal)y_, (afxReal)z_, (afxReal)w_ }
-#define AFX_ATV4D(x_, y_, z_) (afxV4d const){ (afxReal)x_, (afxReal)y_, (afxReal)z_, (afxReal)1 }
+#define AFX_V2D_MIN AFX_V2D(-AFX_R32_MAX, -AFX_R32_MAX)
+#define AFX_V3D_MIN AFX_V3D(-AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX)
+#define AFX_V4D_MIN AFX_V4D(-AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX)
+
+#define AFX_V2D_EPSILON AFX_V2D(AFX_EPSILON, AFX_EPSILON)
+#define AFX_V3D_EPSILON AFX_V3D(AFX_EPSILON, AFX_EPSILON, AFX_EPSILON)
+#define AFX_V4D_EPSILON AFX_V4D(AFX_EPSILON, AFX_EPSILON, AFX_EPSILON, AFX_EPSILON)
+
+#define AFX_V2D_PI AFX_V2D(AFX_PI, AFX_PI)
+#define AFX_V3D_PI AFX_V3D(AFX_PI, AFX_PI, AFX_PI)
+#define AFX_V4D_PI AFX_V4D(AFX_PI, AFX_PI, AFX_PI, AFX_PI)
+
+#define AFX_V2D_PI_OVER2 AFX_V2D(AFX_PI_OVER2, AFX_PI_OVER2)
+#define AFX_V3D_PI_OVER2 AFX_V3D(AFX_PI_OVER2, AFX_PI_OVER2, AFX_PI_OVER2)
+#define AFX_V4D_PI_OVER2 AFX_V4D(AFX_PI_OVER2, AFX_PI_OVER2, AFX_PI_OVER2, AFX_PI_OVER2)
+
+#define AFX_V2D_PI_OVER_180 AFX_V2D(AFX_PI_OVER_180, AFX_PI_OVER_180)
+#define AFX_V3D_PI_OVER_180 AFX_V3D(AFX_PI_OVER_180, AFX_PI_OVER_180, AFX_PI_OVER_180)
+#define AFX_V4D_PI_OVER_180 AFX_V4D(AFX_PI_OVER_180, AFX_PI_OVER_180, AFX_PI_OVER_180, AFX_PI_OVER_180)
+
+#define AFX_V2D_180_OVER_PI AFX_V2D(AFX_180_OVER_PI, AFX_180_OVER_PI)
+#define AFX_V3D_180_OVER_PI AFX_V3D(AFX_180_OVER_PI, AFX_180_OVER_PI, AFX_180_OVER_PI)
+#define AFX_V4D_180_OVER_PI AFX_V4D(AFX_180_OVER_PI, AFX_180_OVER_PI, AFX_180_OVER_PI, AFX_180_OVER_PI)
+
+#define AFX_V4D_IDENTITY AFX_V4D(0, 0, 0, 1)
 
 #define AFX_V(x) _Generic((x), \
     afxReal: (afxV4d){(x), (x), (x), (x)}, \
@@ -96,11 +132,11 @@ AFX afxV4d const AFX_V4D_IDENTITY;
 AFXINL void     AfxV2dZero(afxV2d v);
 AFXINL void     AfxV3dZero(afxV3d v);
 AFXINL void     AfxV4dZero(afxV4d v);
-AFXINL void     AfxResetV4d(afxV4d v);
+AFXINL void     AfxV4dReset(afxV4d v);
 
-AFXINL void     AfxFillV2d(afxV2d v, afxReal value);
-AFXINL void     AfxFillV3d(afxV3d v, afxReal value);
-AFXINL void     AfxFillV4d(afxV4d v, afxReal value);
+AFXINL void     AfxV2dFill(afxV2d v, afxReal value);
+AFXINL void     AfxV3dFill(afxV3d v, afxReal value);
+AFXINL void     AfxV4dFill(afxV4d v, afxReal value);
 
 AFXINL void     AfxV2dSet(afxV2d v, afxReal x, afxReal y);
 AFXINL void     AfxV3dSet(afxV3d v, afxReal x, afxReal y, afxReal z);
@@ -112,9 +148,17 @@ AFXINL void     AfxV4dSet(afxV4d v, afxReal x, afxReal y, afxReal z, afxReal w);
 
 AFXINL afxBool  AfxV4dIsIdentity(afxV4d const v);
 
-AFXINL afxBool  AfxV2dAreEquals(afxV2d const v, afxV2d const other);
-AFXINL afxBool  AfxV3dAreEquals(afxV3d const v, afxV3d const other);
-AFXINL afxBool  AfxV4dAreEquals(afxV4d const v, afxV4d const other);
+AFXINL afxBool  AfxV2dIsEqual(afxV2d const v, afxV2d const other);
+AFXINL afxBool  AfxV3dIsEqual(afxV3d const v, afxV3d const other);
+AFXINL afxBool  AfxV4dIsEqual(afxV4d const v, afxV4d const other);
+
+AFXINL afxBool  AfxV2dIsNearEqual(afxV2d const v, afxV2d const other);
+AFXINL afxBool  AfxV3dIsNearEqual(afxV3d const v, afxV3d const other);
+AFXINL afxBool  AfxV4dIsNearEqual(afxV4d const v, afxV4d const other);
+
+AFXINL afxBool  AfxV2dIsDiff(afxV2d const v, afxV2d const other);
+AFXINL afxBool  AfxV3dIsDiff(afxV3d const v, afxV3d const other);
+AFXINL afxBool  AfxV4dIsDiff(afxV4d const v, afxV4d const other);
 
 AFXINL afxBool  AfxV2dIsInBounds(afxV2d const v, afxV2d const bounds);
 AFXINL afxBool  AfxV3dIsInBounds(afxV3d const v, afxV3d const bounds);
@@ -150,19 +194,15 @@ AFXINL void     AfxV2dCopy(afxV2d v, afxV2d const in);
 AFXINL void     AfxV3dCopy(afxV3d v, afxV3d const in);
 AFXINL void     AfxV4dCopy(afxV4d v, afxV4d const in);
 
-AFXINL void     AfxCopyArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
-AFXINL void     AfxCopyArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxCopyArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
 AFXINL void     AfxV3dCopyV2d(afxV3d v, afxV2d const in); // 2D linear transformation vector. Z is 0.
 AFXINL void     AfxV4dCopyV2d(afxV4d v, afxV2d const in);
 AFXINL void     AfxV4dCopyV3d(afxV4d v, afxV3d const in);
 AFXINL void     AfxV3dCopyAtv2d(afxV3d v, afxV2d const in); // 2D affine transfomartion vector. Z is 1.
 AFXINL void     AfxV4dCopyAtv3d(afxV4d v, afxV3d const in); // 3D affine transformation vector. W is 1.
 
-AFXINL void     AfxSwapV2d(afxV2d v, afxV2d other);
-AFXINL void     AfxSwapV3d(afxV3d v, afxV3d other);
-AFXINL void     AfxSwapV4d(afxV4d v, afxV4d other);
+AFXINL void     AfxV2dSwap(afxV2d v, afxV2d other);
+AFXINL void     AfxV3dSwap(afxV3d v, afxV3d other);
+AFXINL void     AfxV4dSwap(afxV4d v, afxV4d other);
 
 // Normalizing a vector scales it so that its length becomes 1 (unit vector), preserving its direction.
 // Ensuring a vector has a unit length for operations like lighting calculations, physics simulations, etc.
@@ -176,25 +216,6 @@ AFXINL afxReal  AfxV3dNormalizeV4d(afxV3d v, afxV4d const in);
 AFXINL afxReal  AfxV2dNormalizeEstimated(afxV2d v, afxV2d const in);
 AFXINL afxReal  AfxV3dNormalizeEstimated(afxV3d v, afxV3d const in);
 AFXINL afxReal  AfxV4dNormalizeEstimated(afxV4d v, afxV4d const in);
-
-AFXINL void     AfxNormalizeArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
-AFXINL void     AfxNormalizeArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxNormalizeArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-AFXINL void     AfxZeroOrNormalizeArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
-AFXINL void     AfxZeroOrNormalizeArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
-AFXINL void     AfxZeroOrNormalizeArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
-
-// SLERP
-// Function to perform Spherical Linear Interpolation (SLERP) between two quaternions
-// Slerp is a type of interpolation that smoothly interpolates between two vectors along the shortest path (on a sphere). 
-// Unlike linear interpolation, it handles rotations and vectors that lie on the surface of a sphere.
-// Rotating objects in 3D space, interpolating between two orientations (used in quaternions and rotation matrices).
-// v(t) = ((sin((1 - t) * theta)) / sin(theta)) * x + ((sin(t) * theta) / (sin(theta))) * y
-
-AFXINL void     AfxV2dSlerp(afxV2d v, afxV2d x, afxV2d y, afxReal t);
-AFXINL void     AfxV3dSlerp(afxV3d v, afxV3d x, afxV3d y, afxReal t);
-AFXINL void     AfxV4dSlerp(afxV4d v, afxV4d x, afxV4d y, afxReal t);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Algebra                                                                    //
@@ -248,49 +269,16 @@ AFXINL void     AfxV2dCross(afxV2d v, afxV2d const a, afxV2d const b);
 AFXINL void     AfxV3dCross(afxV3d v, afxV3d const a, afxV3d const b);
 AFXINL void     AfxV4dCross(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c);
 
-////////////////////////////////////////////////////////////////////////////////
-// VECTOR TRANSFORMATION METHODS                                              //
-////////////////////////////////////////////////////////////////////////////////
+AFXINL void     AfxCopyArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
+AFXINL void     AfxCopyArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
+AFXINL void     AfxCopyArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
 
-//  --- post-multiply
-//  m[0][i/0] * v[i/0], m[0][i/1] * v[i/1], m[0][i/2] * v[i/2], m[0][i/3] * v[i/3]
+AFXINL void     AfxNormalizeArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
+AFXINL void     AfxNormalizeArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
+AFXINL void     AfxNormalizeArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
 
-//  --- pre-multiply
-//  v[i/0] * m[i/0][0], v[i/1] * m[i/1][0], v[i/2] * m[i/2][0], v[i/3] * m[i/3][0]
-
-// Multiply (column) vector by matrix ([0][0], [1][0], [2][0], [3][0])
-// With post-multiplication, a 4x4 matrix multiplied with a 4x1 column vector took the dot product of each row of the matrix with the vector.
-
-// Multiply (row) vector by matrix ([0][0], [0][1], [0][2], [0][3])
-// With pre-multiplication, the dot product is with the vector and each column of the matrix (since the matrix is now on the right side of the multiplication operator).
-
-AFXINL void     AfxV2dPostMultiplyM2d(afxV2d v, afxM2d const m, afxV2d const in); // m * v
-AFXINL void     AfxV3dPostMultiplyM3d(afxV3d v, afxM3d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyM4d(afxV4d v, afxM4d const m, afxV4d const in); // m * v
-
-AFXINL void     AfxV3dPostMultiplyLtm4d(afxV3d v, afxM4d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyM3d(afxV4d v, afxM3d const m, afxV4d const in); // m * v
-
-AFXINL void     AfxV2dPostMultiplyAtm4d(afxV2d v, afxM4d const m, afxV2d const in); // m * v
-AFXINL void     AfxV3dPostMultiplyAtm4d(afxV3d v, afxM4d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyAtm4d(afxV4d v, afxM4d const m, afxV4d const in); // m * v
-
-AFXINL void     TransposeVectorTransform4x3(afxV3d Dest, float D3, afxM4d const Transform);
-
-AFXINL void     AfxV2dPreMultiplyM2d(afxV2d v, afxV2d const in, afxM2d const m); // v * m
-AFXINL void     AfxV3dPreMultiplyM3d(afxV3d v, afxV3d const in, afxM3d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyM4d(afxV4d v, afxV4d const in, afxM4d const m); // v * m
-
-AFXINL void     AfxV3dPreMultiplyLtm4d(afxV3d v, afxV3d const in, afxM4d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyM3d(afxV4d v, afxV4d const in, afxM3d const m); // v * m
-
-AFXINL void     AfxV2dPreMultiplyAtm4d(afxV2d v, afxV2d const in, afxM4d const m); // v * m
-AFXINL void     AfxV3dPreMultiplyAtm4d(afxV3d v, afxV3d const in, afxM4d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyAtm4d(afxV4d v, afxV4d const in, afxM4d const m); // v * m
-
-// Similarity transform
-
-AFXINL void     AfxAssimilateAtv3d(afxM3d const ltm, afxV4d const atv, afxUnit cnt, afxV3d const in[], afxV3d out[]); // make similarity transformation on afxV3d-based position.
-AFXINL void     AfxAssimilateAtv4d(afxM3d const ltm, afxV4d const atv, afxUnit cnt, afxV4d const in[], afxV4d out[]); // make similarity transformation on afxV3d-based position.
+AFXINL void     AfxZeroOrNormalizeArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
+AFXINL void     AfxZeroOrNormalizeArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);
+AFXINL void     AfxZeroOrNormalizeArrayedV4d(afxUnit cnt, afxV4d const in[], afxV4d out[]);
 
 #endif//AFX_VECTOR_H

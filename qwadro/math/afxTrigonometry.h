@@ -19,7 +19,7 @@
 /*
     Trigonometric Functions
     Functions that deal with angles and their corresponding trigonometric values.
-
+    
     Sine: sin
     Cosine: cos
     Tangent: tan
@@ -29,10 +29,17 @@
     Inverse Trigonometric: asin, acos, atan, acot, asec, acsc
 */
 
+// Trigonometry deals more with angles and ratios of sides in right-angled triangles, 
+// while linear algebra focuses on vector spaces and linear transformations.
+
 #ifndef AFX_TRIGONOMETRY_H
 #define AFX_TRIGONOMETRY_H
 
 #include "qwadro/math/afxVector.h"
+
+////////////////////////////////////////////////////////////////////////////////
+// SCALAR                                                                     //
+////////////////////////////////////////////////////////////////////////////////
 
 /*********************************************************************************
  * ANGLE AND TRIGONOMETRY FUNCTIONS                                              *
@@ -62,18 +69,10 @@ AFXINL afxReal      AfxDegf(afxReal radians);
 AFXINL afxReal64    AfxSin(afxReal64 radians);
 AFXINL afxReal      AfxSinf(afxReal radians);
 
-AFXINL void         AfxSinV2d(afxV2d v, afxV2d const in); // v = sin(in)
-AFXINL void         AfxSinV3d(afxV3d v, afxV3d const in); // v = sin(in)
-AFXINL void         AfxSinV4d(afxV4d v, afxV4d const in); // v = sin(in)
-
 // The standard trigonometric cosine function.
 
 AFXINL afxReal64    AfxCos(afxReal64 radians);
 AFXINL afxReal      AfxCosf(afxReal radians);
-
-AFXINL void         AfxCosV2d(afxV2d v, afxV2d const in); // v = cos(in)
-AFXINL void         AfxCosV3d(afxV3d v, afxV3d const in); // v = cos(in)
-AFXINL void         AfxCosV4d(afxV4d v, afxV4d const in); // v = cos(in)
 
 // Combined cosine and sine
 
@@ -84,10 +83,6 @@ AFXINL void         AfxCosSinf(afxReal radians, afxReal* cos, afxReal* sin);
 
 AFXINL afxReal64    AfxTan(afxReal64 radians);
 AFXINL afxReal      AfxTanf(afxReal radians);
-
-AFXINL void         AfxTanV2d(afxV2d v, afxV2d const in); // v = tan(in)
-AFXINL void         AfxTanV3d(afxV3d v, afxV3d const in); // v = tan(in)
-AFXINL void         AfxTanV4d(afxV4d v, afxV4d const in); // v = tan(in)
 
 // Arc sine. Returns an angle whose sine is x.
 // The range of values returned by this function is [-pi / 2, pi / 2].
@@ -103,19 +98,11 @@ AFXINL afxReal      AfxAsinf(afxReal x);
 AFXINL afxReal64    AfxAcos(afxReal64 x);
 AFXINL afxReal      AfxAcosf(afxReal x);
 
-AFXINL void         AfxAcosV2d(afxV2d v, afxV2d const in); // v = acos(in)
-AFXINL void         AfxAcosV3d(afxV3d v, afxV3d const in); // v = acos(in)
-AFXINL void         AfxAcosV4d(afxV4d v, afxV4d const in); // v = acos(in)
-
 // Arc tangent. Returns an angle whose tangent is y_over_x.
 // The range of values returned by this function is [-pi / 2, pi / 2].
 
 AFXINL afxReal64    AfxAtan(afxReal64 y_over_x);
 AFXINL afxReal      AfxAtanf(afxReal y_over_x);
-
-AFXINL void         AfxAtanV2d(afxV2d v, afxV2d const in); // v = atan(in)
-AFXINL void         AfxAtanV3d(afxV3d v, afxV3d const in); // v = atan(in)
-AFXINL void         AfxAtanV4d(afxV4d v, afxV4d const in); // v = atan(in)
 
 // Arc tangent. Returns an angle whose tangent is y / x.
 // The signs of x and y are used to determine what quadrant the angle is in.
@@ -125,7 +112,35 @@ AFXINL void         AfxAtanV4d(afxV4d v, afxV4d const in); // v = atan(in)
 AFXINL afxReal64    AfxAtan2(afxReal64 y, afxReal64 x);
 AFXINL afxReal      AfxAtan2f(afxReal y, afxReal x);
 
+////////////////////////////////////////////////////////////////////////////////
+// VECTOR                                                                     //
+////////////////////////////////////////////////////////////////////////////////
 
+AFXINL void     AfxSinV2d(afxV2d v, afxV2d const in); // v = sin(in)
+AFXINL void     AfxSinV3d(afxV3d v, afxV3d const in); // v = sin(in)
+AFXINL void     AfxSinV4d(afxV4d v, afxV4d const in); // v = sin(in)
+
+AFXINL void     AfxCosV2d(afxV2d v, afxV2d const in); // v = cos(in)
+AFXINL void     AfxCosV3d(afxV3d v, afxV3d const in); // v = cos(in)
+AFXINL void     AfxCosV4d(afxV4d v, afxV4d const in); // v = cos(in)
+
+AFXINL void     AfxTanV2d(afxV2d v, afxV2d const in); // v = tan(in)
+AFXINL void     AfxTanV3d(afxV3d v, afxV3d const in); // v = tan(in)
+AFXINL void     AfxTanV4d(afxV4d v, afxV4d const in); // v = tan(in)
+
+AFXINL void     AfxAcosV2d(afxV2d v, afxV2d const in); // v = acos(in)
+AFXINL void     AfxAcosV3d(afxV3d v, afxV3d const in); // v = acos(in)
+AFXINL void     AfxAcosV4d(afxV4d v, afxV4d const in); // v = acos(in)
+
+/*
+    The atan function, or arc tangent, is a trigonometric operation. It is the inverse of the tangent function. 
+    Specifically, for a given value x, atan(x) returns the angle whose tangent is x.
+    This angle is expressed in radians, and the result lies within the interval (-Pi / 2, Pi / 2)
+*/
+
+AFXINL void     AfxAtanV2d(afxV2d v, afxV2d const in); // v = atan(in)
+AFXINL void     AfxAtanV3d(afxV3d v, afxV3d const in); // v = atan(in)
+AFXINL void     AfxAtanV4d(afxV4d v, afxV4d const in); // v = atan(in)
 
 AFXINL void     AfxComputeTriangleNormal(afxV3d const a, afxV3d const b, afxV3d const c, afxReal n[3]);
 
@@ -148,5 +163,18 @@ AFXINL void     AfxBarycentricV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV
 AFXINL void     AfxBarycentricV2d2(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const f, afxV2d const g);
 AFXINL void     AfxBarycentricV3d2(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const f, afxV3d const g);
 AFXINL void     AfxBarycentricV4d2(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const f, afxV4d const g);
+
+////////////////////////////////////////////////////////////////////////////////
+// QUATERNION (aka QWATERNION)                                                //
+////////////////////////////////////////////////////////////////////////////////
+
+/// Returns a point in barycentric coordinates, using the specified quaternions. Note that Barycentric coordinates work for 'flat' surfaces but not for 'curved' ones.
+/// a = First quaternion in the triangle.
+/// b = Second quaternion in the triangle.
+/// c = Third quaternion in the triangle.
+/// f = Weighting factor.
+/// g = Weighting factor.
+
+AFXINL void AfxQuatBarycentric(afxQuat q, afxQuat const a, afxQuat const b, afxQuat const c, afxReal f, afxReal g);
 
 #endif//AFX_TRIGONOMETRY_H

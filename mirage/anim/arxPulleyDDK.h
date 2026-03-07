@@ -44,10 +44,10 @@ AFX_OBJECT(arxPulley)
 {
     _arxIddCap*         idd;
     _arxDdiCap const*   ddi;
-    // User-defined data.
-    void*               udd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     arxPulleyFlags flags;
     afxReal         dtLocalTimePending;

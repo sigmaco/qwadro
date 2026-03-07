@@ -41,6 +41,7 @@
 
 #include "qwadro/coll/afxSphere.h"
 #include "qwadro/iris/arxIrisDefs.h"
+#include "qwadro/scene/arxBuffer.h"
 
 typedef enum arxCurveFlag
 {

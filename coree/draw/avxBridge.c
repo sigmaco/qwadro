@@ -532,7 +532,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DEXU =
 {
     .fcc = afxFcc_DEXU,
     .name = "DrawBridge",
-    .desc = "Draw Device Execution Bridge",
+    .desc = "Draw I/O Bridge",
     .fixedSiz = sizeof(AFX_OBJECT(afxDrawBridge)),
     .ctor = (void*)_AvxDexuCtorCb,
     .dtor = (void*)_AvxDexuDtorCb

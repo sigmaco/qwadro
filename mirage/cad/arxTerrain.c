@@ -661,6 +661,32 @@ _ARX afxError ArxAddTerrainSector(arxTerrain ter)
     return err;
 }
 
+_ARX afxError ArxGetTerrainHeights(arxTerrain ter, afxUnit x, afxUnit z, afxUnit w, afxUnit d, afxReal heights[], afxUnit heightStride)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_TER, 1, &ter);
+
+    for (afxUnit i = 0; i < d; i++) for (afxUnit j = 0; j < w; j++)
+    {
+        ter->secAabb;
+    }
+
+    return err;
+}
+
+_ARX afxError ArxSetTerrainHeights(arxTerrain ter, afxUnit x, afxUnit z, afxUnit w, afxUnit d, afxReal const heights[], afxUnit heightStride)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_TER, 1, &ter);
+
+    for (afxUnit i = 0; i < d; i++) for (afxUnit j = 0; j < w; j++)
+    {
+        ter->secAabb;
+    }
+
+    return err;
+}
+
 _ARX afxError _ArxTerDtorCb(arxTerrain ter)
 {
     afxError err = { 0 };
@@ -701,12 +727,16 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
 
     ter->width = AFX_MAX(128, cfg->width);
     ter->depth = AFX_MAX(128, cfg->depth);
-    ter->heightScale = AFX_MAX(16, cfg->heightScale);
-    ter->heightmap = cfg->heightmap;
+    //ter->heightScale = AFX_MAX(16, cfg->heightScale);
+    ter->heightmap = (afxUri) { 0 };// cfg->heightmap;
+
+    AfxV3dCopy(ter->displace, cfg->displace);
+    AfxV3dCopy(ter->scale, cfg->scale);
+    //AFX_ASSERT(AfxV3dMag(cfg->scale));
 
     // Set the height and width of each terrain cell to a fixed 33x33 vertex array.
-    ter->secWidth = AFX_MAX(cfg->secWidth, 32);
-    ter->secDepth = AFX_MAX(cfg->secHeight, 32);
+    ter->secWidth = AFX_MAX(cfg->blockSiz, 32);
+    ter->secDepth = AFX_MAX(cfg->blockSiz, 32);
 
     // Calculate the number of cells needed to store the terrain data.
     ter->rowSecCnt = ter->width / ter->secWidth;

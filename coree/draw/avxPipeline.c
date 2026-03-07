@@ -1229,7 +1229,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_PIP =
 {
     .fcc = afxFcc_PIP,
     .name = "Pipeline",
-    .desc = "AVX Pipeline State Object",
+    .desc = "Device-Execution Pipeline",
     .fixedSiz = sizeof(AFX_OBJECT(avxPipeline)),
     .ctor = (void*)_AvxPipCtorCb,
     .dtor = (void*)_AvxPipDtorCb

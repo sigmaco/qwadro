@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\qwadro\draw\avxTxd.h" />
     <ClInclude Include="..\..\qwadro\draw\avxVertexInput.h" />
     <ClInclude Include="..\..\qwadro\draw\avxViewport.h" />
+    <ClInclude Include="..\..\qwadro\etc\afxNotation.h" />
     <ClInclude Include="..\..\qwadro\etc\afxManifest.h" />
     <ClInclude Include="..\..\qwadro\etc\afxManifest2.h" />
     <ClInclude Include="..\..\qwadro\etc\afxResource.h" />
@@ -151,15 +152,18 @@
     <ClInclude Include="..\..\qwadro\math\afxArithmetic.h" />
     <ClInclude Include="..\..\qwadro\math\afxArithmetic2.h" />
     <ClInclude Include="..\..\qwadro\math\afxHyperbolicTrigonometry.h" />
+    <ClInclude Include="..\..\qwadro\math\afxInterpolation.h" />
     <ClInclude Include="..\..\qwadro\math\afxLogarithmic.h" />
     <ClInclude Include="..\..\qwadro\math\afxMathDefs.h" />
     <ClInclude Include="..\..\qwadro\math\afxMatrix.h" />
+    <ClInclude Include="..\..\qwadro\math\afxMultiplication.h" />
     <ClInclude Include="..\..\qwadro\math\afxQuaternion.h" />
     <ClInclude Include="..\..\qwadro\math\afxReal16.h" />
     <ClInclude Include="..\..\qwadro\math\afxRotor.h" />
     <ClInclude Include="..\..\qwadro\math\afxScalar.h" />
     <ClInclude Include="..\..\qwadro\math\afxSpace.h" />
     <ClInclude Include="..\..\qwadro\math\afxTransform.h" />
+    <ClInclude Include="..\..\qwadro\math\afxTransformation.h" />
     <ClInclude Include="..\..\qwadro\math\afxTrigonometry.h" />
     <ClInclude Include="..\..\qwadro\math\afxVector.h" />
     <ClInclude Include="..\..\qwadro\math\afxVertex.h" />
@@ -282,9 +286,11 @@
     <ClCompile Include="..\..\coree\base\afxCoreDefs.c" />
     <ClCompile Include="..\..\coree\base\afxFixedString.c" />
     <ClCompile Include="..\..\coree\base\afxHyperbolicTrigonometry.c" />
+    <ClCompile Include="..\..\coree\base\afxInterpolation.c" />
     <ClCompile Include="..\..\coree\base\afxLogarithmic.c" />
     <ClCompile Include="..\..\coree\base\afxMathOps.c" />
     <ClCompile Include="..\..\coree\base\afxMatrix.c" />
+    <ClCompile Include="..\..\coree\base\afxMultiplication.c" />
     <ClCompile Include="..\..\coree\base\afxObject.c" />
     <ClCompile Include="..\..\coree\base\afxQuaternion.c" />
     <ClCompile Include="..\..\coree\base\afxRawString.c" />
@@ -295,6 +301,7 @@
     <ClCompile Include="..\..\coree\base\afxSimd.c" />
     <ClCompile Include="..\..\coree\base\afxString.c" />
     <ClCompile Include="..\..\coree\base\afxTransform.c" />
+    <ClCompile Include="..\..\coree\base\afxTransformation.c" />
     <ClCompile Include="..\..\coree\base\afxTrigonometry.c" />
     <ClCompile Include="..\..\coree\base\afxUri.c" />
     <ClCompile Include="..\..\coree\base\afxVector.c" />
@@ -307,6 +314,7 @@
     <ClCompile Include="..\..\coree\coll\afxPlane.c" />
     <ClCompile Include="..\..\coree\coll\afxRay.c" />
     <ClCompile Include="..\..\coree\coll\afxSphere.c" />
+    <ClCompile Include="..\..\coree\etc\afxNotation.c" />
     <ClCompile Include="..\..\coree\etc\afxManifest.c" />
     <ClCompile Include="..\..\coree\etc\afxManifest2.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

@@ -384,7 +384,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_LIGA =
 {
     .fcc = afxFcc_LIGA,
     .name = "Ligature",
-    .desc = "Resource Pipelining Ligature",
+    .desc = "Pipeline Resourcing Ligature",
     .fixedSiz = sizeof(AFX_OBJECT(avxLigature)),
     .ctor = (void*)_AvxLigaCtorCb,
     .dtor = (void*)_AvxLigaDtorCb
