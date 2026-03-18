@@ -73,7 +73,10 @@ _AUX afxBool AfxGetFocusedWindow(afxUnit seat, afxWindow* window)
     if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
-
+    if (seat > 0)
+    {
+        int a = 1;
+    }
     afxWindow wnd = env->focusedWnd;
     if (window) *window = wnd;
     AFX_TRY_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -302,6 +305,11 @@ _AUX afxBool AFX_ENV_EVENT_HANDLER(afxEnvironment env, auxEvent *ev)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (ev->ev.id != afxEvent_UX)
+    {
+        return FALSE;
+    }
 
     afxWindow focusedWnd = NIL;
     AfxGetFocusedWindow(ev->seat, &focusedWnd);
@@ -569,13 +577,11 @@ _AUX afxError AfxConfigureEnvironment(afxUnit icd, afxEnvironmentConfig const* c
     if (cfg->dsys)
     {
         AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg->dsys);
-
     }
 
     if (cfg->msys)
     {
         AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &cfg->msys);
-
     }
 
     return err;

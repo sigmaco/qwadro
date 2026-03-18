@@ -82,7 +82,9 @@ _AUX afxError AfxChangeWindowIcon(afxWindow wnd, avxRaster font, avxRasterRegion
     }
     else
     {
-        if (afxError_UNSUPPORTED != (err = wnd->ddi->chIconCb(wnd, font, rgn)))
+        err = wnd->ddi->chIconCb(wnd, font, rgn);
+
+        if (err && (afxError_UNSUPPORTED != err))
             AfxThrowError();
     }
     return err;
@@ -832,7 +834,9 @@ _AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev)
     {
     case auxEventId_KEY:
     {
-        if (AfxWasKeyPressed(0, afxKey_ESC))
+        afxUnit seatId = ev->seat;
+
+        if (AfxWasKeyPressed(seatId, afxKey_ESC))
         {
             if (wnd->cursConfined)
             {
@@ -840,9 +844,9 @@ _AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev)
             }
         }
         
-        if (AfxIsKeyPressed(0, afxKey_LALT) || AfxIsKeyPressed(0, afxKey_RALT))
+        if (AfxIsKeyPressed(seatId, afxKey_LALT) || AfxIsKeyPressed(0, afxKey_RALT))
         {
-            if (AfxWasKeyPressed(0, afxKey_PRINT))
+            if (AfxWasKeyPressed(seatId, afxKey_PRINT))
             {
                 if (wnd->surfaceDout)
                 {
@@ -852,7 +856,7 @@ _AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev)
                     AvxPrintSurfaceBuffer(wnd->surfaceDout, 0, NIL, &uri.uri, 0);
                 }
             }
-            else if (AfxWasKeyPressed(0, afxKey_F11))
+            else if (AfxWasKeyPressed(seatId, afxKey_F11))
             {
                 AfxTakeFullscreen(wnd, !wnd->fullscreen);
             }

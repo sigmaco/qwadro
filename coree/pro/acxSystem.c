@@ -344,17 +344,19 @@ _ACX afxError _AcxSsysCtorCb(afxWarpSystem ssys, void** args, afxUnit invokeNo)
 
         afxClassConfig clsCfg;
 
-        clsCfg = cfg->sbufClsCfg ? *cfg->sbufClsCfg : _ACX_SBUF_CLASS_CONFIG;
-        AFX_ASSERT(clsCfg.fcc == afxFcc_SBUF);
-        AfxMountClass(&ssys->sbufCls, NIL, classes, &clsCfg);
+        // Must be first to be disponible at disposition of SSYS' child objects.
+        clsCfg = cfg->sexuClsCfg ? *cfg->sexuClsCfg : _ACX_SEXU_CLASS_CONFIG;
+        AFX_ASSERT(clsCfg.fcc == afxFcc_SEXU);
+        AfxMountClass(&ssys->sexuCls, NIL, classes, &clsCfg);
 
         clsCfg = cfg->sctxClsCfg ? *cfg->sctxClsCfg : _ACX_SCTX_CLASS_CONFIG;
         AFX_ASSERT(clsCfg.fcc == afxFcc_SCTX);
         AfxMountClass(&ssys->sctxCls, NIL, classes, &clsCfg);
 
-        clsCfg = cfg->sexuClsCfg ? *cfg->sexuClsCfg : _ACX_SEXU_CLASS_CONFIG;
-        AFX_ASSERT(clsCfg.fcc == afxFcc_SEXU);
-        AfxMountClass(&ssys->sexuCls, NIL, classes, &clsCfg);
+        clsCfg = cfg->sbufClsCfg ? *cfg->sbufClsCfg : _ACX_SBUF_CLASS_CONFIG;
+        AFX_ASSERT(clsCfg.fcc == afxFcc_SBUF);
+        AfxMountClass(&ssys->sbufCls, NIL, classes, &clsCfg);
+
     }
 
     afxUnit totalDqueCnt = 0;

@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="e2tarzgl4">
+      <UniqueIdentifier>{39674572-e32c-4d83-adef-0eb216f358df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2tarzgl4\dep">
+      <UniqueIdentifier>{efd7b40d-a0c7-4e72-9dd5-3ca79ba23e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2tarzgl4\dep\gl">
+      <UniqueIdentifier>{a261857b-6f13-4fea-9da1-b25cbd5479ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2tarzgl4\io">
+      <UniqueIdentifier>{c573ac34-f663-4e68-be8a-c3fecac6c73f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2tarzgl4\pipe">
+      <UniqueIdentifier>{560d3144-3cc7-4acf-8a6f-867757ca4606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_dll">
+      <UniqueIdentifier>{c80c1acf-b0e0-4300-8e08-8cb7c2a12fad}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglDefs.h">
+      <Filter>e2tarzgl4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglDevices.h">
+      <Filter>e2tarzgl4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglInterop_WGL.h">
+      <Filter>e2tarzgl4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglCommands.h">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglUtils.h">
+      <Filter>e2tarzgl4\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\zglObjects.h">
+      <Filter>e2tarzgl4\io</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\zglInterop_D3D.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglInterop_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dep\gl\wgl.c">
+      <Filter>e2tarzgl4\dep\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglBuffer.c">
+      <Filter>e2tarzgl4\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglRaster.c">
+      <Filter>e2tarzgl4\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglFence.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglPipeline.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglQueryPool.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglLigature.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglCanvas.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglCommandDecoder.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglSampler.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglRasterizationOps.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglTransformationOps.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglShader.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglUtils.c">
+      <Filter>e2tarzgl4\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglVertexInput.c">
+      <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawBridge_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawDevice_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawSystem_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="e2tarzgl4.rc">
+      <Filter>_dll</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\zglWrapper.inl">
+      <Filter>e2tarzgl4\io</Filter>
+    </None>
+  </ItemGroup>
+</Project>

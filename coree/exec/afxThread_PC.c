@@ -363,7 +363,7 @@ _AFX afxResult AfxWaitForThreadExit(afxThread thr, afxResult* exitCode)
     if (curr == thr) rslt = TRUE;
     else
     {
-        while (!thr->finished)
+        while (!thr->finished && thr->running)
         {
             AfxLockMutex(&thr->statusCndMtx);
 

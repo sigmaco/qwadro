@@ -433,6 +433,15 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
 
         afxClassConfig clsCfg;
 
+        // Must be first to be disponible at disposition of MSYS' child objects.
+        clsCfg = cfg->mexuClsCfg ? *cfg->mexuClsCfg : _AMX_MEXU_CLASS_CONFIG;
+        AFX_ASSERT(clsCfg.fcc == afxFcc_MEXU);
+        AfxMountClass(&msys->mexuCls, NIL, classes, &clsCfg);
+
+        clsCfg = cfg->mixClsCfg ? *cfg->mixClsCfg : _AMX_MCTX_CLASS_CONFIG;
+        AFX_ASSERT(clsCfg.fcc == afxFcc_MCTX);
+        AfxMountClass(&msys->mixCls, NIL, classes, &clsCfg);
+
         clsCfg = cfg->sndsClsCfg ? *cfg->sndsClsCfg : _AMX_SNDS_CLASS_CONFIG;
         AFX_ASSERT(clsCfg.fcc == afxFcc_SNDS);
         AfxMountClass(&msys->sndsCls, NIL, classes, &clsCfg);
@@ -461,10 +470,6 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         AFX_ASSERT(clsCfg.fcc == afxFcc_MSRC);
         AfxMountClass(&msys->pmpCls, NIL, classes, &clsCfg);
 
-        clsCfg = cfg->mixClsCfg ? *cfg->mixClsCfg : _AMX_MCTX_CLASS_CONFIG;
-        AFX_ASSERT(clsCfg.fcc == afxFcc_MCTX);
-        AfxMountClass(&msys->mixCls, NIL, classes, &clsCfg);
-
         clsCfg = cfg->traxClsCfg ? *cfg->traxClsCfg : _AMX_TRAX_CLASS_CONFIG;
         AFX_ASSERT(clsCfg.fcc == afxFcc_TRAX);
         AfxMountClass(&msys->traxCls, NIL, classes, &clsCfg);
@@ -482,9 +487,6 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         AFX_ASSERT(asioClsCfg.fcc == afxFcc_ASIO);
         AfxMountClass(&msys->asioCls, NIL, classes, &asioClsCfg); // require mdev, sout
 
-        clsCfg = cfg->mexuClsCfg ? *cfg->mexuClsCfg : _AMX_MEXU_CLASS_CONFIG;
-        AFX_ASSERT(clsCfg.fcc == afxFcc_MEXU);
-        AfxMountClass(&msys->mexuCls, NIL, classes, &clsCfg);
     }
 
     afxUnit totalDqueCnt = 0;

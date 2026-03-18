@@ -593,6 +593,15 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         afxChain* classes = &dsys->ctx.classes;
         AfxMakeChain(classes, (void*)dsys);
 
+        // Must be first to be disponible at disposition of DSYS' child objects.
+        afxClassConfig dexuClsCfg = cfg->dexuClsCfg ? *cfg->dexuClsCfg : _AVX_CLASS_CONFIG_DEXU;
+        AFX_ASSERT(dexuClsCfg.fcc == afxFcc_DEXU);
+        AfxMountClass(&dsys->dexuCls, NIL, classes, &dexuClsCfg);
+
+        afxClassConfig dctxClsCfg = cfg->dctxClsCfg ? *cfg->dctxClsCfg : _AVX_CLASS_CONFIG_DCTX;
+        AFX_ASSERT(dctxClsCfg.fcc == afxFcc_DCTX);
+        AfxMountClass(&dsys->dctxCls, NIL, classes, &dctxClsCfg);
+
         afxClassConfig bufClsCfg = cfg->bufClsCfg ? *cfg->bufClsCfg : _AVX_CLASS_CONFIG_BUF;
         AFX_ASSERT(bufClsCfg.fcc == afxFcc_BUF);
         AfxMountClass(&dsys->bufCls, NIL, classes, &bufClsCfg);
@@ -629,6 +638,10 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         AFX_ASSERT(qrypClsCfg.fcc == afxFcc_QRYP);
         AfxMountClass(&dsys->qrypCls, NIL, classes, &qrypClsCfg);
 
+        afxClassConfig txdClsCfg = cfg->txdClsCfg ? *cfg->txdClsCfg : _AVX_CLASS_CONFIG_TXD;
+        AFX_ASSERT(txdClsCfg.fcc == afxFcc_TXD);
+        AfxMountClass(&dsys->txdCls, NIL, classes, &txdClsCfg); // req RAS
+
         afxClassConfig doutClsCfg;
         if (cfg->doutClsCfg) doutClsCfg = *cfg->doutClsCfg;
         else
@@ -642,17 +655,6 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         AFX_ASSERT(doutClsCfg.fcc == afxFcc_DOUT);
         AfxMountClass(&dsys->doutCls, NIL, classes, &doutClsCfg); // req RAS, CANV
 
-        afxClassConfig txdClsCfg = cfg->txdClsCfg ? *cfg->txdClsCfg : _AVX_CLASS_CONFIG_TXD;
-        AFX_ASSERT(txdClsCfg.fcc == afxFcc_TXD);
-        AfxMountClass(&dsys->txdCls, NIL, classes, &txdClsCfg); // req RAS
-
-        afxClassConfig dctxClsCfg = cfg->dctxClsCfg ? *cfg->dctxClsCfg : _AVX_CLASS_CONFIG_DCTX;
-        AFX_ASSERT(dctxClsCfg.fcc == afxFcc_DCTX);
-        AfxMountClass(&dsys->dctxCls, NIL, classes, &dctxClsCfg);
-
-        afxClassConfig dexuClsCfg = cfg->dexuClsCfg ? *cfg->dexuClsCfg : _AVX_CLASS_CONFIG_DEXU;
-        AFX_ASSERT(dexuClsCfg.fcc == afxFcc_DEXU);
-        AfxMountClass(&dsys->dexuCls, NIL, classes, &dexuClsCfg);
     }
 
     afxUnit totalDqueCnt = 0;
