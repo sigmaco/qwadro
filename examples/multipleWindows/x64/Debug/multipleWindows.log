@@ -3,4 +3,4 @@
 ..\src\multipleWindows.c(36): warning : unused parameter 'argc' [-Wunused-parameter]
 ..\src\multipleWindows.c(36): warning : unused parameter 'argv' [-Wunused-parameter]
 lld-link : warning : /debug:fastlink unsupported; using /debug:full
-  multipleWindows.vcxproj -> E:\qwadro\repo\qwadro_afx\_vs17\..\qwd\w64d\multipleWindows.exe
+  multipleWindows.vcxproj -> E:\qwadro\repo\qwadro\_vs17\..\qwd\w64d\multipleWindows.exe

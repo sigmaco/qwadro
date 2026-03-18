@@ -1,0 +1,733 @@
+/*
+ *           ::::::::    :::::::::::    ::::::::    ::::     ::::       :::
+ *          :+:    :+:       :+:       :+:    :+:   +:+:+: :+:+:+     :+: :+:
+ *          +:+              +:+       +:+          +:+ +:+:+ +:+    +:+   +:+
+ *          +#++:++#++       +#+       :#:          +#+  +:+  +#+   +#++:++#++:
+ *                 +#+       +#+       +#+   +#+#   +#+       +#+   +#+     +#+
+ *          #+#    #+#       #+#       #+#    #+#   #+#       #+#   #+#     #+#
+ *           ########    ###########    ########    ###       ###   ###     ###
+ *
+ *                     S I G M A   T E C H N O L O G Y   G R O U P
+ *
+ *                                   Public Test Build
+ *                               (c) 2017 SIGMA FEDERATION
+ *                             <https://sigmaco.org/qwadro/>
+ */
+
+#include "qowBase.h"
+#pragma comment(lib,"dwmapi.lib")
+
+QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+extern afxKey const Scan1MakeToQwadroDereferenceMap[afxKey_TOTAL];
+
+#ifdef AFX_OS_WIN10
+_QOW BOOL CALLBACK FindShellWorkerWindowW32(HWND hwnd, LPARAM lParam)
+{
+    HWND* found = (HWND*)lParam;
+
+    if (FindWindowExA(hwnd, NULL, "SHELLDLL_DefView", NULL))
+        *found = FindWindowExA(NULL, hwnd, "WorkerW", NULL);
+
+    return TRUE;
+}
+#endif
+
+_QOW HWND FindShellBackgroundWindowW32(void)
+{
+    HWND hwnd = 0;
+#ifdef AFX_OS_WIN10
+    // Windows 10 Method
+
+    SendMessageTimeoutA(FindWindowA("ProgMan", NULL), 0x052C, 0, 0, SMTO_NORMAL, 1000, NULL);
+    hwnd = 0;
+    EnumWindows(FindShellWorkerWindowW32, (LPARAM)&(hwnd));
+#else
+    // Windows 7 Method
+    HWND p = FindWindowA("ProgMan", NULL);
+    HWND s = FindWindowExA(p, NULL, "SHELLDLL_DefView", NULL);
+    hwnd = FindWindowExA(s, NULL, "SysListView32", NULL);
+#endif
+    return hwnd;
+}
+
+_QOW afxError _QowEnvDrawBgCb(afxEnvironment env, afxDrawContext dctx, afxFlags flags)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    // TODO: Pass a canvas or surface to be copied?
+
+    if (env->m.dsys)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &env->m.dsys);
+
+        AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+        //AvxExecuteDrawCommands(env->m.dsys, 1, &dctx);
+
+        // TODO: Get/Gen surface for wallpapper.
+    }
+    return err;
+}
+
+_QOW afxTime _QowEnvPump(afxEnvironment env, afxFlags flags, afxTime timeout)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    //afxTime timeout = 0;
+
+    afxTime first, last, dt;
+    AfxGetTime(&first);
+
+    SHORT escSt = 0, lastEscSt = 0;
+
+    MSG msg;
+    afxResult msgCnt = 0;
+    while (PeekMessageA(&msg, NIL, 0, 0, PM_REMOVE | PM_NOYIELD))
+    {
+        ++msgCnt;
+
+        afxWindow wnd = (afxWindow)(GetWindowLongPtr(msg.hwnd, GWLP_USERDATA));
+        afxEnvironment env = NIL;
+
+        if (wnd)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+            env = AfxGetHost(wnd);
+            AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+        }
+
+        if (msg.message == WM_QUIT) // PostQuitMessage()
+        {
+            if (AfxIsPrimeThread())
+                AfxRequestShutdown(0);
+        }
+        else if (msg.message == WM_USER)
+        {
+            void(*event)(void* udd) = (void*)msg.wParam;
+
+            if (event)
+                event((void*)msg.lParam);
+        }
+        else
+        {
+            if (AfxIsPrimeThread())
+            {
+
+                lastEscSt = escSt;
+                escSt = (GetKeyState(VK_ESCAPE) & 0x8000);
+
+#if 0
+                if (GetKeyState(VK_F1))
+                {
+                    AfxReportHint("User input requested support.");
+                    AfxReportHint("Get help at https://sigmaco.org/");
+                    system("start https://sigmaco.org");
+                }
+                else if (GetKeyState(VK_F4))
+                {
+                    //AfxRequestThreadInterruption(thr);
+                    AfxReportWarn("User input requested application break.");
+                    AfxRequestShutdown(0);
+                }
+                else if (GetKeyState(VK_F5))
+                {
+                    AfxReportWarn("User input requested application reboot.");
+                    //_AfxInterruptionAllApplications();
+                    //opcode = AFX_OPCODE_REBOOT;
+                }
+#endif
+
+#if 0
+                else if (lastEscSt && !(escSt))
+                {
+                    {
+                        afxString cur;
+                        AfxMakeString(&cur, 0, "\n$ ", 0);
+                        afxString2048 buf;
+                        AfxMakeString2048(&buf, NIL);
+                        AfxPrompt(&cur, &buf.str);
+                        AfxPrint(0, buf.buf);
+                        AfxPrint(0, "\n");
+                    }
+                }
+#endif
+            }
+
+            TranslateMessage(&msg);
+            DispatchMessageA(&msg);
+        }
+    }
+    dt = (AfxGetTime(&last) - first);
+    return dt;
+}
+
+#if 0
+
+// Confines the cursor to a rectangular area on the screen. 
+// If a subsequent cursor position (set by the SetCursorPos function or the mouse) lies outside the rectangle, 
+// the system automatically adjusts the position to keep the cursor inside the rectangular area.
+
+_QOW afxBool AfxConfineCursor(afxWindow wnd)
+{
+    afxError err = { 0 };
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool rslt = FALSE;
+
+    if (!wnd)
+    {
+        rslt = !!ClipCursor(NULL);
+    }
+    else
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+        HWND hWnd = wnd->hWnd;
+
+        RECT cr;
+        GetClientRect(hWnd, &cr);
+        ClientToScreen(hWnd, (POINT*)&cr.left);
+        ClientToScreen(hWnd, (POINT*)&cr.right);
+        rslt = !!ClipCursor(&cr);
+    }
+    TheShell.m.curCapturedOn = wnd;
+    return rslt;
+}
+
+_QOW afxBool AfxLiberateCursor(afxWindow wnd)
+{
+    afxError err = { 0 };
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool rslt = FALSE;
+
+    if (!wnd || (wnd == TheShell.m.curCapturedOn))
+        rslt = AfxConfineCursor(NIL);
+
+    return rslt;
+}
+
+_QOW afxBool AfxIsCursorOnSurface(afxWindow wnd)
+{
+    afxError err = { 0 };
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+    HWND hWnd = wnd->hWnd;
+    afxBool rslt = FALSE;
+    POINT pos;
+
+    if (GetCursorPos(&pos))
+    {
+        if (hWnd == WindowFromPoint(pos))
+        {
+            RECT cr;
+            GetClientRect(hWnd, &cr);
+            ClientToScreen(hWnd, (POINT*)&cr.left);
+            ClientToScreen(hWnd, (POINT*)&cr.right);
+            rslt = PtInRect(&cr, pos);
+        }
+    }
+    return rslt;
+}
+#endif
+
+_QOW afxError CopyIntoClipboard(afxEnvironment env, afxUnit slot, afxFlags flags, afxString const* text)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (!OpenClipboard(NIL))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    if (!EmptyClipboard())
+    {
+        AfxThrowError();
+        CloseClipboard();
+        return err;
+    }
+
+    // Create a Win32-compatible string
+    size_t stringSize = (text->len + 1) * sizeof(WCHAR);
+    HANDLE stringHandle = GlobalAlloc(GMEM_MOVEABLE, stringSize);
+
+    if (stringHandle)
+    {
+        LPVOID p = GlobalLock(stringHandle);
+        // Perform the conversion from UTF-8 to UTF-16
+        MultiByteToWideChar(CP_UTF8, 0, text->start, text->len, p, stringSize);
+        GlobalUnlock(stringHandle);
+        SetClipboardData(CF_UNICODETEXT, stringHandle);
+    }
+    CloseClipboard();
+    return FALSE;
+}
+
+_QOW afxBool HasClipboardContent(afxEnvironment env, afxUnit slot, afxFlags flags)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
+    {
+        AfxThrowError();
+        return err;
+    }
+    return FALSE;
+}
+
+_QOW afxError CopyOutClipboard(afxEnvironment env, afxUnit slot, afxFlags flags, afxString* buf)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (!IsClipboardFormatAvailable(CF_UNICODETEXT))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    if (!OpenClipboard(NIL))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    HANDLE clipboardHandle = GetClipboardData(CF_UNICODETEXT);
+
+    if (!clipboardHandle)
+    {
+        AfxThrowError();
+        CloseClipboard();
+        return err;
+    }
+
+    LPVOID p = GlobalLock(clipboardHandle);
+    size_t stringSize = wcslen(p);
+    WideCharToMultiByte(CP_UTF8, 0, p, stringSize, (void*)buf->start, buf->cap, 0, 0);
+    GlobalUnlock(clipboardHandle);
+
+    CloseClipboard();
+    return err;
+}
+
+_QOW void setMousePosition(afxEnvironment env, afxWindow wnd, afxInt const position[2])
+{
+    HWND hWnd = wnd ? wnd->hWnd : 0;
+
+    if (hWnd) // relative?
+    {
+        POINT point = { position[0], position[1] };
+        ClientToScreen(hWnd, &point);
+        SetCursorPos(point.x, point.y);
+    }
+    else
+    {
+        SetCursorPos(position[0], position[1]);
+    }
+}
+
+_QOW afxBool _QowGetFocusedWindow(afxEnvironment env, afxWindow* window)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    afxWindow wnd = env->m.focusedWnd;
+    HWND hWndFocused = GetForegroundWindow();
+
+    if (wnd)
+    {
+        AFX_ASSERT(wnd->hWnd == hWndFocused);
+        *window = wnd;
+    }
+    else
+    {
+        AFX_ASSERT(NIL == hWndFocused);
+        *window = NIL;
+    }
+
+    return !!wnd;
+}
+
+_QOW afxError _QowPromoteWindow(afxEnvironment env, afxWindow wnd)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    // Win32: We can only promote windows in same process.
+
+    DWORD thisPid = 0;
+    DWORD foregroundPid = 0;
+    GetWindowThreadProcessId(wnd->hWnd, &thisPid);
+    GetWindowThreadProcessId(GetForegroundWindow(), &foregroundPid);
+
+    if (thisPid == foregroundPid) SetForegroundWindow(wnd->hWnd);
+    else
+    {
+        // If our process is not focused, we just flash the window as we cant steal focus for it.
+        FLASHWINFO info = { 0 };
+        info.cbSize = sizeof(info);
+        info.hwnd = wnd->hWnd;
+        info.dwFlags = FLASHW_TRAY;
+        info.dwTimeout = 0;
+        info.uCount = 3;
+
+        FlashWindowEx(&info);
+    }
+    return err;
+}
+
+_QOW afxBool getMousePosition(afxEnvironment env, afxRect* rc, afxWindow wnd, afxRect* onFrame, afxRect* onSurface)
+{
+    // Get the cursor width and height using GetSystemMetrics
+    // The nominal width and height of a cursor, in pixels.
+    int w = GetSystemMetrics(SM_CXCURSOR);
+    int h = GetSystemMetrics(SM_CYCURSOR);
+    POINT cursorPos;
+    BOOL rslt = GetCursorPos(&cursorPos);
+    env->m.cursRect = AFX_RECT(cursorPos.x, cursorPos.y, w, h);
+
+    if (rc)
+        *rc = env->m.cursRect;
+
+    if (wnd)
+    {
+        if (onFrame)
+        {
+            // Get the window's rectangle
+            RECT wr;
+            GetWindowRect(wnd->hWnd, &wr);
+
+            // Check if the cursor is inside the rectangle
+            if (cursorPos.x >= wr.left && cursorPos.x <= wr.right &&
+                cursorPos.y >= wr.top && cursorPos.y <= wr.bottom)
+            {
+                // Cursor is inside the window's area
+                *onFrame = AFX_RECT(cursorPos.x - wr.left, cursorPos.y - wr.top, w, h);
+            }
+            else rslt = FALSE;
+        }
+
+        if (onSurface)
+        {
+            // Convert the cursor position to the client area of the window
+            rslt = ScreenToClient(wnd->hWnd, &cursorPos);
+
+            // Get the window's client rectangle
+            RECT cr;
+            GetClientRect(wnd->hWnd, &cr);
+
+            // Check if the cursor is inside the client rectangle
+            if (cursorPos.x >= cr.left && cursorPos.x <= cr.right &&
+                cursorPos.y >= cr.top && cursorPos.y <= cr.bottom)
+            {
+                // Cursor is inside the window's client area
+                *onSurface = AFX_RECT(cursorPos.x, cursorPos.y, w, h);
+            }
+            else rslt = FALSE;
+        }
+    }
+    return rslt;
+}
+
+void setTracking(afxWindow wnd, afxBool track)
+{
+    TRACKMOUSEEVENT mouseEvent = { 0 };
+    mouseEvent.cbSize = sizeof(TRACKMOUSEEVENT);
+    mouseEvent.dwFlags = track ? TME_LEAVE : TME_CANCEL;
+    mouseEvent.hwndTrack = wnd->hWnd;
+    mouseEvent.dwHoverTime = HOVER_DEFAULT;
+    TrackMouseEvent(&mouseEvent);
+}
+
+afxError grabCursor(afxEnvironment env, afxWindow wnd, afxBool grabbed)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (grabbed)
+    {
+        RECT rect;
+        GetClientRect(wnd->hWnd, &rect);
+        MapWindowPoints(wnd->hWnd, NIL, (LPPOINT)&rect, 2);
+        ClipCursor(&rect);
+        env->m.cursCapturedOn = wnd;
+    }
+    else
+    {
+        ClipCursor(NIL);
+        env->m.cursCapturedOn = NIL;
+    }
+    return err;
+}
+
+_QOW afxError immergeWindow(afxEnvironment env, afxWindow wnd, afxBool fullscreen)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (wnd)
+    {
+        HWND hWnd = wnd->hWnd;
+        RECT bkpRc;
+
+        if (fullscreen)
+        {
+            //
+            // Save the window position.
+            //
+            if (!GetWindowRect(hWnd, &bkpRc))
+            {
+                AfxThrowError();
+            }
+
+            if (!SetWindowLongPtr(hWnd, GWL_STYLE, (WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS)))
+            {
+                AfxThrowError();
+            }
+
+            if (!SetWindowLongPtr(hWnd, GWL_EXSTYLE, (WS_EX_APPWINDOW | WS_EX_TOPMOST)))
+            {
+                AfxThrowError();
+            }
+
+#if 0
+            DEVMODE devMode = { 0 };
+            devMode.dmSize = sizeof(devMode);
+            devMode.dmPelsWidth = resW;
+            devMode.dmPelsHeight = resY;
+            devMode.dmBitsPerPel = resBpp;
+            devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+
+            if (ChangeDisplaySettingsW(&devMode, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+            {
+                AfxThrowError();
+            }
+#endif
+#if 0
+            if (!SetWindowPos(hWnd,
+                HWND_TOPMOST,
+                0,
+                0,
+                GetSystemMetrics(SM_CXSCREEN),
+                GetSystemMetrics(SM_CYSCREEN),
+                SWP_FRAMECHANGED))
+            {
+                AfxThrowError();
+                // let proceed to restore
+                //return err;
+            }
+#else
+            if (!_QowPlaceFseSurfaceW32(hWnd))
+            {
+                AfxThrowError();
+                // let proceed to restore
+                //return err;
+            }
+#endif
+            else
+            {
+                wnd->bkpRc = bkpRc;
+                wnd->m.fullscreen = TRUE;
+                return err;
+            }
+        }
+
+        bkpRc = wnd->bkpRc;
+        wnd->m.fullscreen = FALSE;
+
+        if (!SetWindowLongPtr(hWnd, GWL_STYLE, wnd->dwStyle | WS_VISIBLE))
+        {
+            AfxThrowError();
+            return err;
+        }
+
+        if (!SetWindowLongPtr(hWnd, GWL_EXSTYLE, wnd->dwExStyle))
+        {
+            AfxThrowError();
+            return err;
+        }
+
+        // Restore the window position.
+
+        if (!SetWindowPos(hWnd,
+            HWND_NOTOPMOST,
+            bkpRc.left,
+            bkpRc.top,
+            bkpRc.right - bkpRc.left,
+            bkpRc.bottom - bkpRc.top,
+            SWP_FRAMECHANGED))
+        {
+            AfxThrowError();
+            return err;
+        }
+    }
+    return err;
+}
+
+_QOW _auxDdiEnv const _QOW_DDI_ENV =
+{
+    .pumpCb = (void*)_QowEnvPump,
+    .getClipboardCb = (void*)CopyOutClipboard,
+    .setClipboardCb = (void*)CopyIntoClipboard,
+    .hasClipboardCb = (void*)HasClipboardContent,
+    .getCurs = (void*)getMousePosition,
+    .fseCb = (void*)immergeWindow,
+    .promote = (void*)_QowPromoteWindow,
+    .grabCursorCb = (void*)grabCursor
+};
+
+_QOW afxError _QowEnvDtorCb(afxEnvironment env)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(env));
+
+    AfxDeregisterChainedClasses(&env->m.classes);
+
+    _AUX_ENV_CLASS_CONFIG.dtor(env);
+
+    UnregisterClassA(env->wndClss.lpszClassName, env->wndClss.hInstance);
+
+    {
+        // remove HIDs
+
+        static RAWINPUTDEVICE const rid[] =
+        {
+            {
+                .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                .usUsage = HID_USAGE_GENERIC_KEYBOARD, // ((USAGE)0x06)
+                .dwFlags = RIDEV_REMOVE, // ignores legacy keyboard messages
+                .hwndTarget = NIL
+            },
+            {
+                .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                .usUsage = HID_USAGE_GENERIC_MOUSE, // ((USAGE) 0x02)
+                .dwFlags = RIDEV_REMOVE,
+                .hwndTarget = NIL
+            },
+            {
+                .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                .usUsage = HID_USAGE_GENERIC_GAMEPAD, // ((USAGE) 0x05)
+                .dwFlags = RIDEV_REMOVE,
+                .hwndTarget = NIL
+            }
+        };
+
+        if (!(RegisterRawInputDevices(rid, ARRAY_SIZE(rid), sizeof(rid[0]))))
+            AfxThrowError();
+
+    }
+
+    return err;
+}
+
+_QOW afxError _QowEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    afxModule icd = args[0];
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    _auxEnvAcq const* cfg = AFX_CAST(_auxEnvAcq const*, args[1]) + invokeNo;
+    AFX_ASSERT(cfg);
+    
+    _auxEnvAcq cfg2 = { 0 };
+    cfg2 = *cfg;
+
+    afxClassConfig wndClsCfg = _AUX_WND_CLASS_CONFIG;
+    wndClsCfg.fixedSiz = sizeof(AFX_OBJ(afxWindow));
+    wndClsCfg.ctor = (void*)_QowWndCtorCb;
+    wndClsCfg.dtor = (void*)_QowWndDtorCb;
+
+    cfg2.wndClsCfg = &wndClsCfg;
+
+    if (_AUX_ENV_CLASS_CONFIG.ctor(env, (void*[]) { icd, &cfg2 }, 0))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    env->wndClss.cbSize = sizeof(env->wndClss); // only on EX
+    env->wndClss.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+    env->wndClss.lpfnWndProc = _QowWndHndlngPrcW32Callback;
+    env->wndClss.cbClsExtra = sizeof(afxObject);
+    env->wndClss.cbWndExtra = sizeof(afxObject);
+    env->wndClss.hInstance = GetModuleHandleA(NULL);
+    env->wndClss.hIcon = LoadIconA(NULL, IDI_SHIELD);
+    env->wndClss.hCursor = LoadCursorA(NULL, IDC_ARROW);
+    env->wndClss.hbrBackground = NULL;
+    env->wndClss.lpszMenuName = NULL;
+    env->wndClss.lpszClassName = "Multimedia UX Infrastructure --- Qwadro Execution Ecosystem (c) 2017 SIGMA --- Public Test Build";
+    env->wndClss.hIconSm = LoadIconA(NULL, IDI_SHIELD);
+
+    if (!(RegisterClassExA(&env->wndClss))) AfxThrowError();
+    else
+    {
+        afxUnit dwmCnt = 1;
+
+        for (afxUnit i = 0; i < dwmCnt; i++)
+        {
+            afxDesktop* dwm = &env->m.dwm;
+
+            dwm->res.w = GetSystemMetrics(SM_CXSCREEN);
+            dwm->res.h = GetSystemMetrics(SM_CYSCREEN);
+            dwm->res.d = 1;
+            dwm->dout = NIL;
+            dwm->refreshRate = 1;
+        }
+
+        env->m.ddi = &_QOW_DDI_ENV;
+
+        {
+            // attach HIDs
+
+            static afxBool hasRidBeenRegistered = FALSE;
+
+            if (hasRidBeenRegistered == FALSE)
+            {
+                static RAWINPUTDEVICE const rid[] =
+                {
+                    {
+                        .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                        .usUsage = HID_USAGE_GENERIC_KEYBOARD, // ((USAGE)0x06)
+                        .dwFlags = /*RIDEV_NOLEGACY | RIDEV_NOHOTKEYS |*/ RIDEV_DEVNOTIFY/* | RIDEV_APPKEYS*/, // ignores legacy keyboard messages
+                        .hwndTarget = NIL
+                    },
+                    {
+                        .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                        .usUsage = HID_USAGE_GENERIC_MOUSE, // ((USAGE) 0x02)
+                        .dwFlags = /*RIDEV_NOLEGACY |*/ RIDEV_DEVNOTIFY, // ignores legacy mouse messages
+                        .hwndTarget = NIL
+                    },
+                    {
+                        .usUsagePage = HID_USAGE_PAGE_GENERIC, // ((USAGE)0x01)
+                        .usUsage = HID_USAGE_GENERIC_GAMEPAD, // ((USAGE) 0x05)
+                        .dwFlags = RIDEV_DEVNOTIFY,
+                        .hwndTarget = NIL
+                    }
+                };
+
+                if (!(hasRidBeenRegistered = RegisterRawInputDevices(rid, ARRAY_SIZE(rid), sizeof(rid[0]))))
+                    AfxThrowError();
+            }
+        }
+
+        if (err)
+            UnregisterClassA(env->wndClss.lpszClassName, env->wndClss.hInstance);
+    }
+
+    if (err)
+    {
+        AfxDeregisterChainedClasses(&env->m.classes);
+
+        _AUX_ENV_CLASS_CONFIG.dtor(env);
+    }
+    return err;
+}

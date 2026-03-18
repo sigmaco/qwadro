@@ -138,6 +138,10 @@ int main(int argc, char const* argv[])
 
     afxReal a = -1;
 
+    afxReal64 ft = 0;
+    afxUnit fpsi = 0;
+    afxUnit fps = 0;
+
     while (1)
     {
         AfxDoUx(0, AFX_TIMEOUT_INFINITE);
@@ -150,6 +154,14 @@ int main(int argc, char const* argv[])
         afxReal64 ct = AfxGetSecondsElapsed(&startClock, &currClock);
         afxReal64 dt = AfxGetSecondsElapsed(&lastClock, &currClock);
         lastClock = currClock;
+
+        if (ct - ft >= 1.0)
+        {
+            fps = fpsi;
+            fpsi = 0;
+            ft = ct;
+        }
+        ++fpsi;
 
         if (!readyToRender)
             continue;
@@ -287,6 +299,8 @@ int main(int argc, char const* argv[])
             AfxThrowError();
             AvxUnlockSurfaceBuffer(dout, outBufIdx);
         }
+
+        AfxFormatWindowTitle(wnd, "FPS %u %u", fps, 0);
     }
 
     AfxDisposeObjects(1, &wnd);

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="qwadro">
+      <UniqueIdentifier>{334cc892-f619-4b48-96b8-2d8997caec44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_dll">
+      <UniqueIdentifier>{69824dbb-b6b2-43db-9c39-51761f93644c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>_dll</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="e2targa.rc">
+      <Filter>_dll</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

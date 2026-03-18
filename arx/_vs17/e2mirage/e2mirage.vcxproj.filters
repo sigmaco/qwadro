@@ -1,0 +1,416 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="qwadro">
+      <UniqueIdentifier>{4d19cb36-9f4e-4675-8e08-3d860b246f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_dll">
+      <UniqueIdentifier>{fe663df2-10e0-4928-bb9a-fa629e25f8fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\sim">
+      <UniqueIdentifier>{2f407ed3-dab5-4277-8ec5-33e7c7e1b64f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\coll">
+      <UniqueIdentifier>{e478d913-1e68-4a88-aa55-c9be4dbfe6fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\cad">
+      <UniqueIdentifier>{32c3f29d-7107-47ce-a594-60076f22340d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\scene">
+      <UniqueIdentifier>{da0ed406-7078-4bb4-8205-cddaa3f38e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\anim">
+      <UniqueIdentifier>{e8229f52-5619-4c90-96de-44a894c979f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="qwadro\iris">
+      <UniqueIdentifier>{345117a9-b1b0-4ca8-aae9-b0dc7570eb83}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>_dll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\anim\arxAnimation.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\anim\arxCurve.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxPose.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxSkeleton.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxTerrain.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxTriangulation.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxMaterial.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxMesh.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxMeshFactory.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxMeshIo.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\cad\arxModel.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\coll\arxQuadtree.h">
+      <Filter>qwadro\coll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\coll\arxBvh.h">
+      <Filter>qwadro\coll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\coll\arxCollider.h">
+      <Filter>qwadro\coll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\coll\arxCollision.h">
+      <Filter>qwadro\coll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\coll\arxOctree.h">
+      <Filter>qwadro\coll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxScenario.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxSky.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxBuffer.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxBufferizer.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxCamera.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxIllumination.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxNode.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxRenderTerrain.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxTechnique.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxRenderContext.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxRenderer.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxRenderModel.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxMiscOps.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxPoseOps.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxSampleContext.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxSimBridge.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxSimDefs.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxSimulation.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\sim\arxEngine.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Simulation.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\sim\asxImplementation.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Context.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\sim\asxImpl_Executor.h">
+      <Filter>qwadro\sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\anim\arxGesture.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxAnimationDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxCurveDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxModelDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxScenarioDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\iris\arxWireframeShaders.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxWireframe.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\iris\arxMaterialShaders.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\anim\arxPuppet.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxPuppetDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxNodeDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxCameraDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxIlluminationDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxSkyDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxGestureDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxInstancedAnimationDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxMotiveDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxSkeletonDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxMaterialDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxMeshDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxPoseDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\cad\arxTerrainDDK.h">
+      <Filter>qwadro\cad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\iris\arxRenderContextDDK.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxBufferDDK.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxIrisDefs.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\iris\arxRenderPuppet.h">
+      <Filter>qwadro\iris</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\scene\arxIcd.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\scene\arxPosture.h">
+      <Filter>qwadro\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qwadro\anim\arxPulley.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mirage\anim\arxPulleyDDK.h">
+      <Filter>qwadro\anim</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="e2mirage.rc">
+      <Filter>_dll</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\mirage\anim\arxInstancedAnimation.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxMotive.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxAnimation.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxAnimationIo.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxCurve.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxMaterialIo.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxMesh.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxMeshFactory.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxMeshIo.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxModel.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxModelIo.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxPose.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxSkeleton.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxTerrain.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxTriangulation.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\cad\arxMaterial.c">
+      <Filter>qwadro\cad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\coll\arxQuadtree.c">
+      <Filter>qwadro\coll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\coll\arxBvh.c">
+      <Filter>qwadro\coll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\coll\arxCollider.c">
+      <Filter>qwadro\coll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\coll\arxCollision.c">
+      <Filter>qwadro\coll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\coll\arxOctree.c">
+      <Filter>qwadro\coll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderContext.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderer.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderModel.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderTerrain.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxTechnique.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxSky.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxBuffer.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxBufferizer.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxCamera.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxIllumination.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxNode.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxScenario.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\asxImplementation.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxEngine.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxMiscOps.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxPoseOps.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxSampleContext.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxSimBridge.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxSimQueue.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxSimulation.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\arxXmd.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\asxImpl_Context.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\sim\asxImpl_Executor.c">
+      <Filter>qwadro\sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxGesture.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxWireframeShaders.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxWireframe.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxMaterialShaders.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderNode.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxPuppet.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxBufferDDK.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxIrisDefs.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\iris\arxRenderPuppet.c">
+      <Filter>qwadro\iris</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxPosture.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\anim\arxPulley.c">
+      <Filter>qwadro\anim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mirage\scene\arxIcd.c">
+      <Filter>qwadro\scene</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
