@@ -208,7 +208,7 @@
     <None Include="..\..\src\zglWrapper.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\qwadro_afx\_vs17\e2coree\e2coree.vcxproj">
+    <ProjectReference Include="..\..\..\..\afx\_vs17\e2coree\e2coree.vcxproj">
       <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
     </ProjectReference>
   </ItemGroup>

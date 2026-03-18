@@ -18,7 +18,7 @@
 #include "zglCommands.h"
 #include "zglObjects.h"
 #define _AUX_UX_C
-#include "../qwadro_afx/coree/ux/auxIcd.h"
+#include "../afx/coree/ux/auxIcd.h"
 
 _ZGLINL afxError _ZglDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[])
 {

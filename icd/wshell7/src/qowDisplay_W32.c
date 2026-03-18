@@ -29,9 +29,9 @@
     A adapter is usually it all together.
 */
 
-#include "../../icd_tarzgl4/src/zglUtils.h"
-#include "../../icd_tarzgl4/src/zglCommands.h"
-#include "../../icd_tarzgl4/src/zglObjects.h"
+#include "../../icd/tarzgl4/src/zglUtils.h"
+#include "../../icd/tarzgl4/src/zglCommands.h"
+#include "../../icd/tarzgl4/src/zglObjects.h"
 #include "qowBase.h"
 #include "qowVideo_W32.h"
 

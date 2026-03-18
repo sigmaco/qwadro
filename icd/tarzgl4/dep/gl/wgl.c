@@ -17,7 +17,7 @@
 /**
  * SPDX-License-Identifier: (WTFPL OR CC0-1.0) AND Apache-2.0
  */
-#include "icd_tarzgl4/src/zglInterop_WGL.h"
+#include "../icd/tarzgl4/src/zglInterop_WGL.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
