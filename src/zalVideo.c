@@ -18,7 +18,7 @@
 
 #define _AFX_DRAW_SYSTEM_C
 #define _AFX_DRAW_SYSTEM_IMPL
-#include "../icd_tarzgl4/src/zglCommands.h"
+#include "../qwadro/icd/tarzgl4/src/zglCommands.h"
 
 #include "zalInteropWasapi.h"
 #include "zalObjects.h"
