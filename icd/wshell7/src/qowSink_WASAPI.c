@@ -15,7 +15,7 @@
  */
 
 #include "qowAudio_W32.h"
-#include "../../icd_amiga/src/zalInteropWasapi.h"
+#include "../qwadro/icd/amiga/src/zalInteropWasapi.h"
 //#include "qowBase.h"
 
 _QOW afxError _QowSinkLockCb(afxSink asi, afxUnit64 timeout, afxMask exuMask, afxUnit minFrameCnt, amxBufferedTrack* room)

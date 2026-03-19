@@ -455,14 +455,14 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     afxEnvironment env = AfxGetHost(wnd);
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
-
+#if 0
     if (wnd->m.redrawFrameRequested)
     {
         wnd->m.redrawFrameRequested = FALSE;
-        SetWindowTextA(hWnd, wnd->m.title.buf);
+        SetWindowTextA(hWnd, wnd->m.title.s.start);
         RedrawWindow(hWnd, NIL, NIL, RDW_FRAME);
     }
-
+#endif
     if (wnd->m.redrawSurfaceRequested)
     {
 
@@ -2012,7 +2012,18 @@ _QOW afxBool _QowWndChangeVisibility(afxWindow wnd, afxBool visible)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    return !!ShowWindow(wnd->hWnd, visible ? SW_SHOW : SW_HIDE);
+
+    BOOL rslt = FALSE;
+
+    if (AfxGetTid() == AfxGetObjectTid(wnd))
+    {
+        rslt = ShowWindow(wnd->hWnd, visible ? SW_SHOW : SW_HIDE);
+    }
+    else
+    {
+        rslt = ShowWindowAsync(wnd->hWnd, visible ? SW_SHOW : SW_HIDE);
+    }
+    return !!rslt;
 }
 
 _QOW afxUnit _QowWndFormatTitleCb(afxWindow wnd)
@@ -2020,13 +2031,36 @@ _QOW afxUnit _QowWndFormatTitleCb(afxWindow wnd)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
-    SetWindowTextA(wnd->hWnd, wnd->m.title.buf);
+    /*
+        If setWindowTitle() is called from the main UI thread (which is the typical scenario), 
+        the call to SetWindowText() is executed directly and immediately updates the window title.
+
+        If the call is made from a different thread, this ICD uses an event-based mechanism to update the window's title safely. 
+        It posts an event to the main UI thread, which is responsible for calling SetWindowText() on the window.
+    */
+
+    //AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+    if (AfxGetTid() == AfxGetObjectTid(wnd))
+    {
+        SetWindowTextA(wnd->hWnd, wnd->m.title.buf);
+    }
+    else
+    {
+        PostMessageA(wnd->hWnd, WM_SETTEXT, NIL, (LPARAM)wnd->m.title.s.start);
+    }
     return 0;
+}
+
+_QOW afxBool _QowWndEventHandlerCb(afxWindow wnd, auxEvent *ev)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+    return _AuxWndEventHandlerSW(wnd, ev);
 }
 
 _QOW _auxDdiWnd const _QOW_DDI_WND =
 {
+    .evhCb = _QowWndEventHandlerCb,
     .damageCb = _QowWndDamageCb,
     .redrawCb = _QowWndRedrawCb,
     .adjustCb = _QowWndAdjustCb,

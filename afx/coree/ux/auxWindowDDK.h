@@ -36,6 +36,7 @@ AFX_DECLARE_STRUCT(_auxDdiWnd);
 #else
 AFX_DEFINE_STRUCT(_auxDdiWnd)
 {
+    afxError(*evhCb)(afxWindow, auxEvent*);
     afxError(*damageCb)(afxWindow, afxRect const*);
     afxError(*redrawCb)(afxWindow, afxRect const*);
     afxError(*chIconCb)(afxWindow, avxRaster, avxRasterRegion const* rgn);
@@ -126,7 +127,10 @@ AUX _auxDdiWnd const _AUX_DDI_WND;
 
 AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd);
 
+AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev);
+
 AUX afxUnit _AfxWndFormatTitleCb(afxWindow wnd);
 AUX afxError _AfxWndAdjustCb(afxWindow wnd, afxAnchor, afxRect* c);
+AUX _auxDdiWnd const _AUX_DDI_WND;
 
 #endif//AUX_WINDOW_DDK_H

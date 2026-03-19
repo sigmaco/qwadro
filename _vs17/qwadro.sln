@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "afx", "afx", "{CAA2B742-D7B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{3DE6B0AA-BD89-4BAD-896F-78B0AA48AC09}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2amiga", "..\..\icd_amiga\_vs17\e2amiga\e2amiga.vcxproj", "{8F03FE4A-AA74-4CFD-A703-C3460E7FA54F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2amiga", "..\icd\amiga\_vs17\e2amiga\e2amiga.vcxproj", "{8F03FE4A-AA74-4CFD-A703-C3460E7FA54F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "e2tarzgl4", "..\icd\tarzgl4\_vs17\e2tarzgl4\e2tarzgl4.vcxproj", "{1BAFD2AD-9548-4FA9-B268-6AFE5087845D}"
 EndProject
