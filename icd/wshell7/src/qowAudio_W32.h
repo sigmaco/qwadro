@@ -32,9 +32,9 @@
 #define _AMX_SINK_IMPL
 #define _AMX_AUDIO_C
 //#define _AMX_BUFFER_IMPL
-#include "../qwadro/afx/coree/mix/amxIcd.h"
-#include "../../icd_amiga/src/zalBase.h"
-#include "../../icd_amiga/src/zalInteropWasapi.h"
+#include "../../../afx/coree/mix/amxIcd.h"
+#include "../../../icd/amiga/src/zalBase.h"
+#include "../../../icd/amiga/src/zalInteropWasapi.h"
 #define _AUX_UX_C
 #include "../qwadro/afx/coree/ux/auxIcd.h"
 
