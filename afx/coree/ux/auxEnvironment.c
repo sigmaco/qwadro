@@ -70,7 +70,7 @@ _AUX afxBool AfxGetFocusedWindow(afxUnit seat, afxWindow* window)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
+    if (!AfxGetActiveEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
     if (seat > 0)
@@ -88,7 +88,7 @@ _AUX afxError AfxFocusWindow(afxUnit seat, afxWindow wnd, afxFlags flags)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
+    if (!AfxGetActiveEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
 
@@ -99,7 +99,7 @@ _AUX afxError AfxDrawBackgroundEXT(afxDrawContext dctx, afxFlags flags)
 {
     afxError err = { 0 };
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return afxError_NOT_READY;
+    if (!AfxGetActiveEnvironment(&env)) return afxError_NOT_READY;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (!env->ddi->drawBgCb) return afxError_UNSUPPORTED;
@@ -173,7 +173,7 @@ _AUX afxBool AfxHasClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
 
@@ -185,7 +185,7 @@ _AUX afxUnit AfxGetClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags, 
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return 0;
+    if (!AfxGetActiveEnvironment(&env)) return 0;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
 
@@ -197,7 +197,7 @@ _AUX afxError AfxSetClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags,
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return err;
+    if (!AfxGetActiveEnvironment(&env)) return err;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
 
@@ -215,7 +215,7 @@ _AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxRect* rc, afxWindow wnd, afx
     afxBool rslt = TRUE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT_RANGE(env->seatCnt, seat, 1);
 
@@ -254,7 +254,7 @@ _AUX afxTime AfxDoUx(afxFlags flags, afxUnit64 timeout)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return 0;
+    if (!AfxGetActiveEnvironment(&env)) return 0;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     afxTime first, last, dt;
@@ -272,7 +272,7 @@ _AUX afxError AfxTakeFullscreen(afxWindow wnd, afxBool fullscreen)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -361,10 +361,10 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
 
     env->ddi = &_AUX_DDI_ENV;
     env->idd = NIL;
-    env->udd = cfg->udd;
-    env->tag = cfg->tag;
+    env->udd = cfg->cfg.udd;
+    env->tag = cfg->cfg.tag;
 
-    AfxMakeString512(&env->name, &cfg->name);
+    AfxMakeString512(&env->name, &cfg->cfg.name);
 
     {
         AfxMakeChain(&env->classes, env);
@@ -396,7 +396,7 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
     env->focusedWnd = NIL;
     env->cursCapturedOn = NIL;
 
-    env->seatCnt = AFX_MAX(AFX_MIN(AFX_MAX_USERS_PER_ENVIRONMENT, cfg->seatCnt), 1);
+    env->seatCnt = AFX_MAX(AFX_MIN(AFX_MAX_USERS_PER_ENVIRONMENT, cfg->cfg.seatCnt), 1);
 
     for (afxUnit i = 0; i < env->seatCnt; i++)
     {
@@ -408,13 +408,13 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
         env->seats[i].keyCnt = afxKey_TOTAL;
     }
 
-    if (cfg->dsys)
+    if (cfg->cfg.dsys)
     {
-        afxDrawSystem dsys = cfg->dsys;
+        afxDrawSystem dsys = cfg->cfg.dsys;
         AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
         AfxReacquireObjects(1, &dsys);
         env->dsys = dsys;
-        env->vduIdx = cfg->vduIdx;
+        env->vduIdx = cfg->cfg.vduIdx;
     }
     else
     {
@@ -424,13 +424,13 @@ _AUX afxError _AuxEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
 
     if (!err)
     {
-        if (cfg->msys)
+        if (cfg->cfg.msys)
         {
-            afxMixSystem msys = cfg->msys;
+            afxMixSystem msys = cfg->cfg.msys;
             AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
             AfxReacquireObjects(1, &msys);
             env->msys = msys;
-            env->soutIdx = cfg->soutIdx;
+            env->soutIdx = cfg->cfg.soutIdx;
 
             afxSinkConfig asoCfg = { 0 };
             AfxConfigureAudioSink(msys, &asoCfg);
@@ -562,10 +562,14 @@ _AUX afxError AfxConfigureEnvironment(afxUnit icd, afxEnvironmentConfig const* c
         return err;
     }
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     if (icd != AFX_INVALID_INDEX)
     {
         afxModule drv;
-        if (!_AuxGetIcd(icd, &drv))
+        if (!_AuxGetIcd(sys, icd, &drv))
         {
             AfxThrowError();
             return err;
@@ -599,12 +603,16 @@ _AUX afxError AfxEstablishEnvironment(afxUnit icd, afxEnvironmentConfig const* c
         return err;
     }
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxClass* envCls = NIL;
     afxModule drv = NIL;
 
     if (icd != AFX_INVALID_INDEX)
     {
-        if (!_AuxGetIcd(icd, &drv))
+        if (!_AuxGetIcd(sys, icd, &drv))
         {
             AfxThrowError();
             return err;
@@ -631,18 +639,18 @@ _AUX afxError AfxEstablishEnvironment(afxUnit icd, afxEnvironmentConfig const* c
     }
 
     _auxEnvAcq cfg2 = { 0 };
+    cfg2.cfg = *cfg;
+    cfg2.cfg.dsys = cfg->dsys;
+    cfg2.cfg.seatCnt = cfg->seatCnt;
+    //cfg2.cfg.seats = cfg->seats;
+    cfg2.cfg.ddevId = cfg->ddevId;
+    cfg2.cfg.sdevId = cfg->sdevId;
+    cfg2.cfg.soutIdx = cfg->soutIdx;
+    cfg2.cfg.msys = cfg->msys;
 
-    cfg2.dsys = cfg->dsys;
-    cfg2.seatCnt = cfg->seatCnt;
-    cfg2.seats = cfg->seats;
-    cfg2.ddevId = cfg->ddevId;
-    cfg2.sdevId = cfg->sdevId;
-    cfg2.soutIdx = cfg->soutIdx;
-    cfg2.msys = cfg->msys;
-
-    cfg2.tag = cfg->tag;
-    cfg2.udd = cfg->udd;
-    cfg2.name = cfg->name;
+    cfg2.cfg.tag = cfg->tag;
+    cfg2.cfg.udd = cfg->udd;
+    cfg2.cfg.name = cfg->name;
 
     AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
 
@@ -659,7 +667,7 @@ _AUX afxError AfxEstablishEnvironment(afxUnit icd, afxEnvironmentConfig const* c
     return err;
 }
 
-_AUX afxBool AfxGetEnvironment(afxEnvironment* environment)
+_AUX afxBool AfxGetActiveEnvironment(afxEnvironment* environment)
 {
     afxError err = { 0 };
     afxEnvironment env = gActiveEnv;

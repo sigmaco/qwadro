@@ -325,7 +325,9 @@ _AFXINL void AfxPopLink(afxLink *lnk)
     }
     afxLink* prev = lnk->prev;
     afxLink* next = lnk->next;
-
+    
+    AFX_ASSERT(prev);
+    AFX_ASSERT(next);
     if (!prev || !next)
     {
         int a = 1;
@@ -333,7 +335,8 @@ _AFXINL void AfxPopLink(afxLink *lnk)
 
     prev->next = next;
     next->prev = prev;
-    lnk->next = (lnk->prev = lnk);
+    lnk->next = lnk;
+    lnk->prev = lnk;
 }
 
 _AFXINL afxLink* AfxFindLastLink(afxChain const *ch, afxUnit idx)

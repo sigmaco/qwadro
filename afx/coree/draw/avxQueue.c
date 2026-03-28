@@ -280,7 +280,7 @@ _AVX afxError _AvxDqueSubmitCallback(afxDrawQueue dque, afxError(*f)(void*, void
     return err;
 }
 
-_AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmission subms[])
+_AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmission const subms[])
 {
     afxError err = { 0 };
     // dque must be a valid afxDrawQueue handle.

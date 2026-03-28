@@ -98,8 +98,12 @@ _AMX afxUnit AmxEnumerateCodecs(afxUnit icd, afxUnit first, afxUnit cnt, amxCode
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AmxGetIcd(icd, &mdle))
+    while (_AmxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
@@ -120,8 +124,12 @@ _AMX afxUnit AmxInvokeCodecs(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AmxGetIcd(icd, &mdle))
+    while (_AmxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
@@ -140,8 +148,12 @@ _AMX afxUnit AmxEvokeCodecs(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(v
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AmxGetIcd(icd, &mdle))
+    while (_AmxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
@@ -161,8 +173,13 @@ _AMX afxUnit AmxChooseCodecs(afxUnit icd, amxCodecFeatures const* features, amxC
     AFX_ASSERT(limits);
     AFX_ASSERT(features);
     afxUnit rslt = 0;
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AmxGetIcd(icd, &mdle))
+    while (_AmxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));

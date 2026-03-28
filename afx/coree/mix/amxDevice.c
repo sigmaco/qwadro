@@ -188,8 +188,12 @@ _AMX afxUnit AmxInvokeMixDevices(afxUnit icd, afxUnit first, void *udd, afxBool(
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -211,8 +215,12 @@ _AMX afxUnit AmxEvokeMixDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -235,8 +243,12 @@ _AMX afxUnit AmxEnumerateMixDevices(afxUnit icd, afxUnit first, afxUnit cnt, afx
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -259,8 +271,12 @@ _AMX afxUnit AmxChooseMixDevices(afxUnit icd, amxDeviceInfo const* caps, amxFeat
     //AFX_ASSERT(features);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }

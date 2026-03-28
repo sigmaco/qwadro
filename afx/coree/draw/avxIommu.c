@@ -32,7 +32,7 @@
 #define _AVX_BUFFER_C
 #include "avxIcd.h"
 
-_AVX afxError _AvxDsysTransferCb_SW(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops)
+_AVX afxError _AvxDsysSW_TransferCb(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops)
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -121,7 +121,7 @@ _AVX afxError _AvxDsysTransferCb_SW(afxDrawSystem dsys, avxTransference* ctrl, a
     return err;
 }
 
-_AVX afxError _AvxDsysRemapBuffersCb_SW(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[])
+_AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -188,7 +188,7 @@ _AVX afxError _AvxDsysRemapBuffersCb_SW(afxDrawSystem dsys, afxBool unmap, afxUn
     return err;
 }
 
-_AVX afxError _AvxDsysCohereMappedBuffersCb_SW(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[])
+_AVX afxError _AvxDsysSW_CohereMappedBuffersCb(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.

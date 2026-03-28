@@ -51,7 +51,7 @@ AFX_OBJECT(avxQueryPool)
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_QRYP;
 
-AVX afxError _AvxDsysResetQrypCb_SW(afxDrawSystem dsys, avxQueryPool qryp, afxUnit base, afxUnit cnt);
-AVX afxResult _AvxDsysGetQrypRsltCb_SW(afxDrawSystem dsys, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride);
+AVX afxError _AvxDsysSW_ResetQrypCb(afxDrawSystem dsys, avxQueryPool qryp, afxUnit base, afxUnit cnt);
+AVX afxResult _AvxDsysSW_GetQrypRsltCb(afxDrawSystem dsys, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride);
 
 #endif//AVX_QUERY_POOL_DDK_H

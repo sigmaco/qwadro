@@ -48,13 +48,8 @@ AFX_DEFINE_STRUCT(_amxDdiMsys)
 
 AFX_DEFINE_STRUCT(__amxMsysAcq)
 {
-    afxUnit             bridgeCnt;
-    amxFeatures         reqFeatures;
-    afxUnit             reqExtCnt;
-    afxString const*    reqExts;
-    void*               udd;
-    afxString           tag;
-    afxDrawSystem       dsys;
+    amxSystemConfig cfg;
+    _amxMexuAcq* bridgeCfg;
 
     afxClassConfig const* mbufClsCfg;
     afxClassConfig const* wavClsCfg;

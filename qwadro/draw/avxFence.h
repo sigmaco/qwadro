@@ -110,7 +110,7 @@ AVX afxDrawSystem   AvxGetFenceHost(avxFence fenc);
 
 // Return the value/status of this fence.
 
-AVX afxUnit64       AvxGetCompletedFenceValue(avxFence fenc);
+AVX afxUnit64       AvxGetFenceValue(avxFence fenc);
 
 AVX afxError        AvxSignalFence(avxFence fenc, afxUnit64 value);
 

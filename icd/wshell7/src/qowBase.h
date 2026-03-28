@@ -57,7 +57,7 @@
 #define _AUX_DISPLAY_C
 #define _AUX_DISPLAY_IMPL
 
-#include "../afx/coree/ux/auxIcd.h"
+#include "afx/coree/ux/auxIcd.h"
 
 #ifndef AUX_DRV_SRC
 #   ifdef _DEBUG
@@ -120,7 +120,7 @@ AFX_OBJECT(afxWindow)
 #define NK_KEYSTATE_BASED_INPUT
 
 #define NK_INCLUDE_FONT_BAKING
-#include "../../demo_guis/nuklear/demo/qwadro/nuklear_qwadro.h"
+#include "../demo_guis/nuklear/demo/qwadro/nuklear_qwadro.h"
 
 #ifdef _AUX_WIDGET_C
 AFX_OBJECT(afxWidget)

@@ -82,74 +82,74 @@ AFX_DEFINE_STRUCT(avxDrawBin)
     afxUnit         lodCnt; 
 };
 
-#define AVX_DEFAULT_VIDEO_DRAW_BIN (avxDrawBin){ \
-    .ras = NIL, \
-    .fmt = avxFormat_BGRA8v, \
-    .usage = avxRasterUsage_DRAW, \
-    .flags = NIL, \
-    .sampleCnt = 1 }
+#define AVX_DEFAULT_VIDEO_DRAW_BIN \
+    (avxDrawBin) {  .ras = NIL, \
+                    .fmt = avxFormat_BGRA8v, \
+                    .usage = avxRasterUsage_DRAW, \
+                    .flags = NIL, \
+                    .sampleCnt = 1 }
 
-#define AVX_DEFAULT_COLOR_DRAW_BIN (avxDrawBin){ \
-    .ras = NIL, \
-    .fmt = avxFormat_RGBA8, \
-    .usage = avxRasterUsage_DRAW, \
-    .flags = NIL, \
-    .sampleCnt = 1 }
+#define AVX_DEFAULT_COLOR_DRAW_BIN \
+    (avxDrawBin) {  .ras = NIL, \
+                    .fmt = avxFormat_RGBA8, \
+                    .usage = avxRasterUsage_DRAW, \
+                    .flags = NIL, \
+                    .sampleCnt = 1 }
 
-#define AVX_DEFAULT_DEPTH_DRAW_BIN (avxDrawBin){ \
-    .ras = NIL, \
-    .fmt = avxFormat_D32f, \
-    .usage = avxRasterUsage_DRAW, \
-    .flags = NIL, \
-    .sampleCnt = 1 }
+#define AVX_DEFAULT_DEPTH_DRAW_BIN \
+    (avxDrawBin) {  .ras = NIL, \
+                    .fmt = avxFormat_D32f, \
+                    .usage = avxRasterUsage_DRAW, \
+                    .flags = NIL, \
+                    .sampleCnt = 1 }
 
-#define AVX_DEFAULT_STENCIL_DRAW_BIN (avxDrawBin){ \
-    .ras = NIL, \
-    .fmt = avxFormat_S8u, \
-    .usage = avxRasterUsage_DRAW, \
-    .flags = NIL, \
-    .sampleCnt = 1 }
+#define AVX_DEFAULT_STENCIL_DRAW_BIN \
+    (avxDrawBin) {  .ras = NIL, \
+                    .fmt = avxFormat_S8u, \
+                    .usage = avxRasterUsage_DRAW, \
+                    .flags = NIL, \
+                    .sampleCnt = 1 }
 
-#define AVX_DEFAULT_DS_DRAW_BIN (avxDrawBin){ \
-    .ras = NIL, \
-    .fmt = avxFormat_D32fS8u, \
-    .usage = avxRasterUsage_DRAW, \
-    .flags = NIL, \
-    .sampleCnt = 1 }
+#define AVX_DEFAULT_DS_DRAW_BIN \
+    (avxDrawBin) {  .ras = NIL, \
+                    .fmt = avxFormat_D32fS8u, \
+                    .usage = avxRasterUsage_DRAW, \
+                    .flags = NIL, \
+                    .sampleCnt = 1 }
 
 AFX_DEFINE_STRUCT(avxCanvasConfig)
 // A structure specifying a canvas configuration.
 {
     // Flags.
-    avxCanvasFlags      flags;
+    avxCanvasFlags  flags;
     // The dimensions of the canvas.
-    avxRange            whd;
+    avxRange        whd;
     // Multisampling order (2^lodCnt); 1 = 1x, 2 = 2x, 3 = 4x, 4 = 8x, ...
-    afxUnit             lodCnt;
+    afxUnit         lodCnt;
     // the number of attachments.
-    afxUnit             binCnt;
-    avxDrawBin          bins[AVX_MAX_CANVAS_BUFFERS];
-    afxString           tag;
-    void*               udd;
+    afxUnit         binCnt;
+    avxDrawBin      bins[AVX_MAX_CANVAS_BUFFERS];
+    afxString       tag;
+    void*           udd;
 };
 
-#define AVX_DEFAULT_CANVAS_CONFIG (avxCanvasConfig){ \
-    .flags = NIL, \
-    .whd = { 1, 1, 1 }, \
-    .lodCnt = 1, \
-    .binCnt = 1, \
-    .bins[0] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[1] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[2] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[3] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[4] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[5] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[6] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[7] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[8] = AVX_DEFAULT_DRAW_BIN, \
-    .bins[9] = AVX_DEFAULT_DRAW_BIN, \
-    .tag = NIL, \
-    .udd = NIL }
+#define AVX_DEFAULT_CANVAS_CONFIG \
+    (avxCanvasConfig) { .flags = NIL, \
+                        .whd = { 1, 1, 1 }, \
+                        .lodCnt = 1, \
+                        .binCnt = 1, \
+                        .bins[0] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[1] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[2] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[3] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[4] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[5] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[6] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[7] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[8] = AVX_DEFAULT_DRAW_BIN, \
+                        .bins[9] = AVX_DEFAULT_DRAW_BIN, \
+                        .tag = NIL, \
+                        .udd = NIL }
 
 /*
     The AvxConfigureCanvas() function configures a canvas configuration that will be later used to acquire canvas instances.
@@ -158,12 +158,12 @@ AFX_DEFINE_STRUCT(avxCanvasConfig)
     Not creating the framebuffer yet, just building the recipe.
 */
 
-AVX afxError            AvxConfigureCanvas
+AVX afxError AvxConfigureCanvas
 (
     // the draw system that provides the canvas.
-    afxDrawSystem       dsys,
+    afxDrawSystem dsys,
     // the specification for a new canvas
-    avxCanvasConfig*    cfg
+    avxCanvasConfig* cfg
 );
 
 /*
@@ -175,24 +175,24 @@ AVX afxError            AvxConfigureCanvas
         AvxAcquireCanvas(dsys, &cfg, 3, myCanvases); // Create triple-buffered canvas set
 */
 
-AVX afxError                AvxAcquireCanvas
+AVX afxError AvxAcquireCanvas
 // Acquire a new buffered drawing canvas object.
 (
     // the draw system that provides the canvas.
-    afxDrawSystem           dsys,
+    afxDrawSystem dsys,
     // the specification of a newly created canvas
-    avxCanvasConfig const*  cfg,
+    avxCanvasConfig const* cfg,
     // the number of canvas to be created.
-    afxUnit                 cnt,
+    afxUnit cnt,
     // an array of avxCanvas handles in which the resulting objects are returned.
-    avxCanvas               canvases[]
+    avxCanvas canvases[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxDrawSystem   AvxGetCanvasHost
+AVX afxDrawSystem AvxGetCanvasHost
 (
-    avxCanvas       canv
+    avxCanvas canv
 );
 
 /*
@@ -200,14 +200,14 @@ AVX afxDrawSystem   AvxGetCanvasHost
     It uses a bitmask to check whether certain flags are set for the canvas.
 */
 
-AVX avxCanvasFlags  AvxGetCanvasFlags
+AVX avxCanvasFlags AvxGetCanvasFlags
 (
     // The canvas object that you want to test.
-    avxCanvas       canv, 
+    avxCanvas canv, 
 
     // A mask that specifies which flags to test for. 
     // Each bit represents a specific condition of the canvas (e.g., whether a specific feature is enabled).
-    avxCanvasFlags  mask
+    avxCanvasFlags mask
 );
 
 /*
@@ -217,10 +217,10 @@ AVX avxCanvasFlags  AvxGetCanvasFlags
     It also provides the area's magnitude (width × height in pixels) as a return value.
 */
 
-AVX afxUnit         AvxGetCanvasExtent
+AVX afxUnit AvxGetCanvasExtent
 (
     // A canvas object that represents a framebuffer, render target, or drawable surface.
-    avxCanvas       canv,
+    avxCanvas canv,
     // Represents the origin or coordinate space used to define the area.
     avxOrigin const*origin,
     // A pointer to an afxLayeredRect structure that will be filled with the canvas's extent.
@@ -232,20 +232,20 @@ AVX afxUnit         AvxGetCanvasExtent
     with relevant data and returns the total number of attachment slots that can be used.
 */
 
-AVX afxUnit         AvxQueryCanvasBins
+AVX afxUnit AvxQueryCanvasBins
 // Returns the total of buffer slots in canvas.
 (
     // The canvas in which the slots are being managed.
-    avxCanvas       canv, 
+    avxCanvas canv, 
 
     // A recipient to hold how many slots are dedicated to color storage or processing.
-    afxUnit*        colBinCnt, 
+    afxUnit* colBinCnt, 
 
     // A recipient to hold the index of the slot where a depth buffer is attached.
-    afxUnit*        dBinIdx, 
+    afxUnit* dBinIdx, 
 
     // A recipient to hold the index of the slot where a stencil buffer is attached.
-    afxUnit*        sBinIdx
+    afxUnit* sBinIdx
 );
 
 /*
@@ -256,25 +256,25 @@ AVX afxUnit         AvxQueryCanvasBins
     Returns the number of valid slots inserted in the recipient array.
 */
 
-AVX afxUnit         AvxGetDrawBuffers
+AVX afxUnit AvxGetDrawBuffers
 (
     // The canvas for which the draw buffers are requested.
-    avxCanvas       canv, 
+    avxCanvas canv, 
 
     // The base index for the buffer slots to retrieve. 
     // If there are multiple drawing buffers, the baseBinIdx indicates where to start the query for buffers. 
     // This is useful when you need a subset of available buffers, not just the first one.
-    afxUnit         baseBinIdx, 
+    afxUnit baseBinIdx, 
 
     // The number of buffers to retrieve. 
     // This specifies how many buffers you wish to get starting from the @baseBinIdx. 
     // The function will return this number of buffers into the @rasters array.
-    afxUnit         cnt, 
+    afxUnit cnt, 
 
     // An array of rasters that will be populated with the retrieved buffers. 
     // Each element in the array corresponds to a drawing buffer associated with the canvas.
     // Each item in this array represents a buffer that holds rendered data for further processing or display.
-    avxRaster       rasters[]
+    avxRaster rasters[]
 );
 
 /*
@@ -285,22 +285,22 @@ AVX afxUnit         AvxGetDrawBuffers
     It returns a amount of retrivied color buffers.
 */
 
-AVX afxUnit         AvxGetColorBuffers
+AVX afxUnit AvxGetColorBuffers
 (
     // The canvas object from which the color buffers are being retrieved.
-    avxCanvas       canv, 
+    avxCanvas canv, 
 
     // The base index of the first color buffer to start retrieving. 
     // This is useful when you want a subset of the available color buffers, not necessarily starting from the first.
-    afxUnit         baseBinIdx, 
+    afxUnit baseBinIdx, 
 
     // The number of color buffers to retrieve. 
     // This specifies how many color buffers you want to get starting from the @baseBinIdx.
-    afxUnit         cnt, 
+    afxUnit cnt, 
 
     // An recipient array that will be populated with the retrieved color buffers. 
     // Each element in this array will hold one of the color buffers.
-    avxRaster       rasters[]
+    avxRaster rasters[]
 );
 
 /*
@@ -310,15 +310,15 @@ AVX afxUnit         AvxGetColorBuffers
     It returns the amount of retrieved auxiliar buffers.
 */
 
-AVX afxUnit         AvxGetAuxBuffers
+AVX afxUnit AvxGetAuxBuffers
 (
     // The canvas from which the depth and stencil buffers are being retrieved.
-    avxCanvas       canv, 
+    avxCanvas canv, 
     // A recipient to store the depth buffer associated with the canvas.
-    avxRaster*      depth, 
+    avxRaster* depth, 
 
     // A recipient to store the stencil buffer associated with the canvas.
-    avxRaster*      stencil
+    avxRaster* stencil
 );
 
 /*
@@ -328,27 +328,27 @@ AVX afxUnit         AvxGetAuxBuffers
     rendered frames, or exporting buffers to remote destinations.
 */
 
-AVX afxError            AvxPrintDrawBuffer
+AVX afxError AvxPrintDrawBuffer
 (
     // The canvas from which the draw buffer is to be printed.
-    avxCanvas           canv, 
+    avxCanvas canv, 
 
     // The bin index. 
     // This parameter specifies which buffer on the canvas to print. 
     // If the canvas has multiple surfaces or buffers (e.g., for double or triple buffering), 
     // this parameter determines which one to print.
-    afxUnit             binIdx,
+    afxUnit binIdx,
 
     // A structure specifying the I/O operation on the raster attached to the canvas.
-    avxRasterIo const*  op,
+    avxRasterIo const* op,
 
     // The URI where the buffer should be printed or exported to. 
     // This could be a file path or a network location.
-    afxUri const*       uri, 
+    afxUri const* uri, 
 
     // The mask specifying the execution unit.
     // The specific unit that will be used to handle the printing process.
-    afxMask             exuMask
+    afxMask exuMask
 );
 
 #endif//AVX_CANVAS_H

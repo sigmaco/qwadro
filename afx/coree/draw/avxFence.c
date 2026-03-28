@@ -21,43 +21,86 @@
 #define _AVX_FENCE_C
 #include "avxIcd.h"
 
-_AVX _avxDdiFenc const _AVX_FENC_DDI =
-{
-
-};
-
 _AVX afxDrawSystem AvxGetFenceHost(avxFence fenc)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+
     afxDrawSystem dsys = AfxGetHost(fenc);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
     return dsys;
 }
 
-_AVX afxUnit64 AvxGetCompletedFenceValue(avxFence fenc)
+_AVX afxUnit64 _AvxFencSW_GetValueCb(avxFence fenc)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
 
-    // This method mimmicks the D3D12's one.
     afxUnit64 value = (afxUnit64)AfxLoadAtom64(&fenc->value);
+
     return value;
+}
+
+_AVX afxUnit64 AvxGetFenceValue(avxFence fenc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+
+    AFX_ASSERT(fenc->ddi->evalCb);
+    afxUnit64 value = fenc->ddi->evalCb(fenc);
+
+    // This method mimmicks the D3D12's one.
+
+    return value;
+}
+
+_AVX afxError _AvxFencSW_SignalCb(avxFence fenc, afxUnit64 value)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+
+    if (fenc->flags & avxFenceFlag_TIMELINE)
+    {
+        AFX_ASSERT(value > (afxUnit64)AfxLoadAtom64(&fenc->value));
+        AfxStoreAtom64(&fenc->value, (afxInt64)value);
+        //AfxIncAtom64(&fenc->value);
+    }
+    else
+    {
+        AfxStoreAtom64(&fenc->value, (afxInt64)value);
+    }
+    return err;
 }
 
 _AVX afxError AvxSignalFence(avxFence fenc, afxUnit64 value)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+
+    AFX_ASSERT(fenc->ddi->signalCb);
+    err = fenc->ddi->signalCb(fenc, value);
     
     // Also queued on D3D12
     // ID3D12Fence::Signal. Use this method to set a fence value from the CPU side.
     // Use ID3D12CommandQueue::Signal to set a fence from the GPU side.
     
-    if (fenc->ddi->signalCb)
-        err = fenc->ddi->signalCb(fenc, value);
-    else
-        AfxStoreAtom64(&fenc->value, (afxInt64)value);
+    return err;
+}
+
+_AVX afxError _AvxFencSW_WaitCb(avxFence fenc, afxUnit64 value, afxUnit64 timeout)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+
+    afxDrawSystem dsys = AvxGetFenceHost(fenc);
+    afxError err2 = AvxWaitForFences(dsys, timeout, TRUE, 1, &fenc, &value);
+
+    if (err2 != afxError_TIMEOUT)
+    {
+        AfxThrowError();
+        err = err2;
+    }
 
     return err;
 }
@@ -66,17 +109,19 @@ _AVX afxError AvxWaitForFence(avxFence fenc, afxUnit64 value, afxUnit64 timeout)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
-    
-#if !0
-    if (fenc->ddi->waitCb)
-        err = fenc->ddi->waitCb(fenc, value, timeout);
-#else
-    if (!AfxLoadAtom64(&fenc->signaled))
-        AvxWaitForFences(AvxGetFenceHost(fenc), timeout, TRUE, 1, &fenc, &value);
-#endif
+
+    AFX_ASSERT(fenc->ddi->waitCb);
+    err = fenc->ddi->waitCb(fenc, value, timeout);
 
     return err;
 }
+
+_AVX _avxDdiFenc const _AVX_FENC_DDI =
+{
+    .waitCb = _AvxFencSW_WaitCb,
+    .signalCb = _AvxFencSW_SignalCb,
+    .evalCb = _AvxFencSW_GetValueCb,
+};
 
 _AVX afxError _AvxFencDtorCb(avxFence fenc)
 {
@@ -132,12 +177,13 @@ _AVX afxError AvxAcquireFences(afxDrawSystem dsys, afxUnit cnt, avxFenceInfo con
     AFX_ASSERT_CLASS(cls, afxFcc_FENC);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)fences, (void const*[]) { dsys, info }))
+    {
         AfxThrowError();
-
+    }
     return err;
 }
 
-_AVX afxError _AvxDsysWaitForFencesCb_SW(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[])
+_AVX afxError _AvxDsysSW_WaitForFencesCb(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[])
 {
     afxError err = { 0 };
     AFX_ASSERT(fences);
@@ -239,8 +285,9 @@ _AVX afxError AvxWaitForFences(afxDrawSystem dsys, afxUnit64 timeout, afxBool wa
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->waitFencCb(dsys, timeout, waitAll, cnt, fences, values))
+    {
         AfxThrowError();
-
+    }
     return err;
 }
 

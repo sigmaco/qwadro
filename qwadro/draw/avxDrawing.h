@@ -124,6 +124,18 @@ AVX afxError AvxCmdClearCanvas
     afxLayeredRect const areas[]
 );
 
+/*
+    
+*/
+
+AVX afxError AvxCmdBindDrawBuffersEXT
+(
+    afxDrawContext dctx, 
+    afxUnit bufCnt, 
+    afxUnit const bins[], 
+    avxRaster const buffers[]
+);
+
 /// Draw primitives.
 /// When the command is executed, primitives are assembled using the current primitive topology and @vtxCnt consecutive vertex indices with the first @vtxIdx value equal to @firstVtx. 
 /// The primitives are drawn @instCnt times with @instIdx starting with @firstInst and increasing sequentially for each instance.

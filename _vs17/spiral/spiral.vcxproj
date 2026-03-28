@@ -156,9 +156,6 @@
     <ProjectReference Include="..\..\afx\_vs17\e2coree\e2coree.vcxproj">
       <Project>{973a60ff-ea6c-4d62-a302-bf610cabab8c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\arx\_vs17\e2mirage\e2mirage.vcxproj">
-      <Project>{0f78f3c8-d287-4a15-a69b-208b85c038f4}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\icd\wshell7\_vs17\e2wshell7\e2wshell7.vcxproj">
       <Project>{de71d516-d811-49f6-8c15-d99975c40801}</Project>
     </ProjectReference>

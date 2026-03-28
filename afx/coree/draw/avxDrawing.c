@@ -185,6 +185,32 @@ _AVX afxError AvxCmdClearCanvas(afxDrawContext dctx, afxUnit bufCnt, afxUnit con
     return err;
 }
 
+_AVX afxError AvxCmdBindDrawBuffersEXT(afxDrawContext dctx, afxUnit bufCnt, afxUnit const bins[], avxRaster const buffers[])
+{
+    afxError err = { 0 };
+    // dctx must be a valid afxDrawContext handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    // dctx must be in the recording state.
+    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called inside of a draw scope instance.
+    AFX_ASSERT(dctx->inDrawScope);
+    // This command must only be called outside of a video coding scope.
+    AFX_ASSERT(!dctx->inVideoCoding);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(BindDrawBuffersEXT), sizeof(cmd->BindDrawBuffersEXT) + (bufCnt * sizeof(cmd->BindDrawBuffersEXT.buffers[0])), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->BindDrawBuffersEXT.bufCnt = bufCnt;
+
+    for (afxUnit i = 0; i < bufCnt; i++)
+    {
+        cmd->BindDrawBuffersEXT.bins[i] = bins ? bins[i] : i;
+        cmd->BindDrawBuffersEXT.buffers[i] = buffers[i];
+    }
+
+    return err;
+}
+
 _AVX afxError AvxCmdNextPass(afxDrawContext dctx, afxBool useAuxScripts)
 {
     afxError err = { 0 };

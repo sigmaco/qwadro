@@ -1,5 +1,16 @@
 ![Logo](doc/qwadro-banner-2048x520-bg-t.png)
 
+This is a project that embeds documentation as part of its codebase instead of using Doxygen-markup commentary convention. 
+It is intended to be used by AI-powered and automation tools to generate ever-green documentation, and may be conturbated to be consumed by an end user.
+
+DeepWiki provides up-to-date documentation you can talk to, for this repo. It can help you find documentation and understand the API.
+
+[![Ask DeepWiki for help](https://deepwiki.com/badge.svg)](https://deepwiki.com/sigmaco/qwadro)
+
+This is a project that embraces the YOLO attitude, and is bringing back the middlewares (and blue screens) to fight the war of platforms for us, while serving, direct or indirectly, as test site for other projects held by SIGMA.
+
+[![YOLO](https://img.shields.io/badge/YOLO-%F0%9F%91%80-blue)](https://github.com/sigmaco/qwadro)
+
 # The Qwadro Execution Ecosystem
 Qwadro is a name for a family of standards specifying ***software engineering infrastructures*** designed by the **SIGMA Technology Group** that defines the interface between an operating system and application software. The primary goal of Qwadro is to ensure that applications written for one Qwadro-compliant system can be easily ported to another, regardless of the underlying hardware or specific operating system implementation. This portability is achieved by standardizing the interfaces, utilities, and libraries that applications use to interact with the operating system. Qwadro provides a common ground, fostering interoperability and reducing the complexities associated with platform-specific development. Adherence to Qwadro standards simplifies software development, maintenance, and deployment across diverse platform environments.
 

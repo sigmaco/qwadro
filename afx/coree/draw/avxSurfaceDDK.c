@@ -100,7 +100,7 @@ _AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build)
                 AFX_ASSERT(!swap->canv);
                 swap->ras = NIL;
             }
-
+#if 0
             if (swap->fenc)
             {
                 AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &swap->fenc);
@@ -108,10 +108,11 @@ _AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build)
                 AFX_ASSERT(!swap->fenc);
                 swap->fencNextValue = 1;
             }
+#endif
 
             if (!build)
                 continue;
-
+#if 0
             if (!swap->fenc)
             {
                 avxFenceInfo fenci = { 0 };
@@ -127,7 +128,7 @@ _AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build)
                     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &swap->fenc);
                 }
             }
-
+#endif
             if (AvxAcquireCanvas(dsys, &dout->ccfg, 1, &swap->canv))
             {
                 AfxThrowError();
@@ -140,7 +141,7 @@ _AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build)
                 AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 #if 0
                 afxUnit objId = AfxGetObjectId(canv);
-                afxClass const* cls = _AvxDsysGetCanvClassCb_SW(dsys);
+                afxClass const* cls = _AvxDsysSW_GetCanvClassCb(dsys);
 
                 avxCanvas canv2 = NIL;
                 AfxEnumerateObjects(cls, objId, 1, (afxObject*)&canv2);
@@ -258,15 +259,26 @@ _AVX afxError _AvxDoutLockBufferCb(afxSurface dout, afxMask exuMask, avxFence si
             //swap->lockedCanv = canv;
             AFX_ASSERT(swap->locked == 0);
             ++swap->locked;
+
             swap->exuMask = exuMask;
-            swap->fencNextValue = AvxGetCompletedFenceValue(swap->fenc) + 1;
+#if 0
+            swap->fencNextValue = AvxGetFenceValue(swap->fenc) + 1;
+#endif       
             bufIdx2 = lockedBufIdx;
             AFX_ASSERT(AFX_INVALID_INDEX != bufIdx2);
             AFX_ASSERT_RANGE(dout->swapCnt, bufIdx2, 1);
+
             AFX_ASSERT(bufIdx);
             *bufIdx = bufIdx2;
-            success = TRUE;
+
             AfxGetClock(&dout->prevBufReqTime);
+            success = TRUE;
+
+            if (signal)
+            {
+                AvxSignalFence(signal, AvxGetFenceValue(signal) + 1);
+            }
+
             break;
         }
 
@@ -311,8 +323,10 @@ _AVX afxError _AvxDoutLockBufferCb(afxSurface dout, afxMask exuMask, avxFence si
         AFX_ASSERT(AFX_INVALID_INDEX == bufIdx2);
         bufIdx2 = AFX_INVALID_INDEX;
     }
+    
     AFX_ASSERT(bufIdx);
     *bufIdx = bufIdx2;
+
     return err;
 }
 
@@ -355,13 +369,13 @@ _AVX afxError _AvxDoutUnlockBufferCb(afxSurface dout, afxUnit bufIdx)
     return err;
 }
 
-_AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation presentations[])
+_AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[])
 {
     afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxPresentation* pres = &presentations[i];
+        avxPresentation const* pres = &presentations[i];
 
         afxSurface dout = pres->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
@@ -422,13 +436,13 @@ _AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresenta
     return err;
 }
 
-_AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption captions[])
+_AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[])
 {
     afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxCaption* cap = &captions[i];
+        avxCaption const* cap = &captions[i];
 
         afxSurface dout = cap->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);

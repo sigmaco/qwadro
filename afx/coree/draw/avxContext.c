@@ -132,9 +132,12 @@ _AVX afxError AvxPrepareDrawCommands(afxDrawContext dctx, afxBool purge, avxCmdF
     }
 
     AFX_ASSERT(dctx->ddi->prepare);
-    if (dctx->ddi->prepare(dctx, purge, flags))
+    afxError err2 = dctx->ddi->prepare(dctx, purge, flags);
+
+    if (err2)
     {
         AfxThrowError();
+        err = err2;
     }
     else
     {
@@ -176,10 +179,13 @@ _AVX afxError AvxCompileDrawCommands(afxDrawContext dctx)
     // TODO: Do it.
 
     AFX_ASSERT(dctx->ddi->compile);
-    if (dctx->ddi->compile(dctx))
+    afxError err2 = dctx->ddi->compile(dctx);
+
+    if (err2)
     {
         AfxThrowError();
-        
+        err = err2;
+
         // If there was an error during recording, the application will be notified by an unsuccessful return 
         // code returned by AfxCompileDrawCommands, and the draw context will be moved to the invalid state.
 
@@ -209,9 +215,12 @@ _AVX afxError AvxExhaustDrawContext(afxDrawContext dctx, afxBool freeMem)
     }
 
     AFX_ASSERT(dctx->ddi->exhaust);
-    if (dctx->ddi->exhaust(dctx, freeMem))
+    afxError err2 = dctx->ddi->exhaust(dctx, freeMem);
+
+    if (err2)
     {
         AfxThrowError();
+        err = err2;
     }
     else
     {
@@ -347,7 +356,7 @@ _AVX afxError AvxAcquireDrawContexts(afxDrawSystem dsys, afxDrawContext pool, av
 
     if (!pool)
     {
-        cls = (afxClass*)_AvxDsysGetDctxClassCb_SW(dsys);
+        cls = (afxClass*)_AvxDsysSW_GetDctxClassCb(dsys);
         AFX_ASSERT_CLASS(cls, afxFcc_DCTX);
         if (AfxAcquireObjects(cls, cnt, (afxObject*)contexts, (void const*[]) { dsys, pool, info }))
         {
@@ -451,7 +460,7 @@ _AVX afxError AvxRecycleDrawContexts(afxBool freeRes, afxUnit cnt, afxDrawContex
     return err;
 }
 
-_AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmission submissions[])
+_AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmission const submissions[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -467,15 +476,17 @@ _AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmiss
 
     for (afxUnit ctxIt = 0; ctxIt < cnt; ctxIt++)
     {
-        avxSubmission* subm = &submissions[ctxIt];
+        avxSubmission const* subm = &submissions[ctxIt];
 
         afxDrawContext dctx = subm->dctx;
+
         if (!dctx)
         {
             AFX_ASSERT(subm->dctx);
             AfxThrowError();
             continue;
         }
+
         AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
         AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_DEFERRED));
@@ -489,6 +500,7 @@ _AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmiss
                 {
                     AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_SHARED));
                     AfxThrowError();
+                    continue;
                 }
             }
         }
@@ -525,6 +537,11 @@ _AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmiss
 
                         if (!err2)
                         {
+                            if (queueingMap)
+                            {
+                                queueingMap[ctxIt] = nextQueIdx - 1;
+                            }
+
                             queued = TRUE;
                             break; // while --- get queue
                         }

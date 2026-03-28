@@ -36,6 +36,7 @@ AFX_DEFINE_STRUCT(_avxDdiFenc)
     afxError(*waitCb)(avxFence, afxUnit64 value, afxUnit64 timeout);
     afxError(*resetCb)(avxFence);
     afxError(*signalCb)(avxFence, afxUnit64 value);
+    afxUnit64(*evalCb)(avxFence);
 };
 
 #ifdef _AVX_FENCE_IMPL
@@ -62,6 +63,10 @@ AFX_OBJECT(avxFence)
 AVX afxClassConfig const _AVX_CLASS_CONFIG_FENC;
 
 
-AVX afxError _AvxDsysWaitForFencesCb_SW(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[]);
+AVX afxError _AvxDsysSW_WaitForFencesCb(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[]);
+
+AVX afxUnit64 _AvxFencSW_GetValueCb(avxFence fenc);
+AVX afxError _AvxFencSW_SignalCb(avxFence fenc, afxUnit64 value);
+AVX afxError _AvxFencSW_WaitCb(avxFence fenc, afxUnit64 value, afxUnit64 timeout);
 
 #endif//AVX_FENCE_DDK_H

@@ -112,7 +112,7 @@ _AVX afxError AfxAcquireQueryPools(afxDrawSystem dsys, afxUnit cnt, avxQueryPool
     return err;
 }
 
-_AVX afxError _AvxDsysResetQrypCb_SW(afxDrawSystem dsys, avxQueryPool qryp, afxUnit base, afxUnit cnt)
+_AVX afxError _AvxDsysSW_ResetQrypCb(afxDrawSystem dsys, avxQueryPool qryp, afxUnit base, afxUnit cnt)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -176,7 +176,7 @@ _AVX afxError _AvxDsysResetQrypCb_SW(afxDrawSystem dsys, avxQueryPool qryp, afxU
     return err;
 }
 
-_AVX afxResult _AvxDsysGetQrypRsltCb_SW(afxDrawSystem dsys, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride)
+_AVX afxResult _AvxDsysSW_GetQrypRsltCb(afxDrawSystem dsys, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);

@@ -97,18 +97,22 @@ AFX_DEFINE_STRUCT(afxWindowConfig)
     afxString           title;
     // The event handler callback assigned to the window.
     afxBool             (*eventCb)(afxWindow, auxEvent*);
-    // The draw system providing the drawable surface and resources for the window.
-    afxDrawSystem       dsys;
-    // The configuration of the drawable surface.
-    afxSurfaceConfig    dout;
+    
     // Optional. The display port to which the window will be open on.
+    // TODO: Change for indexed into desktop-mounted displays.
     afxDisplay          disp;
     afxUnit             dport;
     // 
     afxAnchor           anchor;
-    // The origin of the window. If display port is specified, it is related to the area covered by the display port, 
-    // else case it is related to the desktop coordinate system (which can be negative).
+    // The origin of the window. If display and display port is specified, it is related to the area covered by the display port, 
+    // else case it is related to the desktop coordinate system (which may be negative).
     afxInt              x, y;
+
+    // The draw system providing the drawable surface and resources for the window.
+    afxDrawSystem       dsys;
+    // The configuration of the drawable surface.
+    afxSurfaceConfig    dout;
+
     // A user-defined data.
     void*               udd;
     // An debugging string.

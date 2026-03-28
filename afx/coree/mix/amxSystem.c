@@ -402,14 +402,15 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
     __amxMsysAcq const* cfg = AFX_CAST(__amxMsysAcq const*, args[1]) + invokeNo;
-    _amxMexuAcq* bridgeCfgs = AFX_CAST(_amxMexuAcq*, args[2]) + invokeNo;
-
+    
     if (!cfg)
     {
         AFX_ASSERT(cfg);
         AfxThrowError();
         return err;
     }
+    
+    _amxMexuAcq* bridgeCfgs = cfg->bridgeCfg;
 
     if (!bridgeCfgs)
     {
@@ -420,12 +421,12 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
 
     msys->ddi = &_AMX_MSYS_IMPL;
     msys->idd = NIL;
-    msys->udd = cfg->udd;
-    msys->tag = cfg->tag;
+    msys->udd = cfg->cfg.udd;
+    msys->tag = cfg->cfg.tag;
 
     msys->running = FALSE;
 
-    msys->requirements = cfg->reqFeatures;
+    msys->requirements = cfg->cfg.features;
 
     {
         afxChain* classes = &msys->ctx.classes;
@@ -490,7 +491,7 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     }
 
     afxUnit totalDqueCnt = 0;
-    afxUnit bridgeCnt = cfg->bridgeCnt;
+    afxUnit bridgeCnt = cfg->cfg.exuCnt;
 
     for (afxUnit i = 0; i < bridgeCnt; i++)
     {
@@ -520,9 +521,9 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         return err;
     }
 
-    if ((msys->dsys = cfg->dsys))
+    if ((msys->dsys = cfg->cfg.dsys))
     {
-        msys->dsys = cfg->dsys;
+        msys->dsys = cfg->cfg.dsys;
         AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &msys->dsys);
         AfxReacquireObjects(1, &msys->dsys);
     }
@@ -621,8 +622,12 @@ _AMX afxUnit AmxEnumerateMixSystems(afxUnit icd, afxUnit first, afxUnit cnt, afx
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -646,8 +651,12 @@ _AMX afxUnit AmxEvokeMixSystems(afxUnit icd, afxUnit first, void* udd, afxBool(*
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -669,9 +678,13 @@ _AMX afxUnit AmxInvokeMixSystems(afxUnit icd, afxUnit first, void *udd, afxBool(
     AFX_ASSERT(cnt);
     AFX_ASSERT(f);
     afxUnit rslt = 0;
+    
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxModule mdle;
-    if (!_AmxGetIcd(icd, &mdle))
+    if (!_AmxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
@@ -697,12 +710,16 @@ _AMX afxError AmxConfigureMixSystem(afxUnit icd, amxSystemConfig* cfg)
         return err;
     }
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     amxAptitude caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
 
     afxModule drv;
     AFX_ASSERT(icd != AFX_INVALID_INDEX);
-    if (!_AmxGetIcd(icd, &drv))
+    if (!_AmxGetIcd(sys, icd, &drv))
     {
         AfxThrowError();
         return err;
@@ -806,12 +823,16 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
         }
     }
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxClass* msysCls = NIL;
     afxModule drv = NIL;
 
     if (icd != AFX_INVALID_INDEX)
     {
-        if (!_AmxGetIcd(icd, &drv))
+        if (!_AmxGetIcd(sys, icd, &drv))
         {
             AfxThrowError();
             return err;
@@ -910,18 +931,21 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
     }
 
     __amxMsysAcq cfg2 = { 0 };
-    cfg2.bridgeCnt = bridgeCnt;
-    cfg2.reqExtCnt = cfg->extCnt;
-    cfg2.reqExts = cfg->exts;
-    cfg2.reqFeatures = cfg->features;
-    cfg2.udd = cfg->udd;
-    cfg2.tag = cfg->tag;
-    cfg2.dsys = cfg->dsys;
+    cfg2.cfg = *cfg;
+    cfg2.cfg.exuCnt = bridgeCnt;
+    cfg2.cfg.extCnt = cfg->extCnt;
+    cfg2.cfg.exts = cfg->exts;
+    cfg2.cfg.features = cfg->features;
+    cfg2.cfg.udd = cfg->udd;
+    cfg2.cfg.tag = cfg->tag;
+    cfg2.cfg.dsys = cfg->dsys;
+    
+    cfg2.bridgeCfg = &bridgeCfg[0];
 
     AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
 
     afxMixSystem msys;
-    if (AfxAcquireObjects(msysCls, 1, (afxObject*)&msys, (void const*[]) { drv, &cfg2, &bridgeCfg[0], }))
+    if (AfxAcquireObjects(msysCls, 1, (afxObject*)&msys, (void const*[]) { drv, &cfg2 }))
     {
         AfxThrowError();
         return err;

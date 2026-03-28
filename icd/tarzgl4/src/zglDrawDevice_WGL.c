@@ -570,10 +570,15 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     dsysClsCfg.dtor = (void*)_ZglDsysDtorCb;
 
     _avxImplementation impl = { 0 };
+    impl.icd = icd;
     impl.ddevCls = ddevClsCfg;
     impl.dsysCls = dsysClsCfg;
 
-    if (_AvxIcdImplement(icd, &impl))
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (_AvxIcdImplement(sys, &impl))
     {
         AfxThrowError();
         return err;

@@ -171,7 +171,7 @@ int main(int argc, char const* argv[])
             subm.dctx = dctx;
             subm.signal = drawCompletedFence;
 
-            if (AvxExecuteDrawCommands(dsys, 1, &subm))
+            if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
             {
                 AfxThrowError();
                 AvxUnlockSurfaceBuffer(dout, outBufIdx);
@@ -186,7 +186,7 @@ int main(int argc, char const* argv[])
             pres.dout = dout;
             pres.bufIdx = outBufIdx;
 
-            if (AvxPresentSurfaces(dsys, 1, &pres))
+            if (AvxPresentSurfaces(dsys, 1, &pres, NIL))
             {
                 AfxThrowError();
                 AvxUnlockSurfaceBuffer(dout, outBufIdx);

@@ -77,11 +77,14 @@ _AVX afxClass const* _AvxIcdGetDsysClass(afxModule icd)
     return cls;
 }
 
-_AVX afxError _AvxIcdImplement(afxModule icd, _avxImplementation const* cfg)
+_AVX afxError _AvxIcdImplement(afxSystem sys, _avxImplementation const* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
     AFX_ASSERT(cfg);
+
+    afxModule icd = cfg->icd;
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);;
 
     if (!AfxTestModule(icd, afxModuleFlag_ICD))
     {
@@ -89,10 +92,6 @@ _AVX afxError _AvxIcdImplement(afxModule icd, _avxImplementation const* cfg)
         AfxThrowError();
         return NIL;
     }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxBool dsysMounted = FALSE, ddevMounted = FALSE;
 
@@ -156,14 +155,11 @@ _AVX afxError _AvxIcdImplement(afxModule icd, _avxImplementation const* cfg)
     return err;
 }
 
-_AVX afxBool _AvxGetIcd(afxUnit icdIdx, afxModule* driver)
+_AVX afxBool _AvxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
 {
     afxError err = { 0 };
-    afxBool found = FALSE;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool found = FALSE;
 
     afxModule icd = NIL;
     while ((icdIdx < sys->avxIcdChain.cnt) && (icd = AFX_REBASE(AfxFindFirstLink(&sys->avxIcdChain, icdIdx), AFX_OBJ(afxModule), icd.avx)))

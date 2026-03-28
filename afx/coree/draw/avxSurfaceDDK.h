@@ -45,12 +45,12 @@ AFX_DEFINE_STRUCT(_avxDdiDout)
     afxError(*ioctlCb)(afxSurface dout, afxUnit code, va_list ap);
     afxError(*adjustCb)(afxSurface dout, afxRect const* rc, afxBool fse);
     afxError(*regenCb)(afxSurface dout, afxBool build);
-    afxError(*presentCb)(afxDrawQueue dque, avxPresentation* pres);
-    afxError(*captureCb)(afxDrawQueue dque, avxCaption* cap);
+    afxError(*presentCb)(afxDrawQueue dque, avxPresentation const* pres);
+    afxError(*captureCb)(afxDrawQueue dque, avxCaption const* cap);
     afxError(*lockCb)(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit *bufIdx);
     afxError(*unlockCb)(afxSurface dout, afxUnit bufIdx);
     afxError(*modeSetCb)(afxSurface dout, avxModeSetting const* mode);
-    afxError(*presOnDpuCb)(void* dpu, avxPresentation* pres);
+    afxError(*presOnDpuCb)(void* dpu, avxPresentation const* pres);
 };
 #endif
 
@@ -82,8 +82,8 @@ AFX_DEFINE_STRUCT(_avxSurfaceSwap)
 {
     afxBool         locked;
     afxMask         exuMask;
-    avxFence        fenc;
-    afxUnit64       fencNextValue;
+    //avxFence        fenc;
+    //afxUnit64       fencNextValue;
     // Locked canvas is an attempt to avoid crashes and busy-waits while readjustments.
     //avxCanvas       lockedCanv;
     avxCanvas       canv;
@@ -105,6 +105,8 @@ AFX_OBJECT(afxSurface)
     afxString           tag;
     // User-defined data.
     void*               udd[4];
+
+    afxDrawSystem       dsys;
 
     // ENDPOINT
     afxVideoEndpoint    endp;
@@ -170,8 +172,8 @@ AFX_OBJECT(afxSurface)
 AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT;
 AVX _avxDdiDout const _AVX_DDI_DOUT;
 
-AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation presentations[]);
-AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption captions[]);
+AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[]);
+AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[]);
 
 AVX afxError _AvxDoutIoctlCb(afxSurface dout, afxUnit code, va_list ap);
 AVX afxError _AvxDoutAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);

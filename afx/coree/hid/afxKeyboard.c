@@ -33,7 +33,7 @@ _AUX afxError AfxEmulatePressedKeys(afxUnit seat, afxUnit cnt, afxKey const key[
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -67,7 +67,7 @@ _AUX afxError AfxReleaseAllKeys(afxUnit seat)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -103,7 +103,7 @@ _AUX afxError AfxReleaseAllKeys2(afxMask seats)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -143,7 +143,7 @@ _AUX afxBool AfxWereKeysReleased(afxUnit seat, afxUnit cnt, afxKey const codes[]
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -165,7 +165,7 @@ _AUX afxMask AfxWereKeysReleased2(afxMask seats, afxUnit cnt, afxKey const codes
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -194,7 +194,7 @@ _AUX afxBool AfxWasKeyReleased(afxUnit seat, afxKey code)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -210,7 +210,7 @@ _AUX afxMask AfxWasKeyReleased2(afxMask seats, afxKey code)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -233,7 +233,7 @@ _AUX afxBool AfxWereKeysPressed(afxUnit seat, afxUnit cnt, afxKey const codes[])
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -255,7 +255,7 @@ _AUX afxMask AfxWereKeysPressed2(afxMask seats, afxUnit cnt, afxKey const codes[
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -284,7 +284,7 @@ _AUX afxBool AfxWasKeyPressed(afxUnit seat, afxKey code)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -300,7 +300,7 @@ _AUX afxMask AfxWasKeyPressed2(afxMask seats, afxKey code)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -323,7 +323,7 @@ _AUX afxBool AfxIsKeyPressed(afxUnit seat, afxKey code)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -339,7 +339,7 @@ _AUX afxMask AfxIsKeyPressed2(afxMask seats, afxKey code)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -361,7 +361,7 @@ _AUX afxReal AfxGetCombinedKeyPressure(afxUnit seat, afxKey lhs, afxKey rhs)
     afxReal pressure = 0.0;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -378,7 +378,7 @@ _AUX afxReal AfxGetKeyPressure(afxUnit seat, afxKey code)
     afxReal pressure = 0.0;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -394,7 +394,7 @@ _AUX afxResult AfxCountPressedKeys(afxUnit seat)
     afxResult c = 0;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return FALSE;
+    if (!AfxGetActiveEnvironment(&env)) return FALSE;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
@@ -414,7 +414,7 @@ _AUX void AfxGetMouseMotion(afxUnit seat, afxV2d motion, afxV2d vel, afxV2d acce
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return;
@@ -445,7 +445,7 @@ _AUX afxReal AfxGetMouseWheelDelta(afxUnit seat)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return 0;
@@ -464,7 +464,7 @@ _AUX afxBool AfxIsMousePressed(afxUnit seat, afxMouseButton mb)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return rslt;
@@ -484,7 +484,7 @@ _AUX afxBool AfxWasMousePressed(afxUnit seat, afxMouseButton mb)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return rslt;
@@ -504,7 +504,7 @@ _AUX afxBool AfxWasMouseReleased(afxUnit seat, afxMouseButton mb)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return rslt;
@@ -524,7 +524,7 @@ _AUX afxMask AfxIsMousePressed2(afxMask seats, afxMouseButton mb)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -549,7 +549,7 @@ _AUX afxMask AfxWasMousePressed2(afxMask seats, afxMouseButton mb)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -575,7 +575,7 @@ _AUX afxMask AfxWasMouseReleased2(afxMask seats, afxMouseButton mb)
     afxMask rslt = NIL;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env)) return rslt;
+    if (!AfxGetActiveEnvironment(&env)) return rslt;
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     for (afxUnit seatIdx = 0, seatCnt = env->seatCnt; seatIdx < seatCnt; seatIdx++)
@@ -601,7 +601,7 @@ _AUX afxBool AfxTestMouseMotionX(afxUnit seat, afxInt tolerance)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return rslt;
@@ -620,7 +620,7 @@ _AUX afxBool AfxTestMouseMotionZ(afxUnit seat, afxInt tolerance)
     afxBool rslt = FALSE;
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return rslt;
@@ -640,7 +640,7 @@ _AUX afxError AfxEmulateMouseMotion(afxUnit seat, afxV2d const motion)
     // TODO: Drop afxWindow parameter and call session's event handler, which should pass input event for windows.
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -709,7 +709,7 @@ _AUX afxError AfxEmulateMouseWheelAction(afxUnit seat, afxReal delta)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -736,7 +736,7 @@ _AUX afxError AfxEmulateMouseButtonActions(afxUnit seat, afxUnit cnt, afxMouseBu
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -810,7 +810,7 @@ _AUX afxError AfxReleaseMouseButtons(afxUnit seat)
     afxError err = { 0 };
 
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;

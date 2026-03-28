@@ -21,6 +21,7 @@
 
 #include "qwadro/draw/afxDrawDefs.h"
 #include "qwadro/draw/avxColor.h"
+#include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxUxDefs.h"
 
 AFX_DEFINE_STRUCT(afxFontConfig)

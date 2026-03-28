@@ -159,7 +159,7 @@ _ARX afxError afxScmHook(afxModule mdle, afxManifest const* ini)
         //sys->asx.ready = TRUE;
     }
 
-    _AfxScanIcdManifests(sys, &AFX_STRING("ARX"), ini);
+    //_AfxScanIcdManifests(sys, &AFX_STRING("ARX"), ini);
 
     return err;
 }

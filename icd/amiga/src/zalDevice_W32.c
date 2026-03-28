@@ -248,11 +248,16 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     msysClsCfg.dtor = (void*)_ZalMsysDtorCb;
 
     _amxImplementation impl = { 0 };
+    impl.icd = icd;
     impl.mcdcCls = _AMX_MCDC_CLASS_CONFIG;
     impl.mdevCls = mdevClsCfg;
     impl.msysCls = msysClsCfg;
 
-    if (_AmxIcdImplement(icd, &impl))
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (_AmxIcdImplement(sys, &impl))
     {
         AfxThrowError();
         return err;
@@ -263,7 +268,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     _amxMdevReg mdevInfos[] =
     {
         {
-            .dev.urn = AFX_STRING("amiga-hwm"),
+            .dev.urn = AFX_STRING("amiga-sfx"),
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
@@ -277,7 +282,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         },
         {
-            .dev.urn = AFX_STRING("amiga-warp"),
+            .dev.urn = AFX_STRING("amiga-pcx"),
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
@@ -291,7 +296,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         },
         {
-            .dev.urn = AFX_STRING("amiga-iommu"),
+            .dev.urn = AFX_STRING("amiga-dma"),
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
@@ -322,7 +327,10 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
     afxMixDevice mdevices[ARRAY_SIZE(mdevInfos)];
 
-    if (_AmxIcdRegisterDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices)) AfxThrowError();
+    if (_AmxIcdRegisterDevices(icd, ARRAY_SIZE(mdevInfos), mdevInfos, mdevices))
+    {
+        AfxThrowError();
+    }
     else
     {
 

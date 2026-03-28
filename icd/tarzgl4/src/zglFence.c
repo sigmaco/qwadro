@@ -43,6 +43,15 @@
 #include "zglCommands.h"
 #include "zglObjects.h"
 
+#define AFX_ITERATE_CHAIN_FIX(iterator_, link_, pChain_) \
+    for (afxLink const* _next##iterator_ = (pChain_)->anchor.next, * _curr##iterator_ = _next##iterator_; \
+         (_curr##iterator_ != &(pChain_)->anchor) /*&& (_curr##iterator_ != NIL)*/ && \
+         ((iterator_) = (AFX_TYPEOF(iterator_))AFX_REBASE(_curr##iterator_, AFX_TYPEOF(*iterator_), link_), \
+          _next##iterator_ = _curr##iterator_->next, 1); \
+         _curr##iterator_ = _next##iterator_)
+
+ZGL afxError _ZglFencSignalOnHostCb(avxFence fenc, afxUnit64 value);
+
 _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
 {
     afxError err = { 0 };
@@ -50,6 +59,8 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
 
     afxUnit finishedCnt = 0;
     afxUnit remaingCnt = 0;
+
+    // TODO: Fix AFX_ITERATE_CHAIN_B2F looping forever.
 
     avxFence fenc;
     AFX_ITERATE_CHAIN_B2F(fenc, onSignalChain, &dpu->fenceSignalChain)
@@ -72,9 +83,13 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
         {
             // the sync object was signaled before the function was called.
             AfxPopLink(&fenc->onSignalChain);
+#if 0
             AfxStoreAtom32(&fenc->m.signaled, 1);
             //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
             SetEvent(fenc->hEventW32);
+#else
+            _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
             ++finishedCnt;
             break;
         }
@@ -82,9 +97,13 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
         {
             // the sync object was signaled within the given timeout period.
             AfxPopLink(&fenc->onSignalChain);
+#if 0
             AfxStoreAtom32(&fenc->m.signaled, 1);
             //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
             SetEvent(fenc->hEventW32);
+#else
+            _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
             ++finishedCnt;
             break;
         }
@@ -99,12 +118,24 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
         {
             // If an OpenGL Error occurred, then GL_WAIT_FAILED will be returned in addition to raising an error.
             // Set event anyway, to unlock wait for infinite time.
-            SetEvent(fenc->hEventW32);
+
             AfxPopLink(&fenc->onSignalChain);
+#if 0
+            SetEvent(fenc->hEventW32);
+#else
+            _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
             break;
         }
         }
     }
+
+    if (remaingCnt)
+    {
+        // Keep the DPU executing. Or we will stuck.
+        _AvxDexu_PingCb(dpu->m.dexu, dpu->m.exuIdx);
+    }
+
     return remaingCnt;
 }
 
@@ -124,8 +155,9 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     // The DPU can not busy-wait. So, it just drop a WaitSync() and proceed immediately.
 
-    afxUnit64 oldVal = 0;
-    if (value == (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+    afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+    if (((fenc->m.flags & avxFenceFlag_TIMELINE) && (value < curVal))
+        || (value != curVal))
     {
         GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
 
@@ -153,9 +185,9 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
         }
     }
 
-    if (value > oldVal)
+    if (value > curVal)
     {
-        ResetEvent(fenc->hEventW32);
+        //ResetEvent(fenc->hEventW32);
     }
 
     return err;
@@ -220,11 +252,8 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
     AFX_ASSERT(gl->IsSync(glHandle));
     glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
 
-    // Flush is required so the other context sees the fence.
+    // Flush() is required so the other context sees the fence immediately.
     gl->Flush();
-
-    AfxIncAtom64(&fenc->m.value);
-    SetEvent(fenc->hEventW32);
 
     if (glHandle)
     {
@@ -232,8 +261,27 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
         gl->DeleteSync(glHandle);
     }
 
-    //AfxPushLink(&fenc->onSignalChain, &dpu->fenceSignalChain);
-    //fenc->nextValueToSignal = value;
+#if 0
+    if (fenc->m.flags & avxFenceFlag_TIMELINE)
+    {
+        AfxIncAtom64(&fenc->m.value);
+    }
+    else
+    {
+        AfxStoreAtom64(&fenc->m.value, value);
+    }
+
+    SetEvent(fenc->hEventW32);
+#else
+    //_ZglFencSignalOnHostCb(fenc, value);
+#endif
+
+    //AFX_ASSERT(!AfxGetLinker(&fenc->onSignalChain));
+    if (!AfxGetLinker(&fenc->onSignalChain))
+    {
+        AfxPushLink(&fenc->onSignalChain, &dpu->fenceSignalChain);
+    }
+    fenc->nextValueToSignal = value;
 
     return err;
 }
@@ -338,21 +386,86 @@ _ZGL afxError _ZglFencWaitOnHostCb(avxFence fenc, afxUnit64 value, afxUnit64 tim
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
 
-    afxUnit64 oldVal = 0;
-    if (value > (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+    //_AvxFencSW_WaitCb();
+
+    afxBool isInf = (timeout == AFX_TIMEOUT_INFINITE);
+    DWORD millis = AFX_MILLISECS_PER_NANOSECS(timeout);
+
+    afxBool keep = TRUE;
+    while (keep)
     {
-        //ResetEvent(fenc->hEventW32);
+        afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
 
-        DWORD millis = AFX_MILLISECS_PER_NANOSECS(timeout);
-        DWORD wfso = WaitForSingleObject(fenc->hEventW32, (timeout == AFX_TIMEOUT_INFINITE) ? INFINITE : millis);
+        if (fenc->m.flags & avxFenceFlag_TIMELINE)
+        {
+            if (value > curVal)
+            {
+                //ResetEvent(fenc->hEventW32);
 
-        if (wfso == WAIT_TIMEOUT)
-            err = afxError_TIMEOUT;
-        else if (wfso == WAIT_FAILED)
-            err = afxError_UNKNOWN;
+                DWORD wfso = WaitForSingleObject(fenc->hEventW32, isInf ? INFINITE : millis);
 
-        if (value > (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
-            err = afxError_TIMEOUT;
+                if (wfso == WAIT_TIMEOUT)
+                {
+                    err = afxError_TIMEOUT;
+                }
+                else if (wfso == WAIT_FAILED)
+                {
+                    err = afxError_UNKNOWN;
+                }
+                else
+                {
+                    
+                }
+
+                curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+
+                if (value > curVal)
+                {
+                    err = afxError_TIMEOUT;
+                }
+                else
+                {
+                    keep = FALSE;
+                }
+
+                if (!isInf)
+                    keep = FALSE;
+            }
+            else
+            {
+                // already signaled
+                keep = FALSE;
+                break;
+            }
+        }
+        else
+        {
+            if (value != curVal)
+            {
+                DWORD wfso = WaitForSingleObject(fenc->hEventW32, isInf ? INFINITE : millis);
+
+                if (wfso == WAIT_TIMEOUT)
+                    err = afxError_TIMEOUT;
+                else if (wfso == WAIT_FAILED)
+                    err = afxError_UNKNOWN;
+                else
+                {
+                    if (value > curVal)
+                    {
+                        err = afxError_TIMEOUT;
+                    }
+                }
+
+                if (!isInf)
+                    keep = FALSE;
+            }
+            else
+            {
+                // already signaled
+                keep = FALSE;
+                break;
+            }
+        }
     }
     return err;
 }
@@ -385,17 +498,26 @@ _ZGL afxError _ZglFencSignalOnHostCb(avxFence fenc, afxUnit64 value)
         SetEvent(fenc->hEventW32);
     }
 #endif
-    AfxIncAtom64(&fenc->m.value);
+    //AfxIncAtom64(&fenc->m.value);
+    _AvxFencSW_SignalCb(fenc, value);
     SetEvent(fenc->hEventW32);
 
     return err;
+}
+
+_ZGL afxUnit64 _ZglFencGetValueCb(avxFence fenc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
+    return _AvxFencSW_GetValueCb(fenc);
 }
 
 _ZGL _avxDdiFenc _ZGL_DDI_FENC =
 {
     .waitCb = _ZglFencWaitOnHostCb,
     .resetCb = _ZglFencResetOnHostCb,
-    .signalCb = _ZglFencSignalOnHostCb
+    .signalCb = _ZglFencSignalOnHostCb,
+    .evalCb = _ZglFencGetValueCb,
 };
 
 _ZGL afxError _ZglFencDtorCb(avxFence fenc)
@@ -442,11 +564,15 @@ _ZGL afxError _ZglFencCtorCb(avxFence fenc, void** args, afxUnit invokeNo)
 
     fenc->glHandle = 0;
     fenc->updFlags = ZGL_UPD_FLAG_DEVICE_INST;
-        
-    fenc->hEventW32 = CreateEvent(NULL, FALSE, info->initialVal, NULL);
+    
+    BOOL manualReset = FALSE;
+    fenc->hEventW32 = CreateEvent(NULL, manualReset, info->initialVal, NULL);
 
     if (info->initialVal || fenc->m.signaled || fenc->m.value)
         SetEvent(fenc->hEventW32);
+
+    AfxResetLink(&fenc->onSignalChain);
+    AfxResetLink(&fenc->onWaitChain);
 
     /*
         [in, optional] lpEventAttributes

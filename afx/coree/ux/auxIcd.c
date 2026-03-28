@@ -60,8 +60,11 @@ _AUX afxError _AuxIcdGetInteropDpyClass(afxUnit icd, afxString const* tool, afxC
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+
     afxModule driver;
-    if (!_AuxGetIcd(icd, &driver))
+    if (!_AuxGetIcd(sys, icd, &driver))
     {
         AfxThrowError();
         return err;
@@ -83,8 +86,11 @@ _AUX afxError _AuxIcdGetInteropDoutClass(afxDrawSystem dsys, afxString const* to
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+
     afxModule driver;
-    if (!_AuxGetIcd(0, &driver))
+    if (!_AuxGetIcd(sys, 0, &driver))
     {
         AfxThrowError();
         return err;
@@ -98,8 +104,11 @@ _AUX afxError _AuxIcdGetInteropSinkClass(afxMixSystem msys, afxString const* too
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+
     afxModule driver;
-    if (!_AuxGetIcd(0, &driver))
+    if (!_AuxGetIcd(sys, 0, &driver))
     {
         AfxThrowError();
         return err;
@@ -153,11 +162,14 @@ _AUX afxClass const* _AuxIcdGetEnvClass(afxModule icd)
     return cls;
 }
 
-_AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg)
+_AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
     AFX_ASSERT(cfg);
+
+    afxModule icd = cfg->icd;
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
     if (!AfxTestModule(icd, afxModuleFlag_ICD))
     {
@@ -165,10 +177,6 @@ _AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg)
         AfxThrowError();
         return NIL;
     }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxBool dpyMounted = FALSE, envMounted = FALSE;
 
@@ -230,14 +238,11 @@ _AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg)
     return err;
 }
 
-_AUX afxBool _AuxGetIcd(afxUnit icdIdx, afxModule* driver)
+_AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
 {
     afxError err = { 0 };
-    afxBool found = FALSE;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool found = FALSE;
 
     afxModule icd = NIL;
     while ((icdIdx < sys->auxIcdChain.cnt) && (icd = AFX_REBASE(AfxFindFirstLink(&sys->auxIcdChain, icdIdx), AFX_OBJ(afxModule), icd.aux)))

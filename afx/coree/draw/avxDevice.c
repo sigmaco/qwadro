@@ -738,8 +738,12 @@ _AVX afxUnit AvxEnumerateDrawDevices(afxUnit icd, afxUnit first, afxUnit cnt, af
 {
     afxError err = { 0 };
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AvxGetIcd(icd, &mdle))
+    if (!_AvxGetIcd(sys, icd, &mdle))
     {
         return 0;
     }
@@ -763,8 +767,12 @@ _AVX afxUnit AvxInvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool
 {
     afxError err = { 0 };
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AvxGetIcd(icd, &mdle))
+    if (!_AvxGetIcd(sys, icd, &mdle))
     {
         return 0;
     }
@@ -784,8 +792,12 @@ _AVX afxUnit AvxEvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool(
 {
     afxError err = { 0 };
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AvxGetIcd(icd, &mdle))
+    if (!_AvxGetIcd(sys, icd, &mdle))
     {
         return 0;
     }
@@ -812,8 +824,12 @@ _AVX afxUnit AvxChooseDrawDevices(afxUnit icd, avxDeviceInfo const* caps, avxFea
     //AFX_ASSERT(limits);
     //AFX_ASSERT(features);
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    if (!_AvxGetIcd(icd, &mdle))
+    if (!_AvxGetIcd(sys, icd, &mdle))
     {
         return rslt;
     }
