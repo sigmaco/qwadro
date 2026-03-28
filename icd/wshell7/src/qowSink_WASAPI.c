@@ -104,8 +104,9 @@ _QOW afxError _QowSinkDtorCb(afxSink asi)
     _ZalWasapiStartStop(&asi->idd.wasapi, FALSE);
 
     if (_ZalWasapiDestroy(&asi->idd.wasapi))
+    {
         AfxThrowError();
-
+    }
     return err;
 }
 
@@ -136,7 +137,9 @@ _QOW afxError _QowSinkCtorCb(afxSink asi, void** args, afxUnit invokeNo)
     }
     
     if (_ZalWasapiCreate(&asi->idd.wasapi, asi->m.fmt, asi->m.chanCnt, asi->m.freq))
+    {
         AfxThrowError();
+    }
 
     asi->m.flushCb = _QowSinkFlushCb;
     asi->m.lockCb = _QowSinkLockCb;

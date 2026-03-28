@@ -49,7 +49,7 @@ _QOW afxUnit _QowDoutResumeFunction(afxSurface dout)
     return suspendCnt;
 }
 
-_QOW afxError _QowDoutPresentCb_GDI(afxDrawQueue dque, avxPresentation* ctrl)
+_QOW afxError _QowDoutPresentCb_GDI(afxDrawQueue dque, avxPresentation const* ctrl)
 {
     afxError err = { 0 };
 
@@ -329,7 +329,7 @@ _QOW afxError _QowRelinkDoutCb_GDI(afxSurface dout)
     mode.refreshRate = refreshRate;
     mode.wpOverHp = physAspRatio;
     mode.resolution = screenRes;
-    AvxResetSurfaceMode(dout, &mode);
+    AvxRequestSurfaceMode(dout, &mode);
 
     return err;
 }
@@ -399,12 +399,15 @@ _QOW afxError _QowDoutCtorCb_GDI(afxSurface dout, void** args, afxUnit invokeNo)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-    afxDrawSystem dsys = args[0];
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxDisplay dpy = args[0];
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     afxSurfaceConfig const* cfg = ((afxSurfaceConfig const *)args[1]) + invokeNo;
     AFX_ASSERT(cfg);
 
-    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dsys, (void*)cfg }, 0))
+    afxDrawSystem dsys = cfg->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
     {
         AfxThrowError();
         return err;

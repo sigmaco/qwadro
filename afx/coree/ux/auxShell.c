@@ -139,8 +139,12 @@ _AUX afxUnit AfxInvokeShells(afxUnit icd, afxUnit first, void *udd, afxBool(*f)(
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AuxGetIcd(icd, &mdle))
+    while (_AuxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AUX) == (afxModuleFlag_ICD | afxModuleFlag_AUX));
@@ -158,8 +162,13 @@ _AUX afxUnit AfxEvokeShells(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(v
     AFX_ASSERT(shells);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule mdle;
-    while (_AuxGetIcd(icd, &mdle))
+    while (_AuxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AUX) == (afxModuleFlag_ICD | afxModuleFlag_AUX));
@@ -177,9 +186,13 @@ _AUX afxUnit AfxEnumerateShells(afxUnit icd, afxUnit first, afxUnit cnt, afxShel
     AFX_ASSERT(shells);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
+    
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxModule mdle;
-    while (_AuxGetIcd(icd, &mdle))
+    while (_AuxGetIcd(sys, icd, &mdle))
     {
         AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
         AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AUX) == (afxModuleFlag_ICD | afxModuleFlag_AUX));

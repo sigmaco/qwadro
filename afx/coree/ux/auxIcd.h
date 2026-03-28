@@ -34,6 +34,7 @@
 
 AFX_DEFINE_STRUCT(_auxImplementation)
 {
+    afxModule icd;
     afxClassConfig dpyCls;
     afxClassConfig envCls;
     afxError(*getInteropDoutCls)(afxDrawSystem dsys, afxString const* tool, afxClassConfig* cfg);
@@ -54,8 +55,8 @@ AUX afxClass const* _AuxIcdGetDpyClass(afxModule icd);
 AUX afxError _AuxRegisterHids(afxModule icd, afxUnit cnt, afxHidInfo const infos[], afxHid hids[]);
 AUX afxError _AuxRegisterShells(afxModule icd, afxUnit cnt, _auxShellAcq const infos[], afxShell shells[]);
 
-AUX afxError _AuxIcdImplement(afxModule icd, _auxImplementation const* cfg);
+AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg);
 
-AUX afxBool _AuxGetIcd(afxUnit icdIdx, afxModule* driver);
+AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
 #endif//AUX_ICD_H

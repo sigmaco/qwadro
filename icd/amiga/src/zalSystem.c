@@ -27,7 +27,8 @@ _ZAL afxError _ZalMsysDtorCb(afxMixSystem msys)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
 
-    _AMX_MSYS_CLASS_CONFIG.dtor(msys);
+    if (_AMX_MSYS_CLASS_CONFIG.dtor(msys))
+        AfxThrowError();
 
     return err;
 }
@@ -40,8 +41,7 @@ _ZAL afxError _ZalMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
     __amxMsysAcq const* cfg = AFX_CAST(__amxMsysAcq const*, args[1]) + invokeNo;
-    _amxMexuAcq* bridgeCfgs = AFX_CAST(_amxMexuAcq*, args[2]) + invokeNo;
-
+    
     __amxMsysAcq cfg2 = *cfg;
 
     afxClassConfig mbufClsCfg = _AMX_MBUF_CLASS_CONFIG;
@@ -69,7 +69,7 @@ _ZAL afxError _ZalMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     cfg2.pmpClsCfg = &mpmpClsCfg;
     cfg2.vidClsCfg = &vidClsCfg;
 
-    if (_AMX_MSYS_CLASS_CONFIG.ctor(msys, (void*[]) { icd, &cfg2, bridgeCfgs }, 0))
+    if (_AMX_MSYS_CLASS_CONFIG.ctor(msys, (void*[]) { icd, &cfg2 }, 0))
     {
         AfxThrowError();
         return err;

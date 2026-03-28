@@ -26,6 +26,7 @@
 //#define _AVX_DRAW_SYSTEM_C
 #define _AVX_SURFACE_C
 #include "avxIcd.h"
+#include "../hid/auxDisplayDDK.h"
 
 _AVX afxUnit _AvxDoutIsSuspended(afxSurface dout)
 {
@@ -78,12 +79,22 @@ _AVX afxError _AvxDoutFreeAllBuffers(afxSurface dout)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+_AVX afxDisplay AvxGetSurfaceDisplay(afxSurface dout)
+{
+    afxError err = { 0 };
+    // @dout must be a valid afxSurface handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+    afxDisplay dpy = AfxGetHost(dout);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    return dpy;
+}
+
 _AVX afxDrawSystem AvxGetSurfaceHost(afxSurface dout)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-    afxDrawSystem dsys = AfxGetHost(dout);
+    afxDrawSystem dsys = dout->dsys;// AfxGetHost(dout);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
     return dsys;
 }
@@ -241,7 +252,7 @@ _AVX afxError _AvxDoutAdjustNormalized(afxSurface dout, afxV3d const whd)
     return AvxAdjustSurface(dout, &whd2, dout->fse);
 }
 
-_AVX afxError AvxResetSurfaceMode(afxSurface dout, avxModeSetting const* mode)
+_AVX afxError AvxRequestSurfaceMode(afxSurface dout, avxModeSetting const* mode)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
@@ -315,7 +326,7 @@ _AVX afxError AvxLockSurfaceBuffer(afxSurface dout, afxUnit64 timeout, afxMask e
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-    if (dout->resizing)
+    if (dout->resizing || dout->suspendCnt)
     {
         err = afxError_NOT_READY;
         return err;
@@ -324,20 +335,24 @@ _AVX afxError AvxLockSurfaceBuffer(afxSurface dout, afxUnit64 timeout, afxMask e
     afxUnit bufIdx2 = AFX_INVALID_INDEX;
 
     AFX_ASSERT(dout->ddi->lockCb);
-    err = dout->ddi->lockCb(dout, exuMask, signal, timeout, &bufIdx2);
+    afxError err2 = dout->ddi->lockCb(dout, exuMask, signal, timeout, &bufIdx2);
 
-    if (!err)
+    if (err2 != afxError_NONE)
+    {
+        AfxThrowError();
+        AFX_ASSERT(AFX_INVALID_INDEX == bufIdx2);
+        bufIdx2 = AFX_INVALID_INDEX;
+        err = err2;
+    }
+    else
     {
         AFX_ASSERT(AFX_INVALID_INDEX != bufIdx2);
         AFX_ASSERT_RANGE(dout->swapCnt, bufIdx2, 1);
     }
-    else
-    {
-        AFX_ASSERT(AFX_INVALID_INDEX == bufIdx2);
-        bufIdx2 = AFX_INVALID_INDEX;
-    }
+
     AFX_ASSERT(bufIdx);
     *bufIdx = bufIdx2;
+
     return err;
 }
 
@@ -347,19 +362,26 @@ _AVX afxError AvxUnlockSurfaceBuffer(afxSurface dout, afxUnit bufIdx)
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-    AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
-    AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
-    if (!(bufIdx < dout->swapCnt))
+    if (bufIdx >= dout->swapCnt)
     {
+        AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
+        AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
+
         AfxThrowError();
+
         err = afxError_OUT_OF_RANGE;
-        return err;
     }
+    else
+    {
+        AFX_ASSERT(dout->ddi->unlockCb);
+        afxError err2 = dout->ddi->unlockCb(dout, bufIdx);
 
-    AFX_ASSERT(dout->ddi->unlockCb);
-    if (dout->ddi->unlockCb(dout, bufIdx))
-        AfxThrowError();
-
+        if (err2)
+        {
+            AfxThrowError();
+            err = err2;
+        }
+    }
     return err;
 }
 
@@ -371,18 +393,21 @@ _AVX afxBool AvxGetSurfaceCanvas(afxSurface dout, afxUnit bufIdx, avxCanvas* can
 
     avxCanvas canv = NIL;
 
-    AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
-    AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
     if (bufIdx >= dout->swapCnt)
     {
+        AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
+        AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
+
         AfxThrowError();
+
         err = afxError_OUT_OF_RANGE;
     }
     else
     {
         _avxSurfaceSwap* swap = &dout->swaps[bufIdx];
+        canv = swap->canv;
 
-        if ((canv = swap->canv))
+        if (canv)
         {
             AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
         }
@@ -393,6 +418,7 @@ _AVX afxBool AvxGetSurfaceCanvas(afxSurface dout, afxUnit bufIdx, avxCanvas* can
 
     AFX_ASSERT(canvas);
     *canvas = canv;
+
     return !!canv;
 }
 
@@ -404,24 +430,71 @@ _AVX afxBool AvxGetSurfaceBuffer(afxSurface dout, afxUnit bufIdx, avxRaster* buf
 
     avxRaster ras = NIL;
 
-    afxLayeredRect area;
-    avxCanvas canv;
-    AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
-    AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
-    if (AvxGetSurfaceCanvas(dout, bufIdx, &canv, &area))
+    if (bufIdx >= dout->swapCnt)
     {
-        AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-        if (AvxGetDrawBuffers(canv, 0, 1, &ras))
+        AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
+        AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
+
+        AfxThrowError();
+
+        err = afxError_OUT_OF_RANGE;
+    }
+    else
+    {
+        avxCanvas canv;
+        afxLayeredRect area;
+        if (AvxGetSurfaceCanvas(dout, bufIdx, &canv, &area))
         {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
+            AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+            if (AvxGetDrawBuffers(canv, 0, 1, &ras))
+            {
+                AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
+            }
         }
     }
 
     AFX_ASSERT(buffer);
     *buffer = ras;
+
     return !!ras;
 }
 
+_AVX afxError AvxPrintSurfaceBuffer(afxSurface dout, afxUnit bufIdx, avxRasterIo const* op, afxUri const* uri, afxMask exuMask)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+
+    if (bufIdx >= dout->swapCnt)
+    {
+        AFX_ASSERT(bufIdx != AFX_INVALID_INDEX);
+        AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
+
+        AfxThrowError();
+
+        err = afxError_OUT_OF_RANGE;
+    }
+    else
+    {
+        avxCanvas canv;
+        afxLayeredRect area;
+        if (!AvxGetSurfaceCanvas(dout, bufIdx, &canv, &area))
+        {
+            AfxThrowError();
+            err = afxError_NOT_READY;
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+
+        AFX_ASSERT(uri);
+        AFX_ASSERT(!AfxIsUriBlank(uri));
+
+        if (AvxPrintDrawBuffer(canv, 0, op, uri, exuMask))
+            AfxThrowError();
+    }
+    return err;
+}
+
+#if 0
 _AVX afxBool AvxGetSurfaceFence(afxSurface dout, afxUnit bufIdx, avxFence* fence, afxUnit64* nextValue)
 {
     afxError err = { 0 };
@@ -455,31 +528,7 @@ _AVX afxBool AvxGetSurfaceFence(afxSurface dout, afxUnit bufIdx, avxFence* fence
     fencNextValue = fencNextValue;
     return !!fenc;
 }
-
-_AVX afxError AvxPrintSurfaceBuffer(afxSurface dout, afxUnit bufIdx, avxRasterIo const* op, afxUri const* uri, afxMask exuMask)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-
-    afxLayeredRect area;
-    avxCanvas canv;
-    AFX_ASSERT_RANGE(dout->swapCnt, bufIdx, 1);
-    if (!AvxGetSurfaceCanvas(dout, bufIdx, &canv, &area))
-    {
-        AfxThrowError();
-        return err;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-
-    AFX_ASSERT(uri);
-    AFX_ASSERT(!AfxIsUriBlank(uri));
-
-    if (AvxPrintDrawBuffer(canv, 0, op, uri, exuMask))
-        AfxThrowError();
-
-    return err;
-}
-
+#endif
 
 
 _AVX afxError AvxWaitForSurface(afxSurface dout, afxUnit64 timeout)
@@ -494,10 +543,14 @@ _AVX afxError AvxWaitForSurface(afxSurface dout, afxUnit64 timeout)
         .nsecs = timeout % AFX_NANOSECS_PER_SECS(1) // Get the remainder in nanoseconds
     };
 
+    afxResult rslt;
+
     AfxLockMutex(&dout->idleCndMtx);
     while (dout->submCnt)
-        AfxWaitTimedCondition(&dout->idleCnd, &dout->idleCndMtx, &ts);
+        rslt = AfxWaitTimedCondition(&dout->idleCnd, &dout->idleCndMtx, &ts);
     AfxUnlockMutex(&dout->idleCndMtx);
+
+    err = rslt;
 
     return err;
 }
@@ -549,6 +602,10 @@ _AVX afxError _AvxDoutDtorCb(afxSurface dout)
     AfxDismantleCondition(&dout->idleCnd);
     AfxDismantleMutex(&dout->idleCndMtx);
 
+    afxDrawSystem dsys = dout->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AfxDisposeObjects(1, &dout->dsys);
+
     return err;
 }
 
@@ -558,15 +615,22 @@ _AVX afxError _AvxDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
 
     AfxZero(dout, sizeof(dout[0]));
 
-    afxDrawSystem dsys = args[0];
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxDisplay dpy = args[0];
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     afxSurfaceConfig const* cfg = ((afxSurfaceConfig const *)args[1]) + invokeNo;
     AFX_ASSERT(cfg);
     
+    afxDrawSystem dsys = cfg->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
     afxSurfaceConfig def = { 0 };
-    AvxConfigureSurface(dsys, &def);
+    def.dsys = cfg->dsys;
+    AvxConfigureSurface(dpy, &def);
 
     dout->ddi = &_AVX_DDI_DOUT;
+
+    dout->dsys = dsys;
+    AfxReacquireObjects(1, &dsys);
 
     dout->udd[0] = cfg->udd[0];
     dout->udd[1] = cfg->udd[1];
@@ -609,7 +673,7 @@ _AVX afxError _AvxDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     }
 #endif
     // swapchain
-    dout->swapCnt = AFX_MAX(1, AFX_MIN(cfg->latency, def.latency)); // 2 or 3; double or triple buffered for via-memory presentation.
+    dout->swapCnt = AFX_MAX(cfg->latency, def.latency); // 2 or 3; double or triple buffered for via-memory presentation.
 
     dout->area = AFX_RECT(0, 0, dout->ccfg.whd.w, dout->ccfg.whd.h);
     dout->dstArea = dout->area;
@@ -618,7 +682,7 @@ _AVX afxError _AvxDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
 
     dout->submCnt = 0;
     dout->lastPresentedBufIdx = AFX_INVALID_INDEX;
-    dout->suspendCnt = 1;
+    dout->suspendCnt = 0;
     AfxSetUpFutex(&dout->suspendSlock);
 
     AfxDeployMutex(&dout->idleCndMtx, AFX_MTX_PLAIN);
@@ -669,8 +733,11 @@ _AVX afxError _AvxDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AvxAdjustSurface(dout, &dout->area, cfg->exclusive);
 
     if (err)
+    {
         AfxDeallocateInstanceData(dout, ARRAY_SIZE(stashs), stashs);
-
+        
+        AfxDisposeObjects(1, &dout->dsys);
+    }
     return err;
 }
 
@@ -686,42 +753,51 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxUnit AvxEnumerateSurfaces(afxDrawSystem dsys, afxUnit first, afxUnit cnt, afxSurface outputs[])
+_AVX afxUnit AvxEnumerateSurfaces(afxDisplay dpy, afxUnit first, afxUnit cnt, afxSurface outputs[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     AFX_ASSERT(!cnt || outputs);
-    afxClass const* cls = _AvxDsysGetDdi(dsys)->doutCls(dsys);
+    afxClass const* cls = _AvxDpyGetDdi(dpy)->doutCls(dpy);
     AFX_ASSERT_CLASS(cls, afxFcc_DOUT);
     return AfxEnumerateObjects(cls, first, cnt, (afxObject*)outputs);
 }
 
-_AVX afxUnit AvxEvokeSurfaces(afxDrawSystem dsys, afxBool(*f)(afxSurface, void*), void* udd, afxUnit first, afxUnit cnt, afxSurface outputs[])
+_AVX afxUnit AvxEvokeSurfaces(afxDisplay dpy, afxBool(*f)(afxSurface, void*), void* udd, afxUnit first, afxUnit cnt, afxSurface outputs[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     AFX_ASSERT(outputs);
     AFX_ASSERT(f);
-    afxClass const* cls = _AvxDsysGetDdi(dsys)->doutCls(dsys);
+    afxClass const* cls = _AvxDpyGetDdi(dpy)->doutCls(dpy);
     AFX_ASSERT_CLASS(cls, afxFcc_DOUT);
     return AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)outputs);
 }
 
-_AVX afxUnit AvxInvokeSurfaces(afxDrawSystem dsys, afxUnit first, afxUnit cnt, afxBool(*f)(afxSurface, void*), void *udd)
+_AVX afxUnit AvxInvokeSurfaces(afxDisplay dpy, afxUnit first, afxUnit cnt, afxBool(*f)(afxSurface, void*), void *udd)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     AFX_ASSERT(f);
-    afxClass const* cls = _AvxDsysGetDdi(dsys)->doutCls(dsys);
+    afxClass const* cls = _AvxDpyGetDdi(dpy)->doutCls(dpy);
     AFX_ASSERT_CLASS(cls, afxFcc_DOUT);
     return AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
 }
 
-_AVX afxError AvxConfigureSurface(afxDrawSystem dsys, afxSurfaceConfig* cfg)
+_AVX afxError AvxConfigureSurface(afxDisplay dpy, afxSurfaceConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     AFX_ASSERT(cfg);
+
+    afxDrawSystem dsys = cfg->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    if (!dsys)
+    {
+        AfxThrowError();
+        AFX_ASSERT(dsys);
+    }
 
     // Used to opt for sRGB format. Safe if used after being zeroed.
     //cfg->colorSpc = avxColorSpace_STANDARD;
@@ -760,11 +836,11 @@ _AVX afxError AvxConfigureSurface(afxDrawSystem dsys, afxSurfaceConfig* cfg)
     return err;
 }
 
-_AVX afxError AvxAcquireSurface(afxDrawSystem dsys, afxSurfaceConfig const* cfg, afxSurface* output)
+_AVX afxError AvxAcquireSurface(afxDisplay dpy, afxSurfaceConfig const* cfg, afxSurface* output)
 // file, window, desktop, widget, frameserver, etc; physical or virtual VDUs.
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     AFX_ASSERT(cfg);
 
     if (!cfg)
@@ -773,11 +849,14 @@ _AVX afxError AvxAcquireSurface(afxDrawSystem dsys, afxSurfaceConfig const* cfg,
         return err;
     }
 
-    afxClass* cls = (afxClass*)_AvxDsysGetDdi(dsys)->doutCls(dsys);
+    afxDrawSystem dsys = cfg->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    afxClass* cls = (afxClass*)_AvxDpyGetDdi(dpy)->doutCls(dpy);
     AFX_ASSERT_CLASS(cls, afxFcc_DOUT);
 
     afxSurface dout;
-    if (AfxAcquireObjects(cls, 1, (afxObject*)&dout, (void const*[]) { dsys, cfg }))
+    if (AfxAcquireObjects(cls, 1, (afxObject*)&dout, (void const*[]) { dpy, cfg }))
     {
         AfxThrowError();
         return err;
@@ -789,7 +868,7 @@ _AVX afxError AvxAcquireSurface(afxDrawSystem dsys, afxSurfaceConfig const* cfg,
     return err;
 }
 
-_AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentation presentations[])
+_AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -808,7 +887,7 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
 
     for (afxUnit doutIt = 0; doutIt < cnt; doutIt++)
     {
-        avxPresentation* pres = &presentations[doutIt];
+        avxPresentation const* pres = &presentations[doutIt];
 
         afxSurface dout = pres->dout;
         if (!dout)
@@ -848,7 +927,7 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
                     return err;
                 }
 
-                afxError err2 = _AvxDexuPresentBuffers(dexu, cnt, presentations);
+                afxError err2 = _AvxDexuPresentBuffers(dexu, 1, &presentations[doutIt], queueingMap);
                 err = err2;
 
                 if (!err2)
@@ -875,7 +954,7 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
     return err;
 }
 
-_AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption captions[])
+_AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -885,7 +964,7 @@ _AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption cap
 
     for (afxUnit doutIt = 0; doutIt < cnt; doutIt++)
     {
-        avxCaption* cap = &captions[doutIt];
+        avxCaption const* cap = &captions[doutIt];
 
         afxSurface dout = cap->dout;
         if (!dout)
@@ -925,7 +1004,7 @@ _AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption cap
                     return err;
                 }
 
-                afxError err2 = _AvxDexuCaptureBuffers(dexu, cnt, captions);
+                afxError err2 = _AvxDexuCaptureBuffers(dexu, 1, &captions[doutIt], queueingMap);
                 err = err2;
 
                 if (!err2)

@@ -355,7 +355,7 @@ _AVX afxError _AvxDexuQueryResults(afxDrawBridge dexu, avxQueryPool qryp, avxQue
     return err;
 }
 
-_AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresentation presentations[])
+_AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dexu must be a valid afxDrawBridge handle.
@@ -374,6 +374,11 @@ _AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresent
 
         if (!err2)
         {
+            if (queueingMap)
+            {
+                for (afxUnit j = 0; j < cnt; j++)
+                    queueingMap[j] = queIdx;
+            }
             queued = TRUE;
             break; // while
         }
@@ -387,7 +392,7 @@ _AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresent
     return err;
 }
 
-_AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption captions[])
+_AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dexu must be a valid afxDrawBridge handle.
@@ -406,6 +411,12 @@ _AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption
 
         if (!err2)
         {
+            if (queueingMap)
+            {
+                for (afxUnit j = 0; j < cnt; j++)
+                    queueingMap[j] = queIdx;
+            }
+
             queued = TRUE;
             break; // while
         }
@@ -548,7 +559,7 @@ _AVX afxError _AvxDsysBridgeDevices(afxDrawSystem dsys, afxUnit cnt, _avxDexuAcq
     AFX_ASSERT(bridges);
     AFX_ASSERT(cnt);
 
-    afxClass* cls = (afxClass*)_AvxDsysGetDexuClassCb_SW(dsys);
+    afxClass* cls = (afxClass*)_AvxDsysSW_GetDexuClassCb(dsys);
     AFX_ASSERT_CLASS(cls, afxFcc_DEXU);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)bridges, (void const*[]) { dsys, configs }))

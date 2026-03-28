@@ -189,7 +189,7 @@ AFX_DEFINE_STRUCT(avxBufferAllocation)
     afxError    rslt;
 };
 
-_AVXINL afxError _AvxDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[])
+_AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[])
 {
     afxError err = { 0 };
 
@@ -218,7 +218,7 @@ _AVXINL afxError _AvxDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt,
     return err;
 }
 
-_AVXINL afxError _AvxDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[])
+_AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[])
 {
     afxError err = { 0 };
 
@@ -250,7 +250,7 @@ _AVXINL afxError _AvxDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
     return err;
 }
 
-_AVXINL afxError _AvxDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[])
+_AVXINL afxError _AvxDsysSW_DeallocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[])
 {
     afxError err = { 0 };
 
@@ -279,7 +279,7 @@ _AVXINL afxError _AvxDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt,
     return err;
 }
 
-_AVXINL afxError _AvxDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[])
+_AVXINL afxError _AvxDsysSW_AllocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[])
 {
     afxError err = { 0 };
 

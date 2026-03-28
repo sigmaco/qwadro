@@ -41,6 +41,7 @@
 
 AFX_DEFINE_STRUCT(_avxImplementation)
 {
+    afxModule icd;
     afxClassConfig ddevCls;
     afxClassConfig dsysCls;
 };
@@ -50,9 +51,9 @@ AVX afxClass const* _AvxIcdGetDsysClass(afxModule icd);
 
 AVX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[]);
 AVX afxError _AvxIcdRegisterDevices(afxModule icd, afxUnit cnt, _avxDdevReg const infos[], afxDrawDevice devices[]);
-AVX afxError _AvxIcdImplement(afxModule icd, _avxImplementation const* cfg);
+AVX afxError _AvxIcdImplement(afxSystem sys, _avxImplementation const* cfg);
 
-AVX afxBool _AvxGetIcd(afxUnit icdIdx, afxModule* driver);
+AVX afxBool _AvxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
 AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL];
 

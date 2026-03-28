@@ -32,6 +32,7 @@
 AFX_DECLARE_STRUCT(_auxIddDisp);
 AFX_DEFINE_STRUCT(_auxDdiDisp)
 {
+    afxClass const*(*doutCls)(afxDisplay);
     afxUnit(*qryModeCb)(afxDisplay, afxUnit port, avxFormat, afxUnit cnt, afxDisplayMode[]);
     afxError(*askGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCapabilites*);
     afxError(*getGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCurve*);
@@ -97,6 +98,7 @@ AFX_OBJECT(afxDisplay)
     void*               udd;
 
     afxClass            portCls;
+    afxClass            doutCls; // req RAS, CANV
 
     // the name of the display.
     afxString32     name;
@@ -109,7 +111,13 @@ AFX_OBJECT(afxDisplay)
 AUX afxClassConfig const _AUX_DPY_CLASS_CONFIG;
 AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG;
 
+AUX _auxDdiDisp _AUX_DDI_DPY;
+
+AUX _auxDdiDisp const* _AvxDpyGetDdi(afxDisplay dpy);
+
 AUX afxClass const* _AuxDpyGetVduClass(afxDisplay dpy);
 AUX afxError _AuxRegisterDisplayPorts(afxDisplay dpy, afxUnit cnt, afxDisplayPortConfig const cfg[], afxDisplayPort ports[]);
+
+AUX afxClass const* _AvxDpyGetDoutClassCb_SW(afxDisplay dpy);
 
 #endif//AUX_DISPLAY_DDK_H

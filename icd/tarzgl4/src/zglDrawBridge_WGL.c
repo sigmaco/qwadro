@@ -805,6 +805,10 @@ _ZGL afxError _DpuWork_ExecuteCb(zglDpu* dpu, _avxIoReqPacket* work)
         }
         else
         {
+            /*
+                glFlush() here is needed because glWaitSync() is called when the DPU must wait for fence signal,
+                where this function stalls the command queue.
+            */
             gl->Flush(); _ZglThrowErrorOccuried();
         }
     }
@@ -1725,13 +1729,13 @@ _ZGL afxError _ZglDexuCtorCb(afxDrawBridge dexu, void** args, afxUnit invokeNo)
 
 #if 0
     dexu->vinExt.extId = afxFcc_DEXU;
-    AfxInstallClassExtension(_AvxDsysGetVinClassCb_SW(dsys), &dexu->vinExt);
+    AfxInstallClassExtension(_AvxDsysSW_GetVinClassCb(dsys), &dexu->vinExt);
 
     dexu->pipExt.extId = afxFcc_DEXU;
-    AfxInstallClassExtension(_AvxDsysGetPipClassCb_SW(dsys), &dexu->pipExt);
+    AfxInstallClassExtension(_AvxDsysSW_GetPipClassCb(dsys), &dexu->pipExt);
 
     dexu->canvExt.extId = afxFcc_DEXU;
-    AfxInstallClassExtension(_AvxDsysGetCanvClassCb_SW(dsys), &dexu->canvExt);
+    AfxInstallClassExtension(_AvxDsysSW_GetCanvClassCb(dsys), &dexu->canvExt);
 #endif
 
     if (_AVX_CLASS_CONFIG_DEXU.ctor(dexu, (void*[]) { dsys, (void*)cfg }, 0))

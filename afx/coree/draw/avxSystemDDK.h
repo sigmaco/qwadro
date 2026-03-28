@@ -62,7 +62,6 @@ AFX_DEFINE_STRUCT(_avxDdiDsys)
 
     afxClass const*(*dexuCls)(afxDrawSystem);
     afxClass const*(*fencCls)(afxDrawSystem);
-    afxClass const*(*doutCls)(afxDrawSystem);
     afxClass const*(*qrypCls)(afxDrawSystem);
     afxClass const*(*vtxdCls)(afxDrawSystem);
     afxClass const*(*rasCls)(afxDrawSystem);
@@ -81,14 +80,8 @@ AFX_DEFINE_STRUCT(_avxDdiDsys)
 
 AFX_DEFINE_STRUCT(_avxDsysAcq)
 {
-    afxUnit             bridgeCnt;
-    avxFeatures         reqFeatures;
-    afxUnit             reqExtCnt;
-    afxString const*    reqExts;
-    void*               udd;
-    afxString           tag;
-    avxClipSpaceDepth   clipSpcDepth;
-    afxBool             nonRhcs;
+    avxSystemConfig     cfg;
+    _avxDexuAcq*        bridgeCfg;
     afxClassConfig const* bufClsCfg;
     afxClassConfig const* rasClsCfg;
     afxClassConfig const* canvClsCfg; // req RAS
@@ -156,8 +149,6 @@ AFX_OBJECT(afxDrawSystem)
 
     afxClass            qrypCls;
 
-    afxClass            doutCls; // req RAS, CANV
-
     afxClass            txdCls; // req RAS
 
     afxClass            dexuCls;
@@ -189,38 +180,35 @@ AVX _avxDdiDsys const _AVX_DDI_DSYS;
 AVX _avxDdiDsys const* _AvxDsysGetDdi(afxDrawSystem dsys);
 AVX afxMask _AvxDsysGetIoExuMask(afxDrawSystem dsys, afxMask* dedIoExuMask);
 
-AVX afxClass const* _AvxDsysGetDexuClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetDctxClassCb_SW(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetDexuClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetDctxClassCb(afxDrawSystem dsys);
 
-AVX afxClass const* _AvxDsysGetDoutClassCb_SW(afxDrawSystem dsys);
-
-AVX afxClass const* _AvxDsysGetFencClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetBufClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetCanvClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetLigaClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetPipClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetQrypClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetRasClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetSampClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetShadClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetVinClassCb_SW(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetFencClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetBufClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetCanvClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetLigaClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetPipClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetQrypClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetRasClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetSampClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetShdClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetVinClassCb(afxDrawSystem dsys);
 
 AVX afxError    _AvxLoadGlScript(afxStream file, afxArray* fCode);
 
 AVX afxBool     AvxGetShaderStringBase(afxDrawSystem dsys, afxStringBase* base);
 
-AVX afxClass const* _AvxDsysGetFencClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetDoutClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetQrypClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetVinClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetRasClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetBufClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetSampClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetPipClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetCanvClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetShadClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetLigaClassCb_SW(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysGetTxdClassCb_SW(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetFencClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetQrypClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetVinClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetRasClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetBufClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetSampClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetPipClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetCanvClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetShdClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetLigaClassCb(afxDrawSystem dsys);
+AVX afxClass const* _AvxDsysSW_GetTxdClassCb(afxDrawSystem dsys);
 
 AVX avxFeatures const* _AvxDsysGetReqFeatures(afxDrawSystem dsys);
 AVX avxLimits const* _AvxDsysGetLimits(afxDrawSystem dsys);

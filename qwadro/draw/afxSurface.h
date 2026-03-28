@@ -135,8 +135,8 @@ AFX_DEFINE_STRUCT(afxSurfaceInterop)
 
 AFX_DEFINE_STRUCT(afxSurfaceConfig)
 {
-    // The display from which the surface will be acquired.
-    afxDisplay          dpy;
+    // The draw system to which the drawing output context belongs.
+    afxDrawSystem       dsys;
     // Boolean requesting full, exclusive control of the video endpoint.
     afxBool             exclusive;
     // The screen resolution to be used to mode-set the video endpoint.
@@ -182,8 +182,8 @@ AFX_DEFINE_STRUCT(afxSurfaceConfig)
 
 AVX afxError AvxConfigureSurface
 (
-    // The drawing system to which the drawing output context belongs.
-    afxDrawSystem dsys,
+    // The display from which the surface will be acquired.
+    afxDisplay dpy,
 
     // A pointer to the configuration settings to be applied to the drawing output context.
     afxSurfaceConfig*cfg
@@ -201,8 +201,8 @@ AVX afxError AvxConfigureSurface
 
 AVX afxError AvxAcquireSurface
 (
-    // The drawing system where the drawing output context will be created or opened.
-    afxDrawSystem dsys,
+    // The display where the drawing output context will be created or opened.
+    afxDisplay dpy,
 
     // A pointer to the configuration settings to initialize the drawing output context.
     afxSurfaceConfig const* cfg,
@@ -222,7 +222,7 @@ AVX afxUnit AvxEnumerateSurfaces
 (
     // The established draw system associated with the enumeration process.
     // The function will query available drawing output contexts for the given drawing system (dsys).
-    afxDrawSystem dsys,
+    afxDisplay dpy,
 
     // The starting index for the enumeration of drawing output contexts.
     // If there are many outputs available, @first allows you to specify where to start enumerating 
@@ -248,7 +248,7 @@ AVX afxUnit AvxEnumerateSurfaces
 AVX afxUnit AvxEvokeSurfaces
 (
     // The drawing system from which the drawing output contexts will be retrieved.
-    afxDrawSystem dsys,
+    afxDisplay dpy,
 
     // A user-defined function pointer that is invoked on each retrieved drawing output context.
     // The return type is afxBool, which indicates if an draw output should be inserted in @output array.
@@ -277,7 +277,7 @@ AVX afxUnit AvxEvokeSurfaces
 AVX afxUnit AvxInvokeSurfaces
 (
     // The drawing system whose outputs are to be processed.
-    afxDrawSystem dsys,
+    afxDisplay dpy,
 
     // The starting index for the outputs to be processed.
     // It specifies the position of the first drawing output context to be processed. 
@@ -316,7 +316,9 @@ AVX afxError AvxPresentSurfaces
     // A control structure for the presentation settings. 
     // This structure would contain configuration options that manage how the output is presented, such as swap chains, 
     // synchronization details, or specific rendering modes(e.g., vsync settings or buffer flipping).
-    avxPresentation presentations[]
+    avxPresentation const presentations[],
+
+    afxUnit queueingMap[]
 );
 
 AVX afxError AvxCaptureSurfaces
@@ -330,7 +332,9 @@ AVX afxError AvxCaptureSurfaces
     // A control structure for the caption settings. 
     // This structure would contain configuration options that manage how the output is captured, such as swap chains, 
     // synchronization details, or specific rendering modes.
-    avxCaption captions[]
+    avxCaption const captions[],
+
+    afxUnit queueingMap[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -353,6 +357,11 @@ AVX afxError AvxQuerySurfaceConfiguration
 */
 
 AVX afxDrawSystem AvxGetSurfaceHost
+(
+    afxSurface dout
+);
+
+AVX afxDisplay AvxGetSurfaceDisplay
 (
     afxSurface dout
 );
@@ -472,12 +481,12 @@ AVX afxError AvxQuerySurfaceMode
 );
 
 /*
-    The AvxResetSurfaceMode() function is used to change or reset the drawing resolution for a specific output device,
+    The AvxRequestSurfaceMode() function is used to change or reset the drawing resolution for a specific output device,
     adjusting both the display resolution and potentially the refresh rate, while considering the aspect ratio and whether the
     change is in an exclusive fullscreen mode.
 */
 
-AVX afxError AvxResetSurfaceMode
+AVX afxError AvxRequestSurfaceMode
 (
     // The drawing output context to be reset or configured.
     afxSurface dout,
@@ -622,14 +631,6 @@ AVX afxBool AvxGetSurfaceBuffer
     avxRaster* buffer
 );
 
-AVX afxBool AvxGetSurfaceFence
-(
-    afxSurface dout, 
-    afxUnit bufIdx, 
-    avxFence* fence, 
-    afxUnit64* nextValue
-);
-
 /*
     The AvxPrintSurfaceBuffer() function is designed to "print" or "export" the contents of a drawing output context buffer to an external resource.
     Depending on the library or framework, "printing" could mean saving the rendered buffer to a file, sending it to a printer,
@@ -654,6 +655,14 @@ AVX afxError AvxPrintSurfaceBuffer
 
     // The mask of the execution unit to handle the I/O.
     afxMask exuMask
+);
+
+AVX afxBool AvxGetSurfaceFence
+(
+    afxSurface dout, 
+    afxUnit bufIdx, 
+    avxFence* fence, 
+    afxUnit64* nextValue
 );
 
 #endif//AVX_SURFACE_H

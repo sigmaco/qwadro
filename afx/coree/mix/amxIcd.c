@@ -190,11 +190,14 @@ _AMX afxError _AmxIcdRegisterAsi(afxModule icd, afxClassConfig const* asiCls)
     return err;
 }
 
-_AMX afxError _AmxIcdImplement(afxModule icd, _amxImplementation const* cfg)
+_AMX afxError _AmxIcdImplement(afxSystem sys, _amxImplementation const* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
     //AFX_ASSERT((mdevCls && msysCls));
+
+    afxModule icd = cfg->icd;
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
     if (!AfxTestModule(icd, afxModuleFlag_ICD))
     {
@@ -228,10 +231,6 @@ _AMX afxError _AmxIcdImplement(afxModule icd, _amxImplementation const* cfg)
         AfxDismountClass(&icd->icd.asiCls);
         return err;
     }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     clsCfg = cfg->mdevCls.fcc ? cfg->mdevCls : _AMX_MDEV_CLASS_CONFIG;
     AFX_ASSERT(clsCfg.fcc == afxFcc_MDEV);
@@ -289,14 +288,11 @@ _AMX afxError _AmxIcdImplement(afxModule icd, _amxImplementation const* cfg)
     return err;
 }
 
-_AMX afxBool _AmxGetIcd(afxUnit icdIdx, afxModule* driver)
+_AMX afxBool _AmxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
 {
     afxError err = { 0 };
-    afxBool found = FALSE;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool found = FALSE;
 
     afxModule icd = NIL;
     while ((icdIdx < sys->amxIcdChain.cnt) && (icd = AFX_REBASE(AfxFindFirstLink(&sys->amxIcdChain, icdIdx), AFX_OBJ(afxModule), icd.amx)))
@@ -324,11 +320,16 @@ _AMX afxError amxIcdHook(afxModule icd, afxUri const* manifest)
     afxClassConfig msysClsCfg = _AMX_MSYS_CLASS_CONFIG;
 
     _amxImplementation mimpl = { 0 };
+    mimpl.icd = icd;
     mimpl.mcdcCls = _AMX_MCDC_CLASS_CONFIG;
     mimpl.mdevCls = _AMX_MDEV_CLASS_CONFIG;
     mimpl.msysCls = _AMX_MSYS_CLASS_CONFIG;
 
-    if (_AmxIcdImplement(icd, &mimpl))
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (_AmxIcdImplement(sys, &mimpl))
     {
         AfxThrowError();
         return err;

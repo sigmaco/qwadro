@@ -173,7 +173,9 @@ AVX afxError AvxExecuteDrawCommands
     // A control structure that might define various parameters related to how the draw commands are submitted, 
     // such as synchronization or execution order. This encapsulate details like submission flags, 
     // command queues, or context properties that manage how and when the draw commands are executed.
-    avxSubmission submissions[]
+    avxSubmission const submissions[],
+
+    afxUnit queueingMap[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////

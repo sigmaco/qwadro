@@ -1109,7 +1109,7 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
         mode.refreshRate = refreshRate;
         mode.wpOverHp = physAspRatio;
         mode.resolution = resolution;
-        AvxResetSurfaceMode(dout, &mode);
+        AvxRequestSurfaceMode(dout, &mode);
 
         afxDesktop* dwm = wnd->m.dwm;
         dwm->wpOverHp = physAspRatio;
@@ -2221,6 +2221,7 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
 
         afxSurface dout;
         afxSurfaceConfig scfg = { 0 };
+        scfg.dsys = wcfg->dsys;
         scfg = wcfg->dout;
         scfg.doNotClip = FALSE;
 
@@ -2229,7 +2230,11 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
         scfg.iop.w32.hInst = env->wndClss.hInstance;
         scfg.iop.w32.hWnd = hWnd;
 
-        if (AvxAcquireSurface(wcfg->dsys, &scfg, &dout)) AfxThrowError();
+        afxDisplay dpy;
+        AfxEnumerateDisplays(0, 0, 1, &dpy);
+        AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+        if (AvxAcquireSurface(dpy, &scfg, &dout)) AfxThrowError();
         else
         {
             wnd->m.surfaceDout = dout;

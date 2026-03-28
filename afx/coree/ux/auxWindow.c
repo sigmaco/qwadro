@@ -871,7 +871,7 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
     AFX_ASSERT(cfg);
 #if 0
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;
@@ -912,7 +912,10 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
     cfg2.dout.ccfg.whd.w = rc.w;
     cfg2.dout.ccfg.whd.h = rc.h;
 
-    AvxConfigureSurface(cfg2.dsys, &cfg2.dout);
+    afxDisplay dpy;
+    AfxEnumerateDisplays(0, 0, 1, &dpy);
+    cfg2.dout.dsys = cfg2.dsys;
+    AvxConfigureSurface(dpy, &cfg2.dout);
     cfg2.dout.doNotClip = FALSE;
     //cfg2.dout.presentAlpha = avxVideoAlpha_PREMUL;
 
@@ -928,7 +931,7 @@ _AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, a
     AFX_ASSERT(cfg);
 #if 0
     afxEnvironment env;
-    if (!AfxGetEnvironment(&env))
+    if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
         return err;

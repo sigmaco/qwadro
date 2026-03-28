@@ -597,6 +597,7 @@ _QOW afxError _QowDpyAskGammaControlCb(afxDisplay dpy, afxUnit port, afxGammaCap
         return err;
     }
 #endif//USE_DXGI_DISPLAY
+
     err = afxError_UNSUPPORTED;
 
     return err;
@@ -626,6 +627,7 @@ _QOW afxError _QowDpyGetGammaControlCb(afxDisplay dpy, afxUnit port, afxGammaCur
         return err;
     }
 #endif//USE_DXGI_DISPLAY
+
     err = afxError_UNSUPPORTED;
 
     return err;
@@ -663,6 +665,7 @@ _QOW afxError _QowDpySetGammaControlCb(afxDisplay dpy, afxUnit port, afxGammaCur
         return err;
     }
 #endif//USE_DXGI_DISPLAY
+
     err = afxError_UNSUPPORTED;
 
     return err;
@@ -697,6 +700,7 @@ _QOW afxError _QowDpyCaptureCb(afxDisplay dpy, afxUnit port, afxSurface dout)
 
 _QOW _auxDdiDisp _QOW_DDI_DPY =
 {
+    .doutCls = _AvxDpyGetDoutClassCb_SW,
     .qryModeCb = _QowDpyQueryModesCb,
     .askGammaCtrlCb = _QowDpyAskGammaControlCb,
     .getGammaCtrlCb = _QowDpyGetGammaControlCb,
@@ -736,6 +740,9 @@ _QOW afxError _QowDpyDtorCb(afxDisplay dpy)
     return err;
 }
 
+QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo);
+QOW afxError _ZglDoutDtorCb(afxSurface dout);
+
 _QOW afxError _QowDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
@@ -751,11 +758,18 @@ _QOW afxError _QowDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
     portClsCfg.ctor = (void*)_QowVduCtorCb;
     portClsCfg.dtor = (void*)_QowVduDtorCb;
 
-    if (_AUX_DPY_CLASS_CONFIG.ctor(dpy, (void*[]) { icd, (void*)cfg, /*args[2]*/&portClsCfg }, 0))
+    afxClassConfig doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+    doutClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSurface));
+    doutClsCfg.ctor = (void*)_ZglDoutCtorCb;
+    doutClsCfg.dtor = (void*)_ZglDoutDtorCb;
+
+    if (_AUX_DPY_CLASS_CONFIG.ctor(dpy, (void*[]) { icd, (void*)cfg, /*args[2]*/&portClsCfg, /*args[3]*/&doutClsCfg }, 0))
     {
         AfxThrowError();
         return err;
     }
+
+    dpy->m.ddi = &_QOW_DDI_DPY;
 
     if (0 == AfxCompareString(&dpy->m.tag, 0, "dxgi", 0, FALSE))
     {

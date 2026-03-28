@@ -123,6 +123,24 @@ _AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
+_AUX _auxDdiDisp const* _AvxDpyGetDdi(afxDisplay dpy)
+{
+    afxError err = { 0 };
+    // @dpy must be a valid afxDisplay handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    return dpy->ddi;
+}
+
+_AUX afxClass const* _AvxDpyGetDoutClassCb_SW(afxDisplay dpy)
+{
+    afxError err = { 0 };
+    // @dpy must be a valid afxDisplay handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+    afxClass const* cls = &dpy->doutCls;
+    AFX_ASSERT_CLASS(cls, afxFcc_DOUT);
+    return cls;
+}
+
 _AUX afxClass const* _AuxDpyGetVduClass(afxDisplay dpy)
 {
     afxError err = { 0 };
@@ -239,6 +257,16 @@ _AUX afxError AfxCopyBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface 
     return err;
 }
 
+_AUX _auxDdiDisp _AUX_DDI_DPY =
+{
+    .doutCls = _AvxDpyGetDoutClassCb_SW,
+    .qryModeCb = NIL,
+    .askGammaCtrlCb = NIL,
+    .getGammaCtrlCb = NIL,
+    .setGammaCtrlCb = NIL,
+    .captureCb = NIL,
+};
+
 _AUX afxError _AuxDpyDtorCb(afxDisplay dpy)
 {
     afxError err = { 0 };
@@ -261,6 +289,7 @@ _AUX afxError _AuxDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
     afxDisplayConfig const* cfg = AFX_CAST(afxDisplayConfig const*, args[1]) + invokeNo;
     AFX_ASSERT(cfg);
     afxClassConfig const* pPortClsCfg = args[2];
+    afxClassConfig const* pDoutClsCfg = args[3];
 
     if (_AFX_DEV_CLASS_CONFIG.ctor(&dpy->dev, (void*[]) { icd, (void*)&cfg->dev }, 0))
     {
@@ -277,6 +306,15 @@ _AUX afxError _AuxDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
     afxClassConfig portClsCfg = pPortClsCfg ? *pPortClsCfg : _AUX_VDU_CLASS_CONFIG;
 
     AfxMountClass(&dpy->portCls, NIL, &dpy->dev.classes, &portClsCfg);
+
+    afxClassConfig doutClsCfg;
+    if (pDoutClsCfg) doutClsCfg = *pDoutClsCfg;
+    else
+    {
+        doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+    }
+    AFX_ASSERT(doutClsCfg.fcc == afxFcc_DOUT);
+    AfxMountClass(&dpy->doutCls, NIL, &dpy->dev.classes, &doutClsCfg); // req RAS, CANV
 
     return err;
 }
@@ -325,8 +363,12 @@ _AUX afxUnit AfxEnumerateDisplays(afxUnit icd, afxUnit first, afxUnit cnt, afxDi
     AFX_ASSERT(displays);
     AFX_ASSERT(cnt);
 
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
     afxModule drv;
-    if (!_AuxGetIcd(icd, &drv))
+    if (!_AuxGetIcd(sys, icd, &drv))
     {
         AfxThrowError();
         return err;

@@ -107,12 +107,17 @@ _QOW afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     dpyClsCfg.dtor = (void*)_QowDpyDtorCb;
 
     _auxImplementation impl = { 0 };
+    impl.icd = icd;
     impl.dpyCls = dpyClsCfg;
     impl.envCls = envClsCfg;
     impl.getInteropDoutCls = getInteropDoutCls;
     impl.getInteropSinkCls = getInteropSinkCls;
 
-    _AuxIcdImplement(icd, &impl);
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    _AuxIcdImplement(sys, &impl);
 
     RegisterPresentVdus(icd);
 

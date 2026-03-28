@@ -382,6 +382,7 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         pipb.primTop = avxTopology_TRI_LIST; // avxTopology_TRI_STRIP
         pipb.vin = vin;
         pipb.codb = codb;
+        pipb.progCnt = 2;
         pipb.progSpecs = specs;
 
         AvxAssembleGfxPipelines(dsys, 1, &pipb, &pip);

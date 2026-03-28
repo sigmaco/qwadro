@@ -32,9 +32,9 @@
 //#define _NEVER_RESTORE_WGL_CONTEXT TRUE
 #define _ALWAYS_RESTORE_WGL_CONTEXT TRUE
 //#define _NEVER_FLUSH_DWM TRUE
-#define _ALWAYS_FLUSH_DWM TRUE
+//#define _ALWAYS_FLUSH_DWM TRUE // WARNING: DmwFlush will force V-Sync.
 //#define _ALWAYS_FLUSH_DWM_FSE TRUE
-#define _SWAP_BUFFERS_WITH_WGL TRUE
+//#define _SWAP_BUFFERS_WITH_WGL TRUE
 #define _SWAP_BUFFERS_WITH_HINT TRUE
 #define _SWAP_BUFFERS_WITH_GDI TRUE
 #define _INVALIDATE_BUFFERS TRUE
@@ -248,7 +248,7 @@ _QOWINL afxError _QowDoutFindPixelFormat(afxSurface dout)
     return err;
 }
 
-_QOWINL afxError _QowDoutUpdateSwapControl(afxSurface dout)
+_QOW afxError _QowDoutUpdateSwapControl(afxSurface dout)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
@@ -445,7 +445,7 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
 #endif//_NEVER_RESTORE_WGL_CONTEXT
 }
 
-_QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation* ctrl)
+_QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl)
 {
     afxError err = { 0 };
 
@@ -474,10 +474,12 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation* ctrl)
 
     if (ctrl->wait)
     {
+        AvxWaitForFence(ctrl->wait, ctrl->waitValue, AFX_TIMEOUT_INFINITE);
+#if 0
         avxFence fenc = ctrl->wait;
         // Just a copy of _DpuWaitForFence, just because we are not the DPU here.
         afxUnit64 oldVal = 0;
-        if (ctrl->waitValue == (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+        if (ctrl->waitValue <= (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
         {
             GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
 
@@ -488,6 +490,7 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation* ctrl)
                 //gl->WaitSync(glHandle, GL_NONE, GL_TIMEOUT_IGNORED);
             }
         }
+#endif
     }
 
     avxRaster buf;
@@ -749,12 +752,12 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation* ctrl)
                     This is why it is used before SwapBuffers.
                 */
                 DwmFlush();
+                // WARNING: DmwFlush will force V-Sync.
             }
         }
 #endif//_NEVER_FLUSH_DWM
 
 #ifdef _SWAP_BUFFERS_WITH_WGL
-
         if (dout->wgl.swapOnWgl)
         {
             wglSwapBuffersWIN(dout->hDC);
@@ -818,7 +821,7 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation* ctrl)
 }
 
 #if !0
-_QOW afxError _DpuPresentDout_BlitSwapFbo(zglDpu* dpu, avxPresentation* ctrl)
+_QOW afxError _DpuPresentDout_BlitSwapFbo(zglDpu* dpu, avxPresentation const* ctrl)
 {
     afxError err = { 0 };
 
@@ -1386,7 +1389,7 @@ _QOW afxError _ZglRelinkDoutCb_WGL(afxSurface dout)
     mode.refreshRate = refreshRate;
     mode.wpOverHp = physAspRatio;
     mode.resolution = screenRes;
-    AvxResetSurfaceMode(dout, &mode);
+    AvxRequestSurfaceMode(dout, &mode);
 
     HDC bkpHdc = wglGetCurrentDCWIN();
     HGLRC bkpGlrc = wglGetCurrentContextWIN();
@@ -1667,12 +1670,15 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-    afxDrawSystem dsys = args[0];
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxDisplay dpy = args[0];
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
     afxSurfaceConfig const* cfg = ((afxSurfaceConfig const *)args[1]) + invokeNo;
     AFX_ASSERT(cfg);
 
-    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dsys, (void*)cfg }, 0))
+    afxDrawSystem dsys = cfg->dsys;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
     {
         AfxThrowError();
         return err;
@@ -1757,7 +1763,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     mode.refreshRate = refreshRate;
     mode.wpOverHp = physAspRatio;
     mode.resolution = screenRes;
-    AvxResetSurfaceMode(dout, &mode);
+    AvxRequestSurfaceMode(dout, &mode);
 
     HWND hWnd = cfg->iop.w32.hWnd;
 
@@ -1788,7 +1794,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
             };
             afxReal64 physAspRatio = (afxReal64)GetDeviceCaps(dc, HORZSIZE) / (afxReal64)GetDeviceCaps(dc, VERTSIZE);
             afxReal refreshRate = GetDeviceCaps(dc, VREFRESH);
-            AvxResetSurfaceMode(dout, physAspRatio, refreshRate, screenRes, FALSE);
+            AvxRequestSurfaceMode(dout, physAspRatio, refreshRate, screenRes, FALSE);
         }
         ReleaseDC(hWnd, dc);
 #endif

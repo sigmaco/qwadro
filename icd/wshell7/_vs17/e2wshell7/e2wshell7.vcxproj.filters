@@ -7,6 +7,12 @@
     <Filter Include="e2wshell7">
       <UniqueIdentifier>{80ca300e-5f34-4411-a012-9d3389d8296d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="e2wshell7\video">
+      <UniqueIdentifier>{7522eecd-2b48-4dab-b93f-71a305fb5088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="e2wshell7\audio">
+      <UniqueIdentifier>{e63e1bea-076e-4aa8-a07d-55e5c04e1bdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -15,14 +21,14 @@
     <ClInclude Include="..\..\src\qowBase.h">
       <Filter>e2wshell7</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\qowVideo_W32.h">
-      <Filter>e2wshell7</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\qowAudio_W32.h">
-      <Filter>e2wshell7</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\guis\nuklear\demo\qwadro\nuklear_qwadro.h">
       <Filter>e2wshell7</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\qowVideo_W32.h">
+      <Filter>e2wshell7\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\qowAudio_W32.h">
+      <Filter>e2wshell7\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -31,19 +37,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\qowDisplay_W32.c">
-      <Filter>e2wshell7</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\qowHid_W32.c">
       <Filter>e2wshell7</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\qowShell_W32.c">
-      <Filter>e2wshell7</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qowSurface_GDI.c">
-      <Filter>e2wshell7</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qowSurface_WGL.c">
       <Filter>e2wshell7</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\qowWidget_W32.c">
@@ -52,17 +49,26 @@
     <ClCompile Include="..\..\src\qowWindow_W32.c">
       <Filter>e2wshell7</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\qowSink_WASAPI.c">
-      <Filter>e2wshell7</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\qowEnvironment_W32.c">
-      <Filter>e2wshell7</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\qowFont_W32.c">
       <Filter>e2wshell7</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\qowTheme_W32.c">
       <Filter>e2wshell7</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qowDisplay_W32.c">
+      <Filter>e2wshell7\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qowSurface_WGL.c">
+      <Filter>e2wshell7\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qowSurface_GDI.c">
+      <Filter>e2wshell7\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qowSink_WASAPI.c">
+      <Filter>e2wshell7\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\qowFont_W32.c">
+      <Filter>e2wshell7\video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

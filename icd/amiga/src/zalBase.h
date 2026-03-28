@@ -17,7 +17,7 @@
 #ifndef ZAL_BASE_H
 #define ZAL_BASE_H
 
-#include "../../../dep_/miniaudio/miniaudio.h"
+#include "../../dep_/miniaudio/miniaudio.h"
 
 #define _AFX_CORE_C
 #define _AFX_SYSTEM_C

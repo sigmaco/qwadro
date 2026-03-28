@@ -812,10 +812,10 @@ _ARX afxError ArxAdvanceFrame(arxRenderContext rctx, afxUnit* nextFrameIdx)
 
     arxRenderFrame* frame = &rctx->frames[rctx->frameIdx];
 
-    afxUnit64 frnv = 1 + AvxGetCompletedFenceValue(frame->frameReady);
+    afxUnit64 frnv = 1 + AvxGetFenceValue(frame->frameReady);
     frame->frameReadyNextValue = frnv;
     //frame->frameReadyNextValue += 1;
-    afxUnit64 fanv = 1 + AvxGetCompletedFenceValue(frame->frameAvail);
+    afxUnit64 fanv = 1 + AvxGetFenceValue(frame->frameAvail);
     frame->frameAvailNextValue = fanv;
     //frame->frameAvailNextValue += 1;
 
@@ -1005,7 +1005,7 @@ _ARX afxError ArxEndScene(arxRenderContext rctx, afxUnit id)
                 .dctx = frame->drawDctx
             }
         };
-        if (AvxExecuteDrawCommands(rctx->dsys, 2, subms))
+        if (AvxExecuteDrawCommands(rctx->dsys, 2, subms, NIL))
             AfxThrowError();
     }
     else if (frame->internalTransferDctx)
@@ -1013,7 +1013,7 @@ _ARX afxError ArxEndScene(arxRenderContext rctx, afxUnit id)
         AvxCompileDrawCommands(frame->transferDctx);
 
         avxSubmission subm = { .dctx = frame->transferDctx };
-        if (AvxExecuteDrawCommands(rctx->dsys, 1, &subm))
+        if (AvxExecuteDrawCommands(rctx->dsys, 1, &subm, NIL))
             AfxThrowError();
     }
     else if(frame->internalDrawDctx)
@@ -1021,7 +1021,7 @@ _ARX afxError ArxEndScene(arxRenderContext rctx, afxUnit id)
         AvxCompileDrawCommands(frame->drawDctx);
 
         avxSubmission subm = { .dctx = frame->drawDctx };
-        if (AvxExecuteDrawCommands(rctx->dsys, 1, &subm))
+        if (AvxExecuteDrawCommands(rctx->dsys, 1, &subm, NIL))
             AfxThrowError();
     }
 

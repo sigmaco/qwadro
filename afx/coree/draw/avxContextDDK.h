@@ -642,6 +642,14 @@ AFX_DEFINE_UNION(_avxCmd)
     {
         _avxCmdHdr hdr;
 
+        afxUnit bufCnt;
+        afxUnit bins[AVX_MAX_CANVAS_BUFFERS];
+        avxRaster AFX_SIMD buffers[];
+    } BindDrawBuffersEXT;
+    struct
+    {
+        _avxCmdHdr hdr;
+
         afxUnit sampleLvl;
     } SetRasterizationSamplesEXT;
     struct
@@ -857,6 +865,7 @@ AFX_DEFINE_UNION(_avxCmdLut)
         void* CommenceDrawScope;
         void* ConcludeDrawScope;
         void* ClearCanvas;
+        void* BindDrawBuffersEXT;
         void* NextPass;
         void* SetFillModeEXT;
         void* SetRasterizationSamplesEXT;

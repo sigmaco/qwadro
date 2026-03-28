@@ -42,19 +42,7 @@ AFX_DEFINE_STRUCT(afxDesktop) // DWM
 
 AFX_DEFINE_STRUCT(_auxEnvAcq)
 {
-    afxString           tag;
-    void*               udd;
-
-    afxString           name;
-    afxUnit             seatCnt;
-    afxSeatConfig const*seats;
-
-    afxUnit             ddevId;
-    afxUnit             vduIdx;
-    afxDrawSystem       dsys;
-    afxUnit             sdevId;
-    afxUnit             soutIdx;
-    afxMixSystem        msys;
+    afxEnvironmentConfig cfg;
 
     afxClassConfig const* wndClsCfg;
     afxClassConfig const* fntClsCfg;

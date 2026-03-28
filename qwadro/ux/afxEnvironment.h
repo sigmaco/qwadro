@@ -197,7 +197,7 @@ AUX afxError AfxEstablishEnvironment
     afxEnvironment* environment
 );
 
-AUX afxBool AfxGetEnvironment
+AUX afxBool AfxGetActiveEnvironment
 (
     afxEnvironment* environment
 );

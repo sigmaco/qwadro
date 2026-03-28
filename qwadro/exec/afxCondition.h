@@ -49,6 +49,6 @@ AFX void                AfxDismantleCondition(afxCondition* cond);
 AFX afxError            AfxSignalCondition(afxCondition* cond);
 AFX afxError            AfxSignalCondition2(afxCondition* cond);
 AFX afxError            AfxWaitCondition(afxCondition* cond, afxMutex* mtx);
-AFX afxResult           AfxWaitTimedCondition(afxCondition* cond, afxMutex* mtx, afxTimeSpec const* ts);
+AFX afxError            AfxWaitTimedCondition(afxCondition* cond, afxMutex* mtx, afxTimeSpec const* ts);
 
 #endif//AFX_CONDITION_H

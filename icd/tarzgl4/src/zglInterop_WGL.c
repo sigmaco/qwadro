@@ -2535,11 +2535,13 @@ _ZGL afxError wglCreateSurfaceSIGMA(int atX, int atY, HWND* phWnd, HDC* phDC, in
 
     if (_WGL_EXT_swap_control)
     {
+#if 0
         if (_WGL_EXT_swap_control_tear)
         {
             wglSwapIntervalEXT(-1);
         }
         else
+#endif
         {
             wglSwapIntervalEXT(0);
         }

@@ -37,6 +37,7 @@
 
 AFX_DEFINE_STRUCT(_amxImplementation)
 {
+    afxModule icd;
     afxClassConfig mcdcCls;
     afxClassConfig mdevCls;
     afxClassConfig msysCls;
@@ -47,7 +48,7 @@ AFX_DEFINE_STRUCT(_amxCodecReg)
 
 };
 
-AMX afxBool _AmxGetIcd(afxUnit icdIdx, afxModule* driver);
+AMX afxBool _AmxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
 AMX afxClass const* _AmxIcdGetAsiClass(afxModule icd);
 AMX afxClass const* _AmxIcdGetMdevClass(afxModule icd);
@@ -56,7 +57,7 @@ AMX afxClass const* _AmxIcdGetMsysClass(afxModule icd);
 
 
 
-AMX afxError _AmxIcdImplement(afxModule icd, _amxImplementation const* cfg);
+AMX afxError _AmxIcdImplement(afxSystem sys, _amxImplementation const* cfg);
 AMX afxError _AmxIcdRegisterCodecs(afxModule icd, afxUnit cnt, _amxCodecReg const infos[], amxCodec codecs[]);
 
 AMX afxError _AmxIcdRegisterAsis(afxModule icd, afxUnit cnt, _amxMdevReg const infos[], afxDevice devices[]);

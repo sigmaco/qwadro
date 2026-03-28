@@ -155,13 +155,13 @@ AVXINL void* _AvxGetClientRasterData(avxRaster ras, afxSize from);
 
 AVXINL void* _AvxGetClientBufferData(avxBuffer buf, afxSize from);
 
-AVX afxError _AvxDsysCohereMappedBuffersCb_SW(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
-AVX afxError _AvxDsysTransferCb_SW(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops);
-AVX afxError _AvxDsysRemapBuffersCb_SW(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[]);
+AVX afxError _AvxDsysSW_CohereMappedBuffersCb(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
+AVX afxError _AvxDsysSW_TransferCb(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops);
+AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[]);
 
-AVXINL afxError _AvxDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[]);
-AVXINL afxError _AvxDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[]);
-AVXINL afxError _AvxDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[]);
-AVXINL afxError _AvxDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[]);
+AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[]);
+AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[]);
+AVXINL afxError _AvxDsysSW_DeallocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[]);
+AVXINL afxError _AvxDsysSW_AllocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[]);
 
 #endif//AVX_IOMMU_DDK_H
