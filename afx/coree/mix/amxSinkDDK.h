@@ -22,10 +22,10 @@
 #include "../exec/afxSystemDDK.h"
 #include "qwadro/mix/afxMixSystem.h"
 #include "amxAudioDDK.h"
-#include "amxContextDDK.h"
+#include "afxMixContextDDK.h"
 #include "mpu/amxMpuExecutor.h"
 #include "amxSoundscapeDDK.h"
-#include "amxSystemDDK.h"
+#include "afxMixSystemDDK.h"
 
 typedef struct
 // Overwrite-on-Full Audio Ring

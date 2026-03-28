@@ -19,7 +19,7 @@
 #ifndef ACX_BRIDGE_DDK_H
 #define ACX_BRIDGE_DDK_H
 
-#include "acxQueueDDK.h"
+#include "afxWarpQueueDDK.h"
 
 AFX_DEFINE_STRUCT(_acxSexuAcq)
 {

@@ -19,9 +19,9 @@
 #ifndef AMX_IMPL___EXECUTOR_H
 #define AMX_IMPL___EXECUTOR_H
 
-#include "../amxBridgeDDK.h"
-#include "../amxContextDDK.h"
-#include "../amxQueueDDK.h"
+#include "../afxMixBridgeDDK.h"
+#include "../afxMixContextDDK.h"
+#include "../afxMixQueueDDK.h"
 
 AFX_DEFINE_STRUCT(amxMpu)
 {

@@ -7,88 +7,78 @@
  *         #+#   +#+   #+#+# #+#+#  #+#     #+# #+#    #+# #+#    #+# #+#    #+#
  *          ###### ###  ###   ###   ###     ### #########  ###    ###  ########
  *
- *                      Q W A D R O   D R A W   I / O   S Y S T E M
+ *          Q W A D R O   P R O C E S S E M E N T   I N F R A S T R U C T U R E
  *
  *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
  *                             <https://sigmaco.org/qwadro/>
  */
 
-  //////////////////////////////////////////////////////////////////////////////
- // The Qwadro Video Graphics Infrastructure                                 //
-//////////////////////////////////////////////////////////////////////////////
+// This software is part of Advanced Multimedia Extensions.
 
-// This code is part of SIGMA GL/2.
-// This software is part of Advanced Video Graphics Extensions.
+#ifndef ACX_DEVICE_DDK_H
+#define ACX_DEVICE_DDK_H
 
-#ifndef AVX_DEVICE_DDK_H
-#define AVX_DEVICE_DDK_H
+#include "../exec/afxSystemDDK.h"
+#include "qwadro/pro/afxWarpSystem.h"
+#include "afxWarpSystemDDK.h"
 
-#include "avxBridgeDDK.h"
-
-AFX_DEFINE_STRUCT(_avxDdevReg)
+AFX_DEFINE_STRUCT(_acxSdevReg)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
-    avxAptitude         capabilities;
-    avxFeatures         features;
-    avxLimits           limits;
+    acxAptitude         capabilities;
+    acxFeatures         features;
+    acxLimits           limits;
     afxUnit             minQueCnt; // usually 3
     afxUnit             maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
-    afxBool             nonRhcs;
-    avxClipSpaceDepth   clipSpaceDepth;
     // User-defined data.
     void*               udd;
     // Debugging tag.
     afxString           tag;
 };
 
-AFX_DECLARE_STRUCT(_avxIddDdev);
-AFX_DEFINE_STRUCT(_avxDdiDdev)
+AFX_DECLARE_STRUCT(_acxIddSdev);
+AFX_DEFINE_STRUCT(_acxDdiSdev)
 {
-
+    int a;
 };
 
-#ifdef _AVX_DRAW_DEVICE_C
-#ifdef _AVX_DRAW_DEVICE_IMPL
+#ifdef _ACX_WARP_DEVICE_C
+#ifdef _ACX_WARP_DEVICE_IMPL
 #ifndef _AFX_DEVICE_C
 #   error "Require afxDevice implementation"
 #endif
-AFX_OBJECT(_avxDrawDevice)
+AFX_OBJECT(_acxStepDevice)
 #else
-AFX_OBJECT(afxDrawDevice)
+AFX_OBJECT(afxWarpDevice)
 #endif
 {
     AFX_OBJ(afxDevice)  dev;
-    _avxDdiDdev const*  ddi;
-    _avxIddDdev*        idd;
+    _acxDdiSdev const*  ddi;
+    _acxIddSdev*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
     void*               udd;
 
     afxAcceleration     acceleration;
-    avxAptitude         capabilities;
-    avxFeatures         features;
-    avxLimits           limits;
+    acxAptitude         capabilities;
+    acxFeatures         features;
+    acxLimits           limits;
     afxUnit             minQueCnt; // usually 3
     afxUnit             maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
     afxString128        desc; // before port extintion
     afxString8          urn; // before port extintion
-
-    afxBool             nonRhcs;
-    avxClipSpaceDepth   clipSpaceDepth;
-
-    avxFormatDescription const*pfds;
-
-    afxChain            ineps;
 };
-#endif//_AVX_DRAW_DEVICE_C
+#endif//_ACX_WARP_DEVICE_C
 
-AVX afxClassConfig const _AVX_CLASS_CONFIG_DDEV;
+ACX afxClassConfig const _ACX_SDEV_CLASS_CONFIG;
 
-AVX void*           _AvxDdevGetIdd(afxDrawDevice ddev);
+ACX void*           _AcxSdevGetIdd(afxWarpDevice sdev);
 
-AVX avxLimits const* _AvxDdevGetLimits(afxDrawDevice ddev);
+ACX acxLimits const* _AcxSdevGetLimits(afxWarpDevice sdev);
 
-#endif//AVX_DEVICE_DDK_H
+ACX afxError _AcxIcdRegisterDevices(afxModule icd, afxUnit cnt, _acxSdevReg const infos[], afxWarpDevice devices[]);
+
+#endif//ACX_DEVICE_DDK_H

@@ -26,7 +26,7 @@
 //#define _AVX_DRAW_SYSTEM_C
 #define _AVX_SURFACE_C
 #include "avxIcd.h"
-#include "../hid/auxDisplayDDK.h"
+#include "../hid/afxDisplayDDK.h"
 
 _AVX afxUnit _AvxDoutIsSuspended(afxSurface dout)
 {

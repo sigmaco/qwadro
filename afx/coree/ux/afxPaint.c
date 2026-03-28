@@ -16,7 +16,7 @@
 
 // This software is part of Advanced User Experience Extensions.
 
-#include "qwadro/ux/auxPaint.h"
+#include "qwadro/ux/afxPaint.h"
 
 void ClumpRenderBoundingBox(afxDrawContext dctx, afxBox box, afxM4d const m)
 {

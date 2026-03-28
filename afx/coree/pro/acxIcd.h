@@ -23,8 +23,8 @@
 #include "qwadro/pro/afxWarpSystem.h"
 #include "spu/acxSpuExecutor.h"
 #include "spu/acxSpuTransference.h"
-#include "acxSystemDDK.h"
-#include "acxDeviceDDK.h"
+#include "afxWarpSystemDDK.h"
+#include "afxWarpDeviceDDK.h"
 
 AFX_DEFINE_STRUCT(_acxImplementation)
 {

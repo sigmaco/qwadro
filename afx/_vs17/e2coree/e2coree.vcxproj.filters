@@ -447,22 +447,10 @@
     <ClInclude Include="..\..\..\qwadro\mix\afxMixDevice.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxBridgeDDK.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxBufferDDK.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxContextDDK.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxDeviceDDK.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxIcd.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxQueueDDK.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxSinkDDK.h">
@@ -477,182 +465,11 @@
     <ClInclude Include="..\..\coree\mix\amxStorageDDK.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxSystemDDK.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxTrackerDDK.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxAudioDDK.h">
       <Filter>coree\mix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxRasterIo.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxRasterization.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxRasterizationEXT.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxSampler.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxSynchronization.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxTransference.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxTransformation.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxTransformationEXT.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxTxd.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxVertexInput.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxViewport.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawBridge.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawContext.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawDefs.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawDevice.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawQueue.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\afxDrawSystem.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxBuffer.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxBuffered.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxBus.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxCanvas.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxColor.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxDrawing.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxFence.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxFormat.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxLigature.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxMatrix.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxPipeline.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxProvision.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxQueryPool.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxRaster.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxRasterFile.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxCanvasDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxContextDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxDeviceDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxFenceDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxIcd.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxIommuDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxLigatureDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxPipelineDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxQueryPoolDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxQueueDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxRasterDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxSamplerDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxSystemDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxVertexInputDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxBridgeDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxBufferDDK.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxLayout.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxShell.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxTheme.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxUxDefs.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxWidget.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxWindow.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\auxPaint.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\ux\afxEnvironment.h">
-      <Filter>coree\ux</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\hid\afxHid.h">
       <Filter>coree\hid</Filter>
@@ -662,24 +479,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\hid\afxGamepad.h">
       <Filter>coree\hid</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxWindowDDK.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxEnvironmentDDK.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxHidDDK.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxIcd.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxShellDDK.h">
-      <Filter>coree\ux</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxWidgetDDK.h">
-      <Filter>coree\ux</Filter>
     </ClInclude>
     <ClInclude Include="..\..\coree\exec\afxServiceDDK.h">
       <Filter>coree\exec</Filter>
@@ -729,36 +528,6 @@
     <ClInclude Include="..\..\coree\mix\mpu\amxMpuAudio.h">
       <Filter>coree\mix\mpu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxSystemDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxStorageDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxQueueDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxIcd.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\acxFormat.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxDeviceDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxContextDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxBufferDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\acxBuffer.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxBridgeDDK.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\pro\spu\acxSpuTransference.h">
       <Filter>coree\pro\spu</Filter>
     </ClInclude>
@@ -770,30 +539,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\exec\afxConsole.h">
       <Filter>coree\exec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpSystem.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpQueue.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpDevice.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpDefs.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpContext.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\pro\afxWarpBridge.h">
-      <Filter>coree\pro</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\draw\avxShader.h">
-      <Filter>coree\draw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxShaderDDK.h">
-      <Filter>coree\draw</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\etc\afxNotation.h">
       <Filter>coree\etc</Filter>
@@ -1014,7 +759,214 @@
     <ClInclude Include="..\..\mirage\iris\arxWireframeShaders.h">
       <Filter>mirage\iris</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\ux\auxFontDDK.h">
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawBridge.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawContext.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawDefs.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawDevice.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawQueue.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\afxDrawSystem.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxBuffer.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxBufferDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxBuffered.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxBus.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxCanvas.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxCanvasDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxColor.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxDrawContextDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxDrawDeviceDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxDrawing.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxFence.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxFenceDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxFormat.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxIcd.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxIommuDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxLigature.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxLigatureDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxMatrix.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxPipeline.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxPipelineDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxProvision.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxQueryPool.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxQueryPoolDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxRaster.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxRasterDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxRasterFile.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxRasterIo.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxRasterization.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxRasterizationEXT.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxSampler.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxSamplerDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxShader.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxShaderDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxSynchronization.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxTransference.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxTransformation.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxTransformationEXT.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxTxd.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxVertexInput.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\avxVertexInputDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\draw\avxViewport.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxDrawBridgeDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxDrawSystemDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxDrawQueueDDK.h">
+      <Filter>coree\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxMixContextDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxMixBridgeDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxMixQueueDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxMixSystemDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxMixDeviceDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxEnvironment.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxLayout.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxShell.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxTheme.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxUxDefs.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxWidget.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxWindow.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\ux\afxEnvironmentDDK.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\ux\auxIcd.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\ux\afxPaint.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\ux\afxShellDDK.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\ux\afxWidgetDDK.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\ux\afxWindowDDK.h">
+      <Filter>coree\ux</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\draw\afxSurfaceDDK.h">
+      <Filter>coree\video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\hid\afxDisplay.h">
       <Filter>coree\video</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\ux\afxFont.h">
@@ -1023,14 +975,62 @@
     <ClInclude Include="..\..\..\qwadro\draw\afxSurface.h">
       <Filter>coree\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxSurfaceDDK.h">
+    <ClInclude Include="..\..\coree\hid\afxDisplayDDK.h">
       <Filter>coree\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\hid\afxDisplay.h">
+    <ClInclude Include="..\..\coree\ux\afxFontDDK.h">
       <Filter>coree\video</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\hid\auxDisplayDDK.h">
-      <Filter>coree\video</Filter>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpSystem.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\afxWarpBridgeDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\acxBuffer.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\acxBufferDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\afxWarpContextDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\afxWarpDeviceDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\acxFormat.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\acxIcd.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\afxWarpQueueDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\acxStorageDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\pro\afxWarpSystemDDK.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpBridge.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpContext.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpDefs.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpDevice.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\pro\afxWarpQueue.h">
+      <Filter>coree\pro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\hid\afxHidDDK.h">
+      <Filter>coree\hid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1119,16 +1119,7 @@
     <ClCompile Include="..\..\coree\mix\amxCodec.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxContext.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxContextDDK.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxDecoder.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxDevice.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxEncoder.c">
@@ -1146,9 +1137,6 @@
     <ClCompile Include="..\..\coree\mix\amxPump.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxQueue.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxSink.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
@@ -1159,9 +1147,6 @@
       <Filter>coree\mix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxStorage.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxSystem.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxTracker.c">
@@ -1182,123 +1167,6 @@
     <ClCompile Include="..\..\coree\mix\amxAudioFile.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxBridge.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxCanvas.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxClipping.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxColor.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxContext.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxContextDDK.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxDevice.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxDrawing.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxFence.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxFormat.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxFormatDXT.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxIcd.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxIommu.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxIommuDDK.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxLigature.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxMatrix.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxPipeline.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxProvision.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxQueryPool.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxQueue.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxRaster.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxRasterFile.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxRasterIo.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxRasterization.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxRasterizationEXT.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxSampler.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxSynchronization.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxSystem.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxTransference.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxTransformation.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxTransformationEXT.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxTxd.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxVertexInput.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxViewport.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\afxDrawDefs.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxBridge.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxBuffer.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxBuffered.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxBufferIo.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\hid\afxHid.c">
       <Filter>coree\hid</Filter>
     </ClCompile>
@@ -1307,39 +1175,6 @@
     </ClCompile>
     <ClCompile Include="..\..\coree\hid\afxGamepad.c">
       <Filter>coree\hid</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxWindowDDK.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxEnvironment.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxEnvironmentDDK.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxIcd.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxLayout.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxPaint.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxShell.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxTheme.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxWidget.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxWidgetDDK.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxWindow.c">
-      <Filter>coree\ux</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\base\afxVertex.c">
       <Filter>coree\math</Filter>
@@ -1623,36 +1458,6 @@
     <ClCompile Include="..\..\coree\mix\mpu\amxMpuTest.c">
       <Filter>coree\mix\mpu</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxSystem.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxStorage.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxQueue.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxIcd.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxDevice.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxContextDDK.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxContext.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxBufferIo.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxBuffer.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxBridge.c">
-      <Filter>coree\pro</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\pro\spu\acxSpuExecutor.c">
       <Filter>coree\pro\spu</Filter>
     </ClCompile>
@@ -1664,15 +1469,6 @@
     </ClCompile>
     <ClCompile Include="..\..\coree\exec\afxConsole.c">
       <Filter>coree\exec</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxUxXss.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxShader.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxShaderDDK.c">
-      <Filter>coree\draw</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\etc\afxNotation.c">
       <Filter>coree\etc</Filter>
@@ -1854,17 +1650,221 @@
     <ClCompile Include="..\..\mirage\iris\arxTechnique.c">
       <Filter>mirage\iris</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\ux\auxFont.c">
-      <Filter>coree\video</Filter>
+    <ClCompile Include="..\..\coree\draw\afxDrawDefs.c">
+      <Filter>coree\draw</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxSurface.c">
-      <Filter>coree\video</Filter>
+    <ClCompile Include="..\..\coree\draw\afxDrawBridge.c">
+      <Filter>coree\draw</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxSurfaceDDK.c">
-      <Filter>coree\video</Filter>
+    <ClCompile Include="..\..\coree\draw\avxBuffer.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxBuffered.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxBufferIo.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxCanvas.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxClipping.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxColor.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxDrawContext.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxDrawContextDDK.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxDrawDevice.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxDrawing.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxFence.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxFormat.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxFormatDXT.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxIcd.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxIommu.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxIommuDDK.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxLigature.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxMatrix.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxPipeline.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxProvision.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxQueryPool.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxRaster.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxRasterFile.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxRasterIo.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxRasterization.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxRasterizationEXT.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxSampler.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxShader.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxShaderDDK.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxSynchronization.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxDrawSystem.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxTransference.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxTransformation.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxTransformationEXT.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxTxd.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxVertexInput.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\avxViewport.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxDrawQueue.c">
+      <Filter>coree\draw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixContext.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixContextDDK.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixBridge.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixQueue.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixSystem.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxMixDevice.c">
+      <Filter>coree\mix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxEnvironment.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxEnvironmentDDK.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\auxIcd.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxLayout.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxPaint.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxShell.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxTheme.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxUxXss.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxWidget.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxWidgetDDK.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxWindow.c">
+      <Filter>coree\ux</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxWindowDDK.c">
+      <Filter>coree\ux</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\hid\afxDisplay.c">
       <Filter>coree\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\ux\afxFont.c">
+      <Filter>coree\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxSurface.c">
+      <Filter>coree\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\draw\afxSurfaceDDK.c">
+      <Filter>coree\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpBridge.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\acxBuffer.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\acxBufferIo.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpContext.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpContextDDK.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpDevice.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\acxIcd.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpQueue.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\acxStorage.c">
+      <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\pro\afxWarpSystem.c">
+      <Filter>coree\pro</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
