@@ -24,7 +24,7 @@
 #ifndef AVX_IMPL___EXECUTOR_H
 #define AVX_IMPL___EXECUTOR_H
 
-#include "../avxBridgeDDK.h"
+#include "../afxDrawBridgeDDK.h"
 
 AFX_DEFINE_STRUCT(avxDpu)
 {

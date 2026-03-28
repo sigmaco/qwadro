@@ -19,9 +19,9 @@
 #ifndef ACX_IMPL___EXECUTOR_H
 #define ACX_IMPL___EXECUTOR_H
 
-#include "../acxBridgeDDK.h"
-#include "../acxContextDDK.h"
-#include "../acxQueueDDK.h"
+#include "../afxWarpBridgeDDK.h"
+#include "../afxWarpContextDDK.h"
+#include "../afxWarpQueueDDK.h"
 
 AFX_DEFINE_STRUCT(acxSpu)
 {

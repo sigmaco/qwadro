@@ -24,7 +24,7 @@
 #ifndef AVX_SYSTEM_DDK_H
 #define AVX_SYSTEM_DDK_H
 
-#include "avxBridgeDDK.h"
+#include "afxDrawBridgeDDK.h"
 #include "avxIommuDDK.h"
 #include "avxFenceDDK.h"
 #include "avxPipelineDDK.h"
@@ -34,7 +34,7 @@
 #include "avxVertexInputDDK.h"
 #include "avxSamplerDDK.h"
 #include "avxCanvasDDK.h"
-#include "avxSurfaceDDK.h"
+#include "afxSurfaceDDK.h"
 #include "avxRasterDDK.h"
 #include "avxBufferDDK.h"
 

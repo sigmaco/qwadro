@@ -19,7 +19,7 @@
 #ifndef AMX_IMPL___MIX_CONTEXT_H
 #define AMX_IMPL___MIX_CONTEXT_H
 
-#include "../amxContextDDK.h"
+#include "../afxMixContextDDK.h"
 #include "../amxTrackerDDK.h"
 
 AMX void resample_stream(ResampleState* state, float* out, int out_count);

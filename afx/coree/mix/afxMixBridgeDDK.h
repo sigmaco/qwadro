@@ -19,7 +19,7 @@
 #ifndef AMX_BRIDGE_DDK_H
 #define AMX_BRIDGE_DDK_H
 
-#include "amxQueueDDK.h"
+#include "afxMixQueueDDK.h"
 
 AFX_DEFINE_STRUCT(_amxMexuAcq)
 {

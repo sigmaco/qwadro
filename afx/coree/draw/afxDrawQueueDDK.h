@@ -25,7 +25,7 @@
 #define AVX_QUEUE_DDK_H
 
 #include "avxIommuDDK.h"
-#include "avxContextDDK.h"
+#include "afxDrawContextDDK.h"
 #include "avxFenceDDK.h"
 
 AFX_DECLARE_UNION(_avxIoReqPacket);

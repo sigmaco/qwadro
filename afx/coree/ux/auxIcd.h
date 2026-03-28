@@ -24,13 +24,13 @@
 #define AUX_ICD_H
 
 #include "qwadro/ux/afxShell.h"
-#include "auxEnvironmentDDK.h"
-#include "../hid/auxHidDDK.h"
-#include "auxFontDDK.h"
-#include "auxWidgetDDK.h"
-#include "auxWindowDDK.h"
-#include "auxShellDDK.h"
-#include "../hid/auxDisplayDDK.h"
+#include "afxEnvironmentDDK.h"
+#include "../hid/afxHidDDK.h"
+#include "afxFontDDK.h"
+#include "afxWidgetDDK.h"
+#include "afxWindowDDK.h"
+#include "afxShellDDK.h"
+#include "../hid/afxDisplayDDK.h"
 
 AFX_DEFINE_STRUCT(_auxImplementation)
 {

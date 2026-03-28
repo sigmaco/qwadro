@@ -34,8 +34,8 @@
 #define AVX_FEATURE_VALIDATION_ENABLED TRUE
 #endif
 
-#include "avxSystemDDK.h"
-#include "avxDeviceDDK.h"
+#include "afxDrawSystemDDK.h"
+#include "afxDrawDeviceDDK.h"
 #include "dpu/avxDpuTransference.h"
 #include "dpu/avxDpuExecutor.h"
 

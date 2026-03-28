@@ -24,7 +24,7 @@
 #ifndef AVX_BRIDGE_DDK_H
 #define AVX_BRIDGE_DDK_H
 
-#include "avxQueueDDK.h"
+#include "afxDrawQueueDDK.h"
 
 AFX_DEFINE_STRUCT(_avxDexuAcq)
 {
