@@ -20,13 +20,13 @@
 
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_VERTEX_DECL_H
-#define AVX_VERTEX_DECL_H
-
 /**
     When the vertex stage is present in a pipeline, the vertex shader input variables form an interface with the vertex input attributes.
     All vertex shader inputs declared must have a corresponding attribute and binding in the pipeline.
 */
+
+#ifndef AVX_VERTEX_DECL_H
+#define AVX_VERTEX_DECL_H
 
 #include "qwadro/draw/avxFormat.h"
 

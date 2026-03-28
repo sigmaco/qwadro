@@ -17,9 +17,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_DRAW_CONTEXT_H
-#define AVX_DRAW_CONTEXT_H
-
 /**
     Command buffers are objects used to record commands which can be subsequently submitted to a device queue for execution. 
     There are two levels of command buffers - primary command buffers, which can execute secondary command buffers, and which are submitted to queues, 
@@ -69,6 +66,9 @@
     In persistent contexts, rolling a context might mean saving the current state and restoring another one, 
     like rolling a coroutine or fiber context.
 */
+
+#ifndef AVX_DRAW_CONTEXT_H
+#define AVX_DRAW_CONTEXT_H
 
 #include "qwadro/draw/avxDrawing.h"
 #include "qwadro/draw/avxProvision.h"

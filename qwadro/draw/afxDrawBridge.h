@@ -21,9 +21,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_DRAW_BRIDGE_H
-#define AVX_DRAW_BRIDGE_H
-
 /*
     In Qwadro, a draw bridge is a context of communications to refer to a network bridge that includes or supports drawing or graphical device functionality. 
     This type of bridge typically integrates with or connects different devices or systems that are involved in graphical or visual processes.
@@ -51,6 +48,9 @@
     It ensures that rendering commands are executed in the correct order, maintaining visual consistency and accuracy.
     And it also helps manage complex scenes and multiple rendering tasks efficiently, which is crucial for high-performance graphics applications.
 */
+
+#ifndef AVX_DRAW_BRIDGE_H
+#define AVX_DRAW_BRIDGE_H
 
 #include "qwadro/draw/afxDrawQueue.h"
 

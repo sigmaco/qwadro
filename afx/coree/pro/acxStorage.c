@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions.
+// This software is part of Advanced Parallel Computing Extensions.
 
 // It is hard to invent something when there is nothing to be copied.
 

@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions.
+// This software is part of Advanced Parallel Computing Extensions.
 
 #define _ACX_WARP_C
 #define _ACX_BUFFER_C

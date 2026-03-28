@@ -157,9 +157,71 @@ _AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev)
     return TRUE;
 }
 
+_AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
+    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+
+    // If the host platform doesn't offer custom icon support, we do with via draw system.
+    avxRaster curr = wnd->iconFnt;
+
+    if (curr != font)
+    {
+        if (curr)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
+            AfxDisposeObjects(1, &curr);
+            wnd->iconFnt = NIL;
+        }
+
+        if (font)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
+            AfxReacquireObjects(1, &font);
+            wnd->iconFnt = font;
+            wnd->iconCrop = *rgn;
+        }
+    }
+    return err;
+}
+
+_AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
+    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+
+    // If the host platform doesn't offer custom icon support, we do with via draw system.
+    avxRaster curr = wnd->cursFnt;
+
+    if (curr != font)
+    {
+        if (curr)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
+            AfxDisposeObjects(1, &curr);
+            wnd->cursFnt = NIL;
+        }
+
+        if (font)
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
+            AfxReacquireObjects(1, &font);
+            wnd->cursFnt = font;
+            wnd->cursCrop = *rgn;
+        }
+    }
+    return err;
+}
+
 _AUX _auxDdiWnd const _AUX_DDI_WND =
 {
     .evhCb = _AuxWndEventHandlerSW,
     .adjustCb = _AfxWndAdjustCb,
-    .titleCb = _AfxWndFormatTitleCb
+    .titleCb = _AfxWndFormatTitleCb,
+    .chIconCb = _AfxWndChangeIconCb,
+    .chCursCb = _AfxWndChangeCursorCb,
 };

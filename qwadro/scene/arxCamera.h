@@ -21,9 +21,6 @@
  // QWADRO DEVICE-AWARE CAMERA                                               //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARX_CAMERA_H
-#define ARX_CAMERA_H
-
 /*
     The terms near, far, FOV, and frustum are all related to the camera's view and the projection of objects in the 3D world onto the 2D screen.
 
@@ -70,6 +67,9 @@
     A perspective projection matrix (which is typically used for 3D scenes) will create this frustum, 
     and the projection will “shrink” objects as they get farther from the camera, which is what gives the scene a realistic appearance.
 */
+
+#ifndef ARX_CAMERA_H
+#define ARX_CAMERA_H
 
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/draw/afxDrawDefs.h"

@@ -17,9 +17,6 @@
 // This code is part of SIGMA GL/2.
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_TECHNIQUE_H
-#define ARX_TECHNIQUE_H
-
 /**
     A draw operation manages a set of state objects, resources, and shaders for implementing a rendering effect.
     An draw operation contains one or more techniques; each technique contains one or more passes; each pass contains state assignments.
@@ -27,6 +24,9 @@
     A draw pass encapsulates state assignments within a technique.
     A pass is a block of code that sets render-state objects and shaders. A pass is declared within a technique.
 */
+
+#ifndef ARX_TECHNIQUE_H
+#define ARX_TECHNIQUE_H
 
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/draw/avxPipeline.h"

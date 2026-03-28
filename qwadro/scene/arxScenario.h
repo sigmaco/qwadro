@@ -17,9 +17,6 @@
 // This code is part of SIGMA GL/2.
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_SCENARIO_H
-#define ARX_SCENARIO_H
-
 // arxScenario is object holding a collection of objects used to produce and capture scenes.
 
 // Draw input devices operates like device submission queues grouping sets of draw streams and present their result to the connected draw output devices.
@@ -46,6 +43,9 @@
     Game Engines with Motion Physics: In game development, motion engines are often built into game engines (like Unity, Unreal Engine, etc.) 
     to simulate realistic movements, from the character's walk cycle to the behavior of vehicles or fluids.
 */
+
+#ifndef ARX_SCENARIO_H
+#define ARX_SCENARIO_H
 
 #include "qwadro/draw/afxDrawSystem.h"
 

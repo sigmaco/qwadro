@@ -17,9 +17,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_SURFACE_H
-#define AVX_SURFACE_H
-
 // afxSurface é um objeto que abstrai a ideia de swapchain junto a surface da plataforma.
  
 // Swapchains are a list of images, accessible by the operating system for display to the screen.
@@ -63,6 +60,9 @@
     Managing video endpoints involves configuring and monitoring these devices to ensure proper functioning and integration within a video system.
 */
 
+#ifndef AVX_SURFACE_H
+#define AVX_SURFACE_H
+
 #include "qwadro/draw/avxCanvas.h"
 #include "qwadro/draw/afxDrawBridge.h"
 #include "qwadro/hid/afxDisplay.h"
@@ -85,49 +85,49 @@ typedef afxBool(*avxPresentNotifier)(afxObject receiver, afxUnit);
 AFX_DEFINE_STRUCT(afxSurfaceCaps)
 {
     // The minimum latency measured in latent buffers.
-    afxUnit             minBufCnt;
+    afxUnit minBufCnt;
     // The maximum latency measured in latent buffers.
-    afxUnit             maxBufCnt;
-    afxUnit             currExtent[2];
-    afxWarp             minWhd; // D is layer
-    afxWarp             maxWhd; // D is layer
-    avxVideoTransform   supportedTransforms;
-    avxVideoTransform   currTransform;
-    avxVideoAlpha       supportedCompositeAlpha;
-    avxRasterFlags      supportedUsageFlags;
-    avxVideoScaling     supportedScaling;
-    afxUnit             supportedModeCnt;
-    avxPresentFlags     supportedModes;
+    afxUnit maxBufCnt;
+    afxUnit currExtent[2];
+    afxWarp minWhd; // D is layer
+    afxWarp maxWhd; // D is layer
+    avxVideoTransform supportedTransforms;
+    avxVideoTransform currTransform;
+    avxVideoAlpha supportedCompositeAlpha;
+    avxRasterFlags supportedUsageFlags;
+    avxVideoScaling supportedScaling;
+    afxUnit supportedModeCnt;
+    avxPresentFlags supportedModes;
 };
 
 AFX_DEFINE_STRUCT(afxSurfaceInterop)
 {
-    afxObject           endpointNotifyObj; // must ensure life of draw output
-    avxPresentNotifier  endpointNotifyFn;
-    afxFcc              ext;
-    afxSurfaceInterop*  next;
-    afxString           wsi; // w32, wgl, wgldx9, wgldx10, wgldx11, gdi
+    afxObject endpointNotifyObj; // must ensure life of draw output
+    avxPresentNotifier endpointNotifyFn;
+    afxFcc ext;
+    afxSurfaceInterop* next;
+    afxString wsi; // w32, wgl, wgldx9, wgldx10, wgldx11, gdi
     union // WSI
     {
 #ifdef AFX_OS_WINDOWS
         struct
         {
-            void*       hInst; // HINSTANCE
-            void*       hWnd; // HWND
+            void* hInst; // HINSTANCE
+            void* hWnd; // HWND
         } w32;
         struct
         {
-            void*       hInst; // HINSTANCE
-            void*       hWnd; // HWND
-            void*       hGlrc; // HGLRC
+            void* hInst; // HINSTANCE
+            void* hWnd; // HWND
+            void* hGlrc; // HGLRC
         } wgl;
         struct
         {
-            void*       hDc; // HDC
+            void* hDc; // HDC
         } gdi;
         struct
         {
-            void*       hDev;
+            void* hDev;
         } d3d9;
 #endif
     };
@@ -136,40 +136,40 @@ AFX_DEFINE_STRUCT(afxSurfaceInterop)
 AFX_DEFINE_STRUCT(afxSurfaceConfig)
 {
     // The draw system to which the drawing output context belongs.
-    afxDrawSystem       dsys;
+    afxDrawSystem dsys;
     // Boolean requesting full, exclusive control of the video endpoint.
-    afxBool             exclusive;
+    afxBool exclusive;
     // The screen resolution to be used to mode-set the video endpoint.
-    avxRange            resolution;
+    avxRange resolution;
     // The refresh rate to be used to mode-set the video endpoint.
-    afxReal64           refreshRate;
+    afxReal64 refreshRate;
     
     // Swapchain
     // The configuration for the canvas, and its draw buffers.
-    avxCanvasConfig     ccfg;
+    avxCanvasConfig ccfg;
     // A value specifying the way the swapchain interprets image data.
-    avxColorSpace       colorSpc;
+    avxColorSpace colorSpc;
     // Boolean requesting adjustability.
-    afxBool             resizable;
+    afxBool resizable;
     // The latency of swapchain measured in latent buffers.
     // Usually 2 or 3, for a double or triple-buffered mechanism, respectively.
-    afxUnit             latency;
+    afxUnit latency;
     // Endpoint
     // Flags specifying how the video endpoint presentation mechanism should behaves.
-    avxPresentFlags     presentMode;
+    avxPresentFlags presentMode;
     // Flags specifying how the video endpoint should position the image.
-    avxVideoTransform   presentTransform;
+    avxVideoTransform presentTransform;
     // Flags specifying how the video endpoint compositor should consider the alpha channel (for example, using it for transparency).
-    avxVideoAlpha       presentAlpha;
+    avxVideoAlpha presentAlpha;
     // Boolean specifying when to do not do off-screen blitting.
-    afxBool             doNotClip;
+    afxBool doNotClip;
 
     // A debuggint string.
-    afxString           tag;
+    afxString tag;
     // A user-defined data.
-    void*               udd[4];
+    void* udd[4];
     // Interoperability extender.
-    afxSurfaceInterop   iop;
+    afxSurfaceInterop iop;
 };
 
 /*

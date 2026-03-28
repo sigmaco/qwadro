@@ -1085,8 +1085,8 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
         if (wnd->m.cursConfined)
         {
             afxRect r = wnd->m.cursConfinRect;
-            AfxMakeWindowCursory(wnd, &r, FALSE);
-            AfxMakeWindowCursory(wnd, &r, TRUE);
+            AfxRequestWindowCursor(wnd, &r, FALSE);
+            AfxRequestWindowCursor(wnd, &r, TRUE);
 #if 0
             ClientToScreen(hwnd, (POINT*)&r);
             ClientToScreen(hwnd, ((POINT*)&r) + 1);
@@ -2065,6 +2065,7 @@ _QOW _auxDdiWnd const _QOW_DDI_WND =
     .redrawCb = _QowWndRedrawCb,
     .adjustCb = _QowWndAdjustCb,
     .chIconCb = _QowWndChIconCb,
+    .chCursCb = _AfxWndChangeCursorCb,
     .titleCb = _QowWndFormatTitleCb,
 };
 
@@ -2221,9 +2222,9 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
 
         afxSurface dout;
         afxSurfaceConfig scfg = { 0 };
-        scfg.dsys = wcfg->dsys;
         scfg = wcfg->dout;
-        scfg.doNotClip = FALSE;
+        scfg.dsys = wcfg->dout.dsys;
+        //scfg.doNotClip = FALSE;
 
         scfg.iop.endpointNotifyObj = wnd;
         scfg.iop.endpointNotifyFn = (void*)DoutNotifyOvy;

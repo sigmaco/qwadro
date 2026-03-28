@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_CURVE_H
-#define ARX_CURVE_H
-
 // Accelerated curve computation
 
 // A curve is a continuous and smooth mathematical object representing a set of points that form a shape or path in a given space.
@@ -38,6 +35,9 @@
 // Knots are the things that make the curve continuous, like in Bezier curves, 
 // the line segment from the mid point control point have to have the same tangent 
 // and length and if they are then the Bezier curves are c-continuous.
+
+#ifndef ARX_CURVE_H
+#define ARX_CURVE_H
 
 #include "qwadro/coll/afxSphere.h"
 #include "qwadro/iris/arxIrisDefs.h"

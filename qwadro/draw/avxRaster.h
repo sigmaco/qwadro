@@ -21,9 +21,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_RASTER_H
-#define AVX_RASTER_H
-
 /*
     A list of function declarations related to raster operations in a graphics or rendering API, 
     related to the management and manipulation of raster data (such as textures or images) in a drawing system.
@@ -34,6 +31,9 @@
 */
 
 // LOD is mip level or sample level, depending on raster
+
+#ifndef AVX_RASTER_H
+#define AVX_RASTER_H
 
 #include "qwadro/draw/avxColor.h"
 #include "qwadro/draw/avxFormat.h"

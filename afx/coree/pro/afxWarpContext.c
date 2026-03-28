@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions.
+// This software is part of Advanced Parallel Computing Extensions.
 
 #define _AFX_CORE_C
 #define _AFX_DEVICE_C

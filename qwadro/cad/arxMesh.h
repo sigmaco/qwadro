@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_MESH_H
-#define ARX_MESH_H
-
 // Morphable topogical mesh, a deformable mesh with fixed topology shared among shapes.
 
 /**
@@ -127,6 +124,9 @@
 /// Vertex data consists of vertex elements combined to form vertex components.
 /// Vertex elements, the smallest unit of a vertex, represent entities such as position, normal, or color.
 /// Vertex components are one or more vertex elements stored contiguously (interleaved per vertex) in a single memory buffer.
+
+#ifndef ARX_MESH_H
+#define ARX_MESH_H
 
 #include "qwadro/cad/arxMeshFactory.h"
 #include "qwadro/scene/arxBuffer.h"

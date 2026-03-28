@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_SKELETON_H
-#define ARX_SKELETON_H
-
 /*
     O objeto arxSkeleton é uma coleção hierárquica de articulações que descrevem a estrutura articular interna de um arxModel, e auxilia no manejo e na animação do mesmo. 
 
@@ -37,6 +34,9 @@
     Nodes that affect a particular geometry are usually organized into a single hierarchy called a 'skeleton', although the influencing nodes may come from unrelated parts of the hierarchy.
     The nodes of such a hierarchy represents the 'joints' of the skeleton, which should not be confused with the 'bones', which are the imaginary line segments connecting two joints.
 */
+
+#ifndef ARX_SKELETON_H
+#define ARX_SKELETON_H
 
 #include "qwadro/cad/arxPose.h"
 #include "qwadro/scene/arxPosture.h"

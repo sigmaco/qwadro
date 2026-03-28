@@ -17,9 +17,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_PULLEY_H
-#define ARX_PULLEY_H
-
 // Servo
 // Governor
 // Regulator
@@ -36,6 +33,9 @@
 // When you want to play an animation on such an instance, you create a arxPulley.
 
 // Essential part of our machinima.
+
+#ifndef ARX_PULLEY_H
+#define ARX_PULLEY_H
 
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/cad/arxPose.h"

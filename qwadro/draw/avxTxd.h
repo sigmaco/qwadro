@@ -20,9 +20,6 @@
 
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_TXD_H
-#define AVX_TXD_H
-
 /*
     The Texture Exchange Dictionary (TXD) is a mechanism inspired in another from RenderWare to efficiently manage textures for rendering. 
     It's part of an major optimization design aimed at improving the performance and flexibility of texture usage, particularly 
@@ -45,6 +42,9 @@
     Efficiently organizing textures and minimizing redundant loading/unloading operations can prevent texture-related bottlenecks and resource exhaustion.
 
 */
+
+#ifndef AVX_TXD_H
+#define AVX_TXD_H
 
 #include "qwadro/draw/avxRaster.h"
 

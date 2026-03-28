@@ -19,12 +19,6 @@
 
 // Projective transformation matrix.
 
-#ifndef AVX_MATRIX_H
-#define AVX_MATRIX_H
-
-#include "qwadro/math/afxMatrix.h"
-#include "qwadro/draw/avxViewport.h"
-
 /*
     Qwadro uses its own matrix denominated as Qwatrix, it is the same matrix layout as do OpenGL. Forget about column-major vs row-major.
     Confusions around this subject is mostly from concepts came from mathemetics, not natural and pertaining to computer science.
@@ -98,6 +92,12 @@
     This allows for better precision in the depth buffer because the depth values are now distributed more evenly across the entire depth range, 
     which is particularly useful when rendering large scenes with objects at a wide range of depths.
 */
+
+#ifndef AVX_MATRIX_H
+#define AVX_MATRIX_H
+
+#include "qwadro/math/afxMatrix.h"
+#include "qwadro/draw/avxViewport.h"
 
 typedef enum avxClipSpaceDepth
 // The depth mapping used by projection to map depth values into the clip space.

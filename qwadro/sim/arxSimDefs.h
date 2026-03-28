@@ -18,9 +18,6 @@
 
 // Welcome to Department of Redundancy Department.
 
-#ifndef ASX_SIM_DEFS_H
-#define ASX_SIM_DEFS_H
-
 // Tudo que é alocado independentemente de forma mecanizada DEVE integrar Acquire, Reacquire e Release.
 
 // Uma entidade somente está em cena se está vinculada a um nódulo.
@@ -35,6 +32,9 @@
 // Model is a malleable representation of a person, thing or proposed structure, composed of one or more meshes.
 
 // Shape is the form of an object or its external boundary, outline, or external surface, as opposed to other properties such as color, texture or material type.
+
+#ifndef ASX_SIM_DEFS_H
+#define ASX_SIM_DEFS_H
 
 #include "qwadro/draw/afxDrawSystem.h"
 

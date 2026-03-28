@@ -21,18 +21,18 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AFX_SURFACE_DDK_H
-#define AFX_SURFACE_DDK_H
-
-#include "../exec/afxSystemDDK.h"
-#include "qwadro/draw/afxDrawSystem.h"
-
 /*
     Blit: Transfers or copies pixel data from one area to another within or between buffers. It’s used for operations like rendering images or updating parts of the screen.
     Flip: Swaps the front and back buffers in double buffering to update the display with a new frame, reducing flickering and improving performance.
     Swap: Refers to the exchange of buffers in multiple buffering strategies (e.g., double or triple buffering) to update the screen, often used to manage buffer visibility and performance.
     Present: Displays the contents of the current frame buffer on the screen, making the rendered image visible to the user.
 */
+
+#ifndef AFX_SURFACE_DDK_H
+#define AFX_SURFACE_DDK_H
+
+#include "../exec/afxSystemDDK.h"
+#include "qwadro/draw/afxDrawSystem.h"
 
 AFX_DECLARE_STRUCT(_avxIddDout);
 

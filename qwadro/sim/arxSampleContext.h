@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ASX_SAMPLE_CONTEXT_H
-#define ASX_SAMPLE_CONTEXT_H
-
 /*
     In computer simulation, a sample context refers to the specific scenario, environment, 
     or conditions under which a simulation is run or a particular model is applied. It provides 
@@ -29,6 +26,9 @@
     In summary, the sample context in a computer simulation refers to the conditions and assumptions that 
     frame the model or system being simulated.
 */
+
+#ifndef ASX_SAMPLE_CONTEXT_H
+#define ASX_SAMPLE_CONTEXT_H
 
 #include "qwadro/sim/arxPoseOps.h"
 #include "qwadro/sim/arxMiscOps.h"

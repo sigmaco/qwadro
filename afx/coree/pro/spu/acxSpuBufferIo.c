@@ -14,8 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This code is part of SIGMA A4D <https://sigmaco.org/a4d>
-// This software is part of Advanced Multimedia Extensions.
+// This software is part of Advanced Parallel Computing Extensions.
 
 // 5417
 

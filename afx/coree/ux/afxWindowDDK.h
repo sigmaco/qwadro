@@ -127,10 +127,14 @@ AUX _auxDdiWnd const _AUX_DDI_WND;
 
 AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd);
 
+AUX afxBool _AuxWidEmitEventCb(afxWidget wid, auxEvent *ev);
 AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev);
 
 AUX afxUnit _AfxWndFormatTitleCb(afxWindow wnd);
 AUX afxError _AfxWndAdjustCb(afxWindow wnd, afxAnchor, afxRect* c);
 AUX _auxDdiWnd const _AUX_DDI_WND;
+
+AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY);
+AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn);
 
 #endif//AUX_WINDOW_DDK_H

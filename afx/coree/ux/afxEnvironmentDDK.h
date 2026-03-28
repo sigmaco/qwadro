@@ -57,12 +57,12 @@ AFX_DECLARE_STRUCT(_auxDdiEnv);
 AFX_DEFINE_STRUCT(_auxDdiEnv)
 {
     afxUnit64(*pumpCb)(afxEnvironment,afxFlags, afxUnit64);
-    afxBool(*hasClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxFlags);
-    afxUnit(*getClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxFlags flags, afxString*);
-    afxError(*setClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxFlags flags, afxString const*);
+    afxBool(*hasClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags);
+    afxUnit(*getClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags, afxString*);
+    afxError(*setClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags, afxString const*);
     afxBool(*getCurs)(afxEnvironment, afxUnit seat, afxRect*,afxWindow,afxRect*,afxRect*);
     afxError(*fseCb)(afxEnvironment,afxWindow,afxBool);
-    afxError(*focusCb)(afxEnvironment, afxUnit seat, afxWindow, afxFlags);
+    afxError(*focusCb)(afxEnvironment, afxUnit seat, afxWindow, afxFocusFlags);
     afxError(*drawBgCb)(afxEnvironment, afxDrawContext, afxFlags);
     afxError(*promote)(afxEnvironment, afxWindow);
     afxError(*grabCursorCb)(afxEnvironment, afxWindow, afxBool);
@@ -171,10 +171,10 @@ AUX afxClass const* _AuxEnvGetWndClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetFntClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetThemClass(afxEnvironment env);
 
-AUX afxError _AfxEnvFocusWindowCb(afxEnvironment env, afxUnit seat, afxWindow wnd, afxFlags flags);
-AUX afxError _AfxEnvSetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxFlags flags, afxString const* buf);
-AUX afxUnit _AfxEnvGetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxFlags flags, afxString* buf);
-AUX afxBool _AfxEnvHasClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxFlags flags);
+AUX afxError _AfxEnvFocusWindowCb(afxEnvironment env, afxUnit seat, afxWindow wnd, afxFocusFlags flags);
+AUX afxError _AfxEnvSetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString const* buf);
+AUX afxUnit _AfxEnvGetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString* buf);
+AUX afxBool _AfxEnvHasClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags);
 AUX afxUnit64 _AfxEnvPollInputCb(afxEnvironment env, afxFlags flags, afxUnit64 timeout);
 
 AUX afxEnvironment gActiveEnv;

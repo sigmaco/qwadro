@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_PUPPET_H
-#define ARX_PUPPET_H
-
 // O objeto arxPuppet aloja o estado de um arxModel no tempo de execução.
 // O arxModel é apenas dados estruturados para um modelo particular --- isto é, este não há qualquer conceito de onde este está, qual estado este está em, ou quais animações estão interagindo em si.
 // O arxPuppet mantém rastreio disto e provém um número de funções úteis para facilitar o trabalho com estados de modelo. 
@@ -31,6 +28,9 @@
 // Note, no entanto, que estes são simplesmente ponteiros para os dados originais que vocÊ passou durante a instanciação.
 // O arxPuppet não mantém cópias dos dados (para minimizar uso de memória), então você não pode liberar os dados originais do modelo e esperar obter ponteiros válidos de volta aqui.
 // Para aquilo que importa, se você liberar os dados originais do modelo, nenhuma das chamadas para arxPuppet funcionarão, desde que elas todas dependem daqueles dados, como você esperaria.
+
+#ifndef ARX_PUPPET_H
+#define ARX_PUPPET_H
 
 #include "qwadro/cad/arxModel.h"
 #include "qwadro/anim/arxPulley.h"

@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_MODEL_H
-#define ARX_MODEL_H
-
 /*
     O objeto arxModel descreve uma coleção de arxMesh'es que são todas ligadas ao mesmo arxSkeleton.
     Isso é essencialmente qualquer grupo conectado de malhas que são animadas em conjuntura.
@@ -28,6 +25,9 @@
     Rigging is the process of connecting a mesh with an internal poseable skeleton rig and bone structure. 
     Rigged meshes allow mesh surfaces to rotate and move where internal bones are placed within the model during the modeling process.
 */
+
+#ifndef ARX_MODEL_H
+#define ARX_MODEL_H
 
 #include "qwadro/cad/arxMeshIo.h"
 #include "qwadro/cad/arxPose.h"

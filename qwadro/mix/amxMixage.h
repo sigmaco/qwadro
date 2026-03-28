@@ -16,9 +16,6 @@
 
 // This software is part of Advanced Multimedia Extensions.
 
-#ifndef AMX_MIXAGE_H
-#define AMX_MIXAGE_H
-
 // Mixer
 // A mixer is a device for merging input signals to produce a combined output in the form of sound.
 
@@ -42,6 +39,9 @@
 */
 
 // Voices could be named decks for a broader range.
+
+#ifndef AMX_MIXAGE_H
+#define AMX_MIXAGE_H
 
 #include "qwadro/mix/amxAudio.h"
 #include "qwadro/mix/amxVoice.h"

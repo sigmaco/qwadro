@@ -38,104 +38,18 @@ _AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd)
     return cls;
 }
 
-_AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
-
-    // If the host platform doesn't offer custom icon support, we do with via draw system.
-    avxRaster curr = wnd->iconFnt;
-
-    if (curr != font)
-    {
-        if (curr)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
-            AfxDisposeObjects(1, &curr);
-            wnd->iconFnt = NIL;
-        }
-
-        if (font)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
-            AfxReacquireObjects(1, &font);
-            wnd->iconFnt = font;
-            wnd->iconCrop = *rgn;
-        }
-    }
-    return err;
-}
-
 _AUX afxError AfxChangeWindowIcon(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+    AFX_ASSERT(wnd->ddi->chIconCb);
+    afxError err2 = wnd->ddi->chIconCb(wnd, font, rgn);
 
-    if (!wnd->ddi->chIconCb)
+    if (err2 && (afxError_UNSUPPORTED != err2))
     {
-        if (afxError_UNSUPPORTED != (err = _AfxWndChangeIconCb(wnd, font, rgn)))
-            AfxThrowError();
-    }
-    else
-    {
-        err = wnd->ddi->chIconCb(wnd, font, rgn);
-
-        if (err && (afxError_UNSUPPORTED != err))
-            AfxThrowError();
-    }
-    return err;
-}
-
-_AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
-
-    // If the host platform doesn't offer custom icon support, we do with via draw system.
-    avxRaster curr = wnd->cursFnt;
-
-    if (curr != font)
-    {
-        if (curr)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &curr);
-            AfxDisposeObjects(1, &curr);
-            wnd->cursFnt = NIL;
-        }
-
-        if (font)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &font);
-            AfxReacquireObjects(1, &font);
-            wnd->cursFnt = font;
-            wnd->cursCrop = *rgn;
-        }
-    }
-    return err;
-}
-
-_AUX afxError AfxChangeWindowCursor(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
-
-    if (!wnd->ddi->chCursCb)
-    {
-        if (_AfxWndChangeCursorCb(wnd, font, rgn, hotspotX, hotspotY))
-            AfxThrowError();
-    }
-    else
-    {
-        if (wnd->ddi->chCursCb(wnd, font, rgn, hotspotX, hotspotY))
-            AfxThrowError();
+        AfxThrowError();
+        err2 = err;
     }
     return err;
 }
@@ -146,28 +60,49 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AFX_ASSERT(uri);
 
-    afxDrawSystem dsys = AvxGetSurfaceHost(wnd->surfaceDout ? wnd->surfaceDout : wnd->frameDout);
+    afxDrawSystem dsys = AvxGetSurfaceHost(AFX_OR(wnd->surfaceDout, wnd->frameDout));
     
+    avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
     rasi.usage = avxRasterUsage_SRC;
-    
-    avxRaster ras;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {
         AfxThrowError();
         return err;
     }
+    AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
     rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
 
-    if (afxError_UNSUPPORTED != (err = AfxChangeWindowIcon(wnd, ras, &rgn)))
+    afxError err2 = AfxChangeWindowIcon(wnd, ras, &rgn);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
+    {
         AfxThrowError();
+        err2 = err;
+    }
 
     AfxDisposeObjects(1, &ras);
 
+    return err;
+}
+
+_AUX afxError AfxChangeWindowCursor(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+    
+    AFX_ASSERT(wnd->ddi->chCursCb);
+    afxError err2 = wnd->ddi->chCursCb(wnd, font, rgn, hotspotX, hotspotY);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
+    {
+        AfxThrowError();
+        err2 = err;
+    }
     return err;
 }
 
@@ -177,25 +112,30 @@ _AUX afxError AfxLoadWindowCursor(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AFX_ASSERT(uri);
 
-    afxDrawSystem dsys = AvxGetSurfaceHost(wnd->surfaceDout ? wnd->surfaceDout : wnd->frameDout);
+    afxDrawSystem dsys = AvxGetSurfaceHost(AFX_OR(wnd->surfaceDout, wnd->frameDout));
 
+    avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
     rasi.usage = avxRasterUsage_SRC;
-
-    avxRaster ras;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {
         AfxThrowError();
         return err;
     }
+    AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
     rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
 
-    if (AfxChangeWindowCursor(wnd, ras, &rgn, 0, 0))
+    afxError err2 = AfxChangeWindowCursor(wnd, ras, &rgn, 0, 0);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
+    {
         AfxThrowError();
+        err2 = err;
+    }
 
     AfxDisposeObjects(1, &ras);
 
@@ -256,15 +196,13 @@ _AUX afxError AfxRedrawWindow(afxWindow wnd, afxRect const* area)
     // Modifier operations must be restricted to the owner thread.
     AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
-    if (!wnd->ddi->redrawCb)
+    AFX_ASSERT(wnd->ddi->redrawCb);
+    afxError err2 = wnd->ddi->redrawCb(wnd, area);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
     {
-        AFX_ASSERT(wnd->ddi->redrawCb);
         AfxThrowError();
-    }
-    else
-    {
-        if (wnd->ddi->redrawCb(wnd, area))
-            AfxThrowError();
+        err2 = err;
     }
     return err;
 }
@@ -277,15 +215,13 @@ _AUX afxError AfxDamageWindow(afxWindow wnd, afxRect const* area)
     // Modifier operations must be restricted to the owner thread.
     AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
-    if (!wnd->ddi->damageCb)
+    AFX_ASSERT(wnd->ddi->damageCb);
+    afxError err2 = wnd->ddi->damageCb(wnd, area);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
     {
-        AFX_ASSERT(wnd->ddi->damageCb);
         AfxThrowError();
-    }
-    else
-    {
-        if (wnd->ddi->damageCb(wnd, area))
-            AfxThrowError();
+        err2 = err;
     }
     return err;
 }
@@ -296,28 +232,13 @@ _AUX afxError AfxGetWindowSurface(afxWindow wnd, afxSurface* surface)
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AFX_ASSERT(surface);
     afxMask found = NIL;
-    afxSurface dout;
-#if 0
-    if (frame)
-    {
-        *frame = (dout = wnd->frameDout);
-
-        if (dout)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-            found |= AFX_BITMASK(0);
-        }
-    }
-#endif
-    if (surface)
-    {
-        *surface = (dout = wnd->surfaceDout);
+    afxSurface dout = wnd->surfaceDout;
+    *surface = dout;
         
-        if (dout)
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-            found |= AFX_BITMASK(1);
-        }
+    if (dout)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+        found |= AFX_BITMASK(1);
     }
 
     if (!found)
@@ -340,12 +261,12 @@ _AUX void _AfxStepWindow(afxWindow wnd, afxReal64* ct, afxReal64* dt)
 }
 
 /*
-    The AfxMakeWindowCursory() method makes a window cursory, that is, superficial, lacking in depth.
+    The AfxRequestWindowCursor() method makes a window cursory, that is, superficial, lacking in depth.
     At this mode, which is the default one, the cursor is enabled to work with widgets and other interactive elements.
     Disabling cursory may be used to grab and/or center the mouse to be used in window area as, for example, a interactive aim.
 */
 
-_AUX afxError AfxMakeWindowCursory(afxWindow wnd, afxRect const* confinement, afxBool cursory)
+_AUX afxError AfxRequestWindowCursor(afxWindow wnd, afxRect const* confinement, afxBool cursory)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -398,10 +319,14 @@ _AUX afxUnit AfxFormatWindowTitle(afxWindow wnd, afxChar const* fmt, ...)
         va_end(va);
     }
 
-    if (wnd->ddi->titleCb)
-        if (wnd->ddi->titleCb(wnd))
-            AfxThrowError();
+    AFX_ASSERT(wnd->ddi->titleCb);
+    afxError err2 = wnd->ddi->titleCb(wnd);
 
+    if (err2 && (afxError_UNSUPPORTED != err2))
+    {
+        AfxThrowError();
+        err2 = err;
+    }
     return wnd->title.s.len;
 }
 
@@ -652,8 +577,13 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
 
     // Call implementation to do stuff on host platform and potentially readjust the surface rectangle.
     AFX_ASSERT(wnd->ddi->adjustCb);    
-    if (wnd->ddi->adjustCb(wnd, anchor, &src))
+    afxError err2 = wnd->ddi->adjustCb(wnd, anchor, &src);
+
+    if (err2 && (afxError_UNSUPPORTED != err2))
+    {
         AfxThrowError();
+        err2 = err;
+    }
 
     AFX_ASSERT(AfxDoesRectContain(&wnd->frameRc, &wnd->surfaceRc));
 
@@ -868,16 +798,8 @@ _AUX afxClassConfig const _AUX_WND_CLASS_CONFIG =
 _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2d const origin, afxV2d const extent)
 {
     afxError err = { 0 };
-    AFX_ASSERT(cfg);
-#if 0
-    afxEnvironment env;
-    if (!AfxGetActiveEnvironment(&env))
-    {
-        AfxThrowError();
-        return err;
-    }
-#endif
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    AFX_ASSERT(cfg);
 
     afxWindowConfig cfg2 = { 0 };
     cfg2 = *cfg;
@@ -885,7 +807,8 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
     if (!cfg2.dsys)
         AfxGetEnvironmentAvx(env, &cfg2.dsys, NIL);
 #endif
-    cfg2.eventCb = AFX_WND_EVENT_HANDLER;
+    if (!cfg2.eventCb)
+        cfg2.eventCb = AFX_WND_EVENT_HANDLER;
 
     afxDesktop* dwm = &env->dwm;
     afxRect rc = { .w = cfg2.dout.ccfg.whd.w, .h = cfg2.dout.ccfg.whd.h };
@@ -912,13 +835,22 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
     cfg2.dout.ccfg.whd.w = rc.w;
     cfg2.dout.ccfg.whd.h = rc.h;
 
-    afxDisplay dpy;
-    AfxEnumerateDisplays(0, 0, 1, &dpy);
-    cfg2.dout.dsys = cfg2.dsys;
-    AvxConfigureSurface(dpy, &cfg2.dout);
-    cfg2.dout.doNotClip = FALSE;
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg2.dout.dsys);
+
+    //cfg2.dout.doNotClip = FALSE;
     //cfg2.dout.presentAlpha = avxVideoAlpha_PREMUL;
 
+    afxDisplay dpy;
+    AfxEnumerateDisplays(0, 0, 1, &dpy);
+    AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
+
+    afxError err2;
+    if (err2 = AvxConfigureSurface(dpy, &cfg2.dout))
+    {
+        AfxThrowError();
+        err = err2;
+    }
+    
     *cfg = cfg2;
 
     return err;
@@ -927,17 +859,9 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
 _AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, afxWindow* window)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
     AFX_ASSERT(window);
     AFX_ASSERT(cfg);
-#if 0
-    afxEnvironment env;
-    if (!AfxGetActiveEnvironment(&env))
-    {
-        AfxThrowError();
-        return err;
-    }
-#endif
-    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (!cfg)
     {
@@ -949,7 +873,6 @@ _AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, a
     AFX_ASSERT_CLASS(cls, afxFcc_WND);
 
     afxWindow wnd;
-
     if (AfxAcquireObjects(cls, 1, (afxObject*)&wnd, (void const*[]) { env, cfg, (void*)&_AUX_WID_CLASS_CONFIG }))
     {
         AfxThrowError();
@@ -957,6 +880,7 @@ _AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, a
     }
 
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
     AFX_ASSERT(window);
     *window = wnd;
 
