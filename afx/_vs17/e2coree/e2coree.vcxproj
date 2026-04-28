@@ -78,7 +78,7 @@
     <ClInclude Include="..\..\coree\mix\afxMixDeviceDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxIcd.h" />
     <ClInclude Include="..\..\coree\mix\afxMixQueueDDK.h" />
-    <ClInclude Include="..\..\coree\mix\amxSinkDDK.h" />
+    <ClInclude Include="..\..\coree\mix\afxSinkDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxSoundDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxSoundscapeDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxStorageDDK.h" />
@@ -474,7 +474,7 @@
     <ClCompile Include="..\..\coree\mix\amxMixage.c" />
     <ClCompile Include="..\..\coree\mix\amxPump.c" />
     <ClCompile Include="..\..\coree\mix\afxMixQueue.c" />
-    <ClCompile Include="..\..\coree\mix\amxSink.c" />
+    <ClCompile Include="..\..\coree\mix\afxSink.c" />
     <ClCompile Include="..\..\coree\mix\amxSound.c" />
     <ClCompile Include="..\..\coree\mix\amxSoundscape.c" />
     <ClCompile Include="..\..\coree\mix\amxStorage.c" />

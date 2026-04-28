@@ -9,9 +9,10 @@
  *
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -69,7 +70,7 @@ typedef enum amxBufferFlag
     amxBufferFlag_WXC = (amxBufferFlag_WX | amxBufferFlag_C),
     amxBufferFlag_RWX = (amxBufferFlag_RW | amxBufferFlag_X),
     amxBufferFlag_RWXC = (amxBufferFlag_RWX | amxBufferFlag_C),
-    amxBufferFlag_ACCESS = (amxBufferFlag_RWX | amxBufferFlag_C),
+    amxBufferFlag_ACCESS    = (amxBufferFlag_RWX | amxBufferFlag_C),
 
     // Sparse. The buffer will be backed using sparse memory, and can NOT be mapped.
     amxBufferFlag_S         = AFX_BITMASK(4),
@@ -86,61 +87,68 @@ typedef enum amxBufferFlag
 AFX_DEFINE_STRUCT(amxBufferedCopy)
 // Structure specifying a amxBuffer-backed copy.
 {
-    amxBuffer       dst;
+    amxBuffer dst;
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // is the number of bytes to copy.
-    afxUnit         range;
+    afxUnit range;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
-    amxBuffer       src;
+    afxSize srcOffset;
+    amxBuffer src;
 };
 
 #define AMX_BUFFERED_COPY(uSrcOffset, uDstOffset, uRange) \
-    (amxBufferedCopy){ .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .range = (uRange) }
+    (amxBufferedCopy) { .srcOffset = (uSrcOffset), \
+                        .dstOffset = (uDstOffset), \
+                        .range = (uRange) }
 
 AFX_DEFINE_STRUCT(amxBufferCopy)
 // Structure specifying a amxBuffer-backed copy.
 {
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
+    afxSize srcOffset;
     // is the number of bytes to copy.
-    afxUnit         range;
+    afxUnit range;
 };
 
 #define AMX_BUFFER_COPY(uSrcOffset, uDstOffset, uRange) \
-    (amxBufferCopy){ .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .range = (uRange) }
+    (amxBufferCopy) {   .srcOffset = (uSrcOffset), \
+                        .dstOffset = (uDstOffset), \
+                        .range = (uRange) }
 
 AFX_DEFINE_STRUCT(amxBufferIo)
 // Structure specifying a amxBuffer-backed transfer.
 {
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // [!] only if supported by device, else case it must be 1.
-    afxUnit         dstStride;
+    afxUnit dstStride;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
+    afxSize srcOffset;
     // [!] only if supported by device, else case it must be 1.
-    afxUnit         srcStride;
+    afxUnit srcStride;
     // is the number of rows to stream in/out.
-    afxUnit         rowCnt;
+    afxUnit rowCnt;
 };
 
 #define AMX_BUFFER_IO(uSrcOffset, uDstOffset, uSrcStride, uDstStride, uRowCnt) \
-    (amxBufferIo) { .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .srcStride = (uSrcStride), \
-                    .dstStride = (uDstStride), .rowCnt = (uRowCnt) }
+    (amxBufferIo) { .srcOffset = (uSrcOffset), \
+                    .dstOffset = (uDstOffset), \
+                    .srcStride = (uSrcStride), \
+                    .dstStride = (uDstStride), \
+                    .rowCnt = (uRowCnt) }
 
 #if 0
 AFX_DEFINE_STRUCT(amxBufferIo)
 {
-    afxUnit         c, r, g;
-    afxUnit         x, y, z;
-    afxUnit         w, h, d;
-    afxSize         offset;
-    afxUnit         rowStride;
-    afxUnit         rowCnt;
+    afxUnit c, r, g;
+    afxUnit x, y, z;
+    afxUnit w, h, d;
+    afxSize offset;
+    afxUnit rowStride;
+    afxUnit rowCnt;
 };
 #endif
 
@@ -148,86 +156,92 @@ AFX_DEFINE_STRUCT(amxBufferedStream)
 // Structured specifying a amxBuffer-backed stream.
 {
     // A buffer handle.
-    amxBuffer       buf;
+    amxBuffer buf;
     // The start of buffer.
-    afxSize         offset;
+    afxSize offset;
     // The size in bytes of data from buffer.
-    afxUnit         range;
+    afxUnit range;
     // The byte stride between consecutive elements within the buffer.
-    afxUnit         stride;
+    afxUnit stride;
 };
 
 #define AMX_BUFFERED_STREAM(hBuf, uOffset, uRange, uStride) \
-    (amxBufferedStream){ .buf = (hBuf), .offset = (uOffset), .range = (uRange), .stride = (uStride) }
+    (amxBufferedStream) {   .buf = (hBuf), \
+                            .offset = (uOffset), \
+                            .range = (uRange), \
+                            .stride = (uStride) }
 
 AFX_DEFINE_STRUCT(amxBufferedMap)
 // Structured specifying a amxBuffer-backed memory map.
 {
     // A buffer handle.
-    amxBuffer       buf;
+    amxBuffer buf;
     // The start of buffer.
-    afxSize         offset;
+    afxSize offset;
     // The size in bytes of data from buffer.
-    afxUnit         range;
+    afxUnit range;
     // A bitmask of flags specifying additional parameters of the memory map operation.
-    afxFlags        flags;
+    afxFlags flags;
 };
 
 #define AMX_BUFFERED_MAP(hBuf, uOffset, uRange, uFlags) \
-    (amxBufferedMap){ .buf = (hBuf), .offset = (uOffset), .range = (uRange), .flags = (uFlags) }
+    (amxBufferedMap) {  .buf = (hBuf), \
+                        .offset = (uOffset), \
+                        .range = (uRange), \
+                        .flags = (uFlags) }
 
 AFX_DEFINE_STRUCT(amxMetabufferInfo)
 {
     // A bitmask specifying additional parameters of the buffer.
-    amxBufferFlags  flags;
+    amxBufferFlags flags;
     // A amxBuffer on which the view will be created.
-    amxBuffer       base;
+    amxBuffer base;
     // An offset in bytes from the base address of the buffer.
-    afxSize         from;
+    afxSize from;
     // The size in bytes of the buffer to be created.
-    afxSize         range;
+    afxSize range;
     // A amxFormat describing the format of the data elements in the buffer.
-    amxFormat       fmt;
+    amxFormat fmt;
     // A user-defined data.
-    void*           udd;
-    afxString       tag;
+    void* udd;
+    afxString tag;
 };
 
 AFX_DEFINE_STRUCT(amxBufferInfo)
 {
     // The size in bytes of the buffer to be created.
-    afxSize         size;
+    afxSize size;
     // A bitmask specifying allowed usages of the buffer.
-    amxBufferUsage  usage;
+    amxBufferUsage usage;
     // A bitmask specifying additional parameters of the buffer.
-    amxBufferFlags  flags;
+    amxBufferFlags flags;
     // A bitmask of device bridges that will access this buffer.
-    afxMask         sharingMask;
+    afxMask sharingMask;
 
     // A amxFormat describing the format of the data elements in the buffer.
-    amxFormat       fmt;
+    amxFormat fmt;
     // An user-defined data.
-    void*           udd;
-    afxString       tag;
+    void* udd;
+    afxString tag;
 
     // Possibly initial data, to avoid boilerplate with unconvenient mappings.
-    void*           data;
-    afxUnit         dataSiz;
+    void* data;
+    afxUnit dataSiz;
     // Should this buffer be mapped at creation?
-    afxBool         mapped;
+    afxBool mapped;
 };
 
 AFX_DEFINE_STRUCT(amxExobufferInfo)
 {
-    amxBufferInfo   info;
+    amxBufferInfo info;
     // Possibly initial data, to avoid boilerplate with unconvenient mappings.
-    void*           data;
-    afxUnit         dataSiz;
+    void* data;
+    afxUnit dataSiz;
     // Should this buffer be mapped at creation?
-    afxBool         mapped;
+    afxBool mapped;
 };
 
-AMX afxError        AmxAcquireBuffers
+AMX afxError AmxAcquireBuffers
 (
     afxMixSystem msys, 
     afxUnit cnt, 
@@ -235,7 +249,7 @@ AMX afxError        AmxAcquireBuffers
     amxBuffer buffers[]
 );
 
-AMX afxError        AmxLoadBuffers
+AMX afxError AmxLoadBuffers
 (
     afxMixSystem msys, 
     afxUnit cnt, 
@@ -315,11 +329,11 @@ AMX afxError AmxUnmapBuffers
 AMX afxError AmxCohereMappedBuffers
 (
     // The mix system providing the buffers.
-    afxMixSystem   msys,
+    afxMixSystem msys,
     // A boolean specifying that any host modification must be discarded.
-    afxBool         discard,
+    afxBool discard,
     // The number of buffered maps.
-    afxUnit         cnt,
+    afxUnit cnt,
     // An array of buffered map operations.
     amxBufferedMap const maps[]
 );
@@ -334,15 +348,15 @@ AMX afxError AmxCopyBuffers
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AMX afxMixSystem    AmxGetBufferHost(amxBuffer buf);
+AMX afxMixSystem AmxGetBufferHost(amxBuffer buf);
 
-AMX void*           AmxGetBufferUdd(amxBuffer buf);
+AMX void* AmxGetBufferUdd(amxBuffer buf);
 
-AMX afxSize         AmxGetBufferCapacity(amxBuffer buf, afxSize from);
+AMX afxSize AmxGetBufferCapacity(amxBuffer buf, afxSize from);
 
-AMX amxBufferUsage  AmxGetBufferUsage(amxBuffer buf, amxBufferUsage mask);
+AMX amxBufferUsage AmxGetBufferUsage(amxBuffer buf, amxBufferUsage mask);
 
-AMX amxBufferFlags  AmxGetBufferFlags(amxBuffer buf, amxBufferFlags mask);
+AMX amxBufferFlags AmxGetBufferFlags(amxBuffer buf, amxBufferFlags mask);
 
 // Query an address of a buffer used to access the memory bound to this buffer on the device.
 
@@ -360,7 +374,7 @@ AMX afxSize AmxGetBufferAddress
     Returns a pointer to a sub-region of a previously mapped buffer.
 */
 
-AMX void*           AmxGetBufferMap
+AMX void* AmxGetBufferMap
 (
     // An handle to a previously acquired and mapped buffer.
     amxBuffer buf,
@@ -379,19 +393,19 @@ AMX void*           AmxGetBufferMap
     for a single buffer. Otherwise, AmxMapBuffers() should be used to avoid contention.
 */
 
-AMX afxError        AmxMapBuffer
+AMX afxError AmxMapBuffer
 (
     // The buffer that needs to be mapped.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The starting byte offset where the buffer mapping should begin.
-    afxSize         offset,
+    afxSize offset,
     // The size (in bytes or units) of the portion of the buffer to map, starting from the @offset.
-    afxUnit         range,
+    afxUnit range,
     // Flags that define the special behaviors for the mapping.
-    afxFlags        flags,
+    afxFlags flags,
     // A pointer to a pointer (void**), which will be used to store the address of the mapped memory.
     // After the mapping, this pointer will point to the memory region that has been mapped.
-    void**          placeholder
+    void** placeholder
 );
 
 /*
@@ -404,12 +418,12 @@ AMX afxError        AmxMapBuffer
     for a single buffer. Otherwise, AmxUnmapBuffers() should be used to avoid contention.
 */
 
-AMX afxError        AmxUnmapBuffer
+AMX afxError AmxUnmapBuffer
 (
     // The buffer to unmap.
-    amxBuffer       buf,
+    amxBuffer buf,
     // A flag indicating whether the operation should wait for synchronization.
-    afxBool         wait
+    afxBool wait
 );
 
 /*
@@ -422,18 +436,18 @@ AMX afxError        AmxUnmapBuffer
     Otherwise, AmxCohereMappedBuffers() should be used to avoid contention.
 */
 
-AMX afxError        AmxCohereMappedBuffer
+AMX afxError AmxCohereMappedBuffer
 (
     // The buffer that needs to be flushed.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The starting point (in bytes) of the portion of the buffer that should be flushed.
-    afxSize         offset,
+    afxSize offset,
     // The size (in bytes or units) of the portion of the buffer to flush, starting from the @offset.
-    afxUnit         range,
+    afxUnit range,
     // The optional flags.
-    afxFlags        flags,
+    afxFlags flags,
     // A boolean specifying if any host modification should be discarded.
-    afxBool         discard
+    afxBool discard
 );
 
 /*
@@ -442,19 +456,19 @@ AMX afxError        AmxCohereMappedBuffer
     The use of execution units allows for parallel or distributed uploads, such as using a MPU to handle the operations.
 */
 
-AMX afxError        AmxUploadBuffer
+AMX afxError AmxUploadBuffer
 (
     // The destination buffer to which data will be uploaded.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt,
+    afxUnit opCnt,
     // An array of operations (@opCnt number of operations) to be performed on the buffer.
     // Each operation specifies where the data will be uploaded within the buffer and how the data should be handled.
     amxBufferIo const ops[],
     // The source stream from which the data will be transferred into the buffer.
-    afxStream       in,
+    afxStream in,
     // The execution unit index. This typically refers to the specific MPU or compute unit that will handle the operation.
-    afxMask         exuMask
+    afxMask exuMask
 );
 
 /*
@@ -464,19 +478,19 @@ AMX afxError        AmxUploadBuffer
     unit responsible for the operation.
 */
 
-AMX afxError        AmxDownloadBuffer
+AMX afxError AmxDownloadBuffer
 (
     // The source buffer from which data will be downloaded.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt,
+    afxUnit opCnt,
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how data should be extracted from the buffer.
     amxBufferIo const ops[],
     // The destination stream where the data from the buffer will be transferred.
-    afxStream       out,
+    afxStream out,
     // The execution unit index. This refers to the specific MPU or compute unit responsible for the operation.
-    afxMask         exuMask
+    afxMask exuMask
 );
 
 /*
@@ -486,34 +500,34 @@ AMX afxError        AmxDownloadBuffer
     the execution unit responsible for the operation.
 */
 
-AMX afxError        AmxDumpBuffer
+AMX afxError AmxDumpBuffer
 (
     // The source buffer from which data will be dumped.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt,
+    afxUnit opCnt,
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how data should be dumped from the buffer.
     amxBufferIo const ops[],
     // A pointer to the destination where the buffer data will be dumped.
-    void*           dst,
+    void* dst,
     // The execution unit index (e.g., MPU or compute unit) responsible for the operation.
-    afxMask         exuMask
+    afxMask exuMask
 );
 
-AMX afxError        AmxUpdateBuffer
+AMX afxError AmxUpdateBuffer
 (
     // The target buffer that will be updated with new data.
-    amxBuffer       buf,
+    amxBuffer buf,
     // The number of operations to be performed on the buffer.
-    afxUnit         opCnt,
+    afxUnit opCnt,
     // An array of operations to be performed on the buffer. 
     // Each operation specifies how the buffer should be updated.
     amxBufferIo const ops[],
     // A pointer to the source data from which the buffer will be updated.
-    void const*     src,
+    void const* src,
     // The execution unit index (e.g., MPU or compute unit) that will perform the transfer.
-    afxMask         exuMask
+    afxMask exuMask
 );
 
 #endif//AMX_BUFFER_H

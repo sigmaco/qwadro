@@ -9,13 +9,11 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
-
-#ifndef AFX_CLASS_H
-#define AFX_CLASS_H
 
 /*
     The afxClass is a rich and powerful type meta-system, forming the core of a reflective object system 
@@ -42,6 +40,9 @@
 
     It has beeen designed for both performance (custom allocators, pools, alignment) and flexibility (plugin IO, VMT, events, extensions).
 */
+
+#ifndef AFX_CLASS_H
+#define AFX_CLASS_H
 
 #include "qwadro/exec/afxDebug.h"
 #include "qwadro/base/afxFcc.h"

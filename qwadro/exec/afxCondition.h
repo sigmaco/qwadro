@@ -9,16 +9,11 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
-
-#ifndef AFX_CONDITION_H
-#define AFX_CONDITION_H
-
-#include "qwadro/exec/afxMutex.h"
-#include "qwadro/exec/afxAtomic.h"
 
 /**
     The afxCondition object provides a condition variable for synchronizing threads.
@@ -27,6 +22,12 @@
     One or many threads can block waiting for a QWaitCondition to set a condition with wakeOne() or wakeAll(). 
     Use wakeOne() to wake one randomly selected thread or wakeAll() to wake them all.
 */
+
+#ifndef AFX_CONDITION_H
+#define AFX_CONDITION_H
+
+#include "qwadro/exec/afxMutex.h"
+#include "qwadro/exec/afxAtomic.h"
 
 AFX_DEFINE_STRUCT(afxCondition)
 {

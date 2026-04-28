@@ -9,9 +9,10 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 #ifndef AFX_FCC_H
@@ -19,8 +20,11 @@
 
 #include "qwadro/base/afxCoreDefs.h"
 
-#define AFX_MAKE_FCC(ch1, ch2, ch3, ch4) (enum afxFcc)(((((((ch4)<<8)|(ch3))<<8)|(ch2))<<8)|(ch1))
-#define AFX_SPLIT_FCC(idn_, cA, cB, cC, cD) (cA=(afxChar)(idn_>>0),cB=(afxChar)(idn_>>8),cC =(afxChar)(idn_>>16), cD = (afxChar)(idn_>>24))
+#define AFX_MAKE_FCC(ch1, ch2, ch3, ch4) \
+    (enum afxFcc)(((((((ch4)<<8)|(ch3))<<8)|(ch2))<<8)|(ch1))
+
+#define AFX_SPLIT_FCC(idn_, cA, cB, cC, cD) \
+    (cA=(afxChar)(idn_>>0), cB=(afxChar)(idn_>>8), cC =(afxChar)(idn_>>16), cD = (afxChar)(idn_>>24))
 
 typedef enum afxFcc
 {

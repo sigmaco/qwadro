@@ -16,6 +16,8 @@
 
 #include "qwadro/afxQwadro.h"
 
+#define FRAMES_IN_FLIGHT 3
+
 #ifdef AFX_OS_WIN
 #ifdef AFX_OS_WIN64
 #ifdef _AFX_DEBUG
@@ -70,7 +72,7 @@ int main(int argc, char const* argv[])
     afxWindow windows[2];
     afxSurface surfaces[2];
     afxWindowConfig wcfg = { 0 };
-    wcfg.dsys = dsys;
+    wcfg.dout.dsys = dsys;
     //wcfg.dout.ccfg.bins[0].fmt = avxFormat_BGRA4un;
     AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
     AfxAcquireWindow(env, &wcfg, &windows[0]);
@@ -83,9 +85,9 @@ int main(int argc, char const* argv[])
 
     // Operation contexts
 
-    afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, 3);
+    afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, FRAMES_IN_FLIGHT);
 
-    afxDrawContext drawContexts[3];
+    afxDrawContext drawContexts[FRAMES_IN_FLIGHT];
     avxContextConfig ctxi = { 0 };
     ctxi.caps = avxAptitude_GFX;
     AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
@@ -122,74 +124,96 @@ int main(int argc, char const* argv[])
             afxUnit outBufIdx = 0;
             if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx))
             {
-                continue;
-            }
-
-            afxDrawContext dctx = drawContexts[outBufIdx];
-
-            if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
-            {
                 AfxThrowError();
-                AvxUnlockSurfaceBuffer(dout, outBufIdx);
-                continue;
             }
-
-            afxLayeredRect area;
-            avxCanvas canv;
-            AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &area);
-            AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-
-            avxDrawScope dps = { 0 };
-            dps.canv = canv;
-            dps.bounds = area;
-            dps.targetCnt = 1;
-            dps.targets[0].clearVal = AVX_COLOR_VALUE(AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), 1);
-            dps.targets[0].loadOp = avxLoadOp_CLEAR;
-            dps.targets[0].storeOp = avxStoreOp_STORE;
-            dps.ds[0].clearVal.depth = 1.0;
-            dps.ds[0].clearVal.stencil = 0;
-            dps.ds[0].loadOp = avxLoadOp_CLEAR;
-            dps.ds[0].storeOp = avxStoreOp_STORE;
-
-            AvxCmdCommenceDrawScope(dctx, &dps);
-
-            avxViewport vp = AVX_VIEWPORT(0, 0, area.area.w, area.area.h, 0, 1);
-            AvxCmdAdjustViewports(dctx, 0, 1, &vp);
-
-            AvxCmdConcludeDrawScope(dctx);
-
-            if (AvxCompileDrawCommands(dctx))
+            else
             {
-                AfxThrowError();
-                AvxUnlockSurfaceBuffer(dout, outBufIdx);
-                continue;
-            }
+                afxBool presented = FALSE;
+                afxDrawContext dctx = drawContexts[outBufIdx];
+                afxBool compiled = FALSE;
 
-            avxFence drawCompletedFence = NIL;
+                if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
+                {
+                    AfxThrowError();
+                }
+                else
+                {
+                    avxCanvas canv;
+                    afxLayeredRect area;
+                    AvxGetSurfaceCanvas(dout, outBufIdx, &canv, &area);
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
-            avxSubmission subm = { 0 };
-            subm.dctx = dctx;
-            subm.signal = drawCompletedFence;
+                    avxDrawScope dps = { 0 };
+                    dps.canv = canv;
+                    dps.bounds = area;
+                    dps.targetCnt = 1;
+                    dps.targets[0].storeOp = avxStoreOp_STORE;
+                    dps.targets[0].loadOp = avxLoadOp_CLEAR;
+                    dps.targets[0].clearVal = AVX_COLOR_VALUE(AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), AfxRandomReal2(0, 1), 1);
+                    dps.ds[0].storeOp = avxStoreOp_STORE;
+                    dps.ds[0].loadOp = avxLoadOp_CLEAR;
+                    dps.ds[0].clearVal.depth = 1.0;
+                    dps.ds[0].clearVal.stencil = 0;
 
-            if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
-            {
-                AfxThrowError();
-                AvxUnlockSurfaceBuffer(dout, outBufIdx);
-                continue;
-            }
+                    if (afxError_NONE == AvxCmdCommenceDrawScope(dctx, &dps))
+                    {
+                        avxViewport vp = AVX_VIEWPORT(0, 0, area.area.w, area.area.h, 0, 1);
+                        AvxCmdAdjustViewports(dctx, 0, 1, &vp);
 
-            //AvxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask, subm.baseQueIdx);
-            AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
+                        AvxCmdConcludeDrawScope(dctx);
+                    }
 
-            avxPresentation pres = { 0 };
-            pres.wait = drawCompletedFence;
-            pres.dout = dout;
-            pres.bufIdx = outBufIdx;
+                    if (AvxCompileDrawCommands(dctx))
+                    {
+                        AfxThrowError();
+                    }
+                    else
+                    {
+                        compiled = TRUE;
+                    }
+                }
 
-            if (AvxPresentSurfaces(dsys, 1, &pres, NIL))
-            {
-                AfxThrowError();
-                AvxUnlockSurfaceBuffer(dout, outBufIdx);
+                if (compiled)
+                {
+                    avxFence drawCompletedFence = NIL;
+
+                    avxSubmission subm = { 0 };
+                    subm.dctx = dctx;
+                    subm.signal = drawCompletedFence;
+
+                    if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
+                    {
+                        AfxThrowError();
+                        AvxUnlockSurfaceBuffer(dout, outBufIdx);
+                        continue;
+                    }
+
+                    //AvxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask, subm.baseQueIdx);
+                    //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
+
+                    avxPresentation pres = { 0 };
+                    pres.wait = drawCompletedFence;
+                    pres.dout = dout;
+                    pres.bufIdx = outBufIdx;
+
+                    if (AvxPresentSurfaces(dsys, 1, &pres, NIL))
+                    {
+                        AfxThrowError();
+                    }
+                    else
+                    {
+                        presented = TRUE;
+                    }
+                }
+                else
+                {
+                    AvxExhaustDrawContext(dctx, FALSE);
+                }
+
+                if (!presented)
+                {
+                    AvxUnlockSurfaceBuffer(dout, outBufIdx);
+                }
             }
         }
     }

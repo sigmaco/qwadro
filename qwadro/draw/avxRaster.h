@@ -9,9 +9,10 @@
  *
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -128,19 +129,19 @@ typedef enum avxRasterLayout
 AFX_DEFINE_STRUCT(avxRasterArrangement)
 // Information about the layout of the raster subresource.
 {
-    afxFlags        memFlags;
+    afxFlags memFlags;
     // the byte offset from the start of the raster or the plane where the raster subresource begins.
-    afxSize         offset;
+    afxSize offset;
     // the size in bytes of the raster subresource. siz includes any extra memory that is required based on rowStride.
-    afxUnit         size;
+    afxUnit size;
     // The alignment.
-    afxUnit         align;
+    afxUnit align;
     // The byte-stride for the format;
-    afxUnit         fmtStride;
+    afxUnit fmtStride;
     // the number of bytes between each row of texels in an raster.
-    afxUnit         rowStride;
+    afxUnit rowStride;
     //  the number of bytes between each layer or (3D) slice of an raster.
-    afxUnit         imgStride;
+    afxUnit imgStride;
 };
 
 typedef enum avxStorageFlag
@@ -208,32 +209,32 @@ AFX_DEFINE_STRUCT(avxRasterBlock)
 
 AFX_DEFINE_STRUCT(avxRasterRegion)
 {
-    afxUnit         lodIdx;
+    afxUnit lodIdx;
     // The initial x, y, z offsets in texels of the sub-region of the source or destination avxRaster data.
-    avxOrigin       origin;
+    avxOrigin origin;
     // The size in texels of the avxRaster to copy in width, height and depth.
-    avxRange        whd;
+    avxRange whd;
 };
 
 AFX_DEFINE_STRUCT(avxRasterInfo)
 {
     // A bitmask specifying allowed usages of the raster.
-    avxRasterUsage  usage;
+    avxRasterUsage usage;
     // A bitmask specifying additional parameters of the raster.
-    avxRasterFlags  flags;
+    avxRasterFlags flags;
     // The number of mipmaps/upsamples. Default is mipmap.
-    afxUnit         lodCnt;
+    afxUnit lodCnt;
     // The extent of the raster.
-    avxRange        whd;
+    avxRange whd;
     // A avxFormat describing the format of the data elements in the raster.
-    avxFormat       fmt;
+    avxFormat fmt;
     // A bitmask of device bridges that will access this buffer.
-    afxMask         exuMask;
+    afxMask exuMask;
 
     // A user-defined data.
-    void*           udd;
+    void* udd;
     // A static string specifying a debug tag.
-    afxString       tag;
+    afxString tag;
 };
 
 /*
@@ -255,11 +256,11 @@ AVX afxError AvxAcquireRasters
 
 AFX_DEFINE_STRUCT(avxExorasterInfo)
 {
-    avxRasterInfo   rasi;
+    avxRasterInfo rasi;
     // reserved for interop
     avxStorageFlags resrvdF;
-    afxSize         resrvdA;
-    afxSize         resrvdS;
+    afxSize resrvdA;
+    afxSize resrvdS;
 };
 
 AVX afxError AvxAcquireExternalRasters
@@ -277,23 +278,23 @@ AVX afxError AvxAcquireExternalRasters
 AFX_DEFINE_STRUCT(avxSubrasterInfo)
 {
     // A bitmask specifying additional parameters of the raster.
-    avxRasterFlags  flags;
+    avxRasterFlags flags;
     // A avxRaster on which the view will be created.
-    avxRaster       ras;
-    afxUnit         baseLod;
+    avxRaster ras;
+    afxUnit baseLod;
     // The number of mipmaps/upsamples. Default is mipmap.
-    afxUnit         lodCnt;
+    afxUnit lodCnt;
     // The index of the layer to be used as first layer by the subraster.
-    afxUnit         baseLayer;
-    afxUnit         layerCnt;
+    afxUnit baseLayer;
+    afxUnit layerCnt;
     // A avxFormat describing the format of the data elements in the raster.
-    avxFormat       fmt;
-    avxSwizzling    swizzle;
+    avxFormat fmt;
+    avxSwizzling swizzle;
 
     // A user-defined data.
-    void*           udd;
+    void* udd;
     // A static string specifying a debug tag.
-    afxString       tag;
+    afxString tag;
 };
 
 AVX afxError AvxReacquireRasters
@@ -310,7 +311,7 @@ AVX afxError AvxReacquireRasters
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxDrawSystem   AvxGetRasterHost
+AVX afxDrawSystem AvxGetRasterHost
 (
     avxRaster       ras
 );

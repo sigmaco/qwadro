@@ -9,15 +9,13 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
-
-#ifndef AFX_MATH_DEFS_H
-#define AFX_MATH_DEFS_H
 
 // IMPORTANT: O módulo de matemática do Qwadro é matemática para programadores, não para matemáticos. 
 // Nossos ângulos e suas contrapartes são representadas em "radians", não em "degrees". Funções para degrees são apenas utilitários de conveniência em conversão.
@@ -40,6 +38,9 @@
 // That means "AfxNormalizeObject(self, to)" always should export to "to" instead of doing action in place.
 
 // Qwadro uses radians as default angle measurement unit. They are natural and faster.
+
+#ifndef AFX_MATH_DEFS_H
+#define AFX_MATH_DEFS_H
 
 #include <math.h>
 #include "qwadro/exec/afxDebug.h"
