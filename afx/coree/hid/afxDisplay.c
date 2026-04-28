@@ -246,7 +246,7 @@ _AUX afxUnit AfxQueryDisplayModes(afxDisplay dpy, afxUnit port, avxFormat fmt, a
     return rslt;
 }
 
-_AUX afxError AfxCopyBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface dout)
+_AUX afxError AfxScanBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface dout)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);

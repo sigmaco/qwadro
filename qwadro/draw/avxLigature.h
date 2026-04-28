@@ -21,9 +21,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_LIGATURE_H
-#define AVX_LIGATURE_H
-
 /*
     avxLigature describes descriptor sets, push constants, and shader resources.
     It's like a contract between your shaders and the pipeline, defining what external resources (textures, buffers, etc.) shaders can access.
@@ -45,6 +42,9 @@
     The descriptor set number 2 will be used for material resources, and the number 3 will be used for per-object resources.
     This way, the inner render loops will only be binding descriptor sets 2 and 3, and performance will be high.
 */
+
+#ifndef AVX_LIGATURE_H
+#define AVX_LIGATURE_H
 
 #include "qwadro/draw/avxShader.h"
 

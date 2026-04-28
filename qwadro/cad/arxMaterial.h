@@ -16,15 +16,15 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_MATERIAL_H
-#define ARX_MATERIAL_H
-
 /*
     A arxMaterial refers to a set of properties that define how an object's surface 
     interacts with light, texture, and other physical properties in the simulated environment. 
     Materials are used to give objects their appearance and simulate how they would look and 
     behave in the real world under various conditions.
 */
+
+#ifndef ARX_MATERIAL_H
+#define ARX_MATERIAL_H
 
 #include "qwadro/iris/arxIrisDefs.h"
 

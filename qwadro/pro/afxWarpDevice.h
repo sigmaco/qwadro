@@ -14,14 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions.
-
-  //////////////////////////////////////////////////////////////////////////////
- // Advanced Sound Experience on Qwadro                                      //
-//////////////////////////////////////////////////////////////////////////////
-// This section is part of SIGMA A4D; Advanced Audio Extensions for Qwadro.
-
-// Qwadro Sound Synthesis Infrastructure
+// This software is part of Advanced Parallel Computing Extensions.
 
 #ifndef ACX_WARP_DEVICE_H
 #define ACX_WARP_DEVICE_H

@@ -85,7 +85,7 @@ int main(int argc, char const* argv[])
     afxWindow wnd;
     afxSurface dout;
     afxWindowConfig wcfg = { 0 };
-    wcfg.dsys = dsys;
+    wcfg.dout.dsys = dsys;
     //wcfg.dout.bins[0].fmt = avxFormat_BGRA4un;
     wcfg.dout.latency = MAX_FRAMES_IN_FLIGHT;
     AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));

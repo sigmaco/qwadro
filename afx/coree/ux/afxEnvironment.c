@@ -83,7 +83,7 @@ _AUX afxBool AfxGetFocusedWindow(afxUnit seat, afxWindow* window)
     return !!wnd;
 }
 
-_AUX afxError AfxFocusWindow(afxUnit seat, afxWindow wnd, afxFlags flags)
+_AUX afxError AfxFocusWindow(afxUnit seat, afxWindow wnd, afxFocusFlags flags)
 {
     afxError err = { 0 };
 
@@ -168,7 +168,7 @@ _AUX afxBool AfxGetEnvironmentAmx(afxEnvironment env, afxMixSystem* system, afxS
     return rslt;
 }
 
-_AUX afxBool AfxHasClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags)
+_AUX afxBool AfxHasClipboardContent(afxUnit seat, afxUnit slot, afxClipboardFlags flags)
 {
     afxError err = { 0 };
 
@@ -180,7 +180,7 @@ _AUX afxBool AfxHasClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags)
     return env->ddi->hasClipboardCb(env, seat, slot, flags);
 }
 
-_AUX afxUnit AfxGetClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags, afxString* buf)
+_AUX afxUnit AfxGetClipboardContent(afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString* buf)
 {
     afxError err = { 0 };
 
@@ -192,7 +192,7 @@ _AUX afxUnit AfxGetClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags, 
     return env->ddi->getClipboardCb(env, seat, slot, flags, buf);
 }
 
-_AUX afxError AfxSetClipboardContent(afxUnit seat, afxUnit slot, afxFlags flags, afxString const* text)
+_AUX afxError AfxSetClipboardContent(afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString const* text)
 {
     afxError err = { 0 };
 

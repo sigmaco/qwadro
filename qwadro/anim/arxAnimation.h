@@ -17,13 +17,13 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_ANIMATION_H
-#define ARX_ANIMATION_H
-
 // Qwadro armazena animações em partes baseadas em quão muitos modelos estão envolvidos numa animação.
 // Assim sendo, uma arxAnimation é a moção de um conjunto de arxModel's animando sobre tempo.
 // A arxAnimation contém um ou mais arxGesture's, cada do qual correspondendo à moção de um modelo específico (desde que uma animação pode envolver múltiplos modelos, se o autor assim escolher).
 // O arxGesture é constituído de curvas, cada da qual especifica a translação, rotação e escala de uma junta no akxSkeleton do correspondente arxModel.
+
+#ifndef ARX_ANIMATION_H
+#define ARX_ANIMATION_H
 
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/anim/arxCurve.h"

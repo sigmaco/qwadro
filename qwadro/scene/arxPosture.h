@@ -16,10 +16,10 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
+// O objeto arxPosture é um buffer usado para manter o estado de um arxSkeleton de arxModel como expressado no "world space". 
+
 #ifndef ARX_PLACEMENT_H
 #define ARX_PLACEMENT_H
-
-// O objeto arxPosture é um buffer usado para manter o estado de um arxSkeleton de arxModel como expressado no "world space". 
 
 #include "qwadro/iris/arxIrisDefs.h"
 

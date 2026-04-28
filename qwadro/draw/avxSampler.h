@@ -20,12 +20,12 @@
 
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_SAMPLER_H
-#define AVX_SAMPLER_H
-
 /**
     A avxSampler object represent the state of an texture sampler which is used by the implementation to read image data and apply filtering and other transformations for the shader.
 */
+
+#ifndef AVX_SAMPLER_H
+#define AVX_SAMPLER_H
 
 #include "qwadro/draw/avxFormat.h"
 #include "qwadro/draw/avxColor.h"

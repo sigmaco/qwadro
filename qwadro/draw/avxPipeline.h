@@ -21,9 +21,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_PIPELINE_H
-#define AVX_PIPELINE_H
-
 /**
     Desde que surgiu as mesh shaders, somado as experiências com rasterização com CUDA, aparentemente o processo de transformação geométrica das pipelines tende a mudar.
     Assim sendo, a SIGMA decideu quebrar o objeto de estado da pipeline em módulos, e assembleá-los, para evitar lidar com alocação de espaço para coisas pouco utilizadas.
@@ -47,6 +44,9 @@
 // This is really not defined yet. There is a thinking about avxVertexInput too.
 
 // Front facing and cull mode should not have effect no point and lines.
+
+#ifndef AVX_PIPELINE_H
+#define AVX_PIPELINE_H
 
 #include "qwadro/draw/avxBus.h"
 #include "qwadro/base/afxUri.h"

@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_NODE_H
-#define ARX_NODE_H
-
 // Frames define the spatial relationships between the objects to which they are attached.
 // The newly created frame has no parent and is its own root.
 // To be of any use the frame should be attached to an object; frames can be added to cameras and lights.
@@ -39,6 +36,9 @@
 // World space is the coordinate system for the entire scene. Its origin is at the center of the scene. The grid you see in view windows shows the world space axes.
 // Object space is the coordinate system from an object's point of view. The origin of object space is at the object's pivot point, and its axes are rotated with the object.
 // Local space is similar to object space, however it uses the origin and axes of the object's parent node in the hierarchy of objects.This is useful when you haven't transformed the object itself, but it is part of a group that is transformed.
+
+#ifndef ARX_NODE_H
+#define ARX_NODE_H
 
 #include "qwadro/base/afxObject.h"
 #include "qwadro/base/afxString.h"

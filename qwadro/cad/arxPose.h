@@ -16,9 +16,6 @@
 
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ARX_POSE_H
-#define ARX_POSE_H
-
 /*
     The arxPose object is a key data structure used in the Qwadro animation subsystems to represent the state of an articulated model 
     or object at a given moment. In essence, a pose encapsulates the configuration of all the joints or bones of a articulated object, 
@@ -46,6 +43,9 @@
         A weight indicating the contribution of the pose to a composite pose (if the pose is blended with others).
         A timestamp for real-time systems, tracking when the pose was generated.
 */
+
+#ifndef ARX_POSE_H
+#define ARX_POSE_H
 
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/math/afxTransform.h"

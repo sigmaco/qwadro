@@ -21,9 +21,6 @@
 // This section is part of SIGMA High Performance Cosputing Infrastructure.
 // This file is part of Advanced RenderWare Extensions.
 
-#ifndef ASX_ENGINE_H
-#define ASX_ENGINE_H
-
 // A computer simulation (or "sim") is an attempt to model a real-life or hypothetical situation on a computer so that it can be studied to see how the system works. 
 // By changing variables in the simulation, predictions may be made about the behaviour of the system. 
 // It is a tool to virtually investigate the behaviour of the system under study.
@@ -35,6 +32,9 @@
     There are many areas of mathematics, which include number theory (the study of numbers), algebra (the study of formulas and related structures), geometry (the study of shapes and spaces that contain them), 
     analysis (the study of continuous changes), and set theory (presently used as a foundation for all mathematics).
 */
+
+#ifndef ASX_ENGINE_H
+#define ASX_ENGINE_H
 
 #include "qwadro/exec/afxDevice.h"
 #include "qwadro/sim/arxSimBridge.h"

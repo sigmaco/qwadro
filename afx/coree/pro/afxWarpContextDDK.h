@@ -14,7 +14,7 @@
  *                             <https://sigmaco.org/qwadro/>
  */
 
-// This software is part of Advanced Multimedia Extensions.
+// This software is part of Advanced Parallel Computing Extensions.
 
 #ifndef ACX_CONTEXT_DDK_H
 #define ACX_CONTEXT_DDK_H

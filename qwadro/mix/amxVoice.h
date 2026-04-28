@@ -16,12 +16,12 @@
 
 // This software is part of Advanced Multimedia Extensions.
 
-#ifndef AMX_VOICE_H
-#define AMX_VOICE_H
-
 // Voice
 // each of the notes or sounds able to be produced simultaneously by a musical instrument (especially an electronic one) or a computer.
 // (in an electronic musical instrument) each of a number of preset or programmable tones.
+
+#ifndef AMX_VOICE_H
+#define AMX_VOICE_H
 
 #include "qwadro/mix/afxMixDefs.h"
 

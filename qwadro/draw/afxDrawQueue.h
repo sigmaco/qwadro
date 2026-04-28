@@ -21,9 +21,6 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_DRAW_QUEUE_H
-#define AVX_DRAW_QUEUE_H
-
 /*
     In Qwadro, a draw queue is an entity used in graphics programming and rendering to manage and organize the tasks related to drawing or rendering operations. 
     It efficiently handles the sequence and execution of draw commands, particularly in environments where multiple rendering tasks are required.
@@ -43,6 +40,9 @@
     It ensures that rendering commands are executed in the correct order, maintaining visual consistency and accuracy.
     And it also helps manage complex scenes and multiple rendering tasks efficiently, which is crucial for high-performance graphics applications.
 */
+
+#ifndef AVX_DRAW_QUEUE_H
+#define AVX_DRAW_QUEUE_H
 
 #include "qwadro/draw/avxPipeline.h"
 #include "qwadro/draw/avxRaster.h"
