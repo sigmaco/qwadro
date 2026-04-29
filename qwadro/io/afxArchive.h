@@ -9,9 +9,10 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This code is part of SIGMA Future Storage.
@@ -21,12 +22,6 @@
     binary form (usually disk storage) that persists after those objects are deleted.
 */
 
-#ifndef AFX_ARCHIVE_H
-#define AFX_ARCHIVE_H
-
-#include "qwadro/io/afxFile.h"
-#include "qwadro/mem/afxArray.h"
-
 /* URI for open zipped streams.
  * art.zip#idx
  * art.zip#name
@@ -34,6 +29,12 @@
  */
 
 // Archives stores metafiles. Metafiles are files used to create files.
+
+#ifndef AFX_ARCHIVE_H
+#define AFX_ARCHIVE_H
+
+#include "qwadro/io/afxFile.h"
+#include "qwadro/mem/afxArray.h"
 
 AFX_DEFINE_STRUCT(afxArchiveItemDescriptor)
 {

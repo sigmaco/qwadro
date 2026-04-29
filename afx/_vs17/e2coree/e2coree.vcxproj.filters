@@ -453,9 +453,6 @@
     <ClInclude Include="..\..\coree\mix\amxIcd.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxSinkDDK.h">
-      <Filter>coree\mix</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxSoundDDK.h">
       <Filter>coree\mix</Filter>
     </ClInclude>
@@ -1032,6 +1029,9 @@
     <ClInclude Include="..\..\coree\hid\afxHidDDK.h">
       <Filter>coree\hid</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\coree\mix\afxSinkDDK.h">
+      <Filter>coree\mix</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md">
@@ -1135,9 +1135,6 @@
       <Filter>coree\mix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxPump.c">
-      <Filter>coree\mix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxSink.c">
       <Filter>coree\mix</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\mix\amxSound.c">
@@ -1865,6 +1862,9 @@
     </ClCompile>
     <ClCompile Include="..\..\coree\pro\afxWarpSystem.c">
       <Filter>coree\pro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mix\afxSink.c">
+      <Filter>coree\mix</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

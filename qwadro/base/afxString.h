@@ -9,9 +9,10 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 /**
@@ -82,9 +83,17 @@ AFX_DEFINE_STRUCT(afxString)
     };
 };
 
-#define AFX_STRING(text_) (afxString) { \
-    .len = (afxUnit)((sizeof((text_)) / sizeof((text_)[0])) - sizeof(afxChar)), \
-    .cap = 0, .start = (afxChar const*)(text_) }
+#define AFX_STRING(text_) \
+    (afxString) {   .len = (afxUnit)((sizeof((text_)) / sizeof((text_)[0])) - sizeof(afxChar)), \
+                    .cap = 0, .start = (afxChar const*)(text_) }
+
+#define AFX_STRING_R(...) AFX_STRING(#__VA_ARGS__)
+
+// AFX_STATIC_STRING deploys a initialized afxString with literal macro data.
+#define AFX_STATIC_STRING_R(...) { \
+    .len = (afxUnit)((sizeof((#__VA_ARGS__)) / sizeof((#__VA_ARGS__)[0])) - sizeof(afxChar)), \
+    .cap = 0, .start = (afxChar const*)(#__VA_ARGS__) }
+
 
 AFX afxString const     AFX_STRING_EMPTY;
 

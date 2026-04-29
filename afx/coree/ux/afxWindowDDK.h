@@ -9,9 +9,10 @@
  *
  *       Q W A D R O   U S E R   E X P E R I E N C E   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This software is part of Advanced User Experience Extensions.

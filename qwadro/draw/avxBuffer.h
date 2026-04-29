@@ -9,9 +9,10 @@
  *
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -117,107 +118,120 @@ typedef enum avxMappingFlag
 AFX_DEFINE_STRUCT(avxBufferedCopy)
 // Structure specifying a avxBuffer-backed copy.
 {
-    avxBuffer       dst;
+    avxBuffer dst;
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // is the number of bytes to copy.
-    afxUnit         range;
+    afxUnit range;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
-    avxBuffer       src;
+    afxSize srcOffset;
+    avxBuffer src;
 };
 
 #define AVX_BUFFERED_COPY(uSrcOffset, uDstOffset, uRange) \
-    (avxBufferedCopy){ .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .range = (uRange) }
+    (avxBufferedCopy) { .srcOffset = (uSrcOffset), \
+                        .dstOffset = (uDstOffset), \
+                        .range = (uRange) }
 
 AFX_DEFINE_STRUCT(avxBufferCopy)
 // Structure specifying a avxBuffer-backed copy.
 {
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
+    afxSize srcOffset;
     // is the number of bytes to copy.
-    afxUnit         range;
+    afxUnit range;
 };
 
 #define AVX_BUFFER_COPY(uSrcOffset, uDstOffset, uRange) \
-    (avxBufferCopy){ .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .range = (uRange) }
+    (avxBufferCopy) {   .srcOffset = (uSrcOffset), \
+                        .dstOffset = (uDstOffset), \
+                        .range = (uRange) }
 
 AFX_DEFINE_STRUCT(avxBufferIo)
 // Structure specifying a avxBuffer-backed transfer.
 {
     // is the starting offset in bytes from the start of dstBuffer.
-    afxSize         dstOffset;
+    afxSize dstOffset;
     // [!] only if supported by device, else case it must be 1.
-    afxUnit         dstStride;
+    afxUnit dstStride;
     // is the starting offset in bytes from the start of srcBuffer.
-    afxSize         srcOffset;
+    afxSize srcOffset;
     // [!] only if supported by device, else case it must be 1.
-    afxUnit         srcStride;
+    afxUnit srcStride;
     // is the number of rows to stream in/out.
-    afxUnit         rowCnt;
+    afxUnit rowCnt;
 };
 
 #define AVX_BUFFER_IO(uSrcOffset, uDstOffset, uSrcStride, uDstStride, uRowCnt) \
-    (avxBufferIo) { .srcOffset = (uSrcOffset), .dstOffset = (uDstOffset), .srcStride = (uSrcStride), \
-                    .dstStride = (uDstStride), .rowCnt = (uRowCnt) }
+    (avxBufferIo) { .srcOffset = (uSrcOffset), \
+                    .dstOffset = (uDstOffset), \
+                    .srcStride = (uSrcStride), \
+                    .dstStride = (uDstStride), \
+                    .rowCnt = (uRowCnt) }
 
 AFX_DEFINE_STRUCT(avxBufferedStream)
 // Structure specifying a avxBuffer-backed stream.
 {
     // A buffer handle.
-    avxBuffer       buf;
+    avxBuffer buf;
     // The start of buffer.
-    afxSize         offset;
+    afxSize offset;
     // The size in bytes of data from buffer.
-    afxUnit         range;
+    afxUnit range;
     // The byte stride between consecutive elements within the buffer.
-    afxUnit         stride;
+    afxUnit stride;
 };
 
 #define AVX_BUFFERED_STREAM(hBuf, uOffset, uRange, uStride) \
-    (avxBufferedStream){ .buf = (hBuf), .offset = (uOffset), .range = (uRange), .stride = (uStride) }
+    (avxBufferedStream) {   .buf = (hBuf), \
+                            .offset = (uOffset), \
+                            .range = (uRange), \
+                            .stride = (uStride) }
 
 AFX_DEFINE_STRUCT(avxBufferedMap)
 // Structure specifying a avxBuffer-backed memory map.
 {
     // A buffer handle.
-    avxBuffer       buf;
+    avxBuffer buf;
     // The start of buffer.
-    afxSize         offset;
+    afxSize offset;
     // The size in bytes of data from buffer.
-    afxUnit         range;
+    afxUnit range;
     // A bitmask of flags specifying additional parameters of the memory map operation.
-    afxFlags        flags;
+    afxFlags flags;
 };
 
 #define AVX_BUFFERED_MAP(hBuf, uOffset, uRange, uFlags) \
-    (avxBufferedMap){ .buf = (hBuf), .offset = (uOffset), .range = (uRange), .flags = (uFlags) }
+    (avxBufferedMap) {  .buf = (hBuf), \
+                        .offset = (uOffset), \
+                        .range = (uRange), \
+                        .flags = (uFlags) }
 
 AFX_DEFINE_STRUCT(avxBufferInfo)
 {
     // A bitmask specifying allowed usages of the buffer.
-    avxBufferUsage  usage;
+    avxBufferUsage usage;
     // A bitmask specifying additional parameters of the buffer.
-    avxBufferFlags  flags;
+    avxBufferFlags flags;
     // The size/range in bytes of the buffer to be created.
-    afxSize         size;
+    afxSize size;
     // A avxFormat describing the format of the data elements in the (FETCH/TENSOR) buffer.
-    avxFormat       fmt; // required for FETCH/TENSOR buffers.
+    avxFormat fmt; // required for FETCH/TENSOR buffers.
     // A bitmask of device bridges that will access this buffer.
-    afxMask         exuMask;
+    afxMask exuMask;
 
     // Possibly initial data, to avoid boilerplate with unconvenient mappings.
-    void*           data;
-    afxSize         dataSiz;
+    void* data;
+    afxSize dataSiz;
     // Should this buffer be mapped at creation?
-    afxBool         mapped; // replace for a avxBufferFlag flag?
+    afxBool mapped; // replace for a avxBufferFlag flag?
 
     // A user-defined data.
-    void*           udd;
+    void* udd;
     // A static string specifying a debug tag.
-    afxString       tag;
+    afxString tag;
 };
 
 /*
@@ -244,20 +258,20 @@ AVX afxError AvxAcquireBuffers
 AFX_DEFINE_STRUCT(avxMetabufferInfo)
 {
     // A bitmask specifying additional parameters of the buffer.
-    avxBufferFlags  flags;
+    avxBufferFlags flags;
     // A avxBuffer on which the view will be created.
-    avxBuffer       buf;
+    avxBuffer buf;
     // An offset in bytes from the base address of the buffer.
-    afxSize         bufBase;
+    afxSize bufBase;
     // The size/range in bytes of the buffer to be created.
-    afxSize         bufRange;
+    afxSize bufRange;
     // A avxFormat describing the format of the data elements in the buffer.
-    avxFormat       fmt; // used for FETCH/TENSOR buffers.
+    avxFormat fmt; // used for FETCH/TENSOR buffers.
 
     // A user-defined data.
-    void*           udd;
+    void* udd;
     // A static string specifying a debug tag.
-    afxString       tag;
+    afxString tag;
 };
 
 AVX afxError AvxReacquireBuffers

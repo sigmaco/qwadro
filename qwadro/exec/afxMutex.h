@@ -9,16 +9,11 @@
  *
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
-
-#ifndef AFX_MUTEX_H
-#define AFX_MUTEX_H
-
-#include "qwadro/exec/afxAtomic.h"
-#include "qwadro/exec/afxTime.h"
 
 /**
     The afxMutex object provides access serialization between threads.
@@ -35,6 +30,12 @@
      - Or use a recursive mutex, so it doesn't matter that the first public function has already locked the mutex when the second one wishes to do so.
 
 */
+
+#ifndef AFX_MUTEX_H
+#define AFX_MUTEX_H
+
+#include "qwadro/exec/afxAtomic.h"
+#include "qwadro/exec/afxTime.h"
 
 AFX_DEFINE_STRUCT(afxMutex)
 {

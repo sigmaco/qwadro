@@ -9,9 +9,10 @@
  *
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -34,6 +35,8 @@
     A mixer is a contraption that is used to merge several signals together. 
     Bigger models are typically called ‘consoles’ and ‘desks.’
 */
+
+// Is a deck a equivalent in audio to a canvas?
 
 #ifndef AMX_SINK_H
 #define AMX_SINK_H

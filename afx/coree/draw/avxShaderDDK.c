@@ -9,9 +9,10 @@
  *
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This software is part of Advanced Video Graphics Extensions.
@@ -88,7 +89,9 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         AFX_STRING("BUFFER"),
         AFX_STRING("FETCH"),
         AFX_STRING("PUSH"),
-        AFX_STRING("#include")
+        AFX_STRING("INC"),
+        AFX_STRING("INCLUDE"),
+        AFX_STRING("#include"),
     };
 
     // Shared among cases.
@@ -102,6 +105,13 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         line = AfxExcerptStringLine(code, base);
 
         if (!line.len) break;
+
+        afxUnit sepPosn;
+        if (AfxFindChar(&line, 0, ';', FALSE, FALSE, &sepPosn))
+        {
+            if (line.len > sepPosn)
+                line.len = sepPosn + 1;
+        }
 
         strStep = line.len;
         base += strStep;
@@ -118,7 +128,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 fmtName = { 0 };
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "IN(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " IN(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
 
             if (fnd == 3)
             {
@@ -148,7 +158,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 fmtName = { 0 };
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "OUT(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " OUT(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
 
             if (fnd == 3)
             {
@@ -177,7 +187,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 varName = { 0 };
             afxString32 layoutName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "UNIFORM(%u, %u, %32[A-Za-z0-9_], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " UNIFORM(%u, %u, %32[A-Za-z0-9_], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, varName.buf);
 
             if (fnd == 4)
             {
@@ -211,7 +221,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 varName = { 0 };
             afxString32 typeName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "TEXTURE(%u, %u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &set, &binding, typeName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " TEXTURE(%u, %u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &set, &binding, typeName.buf, varName.buf);
 
             if (fnd == 4)
             {
@@ -256,7 +266,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
             afxString32 varName = { 0 };
             afxString32 layoutName = { 0 };
             afxString32 accessName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "BUFFER(%u, %u, %32[A-Za-z0-9], %32[A-Za-z0-9], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, accessName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " BUFFER(%u, %u, %32[A-Za-z0-9], %32[A-Za-z0-9], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, accessName.buf, varName.buf);
 
             if (fnd == 5)
             {
@@ -290,7 +300,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         case 5: // FETCH
         {
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "FETCH(%u, %u, %32[A-Za-z0-9_] )", &set, &binding, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " FETCH(%u, %u, %32[A-Za-z0-9_] )", &set, &binding, varName.buf);
 
             if (fnd == 3)
             {
@@ -323,7 +333,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         case 6: // PUSH
         {
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, "PUSH(%32[A-Za-z0-9_] )", varName.buf);
+            afxUnit fnd = AfxScanString(&line, " PUSH(%32[A-Za-z0-9_] )", varName.buf);
 
             if (fnd == 1)
             {
@@ -333,10 +343,14 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
             }
             break;
         }
-        case 7: // #include
+        case 7: // INC
+        case 8: // INCLUDE
+        case 9: // #include
         {
             afxChar buf[128] = { 0 };
             afxBool fnd = AfxScanString(&line, "#include <%128[^>]>\n", buf);
+            if (!fnd) fnd = AfxScanString(&line, "INC(%128[^>])\n", buf);
+            if (!fnd) fnd = AfxScanString(&line, "INCLUDE(%128[^>])\n", buf);
 #if !0
             afxStream inc;
             afxStreamInfo iobi = { 0 };

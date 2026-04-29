@@ -9,9 +9,10 @@
  *
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
- *                                   Public Test Build
  *                               (c) 2017 SIGMA FEDERATION
- *                             <https://sigmaco.org/qwadro/>
+ *                               ESTADO-MAIOR DA SEGURIDADE
+ *                                 SIGMA TECHNOLOGY GROUP
+ *                                        ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -30,7 +31,7 @@
 #include "mpu/amxMpuTransference.h"
 #include "amxSoundscapeDDK.h"
 #include "afxMixSystemDDK.h"
-#include "amxSinkDDK.h"
+#include "afxSinkDDK.h"
 #include "afxMixDeviceDDK.h"
 #include "amxAudioDDK.h"
 #include "amxTrackerDDK.h"
