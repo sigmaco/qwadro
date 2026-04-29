@@ -461,6 +461,11 @@ AFX afxString           AfxFindSubstrings
     afxUnit*            matchedIdx
 );
 
+AFX afxString AfxSkipWhitespaces
+(
+    afxString const* s
+);
+
 AFX afxUnit             AfxFormatString
 (
     afxString*          s, 

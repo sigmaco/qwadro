@@ -96,6 +96,10 @@ int main(int argc, char const* argv[])
     AfxGetClock(&startClock);
     lastClock = startClock;
 
+    afxReal64 ft = 0;
+    afxUnit fpsi = 0;
+    afxUnit fps = 0;
+
     afxBool readyToRender = TRUE;
 
     while (1)
@@ -113,6 +117,14 @@ int main(int argc, char const* argv[])
 
         if (!readyToRender)
             continue;
+
+        if (ct - ft >= 1.0)
+        {
+            fps = fpsi;
+            fpsi = 0;
+            ft = ct;
+        }
+        ++fpsi;
 
         afxUnit outBufIdx = 0;
         if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx))
@@ -198,6 +210,8 @@ int main(int argc, char const* argv[])
                 {
                     presented = TRUE;
                 }
+
+                AfxFormatWindowTitle(wnd, "FPS %u %u", fps, 0);
             }
             else
             {

@@ -26,12 +26,12 @@
 #include "../scene/arxIcd.h"
 #include "../afx/coree/draw/avxIcd.h"
 
-afxChar const mtlVshCode[] = R"(
+static afxString const mtlVshCode = AFX_STATIC_STRING_R(
 // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
 // Vertex shader. Basic pass-through.
 
-#include <../gfx/stdView.inc>
-#include <../gfx/stdObject.inc>
+INCLUDE(../gfx/stdView.inc)
+INCLUDE(../gfx/stdObject.inc)
 
 PUSH(pushes)
 {
@@ -59,15 +59,15 @@ void main()
     
     gl_Position = p * v * vec4(fPos, 1.0);
 }
-)";
+);
 
-afxChar const mtlFshCode[] = R"(
+static afxString const mtlFshCode = AFX_STATIC_STRING_R(
 // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
 // Fragment Shader. PBR lighting with support for both solid color and texture.
 
-#include <../gfx/stdView.inc>
-#include <../gfx/stdMaterial.inc>
-#include <../gfx/stdObject.inc>
+INCLUDE(../gfx/stdView.inc)
+INCLUDE(../gfx/stdMaterial.inc)
+INCLUDE(../gfx/stdObject.inc)
 
 PUSH(pushes)
 {
@@ -183,7 +183,7 @@ void main()
 
     FragColor = vec4(color, 1.0);
 }
-)";
+);
 
 avxPipelineConfig const mtlPipc =
 {

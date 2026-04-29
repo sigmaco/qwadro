@@ -54,12 +54,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireBaryFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireBaryVshCode, 0)))
+            if (AvxCompileShader(codb, &specs[0].prog, &wireBaryVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireBaryFshCode, 0)))
+            if (AvxCompileShader(codb, &specs[1].prog, &wireBaryFshCode))
             {
                 AfxThrowError();
             }
@@ -107,12 +107,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireVshCode, 0)))
+            if (AvxCompileShader(codb, &specs[0].prog, &wireVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireFshCode, 0)))
+            if (AvxCompileShader(codb, &specs[1].prog, &wireFshCode))
             {
                 AfxThrowError();
             }
