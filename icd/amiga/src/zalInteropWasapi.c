@@ -315,7 +315,10 @@ _ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb)
         }
 
         afxReal* data = NULL;
-        idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, availableFrames, &data);
+        if (idd->pRenderClient->lpVtbl->GetBuffer(idd->pRenderClient, availableFrames, &data))
+        {
+            break;
+        }
 
         // Fill from ring buffer
         size_t framesAvailable = audio_ringbuffer_available(rb);
@@ -500,25 +503,72 @@ _ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst,
     return err;
 }
 
-_ZAL afxError _ZalWasapiStartStop(zalWasapi* idd, afxBool start)
+_ZAL afxError _ZalWasapiPause(zalWasapi* idd, afxBool pause)
 {
     afxError err = { 0 };
     AFX_ASSERT(idd);
 
-    if (idd->pAudioClient)
-        idd->pAudioClient->lpVtbl->Stop(idd->pAudioClient);
-        
     HRESULT hr = 0;
 
     // Step 9: Start both audio clients
 
-    if (start)
+    if (pause)
     {
+        /*
+            Stop is a control method that stops a running audio stream. 
+            This method stops data from streaming through the client's connection with the audio engine. 
+            Stopping the stream freezes the stream's audio clock at its current stream position. 
+            A subsequent call to IAudioClient::Start causes the stream to resume running from that position. 
+            If necessary, the client can call the IAudioClient::Reset method to reset the position while the stream is stopped.
+        */
+
+        if (idd->pAudioClient)
+            hr = idd->pAudioClient->lpVtbl->Stop(idd->pAudioClient);
+    }
+    else
+    {
+        /*
+            Start is a control method that the client calls to start the audio stream. 
+            Starting the stream causes the IAudioClient object to begin streaming data between the endpoint buffer and the audio engine. 
+            It also causes the stream's audio clock to resume counting from its current position.
+
+            The first time this method is called following initialization of the stream, 
+            the IAudioClient object's stream position counter begins at 0. Otherwise, 
+            the clock resumes from its position at the time that the stream was last stopped. 
+            Resetting the stream forces the stream position back to 0.
+
+            To avoid start-up glitches with rendering streams, 
+            clients should not call Start until the audio engine has been initially loaded with data by calling 
+            the IAudioRenderClient::GetBuffer and IAudioRenderClient::ReleaseBuffer methods on the rendering interface.
+        */
+
         if (idd->pAudioClient)
             hr = idd->pAudioClient->lpVtbl->Start(idd->pAudioClient);
-
-        AFX_ASSERT(!hr);
     }
+    
+    AFX_ASSERT(!hr);
+
+    return err;
+}
+
+_ZAL afxError _ZalWasapiReset(zalWasapi* idd)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(idd);
+
+    /*
+        Reset is a control method that the client calls to reset a stopped audio stream. 
+        Resetting the stream flushes all pending data and resets the audio clock stream position to 0. 
+        This method fails if it is called on a stream that is not stopped.
+    */
+
+    HRESULT hr = 0;
+
+    if (idd->pAudioClient)
+        hr = idd->pAudioClient->lpVtbl->Reset(idd->pAudioClient);
+
+    AFX_ASSERT(!hr);
+
     return err;
 }
 
@@ -551,7 +601,7 @@ _ZAL afxError _ZalWasapiDestroy(zalWasapi* idd)
     return err;
 }
 
-_ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afxUnit sampRate)
+_ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afxUnit sampRate, afxUnit latency/*scaler*/, afxUnit periodicity/*ns*/, afxBool exclusive)
 {
     afxResult err = NIL;
     AFX_ASSERT(idd);
@@ -668,7 +718,11 @@ _ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afx
     // You should choose a duration that matches or exceeds the hardware's minimum period --- or risk AUDCLNT_E_INVALID_DEVICE_PERIOD.
 
     DWORD dwStreamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST;
-    AUDCLNT_SHAREMODE shareMode = AUDCLNT_SHAREMODE_SHARED; // ; AUDCLNT_SHAREMODE_EXCLUSIVE;
+    AUDCLNT_SHAREMODE shareMode = (!exclusive) ? AUDCLNT_SHAREMODE_SHARED : AUDCLNT_SHAREMODE_EXCLUSIVE;
+
+    //defaultPeriod *= 3;
+    defaultPeriod *= AFX_MAX(1, latency);
+    defPeriodNs = defaultPeriod * 100; // REFERENCE_TIME 1 unit = 100 nanoseconds.
 
     // Step 5: Initialize the render audio client
     hr = pAudioClient->lpVtbl->Initialize(pAudioClient, shareMode, dwStreamFlags, /*minimumPeriod*/defaultPeriod, 0, pwfx, NULL);

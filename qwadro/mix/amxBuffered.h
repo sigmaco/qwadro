@@ -28,18 +28,39 @@
 
 AFX_DEFINE_STRUCT(amxBufferedRing)
 {
-    afxUnit     rounds;
-    afxSize     blockSiz;
-    afxUnit     blockAlign;
-    amxBuffer   buf;
-    afxSize     maxSiz;
-    afxUnit     blockCnt;
+    amxBuffer   mbuf;
+    afxSize     mbufBase;
+    afxUnit     mbufRange;
     afxByte*    basePtr;
     afxSize     currOffset;
+    afxUnit     blockAlign;
+    afxSize     blockSiz;
+    afxUnit     blockCnt;
+    afxUnit     rounds;
 };
 
-AMX void    AmxMakeBufferedRing(amxBufferedRing* rng, afxUnit rounds, afxUnit blockSiz, afxUnit blockAlign, amxBuffer buf, afxSize bufCap, void* mapped);
-AMX afxSize AmxCycleBufferedRing(amxBufferedRing* rng);
-AMX void*   AmxAdvanceBufferedRing(amxBufferedRing* rng, afxUnit reqSiz, afxSize* pOffset, afxUnit* pRange);
+AMX afxError AmxMakeBufferedRing
+(
+    amxBufferedRing* rng, 
+    amxBuffer mbuf, 
+    afxSize bufBase, 
+    afxUnit bufRange, 
+    afxUnit blockSiz, 
+    afxUnit blockAlign, 
+    afxUnit rounds
+);
+
+AMX afxSize AmxCycleBufferedRing
+(
+    amxBufferedRing* rng
+);
+
+AMX void* AmxAdvanceBufferedRing
+(
+    amxBufferedRing* rng, 
+    afxUnit reqSiz, 
+    afxSize* pOffset, 
+    afxUnit* pRange
+);
 
 #endif//AMX_BUFFERED_H

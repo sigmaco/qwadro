@@ -127,6 +127,7 @@ typedef enum afxFcc
     afxFcc_EXU      = AFX_MAKE_FCC('e', 'x', 'u', '\0'), // afxIoBridge
     afxFcc_XQUE     = AFX_MAKE_FCC('x', 'q', 'u', 'e'), // afxIoQueue
     afxFcc_IOC      = AFX_MAKE_FCC('i', 'o', 'c', '\0'), // afxIoContext
+    afxFcc_IOM      = AFX_MAKE_FCC('i', 'o', 'm', '\0'), // afxIommu
     afxFcc_XCMD     = AFX_MAKE_FCC('x', 'c', 'm', 'd'), // afxIoCmd
 
     afxFcc_EMEC     = AFX_MAKE_FCC('e', 's', 'y', 's'), // afxEventMechanism

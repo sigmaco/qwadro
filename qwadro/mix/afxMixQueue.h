@@ -61,10 +61,36 @@ AFX_DEFINE_STRUCT(amxSubmission)
 
 AFX_DEFINE_STRUCT(amxFlush)
 {
-    afxMask             exuMask;
-    afxUnit             baseQueIdx;
-    afxUnit             queCnt;
-    afxSemaphore        wait;
+    // A bitmask specifying which bridges can assume this operation.
+    // If NIL, any bridge is allowed to assume this operation.
+    afxMask         exuMask;
+    afxUnit         baseQueIdx;
+    afxUnit         queCnt;
+
+    afxSink         sink;
+    afxUnit         sampleCnt;
+
+    amxFence        wait;
+    afxUnit64       waitValue;
+    amxFence        signal;
+    afxUnit64       signalValue;
+};
+
+AFX_DEFINE_STRUCT(amxCaption)
+{
+    // A bitmask specifying which bridges can assume this operation.
+    // If NIL, any bridge is allowed to assume this operation.
+    afxMask         exuMask;
+    afxUnit         baseQueIdx;
+    afxUnit         queCnt;
+
+    afxSink         sink;
+    afxUnit         sampleCnt;
+
+    avxFence        wait;
+    afxUnit64       waitValue;
+    avxFence        signal;
+    afxUnit64       signalValue;
 };
 
 AFX_DEFINE_STRUCT(amxTransference)

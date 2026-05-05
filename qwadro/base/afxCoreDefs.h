@@ -320,6 +320,20 @@ typedef enum afxError
     afxError_NOT_AUTHORIZED,
 } afxError;
 
+#define AfxSucceded(...) (afxError_NONE == (__VA_ARGS__))
+#define AfxFailed(...) (afxError_NONE != (__VA_ARGS__))
+#define AfxTimeOut(...) (afxError_TIMEOUT == (__VA_ARGS__))
+#define AfxIncomplete(...) (afxError_INCOMPLETE == (__VA_ARGS__))
+#define AfxNotReady(...) (afxError_NOT_READY == (__VA_ARGS__))
+#define AfxBusy(...) (afxError_BUSY == (__VA_ARGS__))
+#define AfxDenied(...) (afxError_DENIED == (__VA_ARGS__))
+#define AfxUnsupported(...) (afxError_UNSUPPORTED == (__VA_ARGS__))
+#define AfxViolation(...) (afxError_VIOLATION == (__VA_ARGS__))
+#define AfxNotFound(...) (afxError_NOT_FOUND == (__VA_ARGS__))
+#define AfxOutOfMemory(...) (afxError_OUT_OF_MEMORY == (__VA_ARGS__))
+#define AfxOutOfRange(...) (afxError_OUT_OF_RANGE == (__VA_ARGS__))
+#define AfxInsufficient(...) (afxError_INSUFFICIENT == (__VA_ARGS__))
+
 typedef enum afxCriterion
 {
     afxCriterion_PROHIBIT, // if available can't be procceeded.
@@ -339,7 +353,7 @@ typedef enum afxProfileFlag
 // Object handles defined by Core Execution System
 
 AFX_DEFINE_HANDLE(afxSystem);
-AFX_DEFINE_HANDLE(afxIoSystem);
+AFX_DEFINE_HANDLE(afxIommu);
 AFX_DEFINE_HANDLE(afxThread);
 AFX_DEFINE_HANDLE(afxThreadPool);
 AFX_DEFINE_HANDLE(afxTxu);
@@ -359,6 +373,8 @@ AFX_DEFINE_HANDLE(afxDevLink);
 AFX_DEFINE_HANDLE(afxService);
 AFX_DEFINE_HANDLE(afxSemaphore);
 AFX_DEFINE_HANDLE(avxFence);
+AFX_DEFINE_HANDLE(afxBuffer);
+AFX_DEFINE_HANDLE(afxFence);
 AFX_DEFINE_HANDLE(afxIoSystem);
 AFX_DEFINE_HANDLE(afxHid);
 AFX_DEFINE_HANDLE(afxKeyboard);

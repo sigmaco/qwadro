@@ -299,7 +299,7 @@ _ZGL void _DpuPlacePipelineBarrier(zglDpu* dpu, avxBusStage dstStage, avxBusAcce
     */
 
     GLbitfield flags = NIL;
-    gl->MemoryBarrier(glMask ? glMask : GL_ALL_BARRIER_BITS);
+    gl->MemoryBarrier(glMask ? glMask : GL_ALL_BARRIER_BITS); _ZglThrowErrorOccuried();
 }
 
 _ZGL void DpuDraw(zglDpu* dpu, avxDrawIndirect const* data)

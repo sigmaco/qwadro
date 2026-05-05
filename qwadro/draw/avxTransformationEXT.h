@@ -28,65 +28,92 @@
 
 // Specify polygon mode dynamically for a draw context.
 
-AVX afxError            AvxCmdChangeFillModeEXT
+AVX afxError AvxCmdChangeFillModeEXT
 (
-    afxDrawContext      dctx,
-    avxFillMode         mode
+    afxDrawContext dctx,
+
+    avxFillMode mode
 );
 
 AFX afxError AvxCmdBeginTransformFeedbackEXT
 (
     afxDrawContext dctx,
+
     afxUnit firstCntBuf,
+
     afxUnit cntBufCnt,
+
     avxBuffer const cntBufs[],
+
     afxSize const cntBufOffsets[]
 );
 
 AFX afxError AvxCmdEndTransformFeedbackEXT
 (
     afxDrawContext dctx,
+
     afxUnit firstCntBuf,
+
     afxUnit cntBufCnt,
+
     avxBuffer const cntBufs[],
+
     afxSize const cntBufOffsets[]
 );
 
 AFX afxError AvxCmdBeginQueryIndexedEXT
 (
     afxDrawContext dctx,
+
     avxQueryPool qryp,
+
     afxUnit query,
+
     afxBool precise,
+
     afxUnit index
 );
 
 AFX afxError AvxCmdEndQueryIndexedEXT
 (
     afxDrawContext dctx,
+
     avxQueryPool qryp,
+
     afxUnit query,
+
     afxUnit index
 );
 
 AFX afxError AvxCmdBindTransformFeedbackBuffersEXT
 (
     afxDrawContext dctx,
+
     afxUnit first,
+
     afxUnit cnt,
+
     avxBuffer const buffers[],
+
     afxSize const offsets[],
+
     afxSize const ranges[]
 );
 
 AFX afxError AvxCmdDrawIndirectByteCountEXT
 (
     afxDrawContext dctx,
+
     afxUnit instCnt,
+
     afxUnit firstInst,
+
     avxBuffer cntBuf,
+
     afxSize cntBufOffset,
+
     afxUnit cntOffset,
+
     afxUnit vtxStride
 );
 
@@ -97,10 +124,13 @@ AFX afxError AvxCmdDrawIndirectByteCountEXT
 AVX afxError AvxCmdDrawMeshTasksEXT
 (
     afxDrawContext dctx,
+
     // The number of local workgroups to dispatch in the X dimension.
     afxUnit w,
+
     // The number of local workgroups to dispatch in the Y dimension.
     afxUnit h,
+
     // The number of local workgroups to dispatch in the Z dimension.
     afxUnit d
 );
@@ -127,12 +157,16 @@ AFX_DEFINE_STRUCT(avxDrawMeshTasksIndirectEXT)
 AVX afxError AvxCmdDrawMeshTasksIndirectEXT
 (
     afxDrawContext dctx,
+
     // The buffer containing draw parameters.
     avxBuffer buf,
+
     // The byte offset into buffer where parameters begin.
     afxSize offset,
+
     // The number of draws to execute, and can be zero.
     afxUnit drawCnt,
+
     // The byte stride between successive sets of draw parameters.
     afxUnit stride
 );
@@ -146,17 +180,23 @@ AVX afxError AvxCmdDrawMeshTasksIndirectEXT
 AVX afxError AvxCmdDrawMeshTasksIndirectCountEXT
 (
     afxDrawContext dctx,
+
     // The buffer containing draw parameters.
     avxBuffer buf,
+
     // The byte offset into buffer where parameters begin.
     afxSize offset,
+
     // The buffer containing the draw count.
     avxBuffer cntBuf,
+
     // The byte offset into countBuffer where the draw count begins.
     afxSize cntBufOffset,
+
     // The maximum number of draws that will be executed. 
     // The actual number of executed draw calls is the minimum of the count specified in @cntBuf and @maxDrawCnt.
     afxUnit maxDrawCnt,
+
     // The byte stride between successive sets of draw parameters.
     afxUnit stride
 );

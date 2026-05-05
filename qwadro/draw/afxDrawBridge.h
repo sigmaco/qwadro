@@ -76,36 +76,46 @@ typedef enum avxAptitude
 
 AFX_DEFINE_STRUCT(avxBridgeConfig)
 {
-    afxUnit             ddevId;
-    afxAcceleration     acceleration;
-    avxAptitude         capabilities; // specifies capabilities of queues in a port.
-    afxUnit             minQueCnt;
-    afxReal const*      queuePriority;
+    afxUnit         ddevId;
+
+    afxAcceleration acceleration;
+
+    avxAptitude     capabilities; // specifies capabilities of queues in a port.
+
+    afxUnit         minQueCnt;
+
+    afxReal const*  queuePriority;
 };
 
 AVX afxDrawSystem AvxGetBridgedDrawSystem
 (
     afxDrawBridge dexu, 
+
     afxUnit* bridgeId
 );
 
 AVX afxDrawDevice AvxGetBridgedDrawDevice
 (
     afxDrawBridge dexu, 
+
     afxUnit* ddevId
 );
 
 AVX afxUnit AvxGetDrawQueues
 (
     afxDrawBridge dexu, 
+
     afxUnit baseQueIdx, 
+
     afxUnit cnt, 
+
     afxDrawQueue queues[]
 );
 
 AVX afxError AvxWaitForIdleDrawBridge
 (
     afxDrawBridge dexu, 
+
     afxUnit64 timeout
 );
 

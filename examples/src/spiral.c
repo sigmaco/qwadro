@@ -16,6 +16,7 @@
 
 #include "qwadro/afxQwadro.h"
 
+//#define WAIT_FOR_FRAME TRUE
 #define MAX_FRAMES_IN_FLIGHT 3
 
 #ifdef AFX_OS_WIN
@@ -165,8 +166,6 @@ int main(int argc, char const* argv[])
 
     while (1)
     {
-        AfxDoUx(0, AFX_TIMEOUT_INFINITE);
-
         if (!AfxSystemIsExecuting())
             break;
 
@@ -187,10 +186,12 @@ int main(int argc, char const* argv[])
         }
         ++fpsi;
 
+#if WAIT_FOR_FRAME
         if (nextFrameId > frameCap)
         {
             AvxWaitForFence(sema, nextFrameId - frameCap, AFX_TIMEOUT_INFINITE);
         }
+#endif
 
         /*
             Frame and Scene Management:
@@ -201,18 +202,26 @@ int main(int argc, char const* argv[])
         */
 
         afxUnit outBufIdx = 0;
-        if (afxError_NONE != AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx))
+        if (AfxFailed(AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx)))
         {
             //continue;
+            AfxDoUx(0, AFX_TIMEOUT_INFINITE);
         }
         else
         {
             afxBool compiled = FALSE;
             afxBool presented = FALSE;
 
+#if WAIT_FOR_FRAME
             afxDrawContext dctx = drawContexts[outBufIdx];
+#else
+            avxContextConfig dci = { 0 };
+            dci.caps = avxAptitude_GFX;
+            afxDrawContext dctx;
+            AvxAcquireDrawContexts(dsys, NIL, &dci, 1, &dctx);
+#endif
 
-            if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
+            if (AfxFailed(AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE)))
             {
                 AfxThrowError();
             }
@@ -233,7 +242,7 @@ int main(int argc, char const* argv[])
                 dps.ds[0].storeOp = avxStoreOp_STORE;
                 dps.ds[0].loadOp = avxLoadOp_CLEAR;
                 dps.ds[0].clearVal = AVX_DEPTH_VALUE(1.0, 0);
-                if (afxError_NONE != AvxCmdCommenceDrawScope(dctx, &dps))
+                if (AfxFailed(AvxCmdCommenceDrawScope(dctx, &dps)))
                 {
 
                 }
@@ -277,14 +286,28 @@ int main(int argc, char const* argv[])
                     AfxM4dScaling(ssm, AFX_V3D(2, 2, 1));
                     ArxPushTransform(rctx, ssm);
 
+#if 0
                     for (afxUnit i = 0; i < 200; i++)
                     {
                         afxReal r1 = 100 - i / 2;
                         afxReal r2 = 100 - (i + 1) / 2;
                         afxReal a1 = i * a / 10;
                         afxReal a2 = (i + 1) * a / 10;
-                        ArxDrawLine(rctx, AFX_V3D(r1 * AfxCos(a1), r1 * AfxSin(a1), 1), AFX_V3D(r2 * AfxCos(a2), r2 * AfxSin(a2), 1));
+                        ArxDrawLine(rctx, AFX_V3D(r1 * AfxCos(a1), r1 * AfxSin(a1), 0), AFX_V3D(r2 * AfxCos(a2), r2 * AfxSin(a2), 0));
                     }
+#else
+                    afxV3d points[200*2];
+                    for (afxUnit i = 0; i < 200; i++)
+                    {
+                        afxReal r1 = 100 - i / 2;
+                        afxReal r2 = 100 - (i + 1) / 2;
+                        afxReal a1 = i * a / 10;
+                        afxReal a2 = (i + 1) * a / 10;
+                        AfxV3dCopy(points[i * 2], AFX_V3D(r1 * AfxCos(a1), r1 * AfxSin(a1), 0));
+                        AfxV3dCopy(points[i * 2 + 1], AFX_V3D(r2 * AfxCos(a2), r2 * AfxSin(a2), 0));
+                    }
+                    ArxDrawStrippedLines(rctx, 200*2, points, 3);
+#endif
 
                     ArxEndScene(rctx, 0);
                     ArxEndFrame(rctx, NIL, NIL);
@@ -293,7 +316,7 @@ int main(int argc, char const* argv[])
                     AvxCmdConcludeDrawScope(dctx);
                 }
 
-                if (AvxCompileDrawCommands(dctx))
+                if (AfxFailed(AvxCompileDrawCommands(dctx)))
                 {
                     AfxThrowError();
                 }
@@ -305,7 +328,11 @@ int main(int argc, char const* argv[])
 
             if (!compiled)
             {
+#if WAIT_FOR_FRAME
                 AvxExhaustDrawContext(dctx, TRUE);
+#else
+                AfxDisposeObjects(1, &dctx);
+#endif
             }
             else
             {
@@ -324,13 +351,19 @@ int main(int argc, char const* argv[])
                 subm.dctx = dctx;
                 //subm.wait = sema;
                 //subm.waitValue = nextFrameId - frameCap;
+#if WAIT_FOR_FRAME
                 subm.signal = sema;
                 subm.signalValue = nextFrameId++;
+#endif
 
-                if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
+                if (AfxFailed(AvxExecuteDrawCommands(dsys, 1, &subm, NIL)))
                 {
                     AfxThrowError();
                 }
+
+#ifndef WAIT_FOR_FRAME
+                AfxDisposeObjects(1, &dctx);
+#endif
 
                 /*
                     Synchronization:
@@ -341,14 +374,18 @@ int main(int argc, char const* argv[])
 
                 //AfxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuIdx);
                 //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
+            }
+            
+            AfxDoUx(0, AFX_TIMEOUT_INFINITE);
 
+            {
                 avxPresentation pres = { 0 };
                 //pres.wait = subm.signal;
                 //pres.waitValue = subm.signalValue;
                 pres.dout = dout;
                 pres.bufIdx = outBufIdx;
 
-                if (AvxPresentSurfaces(dsys, 1, &pres, NIL))
+                if (AfxFailed(AvxPresentSurfaces(dsys, 1, &pres, NIL)))
                 {
                     AfxThrowError();
                 }

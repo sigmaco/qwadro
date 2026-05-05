@@ -79,5 +79,7 @@ ARX afxError ArxSetWireframeConstants(arxRenderContext rctx, afxReal wireThickne
 ARX afxError ArxPushTransform(arxRenderContext rctx, afxM4d const m);
 
 ARX void ArxDrawLine(arxRenderContext rctx, afxV3d origin, afxV3d target);
+ARX void ArxDrawLines(arxRenderContext rctx, afxUnit cnt, afxRect const rects[]);
+ARX void ArxDrawStrippedLines(arxRenderContext rctx, afxUnit vtxCnt, afxReal const vertices[], afxUnit vecSiz);
 
 #endif//ARX_WIREFRAME_H

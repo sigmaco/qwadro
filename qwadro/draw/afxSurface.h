@@ -322,7 +322,7 @@ AVX afxError AvxPresentSurfaces
     afxUnit queueingMap[]
 );
 
-AVX afxError AvxCaptureSurfaces
+AVX afxError AvxScanSurfaces
 (
     // The drawing system where the outputs will be captured.
     afxDrawSystem dsys,

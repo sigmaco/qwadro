@@ -38,6 +38,24 @@
     <ClInclude Include="..\..\..\qwadro\coll\arxCollision.h" />
     <ClInclude Include="..\..\..\qwadro\coll\arxOctree.h" />
     <ClInclude Include="..\..\..\qwadro\coll\arxQuadtree.h" />
+    <ClInclude Include="..\..\..\qwadro\io\afxFence.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\io\afxIommu.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\io\afxIoQueue.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\..\qwadro\iris\arxIrisDefs.h" />
     <ClInclude Include="..\..\..\qwadro\iris\arxRenderContext.h" />
     <ClInclude Include="..\..\..\qwadro\iris\arxRenderer.h" />
@@ -46,6 +64,18 @@
     <ClInclude Include="..\..\..\qwadro\iris\arxRenderTerrain.h" />
     <ClInclude Include="..\..\..\qwadro\iris\arxTechnique.h" />
     <ClInclude Include="..\..\..\qwadro\iris\arxWireframe.h" />
+    <ClInclude Include="..\..\..\qwadro\mem\afxBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\mem\afxBuffered.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\..\qwadro\scene\arxBuffer.h" />
     <ClInclude Include="..\..\..\qwadro\scene\arxBufferizer.h" />
     <ClInclude Include="..\..\..\qwadro\scene\arxCamera.h" />
@@ -68,9 +98,50 @@
     <ClInclude Include="..\..\coree\exec\afxThreadingDDK.h" />
     <ClInclude Include="..\..\coree\hid\afxHidDDK.h" />
     <ClInclude Include="..\..\coree\io\afxArchiveDDK.h" />
-    <ClInclude Include="..\..\coree\io\afxIoDDK.h" />
+    <ClInclude Include="..\..\coree\io\afxFenceDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\io\afxIoBridgeDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\io\afxIoContextDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\io\afxIoDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\io\afxIommuDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\coree\io\afxIoQueueDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\coree\io\afxStorageDDK.h" />
     <ClInclude Include="..\..\coree\io\afxStreamDDK.h" />
+    <ClInclude Include="..\..\coree\mem\afxBufferDDK.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\coree\mix\amxAudioDDK.h" />
     <ClInclude Include="..\..\coree\mix\afxMixBridgeDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxBufferDDK.h" />
@@ -133,13 +204,12 @@
     <ClInclude Include="..\..\..\qwadro\draw\avxCanvas.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxShader.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxColor.h" />
-    <ClInclude Include="..\..\..\qwadro\draw\avxDrawing.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxFence.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxFormat.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxLigature.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxMatrix.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxPipeline.h" />
-    <ClInclude Include="..\..\..\qwadro\draw\avxProvision.h" />
+    <ClInclude Include="..\..\..\qwadro\draw\avxBusEXT.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxQueryPool.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxRaster.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxRasterFile.h" />
@@ -147,7 +217,6 @@
     <ClInclude Include="..\..\..\qwadro\draw\avxRasterization.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxRasterizationEXT.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxSampler.h" />
-    <ClInclude Include="..\..\..\qwadro\draw\avxSynchronization.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxTransference.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxTransformation.h" />
     <ClInclude Include="..\..\..\qwadro\draw\avxTransformationEXT.h" />
@@ -185,8 +254,18 @@
     <ClInclude Include="..\..\..\qwadro\io\afxData.h" />
     <ClInclude Include="..\..\..\qwadro\io\afxDatabase.h" />
     <ClInclude Include="..\..\..\qwadro\io\afxFile.h" />
-    <ClInclude Include="..\..\..\qwadro\io\afxIoBridge.h" />
-    <ClInclude Include="..\..\..\qwadro\io\afxIoContext.h" />
+    <ClInclude Include="..\..\..\qwadro\io\afxIoBridge.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\io\afxIoContext.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\..\qwadro\io\afxSource.h" />
     <ClInclude Include="..\..\..\qwadro\io\afxStorage.h" />
     <ClInclude Include="..\..\..\qwadro\io\afxStream.h" />
@@ -421,18 +500,84 @@
     <ClCompile Include="..\..\coree\io\afxArchive.c" />
     <ClCompile Include="..\..\coree\io\afxData.c" />
     <ClCompile Include="..\..\coree\io\afxDatabase.c" />
+    <ClCompile Include="..\..\coree\io\afxFence.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\coree\io\afxFile.c" />
-    <ClCompile Include="..\..\coree\io\afxIoBridge.c" />
-    <ClCompile Include="..\..\coree\io\afxIoContext.c" />
-    <ClCompile Include="..\..\coree\io\afxIoPort.c" />
-    <ClCompile Include="..\..\coree\io\afxIoQueue.c" />
+    <ClCompile Include="..\..\coree\io\afxIoBridge.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxIoContext.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxIoContextDDK.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxIoPort.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxIoQueue.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxIommu.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\coree\io\afxSource.c" />
     <ClCompile Include="..\..\coree\io\afxStorage.c" />
     <ClCompile Include="..\..\coree\io\afxStream.c" />
-    <ClCompile Include="..\..\coree\io\afxStreamOps.c" />
-    <ClCompile Include="..\..\coree\io\afxStreamXpu.c" />
+    <ClCompile Include="..\..\coree\io\afxStreamOps.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\io\afxStreamXpu.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\coree\mem\afxArena.c" />
     <ClCompile Include="..\..\coree\mem\afxArray.c" />
+    <ClCompile Include="..\..\coree\mem\afxBuffer.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mem\afxBuffered.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\coree\mem\afxBufferIo.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\coree\mem\afxInterlockedQueue.c" />
     <ClCompile Include="..\..\coree\mem\afxMappedString.c" />
     <ClCompile Include="..\..\coree\mem\afxMemory.c" />
@@ -531,7 +676,6 @@
     <ClCompile Include="..\..\coree\draw\afxDrawContext.c" />
     <ClCompile Include="..\..\coree\draw\afxDrawContextDDK.c" />
     <ClCompile Include="..\..\coree\draw\afxDrawDevice.c" />
-    <ClCompile Include="..\..\coree\draw\avxDrawing.c" />
     <ClCompile Include="..\..\coree\draw\avxFence.c" />
     <ClCompile Include="..\..\coree\draw\avxFormat.c" />
     <ClCompile Include="..\..\coree\draw\avxFormatDXT.c" />
@@ -541,7 +685,7 @@
     <ClCompile Include="..\..\coree\draw\avxLigature.c" />
     <ClCompile Include="..\..\coree\draw\avxMatrix.c" />
     <ClCompile Include="..\..\coree\draw\avxPipeline.c" />
-    <ClCompile Include="..\..\coree\draw\avxProvision.c" />
+    <ClCompile Include="..\..\coree\draw\avxBusEXT.c" />
     <ClCompile Include="..\..\coree\draw\avxQueryPool.c" />
     <ClCompile Include="..\..\coree\draw\afxDrawQueue.c" />
     <ClCompile Include="..\..\coree\draw\avxRaster.c" />
@@ -552,7 +696,7 @@
     <ClCompile Include="..\..\coree\draw\avxSampler.c" />
     <ClCompile Include="..\..\coree\draw\afxSurface.c" />
     <ClCompile Include="..\..\coree\draw\afxSurfaceDDK.c" />
-    <ClCompile Include="..\..\coree\draw\avxSynchronization.c" />
+    <ClCompile Include="..\..\coree\draw\avxBus.c" />
     <ClCompile Include="..\..\coree\draw\afxDrawSystem.c" />
     <ClCompile Include="..\..\coree\draw\avxTransference.c" />
     <ClCompile Include="..\..\coree\draw\avxTransformation.c" />

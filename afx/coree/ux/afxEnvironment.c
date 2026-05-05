@@ -208,11 +208,11 @@ _AUX afxError AfxSetClipboardContent(afxUnit seat, afxUnit slot, afxClipboardFla
     return err;
 }
 
-_AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxRect* rc, afxWindow wnd, afxRect* onFrame, afxRect* onSurface)
+_AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxWindow wnd, afxBool onFrame, afxRect* rc)
 {
     afxError err = { 0 };
-    AFX_ASSERT(!wnd || (onFrame || onSurface));
-    AFX_ASSERT(rc || onFrame || onSurface);
+    AFX_ASSERT(!onFrame || (wnd));
+    AFX_ASSERT(rc);
     afxBool rslt = TRUE;
 
     afxEnvironment env;
@@ -222,7 +222,7 @@ _AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxRect* rc, afxWindow wnd, afx
 
     if (env->ddi->getCurs)
     {
-        return env->ddi->getCurs(env, seat, rc, wnd, onFrame, onSurface);
+        return env->ddi->getCurs(env, seat, wnd, onFrame, rc);
     }
     else
     {
@@ -238,12 +238,11 @@ _AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxRect* rc, afxWindow wnd, afx
 
             if (onFrame)
             {
-                rslt = AfxIntersectRects(onFrame, &cursRect, &frameRc);
+                rslt = AfxIntersectRects(rc, &cursRect, &frameRc);
             }
-
-            if (onSurface)
+            else
             {
-                rslt = AfxIntersectRects(onSurface, &cursRect, &surfaceRc);
+                rslt = AfxIntersectRects(rc, &cursRect, &surfaceRc);
             }
         }
     }

@@ -1113,6 +1113,8 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
 
         avxFence fences[2] = { 0 };
         avxFenceInfo fencesInfo[2] = { 0 };
+        fencesInfo[0].flags = avxFenceFlag_TIMELINE;
+        fencesInfo[1].flags = avxFenceFlag_TIMELINE;
         fencesInfo[0].initialVal = 0;
         fencesInfo[1].initialVal = 0; // start avail already signaled
         if (AvxAcquireFences(dsys, 2, fencesInfo, fences))

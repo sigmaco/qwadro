@@ -370,6 +370,13 @@ typedef int16_t         afxInt16;
 typedef int32_t         afxInt32;
 typedef int64_t         afxInt64;
 
+/*
+    The nomenclature 'unit' (instead of 'uint') for unsigned int is not mispelled.
+    But due to some many mispelled cases, the developers decided to joke on it,
+    renaming all the 'uint' types to 'unit', and it is now a cultural artifact of this project.
+    Do not take things too much seriously in this life when it is not needed. Have fun of it.
+    Once our life projects will obsolete too, and it used to happen as we try to force irrelevant things.
+*/
 typedef uint8_t         afxUnit8;
 typedef uint16_t        afxUnit16;
 typedef uint32_t        afxUnit32;

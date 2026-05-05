@@ -386,26 +386,6 @@ AFX_DEFINE_STRUCT(avxRasterization)
 //////////////////////////////////////////////////////////////////////////////
 
 /*
-    The AvxCmdAdjustScissors() operation adjusts scissor rectangles dynamically for a draw context.
-
-    This command sets the scissor rectangles for subsequent drawing commands when drawing using shader objects, 
-    or when the graphics pipeline is created without scissor set.
-
-    The scissor rectangles taken from element #i of @rect replace the current state for the scissor index @baseIdx + #i, for #i in [0, @cnt).
-*/
-
-AVX afxError AvxCmdAdjustScissors
-(
-    afxDrawContext dctx,
-    // is the index of the first scissor whose state is updated by the command.
-    afxUnit baseIdx,
-     // is the number of scissors whose rectangles are updated by the command.
-    afxUnit cnt,
-     // is a pointer to an array of afxRect structures defining scissor rectangles.
-    afxRect const rects[]
-);
-
-/*
     The AvxCmdSwitchRasterization() operation controls whether primitives are discarded before the 
     rasterization stage dynamically for a draw context.
 */
@@ -413,17 +393,35 @@ AVX afxError AvxCmdAdjustScissors
 AVX afxError AvxCmdSwitchRasterization
 (
     afxDrawContext dctx,
+
     // controls whether primitives are discarded immediately before the rasterization stage.
     afxBool disabled
 );
 
 /*
-    The AvxCmdSwitchDepthBias() operation controls whether to bias fragment depth values dynamically for a draw context.
+    The AvxCmdSetLineWidth() operation sets line width dynamically for a draw context.
 */
 
-AVX afxError AvxCmdSwitchDepthBias
+AVX afxError AvxCmdSetLineWidth
 (
     afxDrawContext dctx,
+
+    // is the width of rasterized line segments.
+    afxReal lineWidth
+);
+
+  //////////////////////////////////////////////////////////////////////////////
+ //// FRAGMENT DEPTH                                                       ////
+//////////////////////////////////////////////////////////////////////////////
+
+/*
+    The AvxCmdEnableDepthBias() operation controls whether to bias fragment depth values dynamically for a draw context.
+*/
+
+AVX afxError AvxCmdEnableDepthBias
+(
+    afxDrawContext dctx,
+
     // controls whether to bias fragment depth values.
     afxBool enabled
 );
@@ -435,57 +433,80 @@ AVX afxError AvxCmdSwitchDepthBias
 AVX afxError AvxCmdSetDepthBias
 (
     afxDrawContext dctx,
+
     // is a scalar factor controlling the constant depth value added to each fragment.
     afxReal constFactor,
+
      // is the maximum (or minimum) depth bias of a fragment.
     afxReal clamp,
+
      // is a scalar factor applied to a fragment’s slope in depth bias calculations.
     afxReal slopeFactor
 );
 
 /*
-    The AvxCmdSetLineWidth() operation sets line width dynamically for a draw context.
+    The AvxCmdEnableDepthTesting() operation sets depth test enable dynamically for a draw context.
 */
 
-AVX afxError AvxCmdSetLineWidth
+AVX afxError AvxCmdEnableDepthTesting
 (
     afxDrawContext dctx,
-    // is the width of rasterized line segments.
-    afxReal lineWidth
-);
 
-/*
-    The AvxCmdSwitchDepthTesting() operation sets depth test enable dynamically for a draw context.
-*/
-
-AVX afxError AvxCmdSwitchDepthTesting
-(
-    afxDrawContext dctx,
     // specifies if the depth test is enabled.
     afxBool enable
 );
 
 /*
-    The AvxCmdSetDepthCompareOp() operation sets depth comparison operator dynamically for a draw context.
+    The AvxCmdSetDepthComparator() operation sets depth comparison operator dynamically for a draw context.
 */
 
-AVX afxError AvxCmdSetDepthCompareOp
+AVX afxError AvxCmdSetDepthComparator
 (
     afxDrawContext dctx,
+
     // A value specifying the comparison operator used for the depth comparison step of the depth test.
     avxCompareOp op
 );
 
 /*
-    The AvxCmdSwitchDepthWrites() operation sets depth write disable dynamically for a draw context.
+    The AvxCmdDisableDepthWrites() operation sets depth write disable dynamically for a draw context.
 */
 
-AVX afxError AvxCmdSwitchDepthWrites
+AVX afxError AvxCmdDisableDepthWrites
 (
     afxDrawContext dctx,
+
     // specifies if depth writes are disabled.
     afxBool disable
 );
+
+/*
+    The AvxCmdEnableDepthBounds() operation sets depth bounds test enable dynamically for a draw context.
+*/
+
+AVX afxError AvxCmdEnableDepthBounds
+(
+    afxDrawContext dctx,
+
+    // specifies if the depth bounds test is enabled.
+    afxBool enable
+);
+
+/*
+    The AvxCmdDelimitDepthBounds() operation sets depth bounds range dynamically for a draw context.
+*/
+
+AVX afxError AvxCmdDelimitDepthBounds
+(
+    afxDrawContext dctx,
+
+    // is the minimum and maximum depth bounds.
+    afxV2d const bounds
+);
+
+  //////////////////////////////////////////////////////////////////////////////
+ //// CANVAS STENCIL                                                       ////
+//////////////////////////////////////////////////////////////////////////////
 
 /*
     The AvxCmdSwitchStencilTesting() operation sets stencil test enable dynamically for a draw context.
@@ -494,6 +515,7 @@ AVX afxError AvxCmdSwitchDepthWrites
 AVX afxError AvxCmdSwitchStencilTesting
 (
     afxDrawContext dctx,
+
     // specifies if the stencil test is enabled.
     afxBool enable
 );
@@ -505,8 +527,10 @@ AVX afxError AvxCmdSwitchStencilTesting
 AVX afxError AvxCmdSetStencilCompareMask
 (
     afxDrawContext dctx,
+
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to update the compare mask.
     avxFaceMask faceMask,
+
      // is the new value to use as the stencil compare mask.
     afxMask compareMask
 );
@@ -518,8 +542,10 @@ AVX afxError AvxCmdSetStencilCompareMask
 AVX afxError AvxCmdSetStencilWriteMask
 (
     afxDrawContext dctx,
+
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to update the write mask, as described above for vkCmdSetStencilCompareMask.
     avxFaceMask faceMask,
+
      // is the new value to use as the stencil write mask.
     afxMask writeMask
 );
@@ -531,8 +557,10 @@ AVX afxError AvxCmdSetStencilWriteMask
 AVX afxError AvxCmdSetStencilReference
 (
     afxDrawContext dctx,
+
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to
     avxFaceMask faceMask,
+
     // is the new value to use as the stencil reference value.
     afxUnit32 reference
 );
@@ -544,38 +572,133 @@ AVX afxError AvxCmdSetStencilReference
 AVX afxError AvxCmdSetStencilOp
 (
     afxDrawContext dctx,
+
     // is a bitmask of (0/FRONT, 1/BACK, 2/BOTH) bits specifying the set of stencil state for which to
     avxFaceMask faceMask,
+
     // The action performed on samples that fail the stencil test.
     avxStencilOp failOp,
+
     // The action performed on samples that pass both the depth and stencil tests.
     avxStencilOp passOp,
+
     // The action performed on samples that pass the stencil test and fail the depth test.
     avxStencilOp depthFailOp,
+
     // The comparison operator used in the stencil test.
     avxCompareOp compareOp
 );
 
+  //////////////////////////////////////////////////////////////////////////////
+ //// CANVAS                                                               ////
+//////////////////////////////////////////////////////////////////////////////
+
 /*
-    The AvxCmdSwitchDepthBoundsTesting() operation sets depth bounds test enable dynamically for a draw context.
+
 */
 
-AVX afxError AvxCmdSwitchDepthBoundsTesting
+AVX afxError AvxCmdBindDrawBuffersEXT
 (
     afxDrawContext dctx,
-    // specifies if the depth bounds test is enabled.
-    afxBool enable
+
+    avxCanvas canv,
+
+    afxUnit bufCnt,
+
+    afxUnit const bins[],
+
+    avxRaster const buffers[]
 );
 
 /*
-    The AvxCmdSetDepthBounds() operation sets depth bounds range dynamically for a draw context.
+    The AvxCmdCommenceDrawScope() operation commences a new drawing scope.
+    After beginning a drawing scope, the drawing context is ready to record draw commands.
+
+    If flags includes resuming then this draw scope is resumed from a drawing scope that has been suspended earlier in submission order.
 */
 
-AVX afxError AvxCmdSetDepthBounds
+AVX afxError AvxCmdCommenceDrawScope
 (
     afxDrawContext dctx,
-    // is the minimum and maximum depth bounds.
-    afxV2d const bounds
+
+    // Structure specifying details of the draw scope instance to begin.
+    avxDrawScope const* cfg
+);
+
+/*
+    The AvxCmdAdvancePass() operation transitions to the next pass of a drawing scope.
+
+   The pass index for a render canvas begins at zero when AvxCmdCommenceDrawScope is recorded, and increments each time AvxCmdAdvancePass is recorded.
+
+   After transitioning to the next pass, the application can record the commands for that pass.
+*/
+
+AVX afxError AvxCmdAdvancePass
+(
+    afxDrawContext dctx,
+
+    // specifies how the commands in the next subpass will be provided, in the same fashion as the corresponding parameter of vkCmdBeginRenderPass.
+    afxBool useAuxScripts
+);
+
+/*
+    The AvxCmdConcludeDrawScope() operation concludes the current drawing scope.
+
+    If the value of flags used to begin this draw scope instance included suspending,
+    then this render canvas is suspended and will be resumed later in submission order.
+*/
+
+AVX afxError AvxCmdConcludeDrawScope
+(
+    afxDrawContext dctx
+);
+
+/*
+    The AvxCmdClearCanvas() operations clears a number of areas in every canvas' annex listed.
+*/
+
+AVX afxError AvxCmdClearCanvas
+(
+    afxDrawContext dctx,
+
+    // The number of annexes to clear.
+    afxUnit bufCnt,
+
+    // An array of indices to each annex to be cleared.
+    // If NIL, it will index sequentially up to @annexCnt.
+    afxUnit const bins[],
+
+    // An array of clear values, one for each annex.
+    avxClearValue const values[],
+
+    // The number of areas to be cleared in every annex.
+    afxUnit areaCnt,
+
+    // An array of areas to be cleared in every annex.
+    afxLayeredRect const areas[]
+);
+
+/*
+    The AvxCmdAdjustScissors() operation adjusts scissor rectangles dynamically for a draw context.
+
+    This command sets the scissor rectangles for subsequent drawing commands when drawing using shader objects,
+    or when the graphics pipeline is created without scissor set.
+
+    The scissor rectangles taken from element #i of @rect replace the current state for the scissor index @baseIdx + #i, for #i in [0, @cnt).
+*/
+
+AVX afxError AvxCmdAdjustScissors
+(
+    afxDrawContext dctx,
+
+    // is the index of the first scissor whose state is updated by the command.
+    afxUnit baseIdx,
+
+    // is the number of scissors whose rectangles are updated by the command.
+    afxUnit cnt,
+
+    // is a pointer to an array of afxRect structures defining scissor rectangles.
+    afxRect const rects[]
 );
 
 /*
@@ -585,6 +708,7 @@ AVX afxError AvxCmdSetDepthBounds
 AVX afxError AvxCmdSetBlendConstants
 (
     afxDrawContext dctx,
+
     // An array of four values specifying the Rc, Gc, Bc, and Ac components of the 
     // blend constant color used in blending, depending on the blend factor.
     afxV4d const blendConstants

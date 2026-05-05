@@ -31,12 +31,40 @@
 #include "qwadro/draw/avxSampler.h"
 #include "qwadro/draw/avxQueryPool.h"
 
+#pragma pack(push, 1)
+
+AFX_DEFINE_STRUCT(avxDrawIndirect)
+/// Structure specifying a indirect drawing command
+{
+    afxUnit32   vtxCnt; // is the number of vertices to draw.
+    afxUnit32   instCnt; // is the number of instances to draw.
+    afxUnit32   baseVtx; // is the index of the first vertex to draw.
+    afxUnit32   baseInst; // is the instance ID of the first instance to draw.
+};
+
+AFX_DEFINE_STRUCT(avxDrawIndexedIndirect)
+/// Structure specifying a indexed indirect drawing command
+{
+    afxUnit32   idxCnt; // is the number of vertices to draw.
+    afxUnit32   instCnt; // is the number of instances to draw.
+    afxUnit32   baseIdx;/// is the base index within the index buffer.
+    afxInt32    vtxOffset; // is the value added to the vertex index before indexing into the vertex buffer.
+    afxUnit32   baseInst; // is the instance ID of the first instance to draw.
+};
+
+#pragma pack(pop)
+
+//////////////////////////////////////////////////////////////////////////////
+//// COMMANDS                                                             ////
+//////////////////////////////////////////////////////////////////////////////
+
 // Specify the vertex input layout for consequent vertex fetching for a draw context.
 
-AVX afxError            AvxCmdUseVertexInput
+AVX afxError AvxCmdUseVertexInput
 (
-    afxDrawContext      dctx,
-    avxVertexInput      vin
+    afxDrawContext dctx,
+
+    avxVertexInput vin
 );
 
 /*
@@ -54,13 +82,16 @@ AVX afxError            AvxCmdUseVertexInput
     The ranges inside the buffers are not required, but they should be provided to help debugging buffer access and hinting the implementation about usage behavior.
 */
 
-AVX afxError            AvxCmdBindVertexBuffers
+AVX afxError AvxCmdBindVertexBuffers
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // The index of the first vertex input binding whose state is updated by the command.
-    afxUnit             basePin,
+    afxUnit basePin,
+
     // The number of vertex input bindings whose state is updated by the command.
-    afxUnit             cnt,
+    afxUnit cnt,
+
     // An array of info to set up the avxBuffer-backed streams.
     avxBufferedStream const streams[]
 );
@@ -71,33 +102,175 @@ AVX afxError            AvxCmdBindVertexBuffers
     The range inside the buffer is not required, but it should be provided to help debugging buffer access and hinting the implementation about usage behavior.
 */
 
-AVX afxError            AvxCmdBindIndexBuffer
+AVX afxError AvxCmdBindIndexBuffer
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // The buffer being bound.
-    avxBuffer           buf,
+    avxBuffer buf,
+
     // The starting offset in bytes within buffer used in index buffer address calculations.
-    afxUnit32           offset,
+    afxUnit32 offset,
+
     // The size in bytes of index data bound from buffer.
-    afxUnit32           range,
+    afxUnit32 range,
+
     // A value specifying the size of the indices.
-    afxUnit32           idxSiz
+    afxUnit32 idxSiz
 );
 
-// Set the viewport dynamically for a draw context.
-// This command sets the viewport transformation parameters state for subsequent drawing commands when the graphics pipeline is created without viewport set.
+/// Draw primitives.
+/// When the command is executed, primitives are assembled using the current primitive topology and @vtxCnt consecutive vertex indices with the first @vtxIdx value equal to @firstVtx. 
+/// The primitives are drawn @instCnt times with @instIdx starting with @firstInst and increasing sequentially for each instance.
+/// The assembled primitives execute the bound graphics pipeline.
 
-// The viewport parameters taken from element #i of @vp replace the current state for the viewport index @baseIdx + #i, for #i in[0, @cnt).
-
-AVX afxError            AvxCmdAdjustViewports
+AVX afxError AvxCmdDraw
 (
-    afxDrawContext      dctx,
-    // The index of the first viewport whose parameters are updated by the command.
-    afxUnit             baseIdx,
-     // The number of viewports whose parameters are updated by the command.
-    afxUnit             cnt,
-     // An array of avxViewport structures specifying viewport parameters.
-    avxViewport const   viewports[]
+    afxDrawContext dctx,
+    
+    // is the number of vertices to draw.
+    afxUnit vtxCnt,
+
+    // is the number of instances to draw.
+    afxUnit instCnt,
+
+    // is the index of the first vertex to draw.
+    afxUnit baseVtx,
+
+    // is the instance ID of the first instance to draw.
+    afxUnit baseInst
+);
+
+/// Draw primitives with indirect parameters.
+/// AvxCmdDrawIndirect behaves similarly to AvxCmdDraw except that the parameters are read by the device from a buffer during execution.
+/// @drawCount draws are executed by the command, with parameters taken from @buf starting at @offset and increasing by @stride bytes for each successive draw.
+/// The parameters of each draw are encoded in an array of afxDrawIndirectCmd structures.
+/// If @drawCnt is less than or equal to one, @stride is ignored.
+
+AVX afxError AvxCmdDrawIndirect
+(
+    afxDrawContext dctx,
+
+    // is the buffer containing draw parameters.
+    avxBuffer buf,
+
+    // is the byte offset into @buf where parameters begin.
+    afxUnit32 offset,
+
+    // is the number of draws to execute, and can be zero.
+    afxUnit32 drawCnt,
+
+    // is the byte stride between successive sets of draw parameters.
+    afxUnit32 stride
+);
+
+/// Draw primitives with indirect parameters and draw count.
+/// AvxCmdDrawIndirect2 behaves similarly to AvxCmdDrawIndirect except that the draw count is read by the device from a buffer during execution.
+/// The command will read an unsigned 32-bit integer from @cntBuf located at @cntBufOff and use this as the draw count.
+
+AVX afxError AvxCmdDrawIndirect2
+(
+    afxDrawContext dctx,
+
+    // is the buffer containing draw parameters.
+    avxBuffer buf,
+
+    // is the byte offset into buffer where parameters begin.
+    afxUnit32 offset,
+
+    // is the buffer containing the draw count.
+    avxBuffer cntBuf,
+
+    // is the byte offset into @cntBuf where the draw count begins.
+    afxUnit32 cntBufOff,
+
+    // specifies the maximum number of draws that will be executed. 
+    // The actual number of executed draw calls is the minimum of the count specified in @cntBuf and @maxDrawCnt.
+    afxUnit32 maxDrawCnt,
+
+    // is the byte stride between successive sets of draw parameters.
+    afxUnit32 stride
+);
+
+/// Draw primitives with indexed vertices. 
+/// When the command is executed, primitives are assembled using the current primitive topology and @idxCnt vertices whose indices are retrieved from the index buffer.
+/// The index buffer is treated as an array of tightly packed unsigned integers of size defined by the @idxSiz parameter (of AvxCmdBindIndexBuffer) with which the buffer was bound.
+
+/// The first vertex index is at an offset of @firstIdx × @idxSiz + @offset within the bound index buffer, where @offset is the offset specified by AvxCmdBindIndexBuffer, and @idxSize is the byte size of the type specified by @idxSiz.
+/// Subsequent index values are retrieved from consecutive locations in the index buffer.
+/// Indices are first compared to the primitive restart value, then zero extended to 32 bits (if the @idxSiz is 1 or 2) and have @vtxOff added to them, before being supplied as the @vtxIdx value.
+
+/// The primitives are drawn @instCnt times with @instIdx starting with @firstInst and increasing sequentially for each instance.
+/// The assembled primitives execute the bound graphics pipeline.
+
+AVX afxError AvxCmdDrawIndexed
+(
+    afxDrawContext dctx,
+
+    // is the number of vertices to draw.
+    afxUnit idxCnt,
+
+    // is the number of instances to draw.
+    afxUnit instCnt,
+
+    // is the base index within the index buffer.
+    afxUnit baseIdx,
+
+    // is the value added to the vertex index before indexing into the vertex buffer.
+    afxUnit vtxOffset,
+
+    // is the instance ID of the first instance to draw.
+    afxUnit baseInst
+);
+
+/// Draw primitives with indirect parameters and indexed vertices.
+/// AvxCmdDrawIndexedIndirect behaves similarly to AvxCmdDrawIndexed except that the parameters are read by the device from a buffer during execution.
+/// @drawCnt draws are executed by the command, with parameters taken from @buf starting at @offset and increasing by @stride bytes for each successive draw.
+/// The parameters of each draw are encoded in an array of afxDrawIndexedIndirectCmd structures. If @drawCnt is less than or equal to one, @stride is ignored.
+
+AVX afxError AvxCmdDrawIndexedIndirect
+(
+    afxDrawContext dctx,
+
+    // is the buffer containing draw parameters.
+    avxBuffer buf,
+
+    // is the byte offset into buffer where parameters begin.
+    afxUnit32 offset,
+
+    // is the number of draws to execute, and can be zero.
+    afxUnit32 drawCnt,
+
+    // is the byte stride between successive sets of draw parameters.
+    afxUnit32 stride
+);
+
+/// Draw parameters with indirect parameters, indexed vertices, and draw count.
+/// AvxCmdDrawIndexedIndirect2 behaves similarly to AvxCmdDrawIndexedIndirect except that the draw count is read by the device from a buffer during execution.
+/// The command will read an unsigned 32-bit integer from @cntBuf located at @cntBufOff and use this as the draw count.
+
+AVX afxError AvxCmdDrawIndexedIndirect2
+(
+    afxDrawContext dctx,
+
+    // is the buffer containing draw parameters.
+    avxBuffer buf,
+
+    // is the byte offset into @buf where parameters begin.
+    afxUnit32 offset,
+
+    // is the buffer containing the draw count.
+    avxBuffer cntBuf,
+
+    // is the byte offset into @cntBuf where the draw count begins.
+    afxUnit32 cntBufOff,
+
+    // specifies the maximum number of draws that will be executed. 
+    // The actual number of executed draw calls is the minimum of the count specified in @cntBuf and @maxDrawCnt.
+    afxUnit32 maxDrawCnt,
+
+    // is the byte stride between successive sets of draw parameters.
+    afxUnit32 stride
 );
 
 /*
@@ -105,29 +278,51 @@ AVX afxError            AvxCmdAdjustViewports
     This command sets the primitive topology for subsequent drawing commands when drawing using shader objects, or when the graphics pipeline is created without primitive topology set.
 */
 
-AVX afxError            AvxCmdSetPrimitiveTopology
+AVX afxError AvxCmdSetPrimitiveTopology
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // The primitive topology to use for drawing.
-    avxTopology         topology
+    avxTopology topology
+);
+
+// Set the viewport dynamically for a draw context.
+// This command sets the viewport transformation parameters state for subsequent drawing commands when the graphics pipeline is created without viewport set.
+
+// The viewport parameters taken from element #i of @vp replace the current state for the viewport index @baseIdx + #i, for #i in[0, @cnt).
+
+AVX afxError AvxCmdAdjustViewports
+(
+    afxDrawContext dctx,
+
+    // The index of the first viewport whose parameters are updated by the command.
+    afxUnit baseIdx,
+
+     // The number of viewports whose parameters are updated by the command.
+    afxUnit cnt,
+
+     // An array of avxViewport structures specifying viewport parameters.
+    avxViewport const viewports[]
 );
 
 // Set cull mode dynamically for a draw context.
 
-AVX afxError            AvxCmdChangeCullMode
+AVX afxError AvxCmdAlterCullMode
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // specifies the cull mode property to use for drawing.
-    avxCullMode         mode
+    avxCullMode mode
 );
 
 // Set front face orientation dynamically for a draw context.
 
-AVX afxError            AvxCmdSwitchFrontFace
+AVX afxError AvxCmdSwitchFrontFace
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // Specifying if the front-facing triangle orientation to be used for culling is CW otherwise it is CCW.
-    afxBool             cw
+    afxBool cw
 );
 
 #endif//AVX_TRANSFORMATION_H

@@ -259,7 +259,7 @@ AUX afxTime AfxDoUx(afxFlags flags, afxUnit64 timeout);
 
 AUX afxError AfxTakeFullscreen(afxWindow wnd, afxBool fullscreen);
 
-AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxRect* rc, afxWindow wnd, afxRect* onFrame, afxRect* onSurface);
+AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxWindow wnd, afxBool onFrame, afxRect* rc);
 
 /*
     The AfxHasClipboardContent() function checks whether there is any content in the clipboard associated with a 

@@ -70,6 +70,9 @@ AFX_OBJECT(afxSink)
     afxError    (*pullCb)(afxSink asio, afxUnit, void*, afxUnit*);
     afxUnit     (*getAvailFramesCb)(afxSink asi);
 
+    afxError    (*pauseCb)(afxSink asi, afxBool pause);
+    afxError    (*resetCb)(afxSink asi);
+
     AudioRingBuffer rb;
 
     afxClock    startClock;
@@ -86,8 +89,10 @@ AMX int audio_ringbuffer_init(AudioRingBuffer* rb, void* bufPtr, afxUnit bufStri
 AMX void audio_ringbuffer_free(AudioRingBuffer* rb);
 
 AMX void audio_ringbuffer_write(AudioRingBuffer* rb, const afxByte* input, afxUnit srcStride, size_t frames);
+AMX void audio_ringbuffer_advance_write(AudioRingBuffer* rb, size_t frames);
 
 AMX size_t audio_ringbuffer_read(AudioRingBuffer* rb, afxByte* output, afxUnit dstStride, size_t max_frames);
+AMX size_t audio_ringbuffer_advance_read(AudioRingBuffer* rb, size_t max_frames);
 
 AMX size_t audio_ringbuffer_available(const AudioRingBuffer* rb);
 

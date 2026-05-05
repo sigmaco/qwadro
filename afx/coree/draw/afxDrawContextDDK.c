@@ -29,6 +29,102 @@
 #define _AVX_DRAW_CONTEXT_C
 #include "avxIcd.h"
 
+_AVX afxError AvxCmdCommenceDebugScope(afxDrawContext dctx, afxString const* name, avxColor const color)
+{
+    afxError err = { 0 };
+    // dctx must be a valid afxDrawContext handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    // dctx must be in the recording state.
+    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a video coding scope.
+    AFX_ASSERT(!dctx->inVideoCoding);
+
+    // Bump up the label.
+    ++dctx->dbgUtilOpenLabelCnt;
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(CommenceDebugScope), sizeof(cmd->CommenceDebugScope), &cmdId);
+    AFX_ASSERT(cmd);
+
+    AfxMakeString2048(&cmd->CommenceDebugScope.label, name);
+
+    if (color)
+        AvxCopyColor(cmd->CommenceDebugScope.color, color);
+    else
+        AvxResetColor(cmd->CommenceDebugScope.color);
+
+    return err;
+}
+
+_AVX afxError AvxCmdConcludeDebugScope(afxDrawContext dctx)
+{
+    afxError err = { 0 };
+    // dctx must be a valid afxDrawContext handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    // dctx must be in the recording state.
+    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a video coding scope.
+    AFX_ASSERT(!dctx->inVideoCoding);
+
+    // There must be an open debug scope.
+    AFX_ASSERT(dctx->dbgUtilOpenLabelCnt > 0);
+    --dctx->dbgUtilOpenLabelCnt;
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ConcludeDebugScope), sizeof(cmd->ConcludeDebugScope), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->ConcludeDebugScope.nothing = NIL;
+    return err;
+}
+
+_AVX afxError AvxCmdMarkDebugMilestone(afxDrawContext dctx, afxString const* name, avxColor const color)
+{
+    afxError err = { 0 };
+    // dctx must be a valid afxDrawContext handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    // dctx must be in the recording state.
+    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a video coding scope.
+    AFX_ASSERT(!dctx->inVideoCoding);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(MarkDebugMilestone), sizeof(cmd->MarkDebugMilestone), &cmdId);
+    AFX_ASSERT(cmd);
+
+    AfxMakeString2048(&cmd->MarkDebugMilestone.label, name);
+
+    if (color)
+        AvxCopyColor(cmd->MarkDebugMilestone.color, color);
+    else
+        AvxResetColor(cmd->MarkDebugMilestone.color);
+
+    return err;
+}
+
+_AVX afxError AvxCmdExecuteCommands(afxDrawContext dctx, afxUnit cnt, afxDrawContext auxs[])
+{
+    afxError err = { 0 };
+    // dctx must be a valid afxDrawContext handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    // dctx must be in the recording state.
+    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a video coding scope.
+    AFX_ASSERT(!dctx->inVideoCoding);
+
+    AFX_ASSERT(cnt);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ExecuteCommands), sizeof(cmd->ExecuteCommands) + (cnt * sizeof(cmd->ExecuteCommands.contexts[0])), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->ExecuteCommands.cnt = cnt;
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        cmd->ExecuteCommands.contexts[i].dctx = auxs[i];
+    }
+    return err;
+}
+
 _AVX afxError _AvxDctxExhaustCb(afxDrawContext dctx, afxBool freeMem)
 {
     afxError err = { 0 };

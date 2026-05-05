@@ -155,7 +155,7 @@ int main(int argc, char const* argv[])
 #endif
 
             amxBufferedTrack room = { 0 };
-            if (!AmxLockSinkBuffer(sink, AFX_TIMEOUT_IGNORED, NIL, writable, &room))
+            //if (AfxSucceded(AmxLockSinkBuffer(sink, AFX_TIMEOUT_IGNORED, NIL, writable, &room)))
             {
                 writable = room.frameCnt;
 
@@ -179,7 +179,7 @@ int main(int argc, char const* argv[])
 
                 afxMixContext mix = mixContexts[submId % 3];
 
-                if (afxError_NONE == AmxPrepareMixCommands(mix, FALSE, amxCmdFlag_ONCE))
+                if (AfxSucceded(AmxPrepareMixCommands(mix, FALSE, amxCmdFlag_ONCE)))
                 {
 
                     amxBufferedAudio dba = { 0 };
@@ -228,7 +228,14 @@ int main(int argc, char const* argv[])
                     sink_unlock(framesToWrite);
 #endif
                 }
-                AmxUnlockSinkBuffer(sink, NIL);
+
+                amxFlush flush = { 0 };
+                flush.sink = sink;
+                flush.sampleCnt = writable;
+                if (AfxSucceded(AmxFlushSinks(msys, 1, &flush, NIL)))
+                {
+
+                }
 
                 cursor += framesToWrite;
 

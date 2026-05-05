@@ -22,7 +22,7 @@
 #define _AVX_BUFFER_C
 #include "avxIcd.h"
 
-_AVX afxError AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit blockSiz, afxUnit blockAlign, avxBuffer buf, afxSize bufCap, void* mapped)
+_AVX afxError AvxMakeBufferedRing(avxBufferedRing* rng, avxBuffer buf, afxSize bufBase, afxUnit bufRange, afxUnit blockSiz, afxUnit blockAlign, afxUnit rounds)
 {
     // Small buffered ring utility.
     // Reuse memory across frames (no new buffer creation).
@@ -33,42 +33,62 @@ _AVX afxError AvxMakeBufferedRing(avxBufferedRing* rng, afxUnit rounds, afxUnit 
     AFX_ASSERT(rng);
     *rng = (avxBufferedRing) { 0 };
 
-    // Use triple buffering (rounds = 3) to rotate through buffer regions.
-    rng->rounds = AFX_MAX(1, rounds);
-    rng->blockAlign = AFX_ALIGN_SIZE(AFX_MIN(AVX_BUFFER_ALIGNMENT, blockAlign), AVX_BUFFER_ALIGNMENT);
-    rng->blockSiz = AFX_MAX(rng->blockAlign, AVX_ALIGN_BUFFERED(blockSiz));
-
-    AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     rng->buf = buf;
-    rng->maxSiz = bufCap;
-    rng->blockCnt = rng->maxSiz / rng->blockSiz;
+    rng->bufBase = bufBase;
+    rng->bufRange = bufRange;
+
+    if (buf)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
+        rng->basePtr = AvxGetBufferMap(buf, bufRange, bufRange);
+        
+        if (!rng->basePtr)
+        {
+            AfxReportError("avxBuffer %p [ %u, %u ] not mapped", buf, bufBase, bufRange);
+            AfxThrowError();
+        }
+    }
+    else
+    {
+        rng->basePtr = (void*)bufBase;
+
+        if (!rng->basePtr)
+        {
+            AfxReportError("avxBuffer %p [ %u, %u ] not mapped", buf, bufBase, bufRange);
+            AfxThrowError();
+        }
+    }
+
     rng->currOffset = 0;
 
-    // With persistent and coherent mapping, you don't need glFenceSync() unless extremely fine-grained sync is required.
-    rng->basePtr = NIL;
-    if (mapped) rng->basePtr = mapped;
-    else if (AvxMapBuffer(buf, 0, bufCap, NIL, (void**)&rng->basePtr))
-        AfxThrowError();
+    rng->blockAlign = AFX_ALIGN_SIZE(AFX_MIN(AVX_BUFFER_ALIGNMENT, blockAlign), AVX_BUFFER_ALIGNMENT);
+    rng->blockSiz = AFX_MAX(rng->blockAlign, AVX_ALIGN_BUFFERED(blockSiz));
+    rng->blockCnt = rng->bufRange / rng->blockSiz;
+
+    // Use triple buffering (rounds = 3) to rotate through buffer regions.
+    rng->rounds = AFX_MAX(1, rounds);
 
     return err;
 }
 
 _AVX afxSize AvxCycleBufferedRing(avxBufferedRing* rng)
 {
-    afxError err;
+    afxError err = { 0 };
     AFX_ASSERT(rng);
-    rng->currOffset = (rng->currOffset + rng->blockSiz * rng->blockCnt / rng->rounds) % rng->maxSiz;
+
+    rng->currOffset = rng->bufBase + (rng->currOffset + rng->blockSiz * rng->blockCnt / rng->rounds) % rng->bufRange;
+
     return rng->currOffset;
 }
 
 _AVX void* AvxAdvanceBufferedRing(avxBufferedRing* rng, afxUnit reqSiz, afxSize* pOffset, afxUnit* pRange)
 {
-    afxError err;
+    afxError err = { 0 };
     AFX_ASSERT(rng);
 
     reqSiz = AFX_ALIGN_SIZE(reqSiz, rng->blockSiz);
 
-    if (rng->currOffset + reqSiz > rng->maxSiz)
+    if (rng->currOffset + reqSiz > rng->bufRange)
     {
         // Wrap around
         rng->currOffset = 0;
@@ -78,8 +98,11 @@ _AVX void* AvxAdvanceBufferedRing(avxBufferedRing* rng, afxUnit reqSiz, afxSize*
 
     // Bind for shader access
     // You now write directly into blockPtr and the shader sees the bound block via layout(std140, binding = %).
-    if (pOffset) *pOffset = rng->currOffset;
-    if (pRange) *pRange = reqSiz;
+    if (pOffset)
+        *pOffset = rng->currOffset;
+
+    if (pRange)
+        *pRange = reqSiz;
 
     rng->currOffset += reqSiz;
 

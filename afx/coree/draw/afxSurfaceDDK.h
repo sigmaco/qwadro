@@ -173,8 +173,8 @@ AFX_OBJECT(afxSurface)
 AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT;
 AVX _avxDdiDout const _AVX_DDI_DOUT;
 
-AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[]);
-AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[]);
+AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[]);
+AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[]);
 
 AVX afxError _AvxDoutIoctlCb(afxSurface dout, afxUnit code, va_list ap);
 AVX afxError _AvxDoutAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);

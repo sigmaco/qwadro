@@ -15,136 +15,12 @@
  *                                        ENGITECH
  */
 
-// This code is part of SIGMA GL/2.
-// This software is part of Advanced Video Graphics Extensions.
+ // This software is part of Advanced Video Graphics Extensions.
 
 #define _AVX_DRAW_C
+#define _AVX_QUERY_POOL_C
 #define _AVX_DRAW_CONTEXT_C
 #include "avxIcd.h"
-
-#ifdef _AFX_DEBUG
-#   define _AVX_DEBUG_BINDING_COMMANDS TRUE
-#endif
-
-_AVX afxError AvxCmdCommenceDebugScope(afxDrawContext dctx, afxString const* name, avxColor const color)
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    // Bump up the label.
-    ++dctx->dbgUtilOpenLabelCnt;
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(CommenceDebugScope), sizeof(cmd->CommenceDebugScope), &cmdId);
-    AFX_ASSERT(cmd);
-
-    AfxMakeString2048(&cmd->CommenceDebugScope.label, name);
-
-    if (color)
-        AvxCopyColor(cmd->CommenceDebugScope.color, color);
-    else
-        AvxResetColor(cmd->CommenceDebugScope.color);
-
-    return err;
-}
-
-_AVX afxError AvxCmdConcludeDebugScope(afxDrawContext dctx)
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    // There must be an open debug scope.
-    AFX_ASSERT(dctx->dbgUtilOpenLabelCnt > 0);
-    --dctx->dbgUtilOpenLabelCnt;
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ConcludeDebugScope), sizeof(cmd->ConcludeDebugScope), &cmdId);
-    AFX_ASSERT(cmd);
-    cmd->ConcludeDebugScope.nothing = NIL;
-    return err;
-}
-
-_AVX afxError AvxCmdMarkDebugMilestone(afxDrawContext dctx, afxString const* name, avxColor const color)
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(MarkDebugMilestone), sizeof(cmd->MarkDebugMilestone), &cmdId);
-    AFX_ASSERT(cmd);
-
-    AfxMakeString2048(&cmd->MarkDebugMilestone.label, name);
-
-    if (color)
-        AvxCopyColor(cmd->MarkDebugMilestone.color, color);
-    else
-        AvxResetColor(cmd->MarkDebugMilestone.color);
-
-    return err;
-}
-
-_AVX afxError AvxCmdStampDebug(afxDrawContext dctx, afxM4d const v, afxV2d const at, afxString const* caption)
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    AFX_ASSERT(at);
-    AFX_ASSERT(v);
-    AFX_ASSERT(caption);
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(StampDebug), sizeof(cmd->StampDebug) + AFX_ALIGN_SIZE(caption->len, 16), &cmdId);
-    AFX_ASSERT(cmd);
-    AfxM4dCopyAtm(cmd->StampDebug.v, v);
-    AfxV2dCopy(cmd->StampDebug.at, at);
-    AfxCopy(cmd->StampDebug.data, caption->start, caption->len);
-
-    return err;
-}
-
-_AVX afxError AvxCmdExecuteCommands(afxDrawContext dctx, afxUnit cnt, afxDrawContext auxs[])
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    AFX_ASSERT(cnt);
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ExecuteCommands), sizeof(cmd->ExecuteCommands) + (cnt * sizeof(cmd->ExecuteCommands.contexts[0])), &cmdId);
-    AFX_ASSERT(cmd);
-    cmd->ExecuteCommands.cnt = cnt;
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        cmd->ExecuteCommands.contexts[i].dctx = auxs[i];
-    }
-    return err;
-}
 
 _AVX afxError AvxCmdBindPipeline(afxDrawContext dctx, avxPipeline pip, avxVertexInput vin, afxFlags dynamics)
 {
@@ -223,33 +99,6 @@ _AVX afxError AvxCmdUseLigature(afxDrawContext dctx, avxBus bus, avxLigature lig
     return err;
 }
 
-_AVX afxError AvxCmdBindShadersEXT(afxDrawContext dctx, afxUnit cnt, avxShaderType const stages[], avxShader shaders[])
-{
-    afxError err = { 0 };
-    // dctx must be a valid afxDrawContext handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-    // dctx must be in the recording state.
-    AFX_ASSERT(dctx->state == avxContextState_RECORDING);
-    // This command must only be called outside of a video coding scope.
-    AFX_ASSERT(!dctx->inVideoCoding);
-
-    // pip must be a valid avxPipeline handle.
-    AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, cnt, shaders);
-
-    afxCmdId cmdId;
-    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(BindShadersEXT), sizeof(cmd->BindShadersEXT) + (cnt * sizeof(cmd->BindShadersEXT.stages[0])), &cmdId);
-    AFX_ASSERT(cmd);
-    cmd->BindShadersEXT.cnt = cnt;
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        cmd->BindShadersEXT.stages[i].shd = shaders[i];
-        cmd->BindShadersEXT.stages[i].stage = stages[i];
-    }
-
-    return err;
-}
-
 _AVX afxError AvxCmdBindBuffers(afxDrawContext dctx, avxBus bus, afxUnit set, afxUnit pin, afxUnit cnt, avxBufferedMap const maps[])
 {
     afxError err = { 0 };
@@ -275,7 +124,7 @@ _AVX afxError AvxCmdBindBuffers(afxDrawContext dctx, avxBus bus, afxUnit set, af
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBufferedMap const* map = maps ? &maps[i] : &(avxBufferedMap const) { 0 };        
+        avxBufferedMap const* map = maps ? &maps[i] : &(avxBufferedMap const) { 0 };
         afxSize offset = map->offset;
         afxUnit range = map->range;
         avxBuffer buf = map->buf;
@@ -508,167 +357,161 @@ _AVX afxError AvxCmdPushConstants(afxDrawContext dctx, afxUnit offset, afxUnit s
     cmd->PushConstants.offset = offset;
     cmd->PushConstants.siz = siz;
     AfxCopy(cmd->PushConstants.data, value, siz);
-    
+
     return err;
 }
 
-_AVX afxError AvxCmdBindArgumentBuffersSIGMA(afxDrawContext dctx, afxUnit bufIdx, afxUnit cnt, avxBufferedMap buffers[])
+_AVX afxError AvxCmdDeclareDependency(afxDrawContext dctx, avxBusStage dstStage, avxBusAccess dstAcc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(PipelineBarrier), sizeof(cmd->PipelineBarrier), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->PipelineBarrier.dstStage = dstStage;
+    cmd->PipelineBarrier.dstAccess = dstAcc;
+    return err;
+}
+
+_AVX afxError AvxCmdDeclareBarrier(afxDrawContext dctx, avxBusStage dstStage, avxBusAccess dstAcc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(PipelineBarrier), sizeof(cmd->PipelineBarrier), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->PipelineBarrier.dstStage = dstStage;
+    cmd->PipelineBarrier.dstAccess = dstAcc;
+    return err;
+}
+
+AVX afxError AvxCmdBeginQuery(afxDrawContext dctx, avxQueryPool pool, afxUnit slot, afxBool precise)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_QRYP, 1, &pool);
+    AFX_ASSERT_RANGE(pool->slotCnt, slot, 1);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(BeginQuery), sizeof(cmd->BeginQuery), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->BeginQuery.pool = pool;
+    cmd->BeginQuery.slot = slot;
+    cmd->BeginQuery.precise = precise;
+    return err;
+}
+
+AVX afxError AvxCmdEndQuery(afxDrawContext dctx, avxQueryPool pool, afxUnit slot)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_QRYP, 1, &pool);
+    AFX_ASSERT_RANGE(pool->slotCnt, slot, 1);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(EndQuery), sizeof(cmd->EndQuery), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->EndQuery.pool = pool;
+    cmd->EndQuery.slot = slot;
+    return err;
+}
+
+AVX afxError AvxCmdCopyQueryResults(afxDrawContext dctx, avxQueryPool pool, afxUnit baseSlot, afxUnit slotCnt, avxBuffer buf, afxSize offset, afxSize stride, avxQueryResultFlags flags)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_QRYP, 1, &pool);
+    AFX_ASSERT_RANGE(pool->slotCnt, baseSlot, slotCnt);
+    AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
+    AFX_ASSERT_RANGE(AvxGetBufferCapacity(buf, 0), offset, stride);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(CopyQueryResults), sizeof(cmd->CopyQueryResults), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->CopyQueryResults.pool = pool;
+    cmd->CopyQueryResults.baseSlot = baseSlot;
+    cmd->CopyQueryResults.slotCnt = slotCnt;
+    cmd->CopyQueryResults.buf = buf;
+    cmd->CopyQueryResults.offset = offset;
+    cmd->CopyQueryResults.stride = stride;
+    cmd->CopyQueryResults.flags = flags;
+    return err;
+}
+
+AVX afxError AvxCmdResetQueries(afxDrawContext dctx, avxQueryPool pool, afxUnit baseSlot, afxUnit slotCnt)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_QRYP, 1, &pool);
+    AFX_ASSERT_RANGE(pool->slotCnt, baseSlot, slotCnt);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ResetQueries), sizeof(cmd->ResetQueries), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->ResetQueries.pool = pool;
+    cmd->ResetQueries.baseSlot = baseSlot;
+    cmd->ResetQueries.slotCnt = slotCnt;
+    return err;
+}
+
+AVX afxError AvxCmdQueryTimestamp(afxDrawContext dctx, avxQueryPool pool, afxUnit slot, avxBusStage stage)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_QRYP, 1, &pool);
+    AFX_ASSERT_RANGE(pool->slotCnt, slot, 1);
+
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(QueryTimestamp), sizeof(cmd->QueryTimestamp), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->QueryTimestamp.pool = pool;
+    cmd->QueryTimestamp.slot = slot;
+    cmd->QueryTimestamp.stage = stage;
+    return err;
+}
+
+_AVX afxError AvxCmdDispatch(afxDrawContext dctx, afxUnit w, afxUnit h, afxUnit d)
 {
     afxError err = { 0 };
     // dctx must be a valid afxDrawContext handle.
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
     // dctx must be in the recording state.
     AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a draw scope instance.
+    AFX_ASSERT(!dctx->inDrawScope);
     // This command must only be called outside of a video coding scope.
     AFX_ASSERT(!dctx->inVideoCoding);
 
-    afxUnit bufGenCnt = 0;
-    avxBuffer bufGens[4];
-    avxBufferInfo bufis[4] = { 0 };
-    afxUnit mapSlotToBufGen[4] = { 0 };
-    afxUnit mapBufGenToSlot[4] = { 0 };
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        avxBuffer buf = buffers[i].buf;
-
-        if (!buf)
-        {
-            if (buffers[i].range)
-            {
-                bufis[bufGenCnt].size = AFX_ALIGN_SIZE(buffers[i].range, AVX_BUFFER_ALIGNMENT);
-                bufis[bufGenCnt].usage = avxBufferUsage_ARGUMENT | avxBufferUsage_UNIFORM;
-                bufis[bufGenCnt].flags = avxBufferFlag_WX;
-                mapSlotToBufGen[bufGenCnt] = i;
-                mapBufGenToSlot[i] = bufGenCnt;
-                ++bufGenCnt;
-            }
-        }
-    }
-
-    if (bufGenCnt)
-    {
-        if (AvxAcquireBuffers(AfxGetHost(AfxGetHost(AfxGetHost(dctx))), bufGenCnt, bufis, bufGens))
-        {
-            AfxThrowError();
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_BUF, bufGenCnt, bufGens);
-
-        afxUnit baseObsToBeDisposedUnit;
-        afxObject* obsToBeDisposed = AfxPushArrayUnits(&dctx->objsToBeDisposed, bufGenCnt, &baseObsToBeDisposedUnit, NIL, 0);
-        AFX_ASSERT(obsToBeDisposed);
-
-        void** bufPtr[4] = { 0 };
-        avxBufferedMap bufGenRemaps[4] = { 0 };
-
-        for (afxUnit i = 0; i < bufGenCnt; i++)
-        {
-            bufGenRemaps[i].buf = bufGens[i];
-            bufGenRemaps[i].range = bufis[mapBufGenToSlot[i]].size;
-            bufPtr[i] = (void**)&dctx->argBufs[mapBufGenToSlot[i]].bytemap;
-            
-            dctx->argBufs[mapBufGenToSlot[i]].alloced = TRUE;
-            obsToBeDisposed[i] = bufGens[i];
-        }
-
-        if (AvxMapBuffers(AfxGetHost(bufGens[0]), bufGenCnt, bufGenRemaps, bufPtr))
-        {
-            AfxThrowError();
-        }
-    }
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        avxBuffer buf = buffers[i].buf;
-
-        if (!buf)
-        {
-            if (buffers[i].range)
-            {
-                buf = bufGens[i];
-                AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-                dctx->argBufs[bufIdx + i].map.buf = buf;
-                dctx->argBufs[bufIdx + i].map.offset = 0;
-                dctx->argBufs[bufIdx + i].map.range = bufis[mapSlotToBufGen[i]].size;
-                dctx->argBufs[bufIdx + i].map.flags = bufis[mapSlotToBufGen[i]].flags;
-                AFX_ASSERT(dctx->argBufs[bufIdx + i].alloced);
-                AFX_ASSERT(dctx->argBufs[bufIdx + i].bytemap);
-                dctx->argBufs[bufIdx + i].nextOffset = 0;
-                dctx->argBufs[bufIdx + i].remainRoom = dctx->argBufs[bufIdx].map.range;
-            }
-#if 0
-            else
-            {
-                dctx->argBufs[bufIdx].map.buf = NIL;
-                dctx->argBufs[bufIdx].map.offset = 0;
-                dctx->argBufs[bufIdx].map.range = 0;
-                dctx->argBufs[bufIdx].map.flags = NIL;
-                dctx->argBufs[bufIdx].nextOffset = 0;
-                dctx->argBufs[bufIdx].remainRoom = 0;
-            }
-#endif
-        }
-        else
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-            avxBufferUsage usage = AvxGetBufferUsage(buf, avxBufferUsage_ARGUMENT);
-            AFX_ASSERT(usage == avxBufferUsage_ARGUMENT);
-            afxUnit bufCap = AvxGetBufferCapacity(buf, 0);
-            AFX_ASSERT_RANGE(bufCap, buffers[i].offset, buffers[i].range);
-
-            AFX_ASSERT_ALIGNMENT(buffers[i].range, AFX_SIMD_ALIGNMENT);
-
-            if (dctx->argBufs[bufIdx + i].map.buf)
-            {
-                AvxUnmapBuffer(dctx->argBufs[bufIdx + i].map.buf, FALSE);
-            }
-
-            dctx->argBufs[bufIdx + i].map.buf = buf;
-            dctx->argBufs[bufIdx + i].map.offset = AFX_MIN(buffers[i].offset, bufCap - 1);
-            dctx->argBufs[bufIdx + i].map.range = AFX_MIN(buffers[i].range, bufCap - dctx->argBufs[bufIdx + i].map.offset);
-            dctx->argBufs[bufIdx + i].map.flags = buffers[i].flags;
-            dctx->argBufs[bufIdx + i].alloced = FALSE;
-            dctx->argBufs[bufIdx + i].nextOffset = 0;
-            dctx->argBufs[bufIdx + i].remainRoom = dctx->argBufs[bufIdx + i].map.range;
-
-            void* ptr = NIL;
-            AvxMapBuffer(dctx->argBufs[bufIdx + i].map.buf, dctx->argBufs[bufIdx + i].map.offset, dctx->argBufs[bufIdx + i].map.range, dctx->argBufs[bufIdx + i].map.flags, &ptr);
-            dctx->argBufs[bufIdx + i].bytemap = ptr;
-        }
-    }
-
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(Dispatch), sizeof(cmd->Dispatch), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->Dispatch.data.w = w;
+    cmd->Dispatch.data.h = h;
+    cmd->Dispatch.data.d = d;
     return err;
 }
 
-_AVX afxError AvxCmdPushUniformsSIGMA(afxDrawContext dctx, avxBus bus, afxUnit set, afxUnit binding, void const* data, afxUnit dataSiz)
+_AVX afxError AvxCmdDispatchIndirect(afxDrawContext dctx, avxBuffer buf, afxUnit32 offset)
 {
     afxError err = { 0 };
     // dctx must be a valid afxDrawContext handle.
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
     // dctx must be in the recording state.
     AFX_ASSERT(dctx->state == avxContextState_RECORDING);
+    // This command must only be called outside of a draw scope instance.
+    AFX_ASSERT(!dctx->inDrawScope);
     // This command must only be called outside of a video coding scope.
     AFX_ASSERT(!dctx->inVideoCoding);
 
-    afxUnit siz = AFX_ALIGN_SIZE(dataSiz, AFX_SIMD_ALIGNMENT);
+    // @buf must be a valid avxBuffer handle.
+    AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 
-    if (siz > dctx->argBufs[set].remainRoom)
-    {
-        AfxThrowError();
-        return err;
-    }
-
-    avxBufferedMap map = { 0 };
-    map.buf = dctx->argBufs[set].map.buf;
-    map.offset = dctx->argBufs[set].nextOffset;
-    map.range = siz;
-    map.flags = dctx->argBufs[set].map.flags;
-    AvxCmdBindBuffers(dctx, bus, set, binding, 1, &map);
-
-    AfxCopy(&(dctx->argBufs[set].bytemap[dctx->argBufs[set].nextOffset]), data, dataSiz);
-
-    dctx->argBufs[set].nextOffset += siz;
-    dctx->argBufs[set].remainRoom -= siz;
-
+    afxCmdId cmdId;
+    _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(DispatchIndirect), sizeof(cmd->DispatchIndirect), &cmdId);
+    AFX_ASSERT(cmd);
+    cmd->DispatchIndirect.buf = buf;
+    cmd->DispatchIndirect.offset = offset;
     return err;
 }

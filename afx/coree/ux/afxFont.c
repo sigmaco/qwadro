@@ -414,7 +414,7 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         fnt->fntSamp = fntSamp;
         fnt->fntPip = pip;
 
-        AvxMakeBufferedRing(&fnt->fntVboRng, 2, 20, AVX_BUFFER_ALIGNMENT, fnt->fntVbo, 32 * 15, NIL);
+        AvxMakeBufferedRing(&fnt->fntVboRng, fnt->fntVbo, 0, 32 * 15, 20, AVX_BUFFER_ALIGNMENT, 2);
 
         fnt->fntEnabled = TRUE;
     }

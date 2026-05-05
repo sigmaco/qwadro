@@ -21,34 +21,39 @@
 #define _AFX_DEVICE_C
 #define _AFX_IO_BRIDGE_C
 #define _AFX_IO_QUEUE_C
-#define _AFX_DRAW_OUTPUT_C
-#include "afxIoDDK.h"
-#include "../exec/afxSystemDDK.h"
-#include "qwadro/io/afxIoBridge.h"
+//#include "afxIoDDK.h"
+//#include "../exec/afxSystemDDK.h"
+#include "afxIoBridgeDDK.h"
 
-_AFX afxDevice AfxGetIoBridgeDevice(afxIoBridge exu)
+
+_AFX afxClass const* _AfxExuGetXqueClass(afxIoBridge exu)
+{
+    afxError err = { 0 };
+    // exu must be a valid afxIoBridge handle.
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
+    afxClass const* cls = &exu->xqueCls;
+    AFX_ASSERT_CLASS(cls, afxFcc_XQUE);
+    return cls;
+}
+
+_AFX afxIommu AfxGetBridgedIoSystem(afxIoBridge exu, afxUnit* bridgeId)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
-    afxDevice dev = AfxGetHost(exu);
+    afxIommu iom = AfxGetHost(exu);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
+    if (bridgeId) *bridgeId = AfxGetObjectId(exu);
+    return iom;
+}
+
+_AFX afxDevice AfxGetBridgedIoDevice(afxIoBridge exu, afxUnit* devId)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
+    afxDevice dev = exu->dev;
     AFX_ASSERT_OBJECTS(afxFcc_DEV, 1, &dev);
+    if (devId) *devId = AfxGetObjectId(dev);
     return dev;
-}
-
-_AFX afxDevLink AfxGetIoBridgeContext(afxIoBridge exu)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
-    afxDevLink ctx = exu->ctx;
-    //AFX_ASSERT_OBJECTS(afxFcc_DEVK, 1, &ctx);
-    return ctx;
-}
-
-_AFX afxUnit AfxGetIoBridgePort(afxIoBridge exu)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
-    return exu->portId;
 }
 
 _AFX afxUnit AfxGetIoQueues(afxIoBridge exu, afxUnit baseQueIdx, afxUnit cnt, afxIoQueue queues[])
@@ -58,142 +63,242 @@ _AFX afxUnit AfxGetIoQueues(afxIoBridge exu, afxUnit baseQueIdx, afxUnit cnt, af
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
     // queues must be a valid pointer to the afxIoQueue handles.
     AFX_ASSERT(queues);
-    afxUnit rslt = 0;
 
-    afxUnit xqueCnt = exu->queCnt;
-    AFX_ASSERT_RANGE(xqueCnt, baseQueIdx, cnt);
-
-    if (baseQueIdx < exu->queCnt)
-    {
-        for (afxUnit i = 0; i < cnt; i++)
-        {
-            afxIoQueue xque = exu->queues[baseQueIdx + i];
-            AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
-            queues[rslt++] = xque;
-        }
-    }
+    afxClass const* xqueCls = _AfxExuGetXqueClass(exu);
+    AFX_ASSERT_CLASS(xqueCls, afxFcc_XQUE);
+    afxUnit rslt = _AfxEnumerateObjectsUnlocked(xqueCls, FALSE, baseQueIdx, cnt, (afxObject*)queues);
+    AFX_ASSERT_OBJECTS(afxFcc_XQUE, rslt, queues);
     return rslt;
 }
 
-_AFX afxError _AfxWaitForEmptyIoQueue(afxIoBridge exu, afxUnit queIdx, afxTime timeout)
+_AFX afxError AfxWaitForIdleIoBridge(afxIoBridge exu, afxUnit64 timeout)
 {
     afxError err = { 0 };
     // exu must be a valid afxIoBridge handle.
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
 
-    afxIoQueue xque;
-    AFX_ASSERT_RANGE(exu->queCnt, queIdx, 1);
-    AfxGetIoQueues(exu, queIdx, 1, &xque);
-    AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
+    if (exu->ddi->pingCb)
+        exu->ddi->pingCb(exu, 0);
 
-    if (!xque->waitCb)
+    if (!exu->ddi->waitCb)
     {
-        AfxLockMutex(&xque->idleCndMtx);
+        afxClass const* xqueCls = _AfxExuGetXqueClass(exu);
 
-        afxTimeSpec ts = { 0 };
-        ts.nsecs = AFX_MAX(1, timeout) * 100000; // 100000 = 0.0001 sec
-
-        while (xque->workChn.cnt)
+        for (afxUnit i = 0; i < xqueCls->instCnt; i++)
         {
-            if (exu->pingCb)
-                exu->pingCb(exu, 0);
+            afxIoQueue xque;
+            AfxGetIoQueues(exu, i, 1, &xque);
+            AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
 
-            AfxWaitTimedCondition(&xque->idleCnd, &xque->idleCndMtx, &ts);
+            afxError err2;
+            if ((err2 = AfxWaitForEmptyIoQueue(xque, timeout)) && (err2 != afxError_TIMEOUT))
+            {
+                AfxThrowError();
+            }
         }
-        AfxUnlockMutex(&xque->idleCndMtx);
     }
-    else if (xque->waitCb(xque, timeout))
+    else if (exu->ddi->waitCb(exu, timeout))
         AfxThrowError();
 
     return err;
 }
 
-_AFX afxError _AfxWaitForIdleIoBridge(afxIoBridge exu, afxTime timeout)
+_AFX afxError _AfxExuTransferVideoMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops)
 {
     afxError err = { 0 };
-    // exu must be a valid afxIoBridge handle.
+    // @exu must be a valid afxIoBridge handle.
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
-    
-    if (!exu->waitCb)
-    {
-        if (exu->pingCb)
-            exu->pingCb(exu, 0);
+    AFX_ASSERT(opCnt);
+    AFX_ASSERT(ctrl);
+    AFX_ASSERT(ops);
 
-        afxUnit queCnt = exu->queCnt;
-
-        for (afxUnit i = 0; i < queCnt; i++)
-            _AfxWaitForEmptyIoQueue(exu, i, timeout);
-    }
-    else if (exu->waitCb(exu, timeout))
-        AfxThrowError();
-
-    return err;
-}
-
-_AFX afxError _AfxSubmitIoOperation(afxIoBridge exu, afxSubmission const* ctrl, afxUnit cnt, afxObject cmdbs[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(cmdbs);
+    afxBool queued = FALSE;
+    afxClass const* xqueCls = _AfxExuGetXqueClass(exu);
 
     // sanitize arguments
-    afxUnit baseQueIdx = AFX_MIN(ctrl->baseQueIdx, exu->queCnt - 1);
-    afxUnit queCnt = AFX_MIN(exu->queCnt - baseQueIdx, AFX_MAX(1, ctrl->queCnt));
+    afxUnit totalQueCnt = xqueCls->instCnt;
+    afxUnit baseQueIdx = AFX_MIN(ctrl->baseQueIdx, totalQueCnt - 1);
+    afxUnit queCnt = AFX_CLAMP(ctrl->queCnt, 1, totalQueCnt - baseQueIdx);
     AFX_ASSERT(queCnt);
 
-    for (afxUnit queIdx = 0; queIdx < queCnt; queIdx++)
+    while (1)
     {
-        afxIoQueue xque;
-        if (!AfxGetIoQueues(exu, baseQueIdx + queIdx, 1, &xque)) continue;
-        else
+        for (afxUnit i = 0; i < queCnt; i++)
         {
-            AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
-            if (!AfxTryLockMutex(&xque->workChnMtx))
-                continue;
+            afxUnit queIdx = baseQueIdx + i;
+
+            afxIoQueue xque;
+            if (!AfxGetIoQueues(exu, queIdx, 1, &xque))
+            {
+                AfxThrowError();
+                continue; // for
+            }
+
+            afxError err2 = _AfxXqueTransferResources(xque, ctrl, opCnt, ops);
+
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // for --- iterate queues
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // for
+
+            AfxThrowError();
         }
 
-        afxCmdId cmdId;
-        afxStdWork* work = _AfxXquePushWork(xque, AFX_GET_STD_WORK_ID(Execute), sizeof(work->Execute) + (cnt * sizeof(work->Execute.cmdbs[0])), &cmdId);
-        AFX_ASSERT(work);
-
-        AfxUnlockMutex(&xque->workChnMtx);
-
-        exu->pingCb(exu, 0);
-        break;
+        if (err || queued) break; // while --- reiterate if not queue for timeout?
     }
     return err;
 }
+
+_AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufferRemapping const maps[])
+{
+    afxError err = { 0 };
+    // @exu must be a valid afxIoBridge handle.
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxBool queued = FALSE;
+    afxIoQueue xque;
+    afxUnit queIdx = 0;
+    while (AfxGetIoQueues(exu, queIdx++, 1, &xque))
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
+
+        if (unmap)
+        {
+            afxError err2 = _AfxXqueRemapBuffers(xque, 0, NIL, cnt, maps);
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // while --- iterate queues
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // while
+
+            // If synchronization fails, throw an error.
+            AfxThrowError();
+        }
+        else
+        {
+            afxError err2 = _AfxXqueRemapBuffers(xque, cnt, maps, 0, NIL);
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // while --- iterate queues
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // while
+
+            // If flushing fails, throw an error
+            AfxThrowError();
+        }
+    }
+
+    if (queued)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
+        // Wait for the IO queue to finish the operation, otherwise we will have not pointers.
+        if (AfxWaitForEmptyIoQueue(xque, AFX_TIMEOUT_INFINITE))
+            AfxThrowError();
+    }
+    return err;
+}
+
+_AFX afxError _AfxExuCohereMappedBuffers(afxIoBridge exu, afxBool invalidate, afxUnit cnt, afxBufferedMap const maps[])
+{
+    afxError err = { 0 };
+    // @exu must be a valid afxIoBridge handle.
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxBool queued = FALSE;
+    afxIoQueue xque;
+    afxUnit queIdx = 0;
+    while (AfxGetIoQueues(exu, queIdx++, 1, &xque))
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &xque);
+
+        if (invalidate)
+        {
+            afxError err2 = _AfxXqueCohereMappedBuffers(xque, 0, NIL, cnt, maps);
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // while --- iterate queues
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // while
+
+            // If synchronization fails, throw an error.
+            AfxThrowError();
+        }
+        else
+        {
+            afxError err2 = _AfxXqueCohereMappedBuffers(xque, cnt, maps, 0, NIL);
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // while --- iterate queues
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // while
+
+            // If flushing fails, throw an error
+            AfxThrowError();
+        }
+    }
+    return err;
+}
+
+_AFX _afxDdiExu const _AFX_DDI_EXU =
+{
+    .pingCb = _AfxExu_PingCb
+};
 
 _AFX afxError _AfxExuDtorCb(afxIoBridge exu)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
 
-    _AfxWaitForIdleIoBridge(exu, AFX_TIMEOUT_INFINITE);
-    _AfxWaitForIdleIoBridge(exu, AFX_TIMEOUT_INFINITE); // yes, two times.
+    afxIommu iom = AfxGetBridgedIoSystem(exu, NIL);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
-    //AfxDeregisterChainedClasses(&exu->classes);
-    AfxExhaustChainedClasses(&exu->classes);
-    
-    //_AfxWaitForIdleIoBridge(exu, AFX_TIMEOUT_INFINITE);
-
-    afxObjectStash const stashes[] =
-    {
-        {
-            .cnt = exu->queCnt,
-            .siz = sizeof(exu->queues[0]),
-            .var = (void**)&exu->queues
-        }
-    };
-    AfxDeallocateInstanceData(exu, ARRAY_SIZE(stashes), stashes);
+    //AfxWaitForIoSystem(iom, AFX_TIMEOUT_INFINITE);
+    //AfxWaitForIoSystem(iom, AFX_TIMEOUT_INFINITE); // yes, two times.
 
     if (exu->worker)
     {
+        while (AfxIsThreadRunning(exu->worker))
+        {
+            AfxRequestThreadInterruption(exu->worker);
+            exu->ddi->pingCb(exu, 0);
+        }
         afxInt exitCode;
         AfxWaitForThreadExit(exu->worker, &exitCode);
         AfxDisposeObjects(1, &exu->worker);
     }
+
+    AfxDeregisterChainedClasses(&exu->classes);
+
     AfxDismantleCondition(&exu->schedCnd);
     AfxDismantleMutex(&exu->schedCndMtx);
 
@@ -205,88 +310,79 @@ _AFX afxError _AfxExuCtorCb(afxIoBridge exu, void** args, afxUnit invokeNo)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
 
-    afxDevice dev = args[0];
-    //AFX_ASSERT_OBJECTS(afxFcc_DEV, 1, &dev);
-    afxDevLink ctx = args[1];
-    //AFX_ASSERT_OBJECTS(afxFcc_DEVK, 1, &ctx);
-    afxIoBridgeConfig const *cfg = ((afxIoBridgeConfig const *)args[2]);
-    AFX_ASSERT(cfg);
-    afxClassConfig const* xqueClsCfg = args[3];
-    AFX_ASSERT(xqueClsCfg);
+    afxIommu iom = AFX_CAST(afxIommu, args[0]);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
+    _afxExuAcq const* cfg = AFX_CAST(_afxExuAcq const*, args[1]) + invokeNo;
 
     if (!cfg)
     {
+        AFX_ASSERT(cfg);
         AfxThrowError();
         return err;
     }
 
-    exu->queCnt = cfg->minQueCnt;
+    exu->dev = cfg->dev;
+    //AFX_ASSERT(cfg->portId != AFX_INVALID_INDEX);
+    //exu->portId = cfg->portId;
+    exu->exuIdx = cfg->exuIdx;
+    AFX_ASSERT(exu->exuIdx == AfxGetObjectId(exu));
 
-    afxObjectStash const stashes[] =
-    {
-        {
-            .cnt = cfg->minQueCnt,
-            .siz = sizeof(exu->queues[0]),
-            .var = (void**)&exu->queues
-        }
-    };
+    exu->ddi = &_AFX_DDI_EXU;
+    exu->workerProc = _AFX_XPU_THREAD_PROC;
+    exu->procCb = _AfxXpu_ProcCb;
 
-    if (AfxAllocateInstanceData(exu, ARRAY_SIZE(stashes), stashes))
-    {
-        AfxThrowError();
-        return err;
-    }
-
-    exu->ctx = ctx;
-    exu->portId = exu->portId;
-    exu->exuIdx = invokeNo;
+    exu->iorpVmt = &_AFX_XPU_IORP_VMT;
+    exu->cmdVmt = &_AFX_XPU_CMD_VMT;
 
     AfxDeployMutex(&exu->schedCndMtx, AFX_MTX_PLAIN);
     AfxDeployCondition(&exu->schedCnd);
     exu->schedCnt = 0;
 
-    afxThreadConfig thrCfg = { 0 };
-    //thrCfg.procCb = DrawThreadProc;
-    thrCfg.usage = afxThreadUsage_IO;
-    thrCfg.udd[0] = exu;
-    if (AfxAcquireThreads(AfxHere(), &thrCfg, 1, &exu->worker))
-        AfxThrowError();
-
-    exu->procCb = _AfxExuStdIoProcCb;
-    exu->pingCb = _AfxExuStdIoPingCb;
-    exu->ctrlCb = _AfxExuStdIoCtrlCb;
-    exu->workerProc = _AfxExuStdIoThreadProc;
-    exu->waitCb = NIL;
-
     AfxMakeChain(&exu->classes, exu);
 
-    afxClassConfig clsCfg;
-    clsCfg = *xqueClsCfg;
-    AfxMountClass(&exu->xqueCls, NIL, &exu->classes, &clsCfg);
+    afxClassConfig xqueClsCfg = cfg->xqueClsCfg ? *cfg->xqueClsCfg : _AFX_CLASS_CONFIG_XQUE;
+    AFX_ASSERT(xqueClsCfg.fcc == afxFcc_XQUE);
+    AfxMountClass(&exu->xqueCls, NIL, &exu->classes, &xqueClsCfg);
 
-    afxClass* xqueCls = (afxClass*)&exu->xqueCls;
+    afxClass* xqueCls = (afxClass*)_AfxExuGetXqueClass(exu);
     AFX_ASSERT_CLASS(xqueCls, afxFcc_XQUE);
+    afxIoQueue queues[AFX_MAX_QUEUES_PER_BRIDGE];
+    AFX_ASSERT(AFX_MAX_QUEUES_PER_BRIDGE >= cfg->minQueCnt);
 
-    if (AfxAcquireObjects(xqueCls, exu->queCnt, (afxObject*)exu->queues, (void const*[]) { exu, cfg })) AfxThrowError();
-    else
+    if (AfxAcquireObjects(xqueCls, cfg->minQueCnt, (afxObject*)queues, (void const*[]) { exu, cfg }))
     {
-        AFX_ASSERT_OBJECTS(afxFcc_XQUE, exu->queCnt, exu->queues);
+        AfxThrowError();
+    }
+
+    if (!err)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_XQUE, cfg->minQueCnt, queues);
+
+        afxThreadConfig thrCfg = { 0 };
+        //thrCfg.procCb = IoThreadProc;
+        thrCfg.usage = afxThreadUsage_DRAW;
+        thrCfg.udd[0] = exu;
+
+        if (AfxAcquireThreads(AfxHere(), &thrCfg, 1, &exu->worker))
+        {
+            AfxThrowError();
+        }
     }
 
     if (err)
+    {
         AfxDeregisterChainedClasses(&exu->classes);
-
-    if (err && AfxDeallocateInstanceData(exu, ARRAY_SIZE(stashes), stashes))
-        AfxThrowError();
-
+        AfxDismantleCondition(&exu->schedCnd);
+        AfxDismantleMutex(&exu->schedCndMtx);
+    }
     return err;
 }
 
-_AFX afxClassConfig const _AFX_EXU_CLASS_CONFIG =
+_AFX afxClassConfig const _AFX_CLASS_CONFIG_EXU =
 {
     .fcc = afxFcc_EXU,
     .name = "IoBridge",
-    .desc = "I/O Device Execution Bridge",
+    .desc = "I/O Bridge",
     .fixedSiz = sizeof(AFX_OBJECT(afxIoBridge)),
     .ctor = (void*)_AfxExuCtorCb,
     .dtor = (void*)_AfxExuDtorCb
@@ -294,37 +390,25 @@ _AFX afxClassConfig const _AFX_EXU_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFX afxError AfxAcquireIoBridge(afxIoBridgeConfig const* cfg, afxIoBridge* bridge)
+_AFX afxError _AfxIomBridgeDevices(afxIommu iom, afxUnit cnt, _afxExuAcq const configs[], afxIoBridge bridges[])
 {
     afxError err = { 0 };
-    
-    // Acquire bridges and queues
-    afxUnit totalDqueCnt = 0;
-    afxIoBridgeConfig bridgeCfg = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
+    AFX_ASSERT(configs);
+    AFX_ASSERT(bridges);
+    AFX_ASSERT(cnt);
 
-    if (cfg)
-    {
-        bridgeCfg = *cfg;
-        bridgeCfg.minQueCnt = bridgeCfg.minQueCnt ? bridgeCfg.minQueCnt : AFX_MAX(1, _AfxXqueStdImplementation.unitsPerPage);            
-    }
-    else
-    {
-        bridgeCfg.minQueCnt = AFX_MAX(1, _AfxXqueStdImplementation.unitsPerPage);
-        bridgeCfg.queuePriority = NIL;
-        //bridgeCfg[i].flags = NIL;
-        totalDqueCnt += bridgeCfg.minQueCnt;
-    }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-    afxClass* cls = (afxClass*)_AfxSysGetExuClass(sys);
+    afxClass* cls = (afxClass*)_AfxIomSW_GetExuClassCb(iom);
     AFX_ASSERT_CLASS(cls, afxFcc_EXU);
 
-    if (AfxAcquireObjects(cls, 1, (afxObject*)bridge, (void const*[]) { NIL, NIL, &bridgeCfg, &_AfxXqueStdImplementation })) AfxThrowError();
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)bridges, (void const*[]) { iom, configs }))
+    {
+        AfxThrowError();
+    }
     else
     {
-        AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, bridge);
+        AFX_ASSERT_OBJECTS(afxFcc_EXU, cnt, bridges);
     }
+
     return err;
 }

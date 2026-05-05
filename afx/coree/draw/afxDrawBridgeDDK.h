@@ -90,8 +90,8 @@ AVX afxClass const* _AvxDexuGetDqueClass(afxDrawBridge dexu);
 AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[]);
 AVX afxError _AvxDexuCohereMappedBuffers(afxDrawBridge dexu, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
 AVX afxError _AvxDexuTransferVideoMemory(afxDrawBridge dexu, avxTransference* ctrl, afxUnit opCnt, void const* ops);
-AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[]);
-AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[]);
+AVX afxError _AvxDexuPresentSurfaces(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[]);
+AVX afxError _AvxDexuScanSurfaces(afxDrawBridge dexu, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[]);
 
 AVX afxError _AvxDexuResetQueries(afxDrawBridge dexu, avxQueryPool qryp, afxUnit base, afxUnit cnt);
 AVX afxError _AvxDexuQueryResults(afxDrawBridge dexu, avxQueryPool qryp, avxQueryResultFlags flags, afxUnit base, afxUnit cnt, afxSize dstCap, void* dst, afxSize stride);
