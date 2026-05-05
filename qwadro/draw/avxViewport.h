@@ -23,7 +23,7 @@
 
 #include "qwadro/math/afxVector.h"
 #include "qwadro/draw/afxDrawDefs.h"
-#include "qwadro/base/afxRect.h"
+#include "qwadro/afxRect.h"
 
 AFX_DEFINE_STRUCT(avxOrigin2)
 // Structure specifying the origin of an area.

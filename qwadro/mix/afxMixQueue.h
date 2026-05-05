@@ -87,9 +87,9 @@ AFX_DEFINE_STRUCT(amxCaption)
     afxSink         sink;
     afxUnit         sampleCnt;
 
-    avxFence        wait;
+    amxFence        wait;
     afxUnit64       waitValue;
-    avxFence        signal;
+    amxFence        signal;
     afxUnit64       signalValue;
 };
 

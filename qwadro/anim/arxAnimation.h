@@ -29,7 +29,7 @@
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/anim/arxCurve.h"
 #include "qwadro/math/afxTransform.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/anim/arxGesture.h"
 #include "qwadro/cad/arxPose.h"
 #include "qwadro/anim/arxPuppet.h"

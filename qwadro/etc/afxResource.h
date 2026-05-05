@@ -20,10 +20,10 @@
 #ifndef AFX_RESOURCE_H
 #define AFX_RESOURCE_H
 
-#include "qwadro/base/afxUri.h"
+#include "qwadro/afxUri.h"
 #include "qwadro/etc/afxXml.h"
-#include "qwadro/exec/afxTime.h"
-#include "qwadro/exec/afxModule.h"
+#include "qwadro/afxTime.h"
+#include "qwadro/afxModule.h"
 
 // Base class for all resources.
 // Resource is the base class for all resource types.

@@ -25,8 +25,8 @@
 #ifndef AVX_ICD_H
 #define AVX_ICD_H
 
-#include "../exec/afxSystemDDK.h"
-#include "../io/afxIoDDK.h"
+#include "../afxSystemDDK.h"
+#include "../afxIoDDK.h"
 
 #ifdef _AFX_DEBUG
 // hardcoded validation controls

@@ -37,7 +37,7 @@
 #ifndef ASX_ENGINE_H
 #define ASX_ENGINE_H
 
-#include "qwadro/exec/afxDevice.h"
+#include "qwadro/afxDevice.h"
 #include "qwadro/sim/arxSimBridge.h"
 
 AFX_DEFINE_STRUCT(arxEngineFeatures)

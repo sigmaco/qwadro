@@ -20,7 +20,7 @@
 #ifndef ACX_ICD_H
 #define ACX_ICD_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/pro/afxWarpSystem.h"
 #include "spu/acxSpuExecutor.h"
 #include "spu/acxSpuTransference.h"

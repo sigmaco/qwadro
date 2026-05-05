@@ -21,7 +21,7 @@
 #define ARX_BVH_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/cad/arxMesh.h"
 
 

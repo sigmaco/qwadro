@@ -36,7 +36,7 @@
 #ifndef AVX_DRAW_DEVICE_H
 #define AVX_DRAW_DEVICE_H
 
-#include "qwadro/exec/afxDevice.h"
+#include "qwadro/afxDevice.h"
 #include "qwadro/draw/afxDrawBridge.h"
 #include "qwadro/draw/afxSurface.h"
 #include "qwadro/hid/afxDisplay.h"

@@ -77,14 +77,14 @@
 
 typedef enum avxCmdFlag
 {
-    // Commands will be submitted once only and then automatically invalidated.
-    avxCmdFlag_ONCE = AFX_BITMASK(0),
+    // Commands will be submitted more than once only and then automatically invalidated.
+    avxCmdFlag_RECURRENT = AFX_BITMASK(0),
     // Commands will be side-loaded (inlined) by a front context.
-    avxCmdFlag_DEFERRED = AFX_BITMASK(1),
-    // Commands are considered entirely inside a drawing scope (to be used by a front context).
-    avxCmdFlag_SCOPED = AFX_BITMASK(2),
+    avxCmdFlag_INCURRENT = AFX_BITMASK(1),
     // Commands will be shared across more than one DPU concurrently.
-    avxCmdFlag_SHARED = AFX_BITMASK(3)
+    avxCmdFlag_CONCURRENT = AFX_BITMASK(2),
+    // Commands are considered entirely inside a drawing scope (to be used by a front context).
+    avxCmdFlag_SCOPED = AFX_BITMASK(3)
 } avxCmdFlags;
 
 typedef enum avxContextFlag

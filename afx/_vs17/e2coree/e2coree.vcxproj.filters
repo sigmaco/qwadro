@@ -117,121 +117,121 @@
     <ClInclude Include="..\..\..\qwadro\math\afxRotor.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxPool.h">
+    <ClInclude Include="..\..\..\qwadro\afxPool.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxQueue.h">
+    <ClInclude Include="..\..\..\qwadro\afxQueue.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxSlabAllocator.h">
+    <ClInclude Include="..\..\..\qwadro\afxSlabAllocator.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxStack.h">
+    <ClInclude Include="..\..\..\qwadro\afxStack.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxArena.h">
+    <ClInclude Include="..\..\..\qwadro\afxArena.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxArray.h">
+    <ClInclude Include="..\..\..\qwadro\afxArray.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>_dll</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxMappedString.h">
+    <ClInclude Include="..\..\..\qwadro\afxMappedString.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxEvent.h">
+    <ClInclude Include="..\..\..\qwadro\afxEvent.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxFcc.h">
+    <ClInclude Include="..\..\..\qwadro\afxFcc.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxFixedString.h">
+    <ClInclude Include="..\..\..\qwadro\afxFixedString.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxIterator.h">
+    <ClInclude Include="..\..\..\qwadro\afxIterator.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxObject.h">
+    <ClInclude Include="..\..\..\qwadro\afxObject.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxPlatformDefs.h">
+    <ClInclude Include="..\..\..\qwadro\afxPlatformDefs.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxRawString.h">
+    <ClInclude Include="..\..\..\qwadro\afxRawString.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxString.h">
+    <ClInclude Include="..\..\..\qwadro\afxString.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxVersion.h">
+    <ClInclude Include="..\..\..\qwadro\afxVersion.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxChain.h">
+    <ClInclude Include="..\..\..\qwadro\afxChain.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxClass.h">
+    <ClInclude Include="..\..\..\qwadro\afxClass.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxCoreDefs.h">
+    <ClInclude Include="..\..\..\qwadro\afxCoreDefs.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxSystem.h">
+    <ClInclude Include="..\..\..\qwadro\afxSystem.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxThread.h">
+    <ClInclude Include="..\..\..\qwadro\afxThread.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxTime.h">
+    <ClInclude Include="..\..\..\qwadro\afxTime.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxAtomic.h">
+    <ClInclude Include="..\..\..\qwadro\afxAtomic.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxClock.h">
+    <ClInclude Include="..\..\..\qwadro\afxClock.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxCondition.h">
+    <ClInclude Include="..\..\..\qwadro\afxCondition.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxDevice.h">
+    <ClInclude Include="..\..\..\qwadro\afxDevice.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxModule.h">
+    <ClInclude Include="..\..\..\qwadro\afxModule.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxMutex.h">
+    <ClInclude Include="..\..\..\qwadro\afxMutex.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxSemaphore.h">
+    <ClInclude Include="..\..\..\qwadro\afxSemaphore.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxService.h">
+    <ClInclude Include="..\..\..\qwadro\afxService.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxInterlockedQueue.h">
+    <ClInclude Include="..\..\..\qwadro\afxInterlockedQueue.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\math\afxScalar.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxMemory.h">
+    <ClInclude Include="..\..\..\qwadro\afxMemory.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\math\afxReal16.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxProcess.h">
+    <ClInclude Include="..\..\..\qwadro\afxProcess.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxTerminal.h">
+    <ClInclude Include="..\..\..\qwadro\afxTerminal.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxThreadPool.h">
+    <ClInclude Include="..\..\..\qwadro\afxThreadPool.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxFutex.h">
+    <ClInclude Include="..\..\..\qwadro\afxFutex.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\math\afxHyperbolicTrigonometry.h">
@@ -243,16 +243,16 @@
     <ClInclude Include="..\..\..\qwadro\math\afxLogarithmic.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxMemoryUtil.h">
+    <ClInclude Include="..\..\..\qwadro\afxMemoryUtil.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\math\afxArithmetic2.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxWarp.h">
+    <ClInclude Include="..\..\..\qwadro\afxWarp.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxRect.h">
+    <ClInclude Include="..\..\..\qwadro\afxRect.h">
       <Filter>coree\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\math\afxTrigonometry.h">
@@ -273,7 +273,7 @@
     <ClInclude Include="..\..\..\qwadro\math\afxTransform.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxRing.h">
+    <ClInclude Include="..\..\..\qwadro\afxRing.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\coll\afxCapsule.h">
@@ -297,10 +297,10 @@
     <ClInclude Include="..\..\..\qwadro\coll\afxBox.h">
       <Filter>coree\coll</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxDebug.h">
+    <ClInclude Include="..\..\..\qwadro\afxDebug.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxUri.h">
+    <ClInclude Include="..\..\..\qwadro\afxUri.h">
       <Filter>coree\base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\etc\afxManifest2.h">
@@ -318,37 +318,37 @@
     <ClInclude Include="..\..\..\qwadro\etc\afxResource.h">
       <Filter>coree\etc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\base\afxSimd.h">
+    <ClInclude Include="..\..\..\qwadro\afxSimd.h">
       <Filter>coree\base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxArchive.h">
+    <ClInclude Include="..\..\..\qwadro\afxArchive.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxData.h">
+    <ClInclude Include="..\..\..\qwadro\afxData.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxDatabase.h">
+    <ClInclude Include="..\..\..\qwadro\afxDatabase.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxFile.h">
+    <ClInclude Include="..\..\..\qwadro\afxFile.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxIoBridge.h">
+    <ClInclude Include="..\..\..\qwadro\afxIoBridge.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxIoContext.h">
+    <ClInclude Include="..\..\..\qwadro\afxIoContext.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxSource.h">
+    <ClInclude Include="..\..\..\qwadro\afxSource.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxStorage.h">
+    <ClInclude Include="..\..\..\qwadro\afxStorage.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxStream.h">
+    <ClInclude Include="..\..\..\qwadro\afxStream.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxStreamOps.h">
+    <ClInclude Include="..\..\..\qwadro\afxStreamOps.h">
       <Filter>coree\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\coree\xss\xssMath.h">
@@ -465,31 +465,31 @@
     <ClInclude Include="..\..\..\qwadro\hid\afxGamepad.h">
       <Filter>coree\hid</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\exec\afxServiceDDK.h">
+    <ClInclude Include="..\..\coree\afxServiceDDK.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\exec\afxSystemDDK.h">
+    <ClInclude Include="..\..\coree\afxSystemDDK.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\exec\afxThreadingDDK.h">
+    <ClInclude Include="..\..\coree\afxThreadingDDK.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\exec\afxDeviceDDK.h">
+    <ClInclude Include="..\..\coree\afxDeviceDDK.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\exec\afxModuleDDK.h">
+    <ClInclude Include="..\..\coree\afxModuleDDK.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxIoDDK.h">
+    <ClInclude Include="..\..\coree\afxIoDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxStorageDDK.h">
+    <ClInclude Include="..\..\coree\afxStorageDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxStreamDDK.h">
+    <ClInclude Include="..\..\coree\afxStreamDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxArchiveDDK.h">
+    <ClInclude Include="..\..\coree\afxArchiveDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\coree\draw\dpu\avxDpuTransference.h">
@@ -522,7 +522,7 @@
     <ClInclude Include="..\..\coree\pro\spu\acxSpuContext.h">
       <Filter>coree\pro\spu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\exec\afxConsole.h">
+    <ClInclude Include="..\..\..\qwadro\afxConsole.h">
       <Filter>coree\exec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\etc\afxNotation.h">
@@ -1035,37 +1035,37 @@
     <ClInclude Include="..\..\coree\mix\amxStorageDDK.h">
       <Filter>coree\mix\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxBuffered.h">
+    <ClInclude Include="..\..\..\qwadro\afxBuffered.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\mem\afxBuffer.h">
+    <ClInclude Include="..\..\..\qwadro\afxBuffer.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\mem\afxBufferDDK.h">
+    <ClInclude Include="..\..\coree\afxBufferDDK.h">
       <Filter>coree\mem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxIommu.h">
+    <ClInclude Include="..\..\..\qwadro\afxIommu.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxIommuDDK.h">
+    <ClInclude Include="..\..\coree\afxIommuDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxIoQueue.h">
+    <ClInclude Include="..\..\..\qwadro\afxIoQueue.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxIoQueueDDK.h">
+    <ClInclude Include="..\..\coree\afxIoQueueDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxIoContextDDK.h">
+    <ClInclude Include="..\..\coree\afxIoContextDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\io\afxFence.h">
+    <ClInclude Include="..\..\..\qwadro\afxFence.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxFenceDDK.h">
+    <ClInclude Include="..\..\coree\afxFenceDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\io\afxIoBridgeDDK.h">
+    <ClInclude Include="..\..\coree\afxIoBridgeDDK.h">
       <Filter>coree\io</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1191,82 +1191,82 @@
     <ClCompile Include="..\..\coree\hid\afxGamepad.c">
       <Filter>coree\hid</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxVertex.c">
+    <ClCompile Include="..\..\coree\math\afxVertex.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxArithmetic.c">
+    <ClCompile Include="..\..\coree\math\afxArithmetic.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxArithmetic2.c">
+    <ClCompile Include="..\..\coree\math\afxArithmetic2.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxHyperbolicTrigonometry.c">
+    <ClCompile Include="..\..\coree\math\afxHyperbolicTrigonometry.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxLogarithmic.c">
+    <ClCompile Include="..\..\coree\math\afxLogarithmic.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxMathOps.c">
+    <ClCompile Include="..\..\coree\math\afxMathOps.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxMatrix.c">
+    <ClCompile Include="..\..\coree\math\afxMatrix.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxQuaternion.c">
+    <ClCompile Include="..\..\coree\math\afxQuaternion.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxReal16.c">
+    <ClCompile Include="..\..\coree\math\afxReal16.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxRotor.c">
+    <ClCompile Include="..\..\coree\math\afxRotor.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxScalar.c">
+    <ClCompile Include="..\..\coree\math\afxScalar.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxTransform.c">
+    <ClCompile Include="..\..\coree\math\afxTransform.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxTrigonometry.c">
+    <ClCompile Include="..\..\coree\math\afxTrigonometry.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxVector.c">
+    <ClCompile Include="..\..\coree\math\afxVector.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxClass.c">
+    <ClCompile Include="..\..\coree\afxClass.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxCoreDefs.c">
+    <ClCompile Include="..\..\coree\afxCoreDefs.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxFixedString.c">
+    <ClCompile Include="..\..\coree\afxFixedString.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxObject.c">
+    <ClCompile Include="..\..\coree\afxObject.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxRawString.c">
+    <ClCompile Include="..\..\coree\afxRawString.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxRect.c">
+    <ClCompile Include="..\..\coree\afxRect.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxSimd.c">
+    <ClCompile Include="..\..\coree\afxSimd.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxString.c">
+    <ClCompile Include="..\..\coree\afxString.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxUri.c">
+    <ClCompile Include="..\..\coree\afxUri.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxVersion.c">
+    <ClCompile Include="..\..\coree\afxVersion.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxWarp.c">
+    <ClCompile Include="..\..\coree\afxWarp.c">
       <Filter>coree\base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxChain.c">
+    <ClCompile Include="..\..\coree\afxChain.c">
       <Filter>coree\base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\coll\afxCapsule.c">
@@ -1302,130 +1302,130 @@
     <ClCompile Include="..\..\coree\etc\afxManifest2.c">
       <Filter>coree\etc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxService.c">
+    <ClCompile Include="..\..\coree\afxService.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxSystem.c">
+    <ClCompile Include="..\..\coree\afxSystem.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxSystem_W32.c">
+    <ClCompile Include="..\..\coree\afxSystem_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxSystemModules.c">
+    <ClCompile Include="..\..\coree\afxSystemModules.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxTerminal_W32.c">
+    <ClCompile Include="..\..\coree\afxTerminal_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxThread_PC.c">
+    <ClCompile Include="..\..\coree\afxThread_PC.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxThreadPool.c">
+    <ClCompile Include="..\..\coree\afxThreadPool.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxTime_W32.c">
+    <ClCompile Include="..\..\coree\afxTime_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxAtomic_PC.c">
+    <ClCompile Include="..\..\coree\afxAtomic_PC.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxClock_W32.c">
+    <ClCompile Include="..\..\coree\afxClock_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxCondition_PC.c">
+    <ClCompile Include="..\..\coree\afxCondition_PC.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxDebug_W32.c">
+    <ClCompile Include="..\..\coree\afxDebug_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxDevice.c">
+    <ClCompile Include="..\..\coree\afxDevice.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxFutex_PC.c">
+    <ClCompile Include="..\..\coree\afxFutex_PC.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxModule_W32.c">
+    <ClCompile Include="..\..\coree\afxModule_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxMutex_PC.c">
+    <ClCompile Include="..\..\coree\afxMutex_PC.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxProcess_W32.c">
+    <ClCompile Include="..\..\coree\afxProcess_W32.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxSemaphore.c">
+    <ClCompile Include="..\..\coree\afxSemaphore.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxDatabase.c">
+    <ClCompile Include="..\..\coree\afxDatabase.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxFile.c">
+    <ClCompile Include="..\..\coree\afxFile.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIoBridge.c">
+    <ClCompile Include="..\..\coree\afxIoBridge.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIoContext.c">
+    <ClCompile Include="..\..\coree\afxIoContext.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIoPort.c">
+    <ClCompile Include="..\..\coree\afxIoPort.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIoQueue.c">
+    <ClCompile Include="..\..\coree\afxIoQueue.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxSource.c">
+    <ClCompile Include="..\..\coree\afxSource.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxStorage.c">
+    <ClCompile Include="..\..\coree\afxStorage.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxStream.c">
+    <ClCompile Include="..\..\coree\afxStream.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxStreamOps.c">
+    <ClCompile Include="..\..\coree\afxStreamOps.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxStreamXpu.c">
+    <ClCompile Include="..\..\coree\afxStreamXpu.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxArchive.c">
+    <ClCompile Include="..\..\coree\afxArchive.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxData.c">
+    <ClCompile Include="..\..\coree\afxData.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxMemory.c">
+    <ClCompile Include="..\..\coree\afxMemory.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxMemoryUtil.c">
+    <ClCompile Include="..\..\coree\afxMemoryUtil.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxPool.c">
+    <ClCompile Include="..\..\coree\afxPool.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxQueue.c">
+    <ClCompile Include="..\..\coree\afxQueue.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxRing.c">
+    <ClCompile Include="..\..\coree\afxRing.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxSlabAllocator.c">
+    <ClCompile Include="..\..\coree\afxSlabAllocator.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxStack.c">
+    <ClCompile Include="..\..\coree\afxStack.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxArena.c">
+    <ClCompile Include="..\..\coree\afxArena.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxArray.c">
+    <ClCompile Include="..\..\coree\afxArray.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxInterlockedQueue.c">
+    <ClCompile Include="..\..\coree\afxInterlockedQueue.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxMappedString.c">
+    <ClCompile Include="..\..\coree\afxMappedString.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\afxQwadroCpp.cpp">
@@ -1482,19 +1482,19 @@
     <ClCompile Include="..\..\coree\pro\spu\acxSpuBufferIo.c">
       <Filter>coree\pro\spu</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\exec\afxConsole.c">
+    <ClCompile Include="..\..\coree\afxConsole.c">
       <Filter>coree\exec</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\etc\afxNotation.c">
       <Filter>coree\etc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxMultiplication.c">
+    <ClCompile Include="..\..\coree\math\afxMultiplication.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxInterpolation.c">
+    <ClCompile Include="..\..\coree\math\afxInterpolation.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\base\afxTransformation.c">
+    <ClCompile Include="..\..\coree\math\afxTransformation.c">
       <Filter>coree\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\mirage\sim\arxEngine.c">
@@ -1899,22 +1899,22 @@
     <ClCompile Include="..\..\coree\mix\amxStorage.c">
       <Filter>coree\mix\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxBufferIo.c">
+    <ClCompile Include="..\..\coree\afxBufferIo.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxBuffer.c">
+    <ClCompile Include="..\..\coree\afxBuffer.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\mem\afxBuffered.c">
+    <ClCompile Include="..\..\coree\afxBuffered.c">
       <Filter>coree\mem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIommu.c">
+    <ClCompile Include="..\..\coree\afxIommu.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxIoContextDDK.c">
+    <ClCompile Include="..\..\coree\afxIoContextDDK.c">
       <Filter>coree\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\io\afxFence.c">
+    <ClCompile Include="..\..\coree\afxFence.c">
       <Filter>coree\io</Filter>
     </ClCompile>
   </ItemGroup>

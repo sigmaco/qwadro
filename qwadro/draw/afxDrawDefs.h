@@ -49,7 +49,7 @@
 #ifndef AVX_DRAW_DEFS_H
 #define AVX_DRAW_DEFS_H
 
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 
 #ifndef __e2targa__
 #   ifdef _DEBUG

@@ -20,7 +20,7 @@
 #ifndef ACX_DEVICE_DDK_H
 #define ACX_DEVICE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/pro/afxWarpSystem.h"
 #include "afxWarpSystemDDK.h"
 

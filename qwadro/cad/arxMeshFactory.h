@@ -22,13 +22,13 @@
 
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/draw/afxDrawDefs.h"
-#include "qwadro/mem/afxArray.h"
+#include "qwadro/afxArray.h"
 #include "qwadro/coll/afxBox.h"
-#include "qwadro/base/afxObject.h"
+#include "qwadro/afxObject.h"
 #include "qwadro/etc/afxUrd.h"
 #include "qwadro/math/afxVertex.h"
 //#include "qwadro/draw/arxBufferizer.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/cad/arxTriangulation.h"
 
 #define ARX_INDICES_PER_TRI 3

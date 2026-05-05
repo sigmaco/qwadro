@@ -20,12 +20,12 @@
 #ifndef ARX_MESH_BUILDER_H
 #define ARX_MESH_BUILDER_H
 
-#include "qwadro/mem/afxArray.h"
+#include "qwadro/afxArray.h"
 #include "qwadro/coll/afxBox.h"
-#include "qwadro/base/afxObject.h"
+#include "qwadro/afxObject.h"
 #include "qwadro/etc/afxUrd.h"
 #include "qwadro/math/afxVertex.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/iris/arxIrisDefs.h"
 

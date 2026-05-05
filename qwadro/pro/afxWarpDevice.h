@@ -20,7 +20,7 @@
 #ifndef ACX_WARP_DEVICE_H
 #define ACX_WARP_DEVICE_H
 
-#include "qwadro/exec/afxDevice.h"
+#include "qwadro/afxDevice.h"
 #include "qwadro/pro/afxWarpBridge.h"
 
 AFX_DEFINE_STRUCT(acxFeatures)

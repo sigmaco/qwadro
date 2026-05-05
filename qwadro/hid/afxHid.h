@@ -31,7 +31,7 @@
 #define AUX_HID_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/exec/afxDevice.h"
+#include "qwadro/afxDevice.h"
 #include "qwadro/math/afxVector.h"
 
 // A HID may be a haptic device.

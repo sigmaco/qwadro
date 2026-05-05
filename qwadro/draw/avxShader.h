@@ -26,7 +26,7 @@
 
 #include "qwadro/draw/avxFormat.h"
 #include "qwadro/etc/afxXml.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 
 typedef enum avxShaderParam
 {

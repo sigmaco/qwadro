@@ -20,6 +20,6 @@
 #include <Windows.h>
 //#include <combaseapi.h>
 #define _AFX_CORE_C
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 //#include "../afxQwadro.h"
 

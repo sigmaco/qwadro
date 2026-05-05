@@ -50,11 +50,11 @@
 #define AVX_PIPELINE_H
 
 #include "qwadro/draw/avxBus.h"
-#include "qwadro/base/afxUri.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxUri.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/draw/avxFormat.h"
 #include "qwadro/draw/avxColor.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/draw/avxRasterization.h"
 
 #define AVX_MAX_SHADER_SPECIALIZATIONS (16)

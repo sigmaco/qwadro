@@ -24,7 +24,7 @@
 #ifndef AUX_HID_DDK_H
 #define AUX_HID_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxShell.h"

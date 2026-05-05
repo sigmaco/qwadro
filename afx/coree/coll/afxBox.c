@@ -22,7 +22,7 @@
 #include "qwadro/math/afxScalar.h"
 #include "qwadro/math/afxVector.h"
 #include "qwadro/math/afxMatrix.h"
-#include "qwadro/mem/afxMemory.h"
+#include "qwadro/afxMemory.h"
 #include "qwadro/math/afxTransformation.h"
 #include "qwadro/math/afxInterpolation.h"
 #include "qwadro/math/afxMultiplication.h"

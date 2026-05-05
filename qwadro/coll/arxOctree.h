@@ -20,8 +20,8 @@
 #ifndef ASX_OCTREE_H
 #define ASX_OCTREE_H
 
-#include "qwadro/base/afxObject.h"
-#include "qwadro/base/afxString.h"
+#include "qwadro/afxObject.h"
+#include "qwadro/afxString.h"
 #include "qwadro/math/afxMathDefs.h"
 #include "qwadro/coll/afxBox.h"
 #include "qwadro/coll/afxSphere.h"

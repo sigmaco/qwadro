@@ -32,7 +32,7 @@
 #ifndef AFX_SURFACE_DDK_H
 #define AFX_SURFACE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 AFX_DECLARE_STRUCT(_avxIddDout);

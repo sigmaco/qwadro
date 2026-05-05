@@ -52,7 +52,7 @@
 #define AFX_QWADRO_H
 
 // AFX
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 // AVX
 #include "qwadro/draw/afxDrawSystem.h"
 // AMX

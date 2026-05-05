@@ -26,11 +26,11 @@
 #define AVX_BUS_H
 
 #include "qwadro/draw/afxDrawDefs.h"
-#include "qwadro/base/afxUri.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxUri.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/draw/avxFormat.h"
 #include "qwadro/draw/avxColor.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/draw/avxRasterization.h"
 
 typedef enum avxBus

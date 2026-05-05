@@ -26,7 +26,7 @@
 #include "dep/pdjson/pdjson.h"
 
 #define _AFX_JSON_C
-#include "../io/afxIoDDK.h"
+#include "../afxIoDDK.h"
 
 AFX_DEFINE_STRUCT(afxNotation)
 {
