@@ -21,7 +21,7 @@
 
 #define _AFX_CORE_C
 #define _AFX_BUFFER_C
-#include "../afxSystemDDK.h"
+#include "afxSystemDDK.h"
 
 #define _AFX_BUFFER_HOSTSIDE_ALWAYS_FULLY_MAPPED TRUE
 
@@ -56,7 +56,7 @@ _AFX afxError AfxDumpBuffer(afxBuffer buf, afxUnit opCnt, afxBufferIo const ops[
 
     // Get the IO system context associated with the buffer
     afxIommu iom = AfxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     // Perform the transfer (dump) of data
     if (_AfxIomGetDdi(iom)->transferCb(iom, &transfer, opCnt, ops))
@@ -106,7 +106,7 @@ _AFX afxError AfxUpdateBuffer(afxBuffer buf, afxUnit opCnt, afxBufferIo const op
 
     // Get the IO system associated with the buffer
     afxIommu iom = AfxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     // Perform the data transfer (buffer update)
     if (_AfxIomGetDdi(iom)->transferCb(iom, &transfer, opCnt, ops))
@@ -156,7 +156,7 @@ _AFX afxError AfxUploadBuffer(afxBuffer buf, afxUnit opCnt, afxBufferIo const op
 
     // Get the IO system (context) associated with the buffer
     afxIommu iom = AfxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     // Perform the actual transfer of data
     if (_AfxIomGetDdi(iom)->transferCb(iom, &transfer, opCnt, ops))
@@ -203,7 +203,7 @@ _AFX afxError AfxDownloadBuffer(afxBuffer buf, afxUnit opCnt, afxBufferIo const 
 
     // Get the IO system context associated with the buffer
     afxIommu iom = AfxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     // Perform the transfer (download) of data
     if (_AfxIomGetDdi(iom)->transferCb(iom, &transfer, opCnt, ops))
@@ -228,7 +228,7 @@ _AFX afxError AfxMapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[], vo
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= AFX_MAX_VERTEX_SOURCES);
@@ -273,7 +273,7 @@ _AFX afxError AfxMapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[], vo
         afxIommu dsys2 = AfxGetBufferHost(buf);
         if (dsys2 != iom)
         {
-            AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys2);
+            AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &dsys2);
             AFX_ASSERT(dsys2 == iom);
             AfxThrowError();
             break;
@@ -402,7 +402,7 @@ _AFX afxError AfxUnmapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[])
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     /*
         This function does not accept flags. Instead, any behavior wanted in unmapping must be specified in mapping operation.
@@ -432,7 +432,7 @@ _AFX afxError AfxUnmapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[])
         // Validate the IO system context of the buffer
         // Ensure the buffer is associated with the current IO system
         afxIommu dsys2 = AfxGetBufferHost(buf);
-        AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys2);
+        AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &dsys2);
 
         if (dsys2 != iom)
         {
@@ -536,7 +536,7 @@ _AFX afxError AfxCohereMappedBuffers(afxIommu iom, afxBool invalidate, afxUnit c
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
 #if AFX_VALIDATION_ENABLED
     // Perform validation for each buffer in the maps
@@ -564,7 +564,7 @@ _AFX afxError AfxCohereMappedBuffers(afxIommu iom, afxBool invalidate, afxUnit c
         if (dsys2 != iom)
         {
             // If the buffer belongs to a different system, throw an error
-            AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys2);
+            AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &dsys2);
             AFX_ASSERT(dsys2 == iom);
             AfxThrowError();
             break;
@@ -590,7 +590,7 @@ _AFX afxError AfxCopyBuffers(afxIommu iom, afxMask exuMask, afxUnit cnt, afxBuff
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     AFX_ASSERT(cnt);
     AFX_ASSERT(ops);

@@ -166,9 +166,9 @@ _AVX afxError AvxCompileDrawCommands(afxDrawContext dctx)
     // If dctx is a prime context, there must not be an active draw scope.
     if (dctx->inDrawScope)
     {
-        if (dctx->cmdFlags & avxCmdFlag_DEFERRED)
+        if (dctx->cmdFlags & avxCmdFlag_INCURRENT)
         {
-            AFX_ASSERT(!dctx->inDrawScope || (dctx->cmdFlags & avxCmdFlag_DEFERRED));
+            AFX_ASSERT(!dctx->inDrawScope || (dctx->cmdFlags & avxCmdFlag_INCURRENT));
             err = afxError_INSUFFICIENT;
             return err;
         }
@@ -380,8 +380,8 @@ _AVX afxError AvxAcquireDrawContexts(afxDrawSystem dsys, afxDrawContext pool, av
         return err;
     }
 
-    afxBool once = (info->cmdFlags & avxCmdFlag_ONCE);
-    afxBool deferred = (info->cmdFlags & avxCmdFlag_DEFERRED);
+    afxBool once = !(info->cmdFlags & avxCmdFlag_RECURRENT);
+    afxBool deferred = (info->cmdFlags & avxCmdFlag_INCURRENT);
 
     afxUnit recycCnt = 0;
     while (1)
@@ -490,16 +490,16 @@ _AVX afxError AvxExecuteDrawCommands(afxDrawSystem dsys, afxUnit cnt, avxSubmiss
 
         AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
-        AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_DEFERRED));
+        AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_INCURRENT));
 
         if (dctx->state != avxContextState_EXECUTABLE)
         {
             if ((dctx->state == avxContextState_PENDING) ||
                 (dctx->state == avxContextState_INTERNAL_EXECUTING))
             {
-                if (!(dctx->cmdFlags & avxCmdFlag_SHARED))
+                if (!(dctx->cmdFlags & avxCmdFlag_CONCURRENT))
                 {
-                    AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_SHARED));
+                    AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_CONCURRENT));
                     AfxThrowError();
                     continue;
                 }

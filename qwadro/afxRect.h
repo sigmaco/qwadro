@@ -127,38 +127,50 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxLayeredRect)
 {
     // the two-dimensional region to be considered.
     afxRect             area;
+
     // The first layer to be considered.
     afxUnit32           baseLayer;
+
     // The number of layers to considered.
     afxUnit32           layerCnt;
 };
 
-AFX afxRect const AFX_RECT_ZERO;
-AFX afxRect const AFX_RECT_MIN;
-AFX afxRect const AFX_RECT_MAX;
+#define AFX_RECT(x_, y_, w_, h_) \
+    (afxRect){  .x = (afxInt)(x_), .y = (afxInt)(y_), \
+                .w = (afxUnit)(w_), .h = (afxUnit)(h_) }
 
-#define AFX_RECT(x_, y_, w_, h_) (afxRect){ \
-    .x = (afxInt)(x_), .y = (afxInt)(y_), \
-    .w = (afxUnit)(w_), .h = (afxUnit)(h_) }
+#define AFX_RECT_ZERO \
+    AFX_RECT(0, 0, 0, 0)
 
-AFX afxLayeredRect const AFX_LAYERED_RECT_ZERO;
-AFX afxLayeredRect const AFX_LAYERED_RECT_MIN;
-AFX afxLayeredRect const AFX_LAYERED_RECT_MAX;
+#define AFX_RECT_MIN \
+    AFX_RECT(AFX_I32_MIN, AFX_I32_MIN, 1, 1)
 
-#define AFX_LAYERED_RECT(x_, y_, w_, h_, z_, d_) (afxLayeredRect){ \
-    .area.x = (afxInt)(x_), .area.y = (afxInt)(y_), \
-    .area.w = (afxUnit)(w_), .area.h = (afxUnit)(h_), \
-    .baseLayer = (z_), .layerCnt = (d_) }
+#define AFX_RECT_MAX \
+    AFX_RECT(AFX_I32_MAX, AFX_I32_MAX, AFX_U32_MAX, AFX_U32_MAX)
+
+#define AFX_LAYERED_RECT(x_, y_, w_, h_, z_, d_) \
+    (afxLayeredRect){   .area.x = (afxInt)(x_), .area.y = (afxInt)(y_), \
+                        .area.w = (afxUnit)(w_), .area.h = (afxUnit)(h_), \
+                        .baseLayer = (z_), .layerCnt = (d_) }
+
+#define AFX_LAYERED_RECT_ZERO \
+    AFX_LAYERED_RECT(0, 0, 0, 0, 0, 0)
+
+#define AFX_LAYERED_RECT_MIN \
+    AFX_LAYERED_RECT(AFX_I32_MIN, AFX_I32_MIN, 1, 1 , 0, 1)
+
+#define AFX_LAYERED_RECT_MAX \
+    AFX_LAYERED_RECT(AFX_I32_MAX, AFX_I32_MAX, AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX)
 
 /*
     The AfxGetRectSize() function calculates the square units for a rectangle.
     The resulting value can be used to determine whether a rectangle is or not empty.
 */
 
-AFXINL afxUnit      AfxGetRectSize
+AFXINL afxUnit AfxGetRectSize
 // Returns the square units of the rectangle.
 (
-    afxRect const*  rc
+    afxRect const* rc
 );
 
 /*
@@ -168,12 +180,14 @@ AFXINL afxUnit      AfxGetRectSize
     Returns the square units of the united rectangle.
 */
 
-AFXINL afxUnit      AfxMergeRects
+AFXINL afxUnit AfxMergeRects
 // Returns the square units of the united rectangle.
 (
-    afxRect*        rc, 
-    afxRect const*  a, 
-    afxRect const*  b
+    afxRect* rc, 
+
+    afxRect const* a, 
+
+    afxRect const* b
 );
 
 /*
@@ -183,24 +197,28 @@ AFXINL afxUnit      AfxMergeRects
     or zero if there's no overlap (and probably leaves rc undefined or zeroed).
 */
 
-AFXINL afxUnit      AfxIntersectRects
+AFXINL afxUnit AfxIntersectRects
 // Returns the square units of the united rectangle.
 (
-    afxRect*        rc, 
-    afxRect const*  a, 
-    afxRect const*  b
+    afxRect* rc, 
+
+    afxRect const* a, 
+
+    afxRect const* b
 );
 
-AFXINL afxBool      AfxAreRectsEqual
+AFXINL afxBool AfxAreRectsEqual
 (
-    afxRect const*  a, 
-    afxRect const*  b
+    afxRect const* a, 
+
+    afxRect const* b
 );
 
-AFXINL afxBool      AfxAreRectsOverlapping
+AFXINL afxBool AfxAreRectsOverlapping
 (
-    afxRect const*  a,
-    afxRect const*  b
+    afxRect const* a,
+
+    afxRect const* b
 );
 
 /*
@@ -210,12 +228,15 @@ AFXINL afxBool      AfxAreRectsOverlapping
     It's like a "soft containment" check, useful for layout fuzziness, hit testing, or floating-point rounding tolerances.
 */
 
-AFXINL afxBool      AfxDoesRectContainBiased
+AFXINL afxBool AfxDoesRectContainBiased
 (
-    afxRect const*  a, 
-    afxRect const*  b, 
-    afxInt          tolX, 
-    afxInt          tolY
+    afxRect const* a, 
+
+    afxRect const* b, 
+
+    afxInt tolX, 
+
+    afxInt tolY
 );
 
 /*
@@ -224,33 +245,41 @@ AFXINL afxBool      AfxDoesRectContainBiased
     Returns true if @b fits completely within @a.
 */
 
-AFXINL afxBool      AfxDoesRectContain
+AFXINL afxBool AfxDoesRectContain
 (
     // The major rect.
-    afxRect const*  a,
+    afxRect const* a,
+
     // The minor rect.
-    afxRect const*  b
+    afxRect const* b
 );
 
-AFXINL afxBool      AfxIsRectOutside
+AFXINL afxBool AfxIsRectOutside
 (
-    afxRect const*  a, 
-    afxRect const*  b
+    afxRect const* a, 
+
+    afxRect const* b
 );
 
-AFXINL afxBool      AfxDoRectsIntersect
+AFXINL afxBool AfxDoRectsIntersect
 (
-    afxRect const*  a, 
-    afxRect const*  b
+    afxRect const* a, 
+
+    afxRect const* b
 );
 
-AFXINL void     AfxExtractRectMargins
+AFXINL void AfxExtractRectMargins
 (
     afxRect const* outer, 
+
     afxRect const* inner, 
+
     afxInt* left, 
+
     afxInt* top, 
+
     afxInt* right, 
+
     afxInt* bottom
 );
 
@@ -259,14 +288,16 @@ AFXINL void     AfxExtractRectMargins
     flipping it relative to the vertical extent (origin shift) - using the total height of the space to invert it for bottom-up/top-down rendering.
 */
 
-AFXINL void         AfxFlipRect
+AFXINL void AfxFlipRect
 (
     // The source rectangle.
-    afxRect const*  rc,
+    afxRect const* rc,
+
     // The maximum vertical size.
-    afxUnit         height,
+    afxUnit height,
+
     // The rectangle that will be modified or created.
-    afxRect*        flipped
+    afxRect* flipped
 );
 
 /*
@@ -283,12 +314,15 @@ AFXINL void         AfxFlipRect
       Calculating drop shadows or effects that leak out of bounds.
 */
 
-AFXINL afxUnit      AfxScissorRect
+AFXINL afxUnit AfxScissorRect
 (
-    afxRect const*  rc, 
-    afxUnit         maxW, 
-    afxUnit         maxH, 
-    afxRect         outsides[4]
+    afxRect const* rc, 
+
+    afxUnit maxW, 
+
+    afxUnit maxH, 
+
+    afxRect outsides[4]
 );
 
 /*
@@ -297,11 +331,13 @@ AFXINL afxUnit      AfxScissorRect
     encompasses all those given rectangles.
 */
 
-AFXINL void         AfxAccumulateRects
+AFXINL void AfxAccumulateRects
 (
-    afxRect*        rc, 
-    afxUnit         cnt, 
-    afxRect*        in
+    afxRect* rc, 
+
+    afxUnit cnt, 
+
+    afxRect* in
 );
 
 /*
@@ -310,17 +346,20 @@ AFXINL void         AfxAccumulateRects
     Returns the area of the rectangle in square units. If zero, the rectangle has not area.
 */
 
-AFXINL afxUnit      AfxClampRect
+AFXINL afxUnit AfxClampRect
 // Returns the area of the rectangle in square units. If zero, the rectangle has not area.
 (
     // The rectangle where clamped area will be stored.
-    afxRect*        rc, 
+    afxRect* rc, 
+
     // The source rectangle to be clamped.
-    afxRect const*  src, 
+    afxRect const* src, 
+
     // The rectangle defining the minimum allowed coordinates. (Lower bounds)
-    afxRect const*  min, 
+    afxRect const* min, 
+
     // The rectangle defining the maximum allowed coordinates. (Upper bounds)
-    afxRect const*  max
+    afxRect const* max
 );
 
 #endif//AFX_RECT_H

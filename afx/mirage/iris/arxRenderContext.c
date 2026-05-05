@@ -903,7 +903,7 @@ _ARX afxError ArxBeginScene(arxRenderContext rctx, afxDrawContext transferDctx, 
         frame->transferDctx = dctx;
         frame->internalTransferDctx = TRUE;
 
-        AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE);
+        AvxPrepareDrawCommands(dctx, FALSE, NIL);
     }
     else
     {
@@ -925,7 +925,7 @@ _ARX afxError ArxBeginScene(arxRenderContext rctx, afxDrawContext transferDctx, 
         frame->drawDctx = dctx;
         frame->internalDrawDctx = TRUE;
 
-        AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE);
+        AvxPrepareDrawCommands(dctx, FALSE, NIL);
     }
     else
     {

@@ -56,7 +56,7 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
     }
     case avxContextState_INTERNAL_EXECUTING:
     {
-        AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_SHARED));
+        AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_CONCURRENT));
         AfxIncAtom32(&dctx->submCnt);
         break;
     }
@@ -102,7 +102,7 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
     {
         if (0 == AfxDecAtom32(&dctx->submCnt))
         {
-            if (dctx->cmdFlags & avxCmdFlag_ONCE)
+            if (!(dctx->cmdFlags & avxCmdFlag_RECURRENT))
             {
                 dctx->state = avxContextState_INVALID;
                 AvxPrepareDrawCommands(dctx, FALSE, NIL);
@@ -114,7 +114,7 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
         }
         else
         {
-            AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_SHARED));
+            AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_CONCURRENT));
         }
         break;
     }

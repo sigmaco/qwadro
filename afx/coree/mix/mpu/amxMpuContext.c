@@ -700,7 +700,7 @@ _AMX afxError _AmxMpuRollMixContexts(amxMpu* mpu, afxMixContext mctx)
     }
     case amxContextState_INTERNAL_EXECUTING:
     {
-        AFX_ASSERT((mctx->cmdFlags & avxCmdFlag_SHARED));
+        AFX_ASSERT((mctx->cmdFlags & avxCmdFlag_CONCURRENT));
         AfxIncAtom32(&mctx->submCnt);
         break;
     }

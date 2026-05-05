@@ -31,7 +31,7 @@ ARX afxError afxScmHook(afxModule mdle, afxManifest const* ini);
 _ARX afxError _ArxAmendEcosystem(afxSystem sys)
 {
     afxError err = { 0 };
-
+#if 0
     if (arxInited)
         return afxError_NONE;
 
@@ -51,7 +51,7 @@ _ARX afxError _ArxAmendEcosystem(afxSystem sys)
 
         //afxScmHook(e2mirageDll, NIL);
     }
-
+#endif
     return err;
 }
 

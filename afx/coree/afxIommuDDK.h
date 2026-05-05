@@ -26,8 +26,8 @@
 #define AFX_IOMMU_DDK_H
 
 #include "afxIoBridgeDDK.h"
-//#include "../afxFenceDDK.h"
-//#include "../afxBufferDDK.h"
+#include "afxFenceDDK.h"
+#include "afxBufferDDK.h"
 
 AFX_DECLARE_STRUCT(_afxIddIom);
 
@@ -46,7 +46,7 @@ AFX_DEFINE_STRUCT(_afxDdiIom)
     afxError(*allocBufCb)(afxIommu, afxUnit, afxBufferInfo const[], afxBuffer[]);
     afxError(*deallocBufCb)(afxIommu, afxUnit, afxBuffer[]);
 
-    afxClass const*(*dexuCls)(afxIommu);
+    afxClass const*(*exuCls)(afxIommu);
     afxClass const*(*fencCls)(afxIommu);
     afxClass const*(*bufCls)(afxIommu);
 };

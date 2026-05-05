@@ -79,7 +79,7 @@ _AFX afxError _AfxIomSW_TransferCb(afxIommu iom, afxTransference* ctrl, afxUnit 
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
     AFX_ASSERT(opCnt);
     AFX_ASSERT(ctrl);
     AFX_ASSERT(ops);
@@ -138,7 +138,7 @@ _AFX afxError _AfxIomSW_TransferCb(afxIommu iom, afxTransference* ctrl, afxUnit 
                 continue;
             }
 
-            afxError err2 = _AfxDexuTransferVideoMemory(dexu, ctrl, opCnt, ops);
+            afxError err2 = _AfxExuTransferVideoMemory(dexu, ctrl, opCnt, ops);
 
             err = err2;
 
@@ -168,7 +168,7 @@ _AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt,
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
     AFX_ASSERT(cnt);
     AFX_ASSERT(maps);
 
@@ -176,7 +176,7 @@ _AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt,
     afxBool queued = FALSE;
 
     afxMask dedIoExuMask;
-    afxMask ioExuMask = _AfxDsysGetIoExuMask(iom, &dedIoExuMask);
+    afxMask ioExuMask = _AfxIomGetIoExuMask(iom, &dedIoExuMask);
     afxUnit exuIdx = 0;
     afxIoBridge dexu;
     afxUnit exuCnt;
@@ -189,7 +189,7 @@ _AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt,
         exuIdx = 0;
         while (AfxChooseIoBridges(iom, AFX_INVALID_INDEX, afxAptitude_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
         {
-            queErr = _AfxDexuRemapBuffers(dexu, unmap, cnt, maps);
+            queErr = _AfxExuRemapBuffers(dexu, unmap, cnt, maps);
             err = queErr;
 
             if (!queErr)
@@ -213,7 +213,7 @@ _AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt,
         exuIdx = 0;
         while (AfxChooseIoBridges(iom, AFX_INVALID_INDEX, afxAptitude_DMA, ioExuMask, exuIdx++, 1, &dexu))
         {
-            queErr = _AfxDexuRemapBuffers(dexu, unmap, cnt, maps);
+            queErr = _AfxExuRemapBuffers(dexu, unmap, cnt, maps);
             err = queErr;
 
             if (!queErr)
@@ -235,7 +235,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &iom);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
     AFX_ASSERT(cnt);
     AFX_ASSERT(maps);
 
@@ -243,7 +243,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
     afxBool queued = FALSE;
 
     afxMask dedIoExuMask;
-    afxMask ioExuMask = _AfxDsysGetIoExuMask(iom, &dedIoExuMask);
+    afxMask ioExuMask = _AfxIomGetIoExuMask(iom, &dedIoExuMask);
     afxUnit exuIdx = 0;
     afxIoBridge dexu;
     afxUnit exuCnt;
@@ -256,7 +256,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
         exuIdx = 0;
         while (AfxChooseIoBridges(iom, AFX_INVALID_INDEX, afxAptitude_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
         {
-            queErr = _AfxDexuCohereMappedBuffers(dexu, invalidate, cnt, maps);
+            queErr = _AfxExuCohereMappedBuffers(dexu, invalidate, cnt, maps);
             err = queErr;
 
             if (!queErr)
@@ -280,7 +280,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
         exuIdx = 0;
         while (AfxChooseIoBridges(iom, AFX_INVALID_INDEX, afxAptitude_DMA, ioExuMask, exuIdx++, 1, &dexu))
         {
-            queErr = _AfxDexuCohereMappedBuffers(dexu, invalidate, cnt, maps);
+            queErr = _AfxExuCohereMappedBuffers(dexu, invalidate, cnt, maps);
             err = queErr;
 
             if (!queErr)
@@ -397,7 +397,7 @@ _AFX afxUnit AfxGetIoBridges(afxIommu iom, afxUnit baseIdx, afxUnit cnt, afxIoBr
     for (afxUnit i = 0; i < cnt; i++)
     {
         afxIoBridge dexu = iom->bridges[baseIdx + i];
-        AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
+        AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &dexu);
         bridges[rslt++] = dexu;
     }
     return rslt;
@@ -417,7 +417,7 @@ _AFX afxError AfxWaitForIoQueue(afxIommu iom, afxUnit64 timeout, afxUnit exuIdx,
         AfxThrowError();
         return err;
     }
-    AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &dexu);
 
     afxIoQueue dque;
     if (!AfxGetIoQueues(dexu, queId, 1, &dque))
@@ -425,7 +425,7 @@ _AFX afxError AfxWaitForIoQueue(afxIommu iom, afxUnit64 timeout, afxUnit exuIdx,
         AfxThrowError();
         return err;
     }
-    AFX_ASSERT_OBJECTS(afxFcc_DQUE, 1, &dque);
+    AFX_ASSERT_OBJECTS(afxFcc_XQUE, 1, &dque);
 
     if (AfxWaitForEmptyIoQueue(dque, timeout))
         AfxThrowError();
@@ -451,7 +451,7 @@ _AFX afxError AfxWaitForIoBridges(afxIommu iom, afxUnit64 timeout, afxMask exuMa
             AfxThrowError();
             return err;
         }
-        AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
+        AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &dexu);
         AfxWaitForIdleIoBridge(dexu, timeout);
     }
     return err;
@@ -474,7 +474,7 @@ _AFX afxError AfxWaitForIoIommu(afxIommu iom, afxUnit64 timeout)
                 AfxThrowError();
                 return err;
             }
-            AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
+            AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &dexu);
             AfxWaitForIdleIoBridge(dexu, timeout);
         }
     }
@@ -497,7 +497,7 @@ _AFX afxError _AfxIomDtorCb(afxIommu iom)
     AfxDeregisterChainedClasses(&iom->classes);
     AFX_ASSERT(AfxIsChainEmpty(&iom->classes));
 #if 0
-    AfxAssertObjects(iom->exuCnt, iom->exus, afxFcc_DEXU);
+    AfxAssertObjects(iom->exuCnt, iom->exus, afxFcc_EXU);
 
     for (afxUnit j = iom->exuCnt; j-- > 0;)
         while (!AfxDisposeObjects(1, &iom->exus[j]));
@@ -506,7 +506,7 @@ _AFX afxError _AfxIomDtorCb(afxIommu iom)
     if (iom->bridges)
     {
 #if 0
-        AFX_TRY_ASSERT_OBJECTS(afxFcc_DEXU, bridgeCnt, iom->bridges);
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_EXU, bridgeCnt, iom->bridges);
 
         for (afxUnit i = bridgeCnt; i-- > 0;)
         {
@@ -569,32 +569,18 @@ _AFX afxError _AfxIomCtorCb(afxIommu iom, void** args, afxUnit invokeNo)
         AfxMakeChain(classes, (void*)iom);
 
         // Must be first to be disponible at disposition of IOM' child objects.
-        afxClassConfig dexuClsCfg = cfg->exuClsCfg ? *cfg->exuClsCfg : _AFX_CLASS_CONFIG_EXU;
-        AFX_ASSERT(dexuClsCfg.fcc == afxFcc_DEXU);
-        AfxMountClass(&iom->exuCls, NIL, classes, &dexuClsCfg);
+        afxClassConfig exuClsCfg = cfg->exuClsCfg ? *cfg->exuClsCfg : _AFX_CLASS_CONFIG_EXU;
+        AFX_ASSERT(exuClsCfg.fcc == afxFcc_EXU);
+        AfxMountClass(&iom->exuCls, NIL, classes, &exuClsCfg);
 
-        afxClassConfig dctxClsCfg = cfg->ctxClsCfg ? *cfg->ctxClsCfg : _AFX_CLASS_CONFIG_CTX;
-        AFX_ASSERT(dctxClsCfg.fcc == afxFcc_DCTX);
-        AfxMountClass(&iom->ctxCls, NIL, classes, &dctxClsCfg);
+        afxClassConfig ctxClsCfg = cfg->ctxClsCfg ? *cfg->ctxClsCfg : _AFX_CLASS_CONFIG_CTX;
+        AFX_ASSERT(ctxClsCfg.fcc == afxFcc_CTX);
+        AfxMountClass(&iom->ctxCls, NIL, classes, &ctxClsCfg);
 
         afxClassConfig bufClsCfg = cfg->bufClsCfg ? *cfg->bufClsCfg : _AFX_CLASS_CONFIG_BUF;
         AFX_ASSERT(bufClsCfg.fcc == afxFcc_BUF);
         AfxMountClass(&iom->bufCls, NIL, classes, &bufClsCfg);
 
-#if 0
-        afxClassConfig doutClsCfg;
-        if (cfg->doutClsCfg) doutClsCfg = *cfg->doutClsCfg;
-        else
-        {
-            doutClsCfg = _AFX_CLASS_CONFIG_DOUT;
-            if (_AuxIcdGetInteropDoutClass(iom, &AFX_STRING(""), &doutClsCfg))
-            {
-                doutClsCfg = _AFX_CLASS_CONFIG_DOUT;
-            }
-        }
-        AFX_ASSERT(doutClsCfg.fcc == afxFcc_DOUT);
-        AfxMountClass(&iom->doutCls, NIL, classes, &doutClsCfg); // req RAS, CANV
-#endif
     }
 
     afxUnit totalDqueCnt = 0;
@@ -639,7 +625,7 @@ _AFX afxError _AfxIomCtorCb(afxIommu iom, void** args, afxUnit invokeNo)
         AFX_ASSERT(AfxIsChainEmpty(&iom->classes));
         return err;
     }
-    AFX_ASSERT_OBJECTS(afxFcc_DEXU, iom->bridgeCnt, iom->bridges);
+    AFX_ASSERT_OBJECTS(afxFcc_EXU, iom->bridgeCnt, iom->bridges);
 
     iom->ioExuMask = NIL;
     iom->dedIoExuMask = NIL;
@@ -648,7 +634,7 @@ _AFX afxError _AfxIomCtorCb(afxIommu iom, void** args, afxUnit invokeNo)
     {
         afxIoBridge exu;
         AfxGetIoBridges(iom, i, 1, &exu);
-        AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &exu);
+        AFX_ASSERT_OBJECTS(afxFcc_EXU, 1, &exu);
 
         afxDevice dev = AfxGetBridgedIoDevice(exu, NIL);
         AFX_ASSERT_OBJECTS(afxFcc_DEV, 1, &dev);
@@ -694,8 +680,8 @@ _AFX afxError _AfxIomCtorCb(afxIommu iom, void** args, afxUnit invokeNo)
 _AFX afxClassConfig const _AFX_CLASS_CONFIG_IOM =
 {
     .fcc = afxFcc_IOM,
-    .name = "IoIommu",
-    .desc = "Io I/O Iommu",
+    .name = "Iommu",
+    .desc = "I/O System",
     .fixedSiz = sizeof(AFX_OBJECT(afxIommu)),
     .ctor = (void*)_AfxIomCtorCb,
     .dtor = (void*)_AfxIomDtorCb

@@ -89,7 +89,7 @@ AFX afxClass const* _AfxExuGetXqueClass(afxIoBridge exu);
 
 AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufferRemapping const maps[]);
 AFX afxError _AfxExuCohereMappedBuffers(afxIoBridge exu, afxBool invalidate, afxUnit cnt, afxBufferedMap const maps[]);
-AFX afxError _AfxExuTransferVideoMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops);
+AFX afxError _AfxExuTransferMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops);
 
 AFX afxError _AfxExu_PingCb(afxIoBridge exu, afxUnit queIdx);
 

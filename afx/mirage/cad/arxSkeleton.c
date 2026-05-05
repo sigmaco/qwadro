@@ -91,6 +91,8 @@ _ARXINL void ArxDescribeSkeleton(arxSkeleton skl, arxSkeletonInfo* info)
 
 // SKELETON
 
+// Pack bone parents
+
 _ARX afxUnit ArxGetBoneParents(arxSkeleton skl, afxUnit baseBone, afxUnit boneCnt, void* indices, afxUnit stride)
 {
     afxError err = { 0 };
@@ -136,6 +138,8 @@ _ARX afxUnit ArxGetBoneParents(arxSkeleton skl, afxUnit baseBone, afxUnit boneCn
     }
     return boneCnt;
 }
+
+// Unpack bone parents
 
 _ARX afxError ArxReplaceBoneParents(arxSkeleton skl, afxUnit baseBone, afxUnit boneCnt, void const* indices, afxUnit stride)
 {
@@ -212,6 +216,8 @@ _ARX afxError ArxReplaceBoneParents(arxSkeleton skl, afxUnit baseBone, afxUnit b
     return err;
 }
 
+// pack bone inversos
+
 _ARX afxUnit ArxGetBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit boneCnt, void* matrices, afxUnit stride)
 {
     afxError err = { 0 };
@@ -268,6 +274,8 @@ _ARX afxUnit ArxGetBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit bone
     }
     return boneCnt;
 }
+
+// unpack bone inversors
 
 _ARX afxError ArxReplaceBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit boneCnt, void const* matrices, afxUnit stride)
 {

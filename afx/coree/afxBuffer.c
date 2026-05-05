@@ -17,51 +17,52 @@
 
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
+// This software is part of SIGMA Future Storage.
 
-#define _AVX_DRAW_C
-#define _AVX_BUFFER_C
-#include "avxIcd.h"
+#define _AFX_CORE_C
+#define _AFX_BUFFER_C
+#include "afxSystemDDK.h"
 
-#define _AVX_BUFFER_HOSTSIDE_ALWAYS_FULLY_MAPPED TRUE
+#define _AFX_BUFFER_HOSTSIDE_ALWAYS_FULLY_MAPPED TRUE
 
-_AVX afxDrawSystem AvxGetBufferHost(avxBuffer buf)
+_AFX afxIoSystem AfxGetBufferHost(afxBuffer buf)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-    afxDrawSystem dsys = AfxGetHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    return dsys;
+    afxIoSystem iom = AfxGetHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
+    return iom;
 }
 
-_AVX afxSize AvxGetBufferAddress(avxBuffer buf, afxSize from)
+_AFX afxSize AfxGetBufferAddress(afxBuffer buf, afxSize from)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     return buf->storage[0].host.addr + buf->storageOffset;
 }
 
-_AVX afxSize AvxGetBufferCapacity(avxBuffer buf, afxSize from)
+_AFX afxSize AfxGetBufferCapacity(afxBuffer buf, afxSize from)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     return AFX_MIN(buf->reqSiz, buf->reqSiz - from);
 }
 
-_AVX avxBufferUsage AvxGetBufferUsage(avxBuffer buf, avxBufferUsage mask)
+_AFX afxBufferUsage AfxGetBufferUsage(afxBuffer buf, afxBufferUsage mask)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     return (!mask) ? buf->usage : (buf->usage & mask);
 }
 
-_AVX avxBufferFlags AvxGetBufferFlags(avxBuffer buf, avxBufferFlags mask)
+_AFX afxBufferFlags AfxGetBufferFlags(afxBuffer buf, afxBufferFlags mask)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     return (!mask) ? buf->flags : (buf->flags & mask);
 }
 
-_AVXINL void _AvxSanitizeBufferCopy(avxBuffer buf, avxBuffer src, afxUnit cnt, avxBufferCopy const raw[], avxBufferCopy san[])
+_AFXINL void _AfxSanitizeBufferCopy(afxBuffer buf, afxBuffer src, afxUnit cnt, afxBufferCopy const raw[], afxBufferCopy san[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &src);
@@ -72,15 +73,15 @@ _AVXINL void _AvxSanitizeBufferCopy(avxBuffer buf, avxBuffer src, afxUnit cnt, a
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBufferCopy* s = &san[i];
-        avxBufferCopy const* r = &raw[i];
+        afxBufferCopy* s = &san[i];
+        afxBufferCopy const* r = &raw[i];
         s->srcOffset = AFX_MIN(r->srcOffset, srcBufCap - 1);
         s->dstOffset = AFX_MIN(r->dstOffset, bufCap - 1);
         s->range = AFX_CLAMP(r->range, 1, AFX_MIN(srcBufCap - s->srcOffset, bufCap - s->dstOffset));
     }
 }
 
-_AVXINL void _AvxSanitizeBufferIo(avxBuffer buf, avxBuffer src, afxUnit cnt, avxBufferIo const raw[], avxBufferIo san[])
+_AFXINL void _AfxSanitizeBufferIo(afxBuffer buf, afxBuffer src, afxUnit cnt, afxBufferIo const raw[], afxBufferIo san[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &src);
@@ -91,8 +92,8 @@ _AVXINL void _AvxSanitizeBufferIo(avxBuffer buf, avxBuffer src, afxUnit cnt, avx
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBufferIo* s = &san[i];
-        avxBufferIo const* r = &raw[i];
+        afxBufferIo* s = &san[i];
+        afxBufferIo const* r = &raw[i];
         s->srcOffset = AFX_MIN(r->srcOffset, srcBufCap - 1);
         s->dstOffset = AFX_MIN(r->dstOffset, bufCap - 1);
         s->srcStride = AFX_MIN(r->srcStride, srcBufCap - s->srcOffset);
@@ -103,7 +104,7 @@ _AVXINL void _AvxSanitizeBufferIo(avxBuffer buf, avxBuffer src, afxUnit cnt, avx
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX void* AvxGetBufferMap(avxBuffer buf, afxSize offset, afxUnit range)
+_AFX void* AfxGetBufferMap(afxBuffer buf, afxSize offset, afxUnit range)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
@@ -124,46 +125,46 @@ _AVX void* AvxGetBufferMap(avxBuffer buf, afxSize offset, afxUnit range)
     return &buf->storage[0].mapPtr[offDiff];
 }
 
-_AVX afxError AvxUnmapBuffer(avxBuffer buf, afxBool wait)
+_AFX afxError AfxUnmapBuffer(afxBuffer buf, afxBool wait)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-    AFX_ASSERT(AvxGetBufferFlags(buf, avxBufferFlag_RW));
+    AFX_ASSERT(AfxGetBufferFlags(buf, afxBufferFlag_RW));
 
-    afxDrawSystem dsys = AvxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxIoSystem iom = AfxGetBufferHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
-    avxBufferedMap map = { 0 };
+    afxBufferedMap map = { 0 };
     map.buf = buf;
     map.offset = buf->storage[0].mapOffset;
     map.range = buf->storage[0].mapRange;
     map.flags = buf->storage[0].mapFlags;
 
-    if (AvxUnmapBuffers(dsys, 1, &map))
+    if (AfxUnmapBuffers(iom, 1, &map))
         AfxThrowError();
 
     return err;
 }
 
-_AVX afxError AvxMapBuffer(avxBuffer buf, afxSize offset, afxUnit range, afxFlags flags, void** placeholder)
+_AFX afxError AfxMapBuffer(afxBuffer buf, afxSize offset, afxUnit range, afxFlags flags, void** placeholder)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-    AFX_ASSERT(AvxGetBufferFlags(buf, avxBufferFlag_RW));
+    AFX_ASSERT(AfxGetBufferFlags(buf, afxBufferFlag_RW));
     AFX_ASSERT_RANGE(buf->reqSiz, offset, range);
-    AFX_ASSERT(AFX_TEST_ALIGNMENT(offset, AVX_BUFFER_ALIGNMENT));
+    AFX_ASSERT(AFX_TEST_ALIGNMENT(offset, AFX_BUFFER_ALIGNMENT));
 
-    avxBufferedMap map = { 0 };
+    afxBufferedMap map = { 0 };
     map.buf = buf;
     map.offset = offset;
     map.range = range;
     map.flags = flags;
 
-    afxDrawSystem dsys = AvxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxIoSystem iom = AfxGetBufferHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     void* holder;
-    if (AvxMapBuffers(dsys, 1, &map, (void**[]) { &holder }))
+    if (AfxMapBuffers(iom, 1, &map, (void**[]) { &holder }))
         AfxThrowError();
 
     // TODO(?): If no placeholder is specified, do not wait for completion.
@@ -174,39 +175,39 @@ _AVX afxError AvxMapBuffer(avxBuffer buf, afxSize offset, afxUnit range, afxFlag
     return err;
 }
 
-_AVX afxError AvxCohereMappedBuffer(avxBuffer buf, afxSize offset, afxUnit range, afxFlags flags, afxBool invalidate)
+_AFX afxError AfxCohereMappedBuffer(afxBuffer buf, afxSize offset, afxUnit range, afxFlags flags, afxBool invalidate)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     AFX_ASSERT_RANGE(buf->reqSiz, offset, range);
-    AFX_ASSERT(AFX_TEST_ALIGNMENT(offset, AVX_BUFFER_ALIGNMENT));
+    AFX_ASSERT(AFX_TEST_ALIGNMENT(offset, AFX_BUFFER_ALIGNMENT));
 
-    avxBufferedMap map = { 0 };
+    afxBufferedMap map = { 0 };
     map.buf = buf;
     map.offset = offset;
     map.range = range;
     map.flags = flags;
 
-    afxDrawSystem dsys = AvxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxIoSystem iom = AfxGetBufferHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
-    if (AvxCohereMappedBuffers(dsys, invalidate, 1, &map))
+    if (AfxCohereMappedBuffers(iom, invalidate, 1, &map))
         AfxThrowError();
 
     return err;
 }
 
-_AVX afxError _AvxBufDtorCb(avxBuffer buf)
+_AFX afxError _AfxBufDtorCb(afxBuffer buf)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 
-    afxDrawSystem dsys = AvxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    afxIoSystem iom = AfxGetBufferHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     while (buf->storage[0].mapPtr)
     {
-        AvxUnmapBuffer(buf, TRUE);
+        AfxUnmapBuffer(buf, TRUE);
         AfxYield();
         //AFX_ASSERT(!buf->bytemap);
     }
@@ -217,8 +218,8 @@ _AVX afxError _AvxBufDtorCb(avxBuffer buf)
         AfxDisposeObjects(1, &buf->base);
     }
 
-    //afxDrawSystem dsys = AvxGetBufferHost(buf);
-    if (_AvxDsysGetDdi(dsys)->deallocBufCb(dsys, 1, &buf))
+    //afxIoSystem iom = AfxGetBufferHost(buf);
+    if (_AfxDsysGetDdi(iom)->deallocBufCb(iom, 1, &buf))
     {
         AfxThrowError();
     }
@@ -226,23 +227,23 @@ _AVX afxError _AvxBufDtorCb(avxBuffer buf)
     return err;
 }
 
-_AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
+_AFX afxError _AfxBufCtorCb(afxBuffer buf, void** args, afxUnit invokeNo)
 {
     afxResult err = NIL;
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 
-    afxDrawSystem dsys = AvxGetBufferHost(buf);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    avxBufferInfo const* bufi = args[1] ? ((avxBufferInfo const*)args[1]) + invokeNo : NIL;
+    afxIoSystem iom = AfxGetBufferHost(buf);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
+    afxBufferInfo const* bufi = args[1] ? ((afxBufferInfo const*)args[1]) + invokeNo : NIL;
     AFX_ASSERT(bufi && bufi->size && bufi->usage);
-    avxMetabufferInfo const* sub = args[2] ? ((avxMetabufferInfo const*)args[2]) + invokeNo : NIL;
+    afxMetabufferInfo const* sub = args[2] ? ((afxMetabufferInfo const*)args[2]) + invokeNo : NIL;
 
     buf->tag = bufi->tag;
     buf->udd = bufi->udd;
 
     if (sub)
     {
-        avxBuffer base = sub->buf;
+        afxBuffer base = sub->buf;
         AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &base);
 
         if (base->base && (base->base != base))
@@ -255,12 +256,12 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
         afxSize from = sub->bufBase;
         afxSize range = sub->bufRange;
-        afxSize srcCap = AvxGetBufferCapacity(base, 0);
+        afxSize srcCap = AfxGetBufferCapacity(base, 0);
         AFX_ASSERT_RANGE(srcCap, from, range);
 
-        if (!AFX_TEST_ALIGNMENT(from, AVX_BUFFER_ALIGNMENT))
+        if (!AFX_TEST_ALIGNMENT(from, AFX_BUFFER_ALIGNMENT))
         {
-            AFX_ASSERT_ALIGNMENT(from, AVX_BUFFER_ALIGNMENT);
+            AFX_ASSERT_ALIGNMENT(from, AFX_BUFFER_ALIGNMENT);
             AfxThrowError();
             err = afxError_OUT_OF_RANGE;
             return err;
@@ -295,7 +296,7 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
         buf->storage[0] = base->storage[0];
         buf->storageOffset = base->storageOffset;
 
-        if (buf->usage & avxBufferUsage_FETCH)
+        if (buf->usage & afxBufferUsage_FETCH)
         {
             if (!buf->fmt)
             {
@@ -321,7 +322,7 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
     buf->usage = bufi->usage;
     buf->flags = bufi->flags;
 
-    if (buf->usage & avxBufferUsage_FETCH)
+    if (buf->usage & afxBufferUsage_FETCH)
     {
         if (!buf->fmt)
         {
@@ -349,7 +350,7 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
     if (err) return err;
 
-    afxUnit exuCnt = 16; // TODO Get it from DSYS
+    afxUnit exuCnt = 16; // TODO Get it from IOM
     buf->exuMask = NIL;
     for (afxUnit i = 0; i < exuCnt; i++)
     {
@@ -358,7 +359,7 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
     // STORAGE
     buf->reqMemType = NIL;
-    buf->reqAlign = AVX_BUFFER_ALIGNMENT;
+    buf->reqAlign = AFX_BUFFER_ALIGNMENT;
 
     // binding
     buf->storage[0].mmu = 0;
@@ -377,22 +378,22 @@ _AVX afxError _AvxBufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
     return err;
 }
 
-_AVX afxClassConfig const _AVX_CLASS_CONFIG_BUF =
+_AFX afxClassConfig const _AFX_CLASS_CONFIG_BUF =
 {
     .fcc = afxFcc_BUF,
     .name = "Buffer",
-    .desc = "Video Memory Buffer", // AVX Buffer
-    .fixedSiz = sizeof(AFX_OBJECT(avxBuffer)),
-    .ctor = (void*)_AvxBufCtorCb,
-    .dtor = (void*)_AvxBufDtorCb
+    .desc = "Video Memory Buffer", // AFX Buffer
+    .fixedSiz = sizeof(AFX_OBJECT(afxBuffer)),
+    .ctor = (void*)_AfxBufCtorCb,
+    .dtor = (void*)_AfxBufDtorCb
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[])
+_AFX afxError AfxAcquireBuffers(afxIoSystem iom, afxUnit cnt, afxBufferInfo const infos[], afxBuffer buffers[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     AFX_ASSERT(cnt);
     AFX_ASSERT(infos);
@@ -405,7 +406,7 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBufferInfo const* info = &infos[i];
+        afxBufferInfo const* info = &infos[i];
 
         if (!info->usage)
         {
@@ -422,10 +423,10 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
     
     if (err) return err;
 
-    afxClass* cls = (afxClass*)_AvxDsysGetDdi(dsys)->bufCls(dsys);
+    afxClass* cls = (afxClass*)_AfxDsysGetDdi(iom)->bufCls(iom);
     AFX_ASSERT_CLASS(cls, afxFcc_BUF);
 
-    if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { dsys, (void*)infos, NIL }))
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { iom, (void*)infos, NIL }))
     {
         AfxThrowError();
         return err;
@@ -433,7 +434,7 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 
     AFX_ASSERT_OBJECTS(afxFcc_BUF, cnt, buffers);
 
-    if (_AvxDsysGetDdi(dsys)->allocBufCb(dsys, cnt, infos, buffers))
+    if (_AfxDsysGetDdi(iom)->allocBufCb(iom, cnt, infos, buffers))
     {
         AfxDisposeObjects(cnt, buffers);
         AfxThrowError();
@@ -442,11 +443,11 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 
     if (err) return err;
 
-#ifdef AVX_VALIDATION_ENABLED
+#ifdef AFX_VALIDATION_ENABLED
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBuffer buf = buffers[i];
-        avxBufferInfo const* bufi = &infos[i];
+        afxBuffer buf = buffers[i];
+        afxBufferInfo const* bufi = &infos[i];
 
         AFX_ASSERT(buf->reqSiz >= bufi->size);
         AFX_ASSERT((buf->flags & bufi->flags) == bufi->flags);
@@ -458,20 +459,20 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 #endif
 
     // Proceed to permanently map and/or upload initial data.
-    // We can't do it in constructor callback because ICD callbacks are called after the AVX one,
+    // We can't do it in constructor callback because ICD callbacks are called after the AFX one,
     // so it would be never ready to be mapped at device side.
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBuffer buf = buffers[i];
-        avxBufferInfo const* bufi = &infos[i];
+        afxBuffer buf = buffers[i];
+        afxBufferInfo const* bufi = &infos[i];
 
         if (bufi->mapped)
         {
             buf->storage[0].permanentlyMapped = TRUE;
 
             void* ptr;
-            if (AvxMapBuffer(buf, 0, buf->reqSiz, NIL, &ptr))
+            if (AfxMapBuffer(buf, 0, buf->reqSiz, NIL, &ptr))
             {
                 AfxThrowError();
                 break;
@@ -486,7 +487,7 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 
                 // Unmapping should do nothing in a persistently mapped buffer.
                 // But we will keep it here for good didactic reasons.
-                AvxUnmapBuffer(buf, 0);
+                AfxUnmapBuffer(buf, 0);
             }
         }
         else
@@ -494,11 +495,11 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
             if (bufi->dataSiz)
             {
                 AFX_ASSERT(bufi->data);
-                avxBufferIo iop = { 0 };
+                afxBufferIo iop = { 0 };
                 iop.srcStride = 1;
                 iop.dstStride = 1;
                 iop.rowCnt = bufi->dataSiz;
-                if (AvxUpdateBuffer(buf, 1, &iop, bufi->data, 0, NIL))
+                if (AfxUpdateBuffer(buf, 1, &iop, bufi->data, 0, NIL))
                 {
                     AfxThrowError();
                     break;
@@ -516,10 +517,10 @@ _AVX afxError AvxAcquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
     return err;
 }
 
-_AVX afxError AvxReacquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxMetabufferInfo const infos[], avxBuffer buffers[])
+_AFX afxError AfxReacquireBuffers(afxIoSystem iom, afxUnit cnt, afxMetabufferInfo const infos[], afxBuffer buffers[])
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     AFX_ASSERT(cnt);
     AFX_ASSERT(infos);
@@ -532,7 +533,7 @@ _AVX afxError AvxReacquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxMetabuffer
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxMetabufferInfo const* info = &infos[i];
+        afxMetabufferInfo const* info = &infos[i];
 
         if (!info->buf)
         {
@@ -543,10 +544,10 @@ _AVX afxError AvxReacquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxMetabuffer
 
     if (err) return err;
 
-    afxClass* cls = (afxClass*)_AvxDsysGetDdi(dsys)->bufCls(dsys);
+    afxClass* cls = (afxClass*)_AfxIomGetDdi(iom)->bufCls(iom);
     AFX_ASSERT_CLASS(cls, afxFcc_BUF);
 
-    if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { dsys, NIL, (void*)infos }))
+    if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { iom, NIL, (void*)infos }))
     {
         AfxThrowError();
         return err;
@@ -554,11 +555,11 @@ _AVX afxError AvxReacquireBuffers(afxDrawSystem dsys, afxUnit cnt, avxMetabuffer
 
     AFX_ASSERT_OBJECTS(afxFcc_BUF, cnt, buffers);
 
-#ifdef AVX_VALIDATION_ENABLED
+#ifdef AFX_VALIDATION_ENABLED
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxBuffer buf = buffers[i];
-        avxMetabufferInfo const* bufi = &infos[i];
+        afxBuffer buf = buffers[i];
+        afxMetabufferInfo const* bufi = &infos[i];
 
         AFX_ASSERT(buf->base == bufi->buf);
         AFX_ASSERT(buf->reqSiz >= bufi->bufRange);

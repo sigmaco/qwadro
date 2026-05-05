@@ -17,225 +17,198 @@
 
 // This software is part of Advanced Video Graphics Extensions.
 
-// QWADRO is an open-source coalition of libraries that supports rapid development of software that deals with 4D data.
-// The QWADRO frontend exposes a set of carefully selected data structures and algorithms in C.
-// The backend is highly optimized and is set up for parallelization.
-// We welcome contributions from the open-source community.
+#ifndef AFX_IOMMU_H
+#define AFX_IOMMU_H
 
-// AVX is designed to be a Vulkan-flavored OpenGL. It is not a graphics engine; it will not engage in optimizations.
+#include "qwadro/afxDevice.h"
+#include "qwadro/afxIoContext.h"
+#include "qwadro/afxBuffer.h"
+#include "qwadro/afxBuffered.h"
+#include "qwadro/afxFence.h"
 
-#ifndef AVX_DRAW_SYSTEM_H
-#define AVX_DRAW_SYSTEM_H
+#define AFX_MAX_BRIDGES_PER_SYSTEM (32)
 
-#include "qwadro/draw/afxDrawDevice.h"
-#include "qwadro/draw/afxDrawContext.h"
-#include "qwadro/draw/avxBuffer.h"
-#include "qwadro/draw/avxBuffered.h"
-#include "qwadro/draw/avxRaster.h"
-#include "qwadro/draw/avxRasterFile.h"
-#include "qwadro/draw/avxCanvas.h"
-#include "qwadro/draw/avxLigature.h"
-#include "qwadro/draw/avxPipeline.h"
-#include "qwadro/draw/avxQueryPool.h"
-#include "qwadro/draw/avxPipeline.h"
-#include "qwadro/draw/avxSampler.h"
-#include "qwadro/draw/avxShader.h"
-#include "qwadro/draw/avxVertexInput.h"
-#include "qwadro/draw/avxBus.h"
-#include "qwadro/draw/avxFence.h"
-#include "qwadro/draw/avxMatrix.h"
-#include "qwadro/draw/avxTxd.h"
-#include "qwadro/draw/avxTransformationEXT.h"
-#include "qwadro/draw/avxRasterizationEXT.h"
-
-#define AVX_MAX_BRIDGES_PER_SYSTEM (32)
-
-typedef enum avxEventId
+typedef enum afxEventId
 {
-    avxEventId_FENCE,
-    avxEventId_EXECUTE,
-    avxEventId_PRESENT,
-    avxEventId_UPLOAD,
-    avxEventId_DOWNLOAD,
-    avxEventId_PREFETCH,
-    avxEventId_REFRESH,
-    avxEventId_RECONNECT,
-    avxEventId_EXTENT,
-} avxEventId;
+    afxEventId_FENCE,
+    afxEventId_EXECUTE,
+    afxEventId_PRESENT,
+    afxEventId_UPLOAD,
+    afxEventId_DOWNLOAD,
+    afxEventId_PREFETCH,
+    afxEventId_REFRESH,
+    afxEventId_RECONNECT,
+    afxEventId_EXTENT,
+} afxEventId;
 
-AFX_DEFINE_STRUCT(avxEvent)
+AFX_DEFINE_STRUCT(afxEvent)
 {
-    avxEventId  id;
+    afxEventId  id;
     afxBool     posted, accepted;
     void*       udd[1];
 };
 
-AFX_DEFINE_STRUCT(avxSystemConfig)
+AFX_DEFINE_STRUCT(afxIommuConfig)
 // The system-wide settings and parameters prefered/required for acquisition.
 {
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    avxAptitude         caps;
+    afxAptitude         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
-    // The features to be enabled.
-    avxFeatures         features;
     // The number of system extensions to be enabled.
     afxUnit             extCnt;
     // An array of Qwadro strings containing the names of extensions to enable for the desired system.
     afxString const*    exts;
-    // The depth mapping used by projection to map depth values into the clip space. 
-    avxClipSpaceDepth   clipSpcDepth;
-    afxBool             nonRhcs;
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    avxBridgeConfig     exus[AVX_MAX_BRIDGES_PER_SYSTEM];
+    afxIoBridgeConfig   exus[AFX_MAX_BRIDGES_PER_SYSTEM];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
     afxString           tag;
 };
 
-AVX afxError AvxConfigureDrawSystem
+AFX afxError AfxConfigureIommu
 (
     // The Id of the installable client driver.
     afxUnit icd,
     // A pointer to a system configuration structure.
-    avxSystemConfig* cfg
+    afxSystemConfig* cfg
 );
 
 /*
-    The AvxEstablishDrawSystem() function establishes a new drawing system based on a specific driver and configuration.
-    It provides the ability to establish a system for rendering and drawing operations, allowing for further interaction
+    The AfxEstablishIommu() function establishes a new IOing system based on a specific driver and configuration.
+    It provides the ability to establish a system for rendering and IOing operations, allowing for further interaction
     with the graphics pipeline (such as rendering, resource management, and more). This function is often used during the
     initialization phase of an application to prepare the system for graphical tasks.
 */
 
-AVX afxError AvxEstablishDrawSystem
+AFX afxError AfxEstablishIommu
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver
     afxUnit icd,
 
-    // A configuration structure that holds the parameters required to establish and configure the drawing system.
-    avxSystemConfig const* cfg,
+    // A configuration structure that holds the parameters required to establish and configure the IOing system.
+    afxSystemConfig const* cfg,
 
-    // A pointer to an afxDrawSystem where the created drawing system will be stored. 
-    // The function will populate this pointer with the reference to the newly established drawing system.
-    afxDrawSystem* system
+    // A pointer to an afxIommu where the created IOing system will be stored. 
+    // The function will populate this pointer with the reference to the newly established IOing system.
+    afxIommu* system
 );
 
 /*
-    The AvxEnumerateDrawSystems() function enumerates drawing systems established by a given installable client driver (ICD).
+    The AfxEnumerateIommus() function enumerates IOing systems established by a given installable client driver (ICD).
     By specifying a starting index and a count of systems to retrieve, you can query and retrieve information about the
-    established drawing systems. This functionality is useful when your application needs to detect and interact with
+    established IOing systems. This functionality is useful when your application needs to detect and interact with
     multiple systems, providing a way to select the best system for rendering.
 */
 
-AVX afxUnit AvxEnumerateDrawSystems
+AFX afxUnit AfxEnumerateIommus
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
 
     // The starting index for the enumeration. 
-    // If you want to start enumerating from the first available drawing system, you would set this value to 0. 
+    // If you want to start enumerating from the first available IOing system, you would set this value to 0. 
     // If you wish to start from a later point, you can provide an index specifying where to begin.
     afxUnit first,
 
-    // The number of draw system to retrieve.
+    // The number of IO system to retrieve.
     afxUnit cnt,
 
-    // An array where the enumerated drawing systems will be stored. 
-    // After the function call, the array will contain the drawing systems up to the requested count @cnt.
-    afxDrawSystem systems[]
+    // An array where the enumerated IOing systems will be stored. 
+    // After the function call, the array will contain the IOing systems up to the requested count @cnt.
+    afxIommu systems[]
 );
 
 /*
-    The AvxInvokeDrawSystems() function performs custom actions on a set of drawing systems established by a given ICD.
-    By specifying a callback function, you can iterate over multiple drawing systems and apply specific logic to each system.
+    The AfxInvokeIommus() function performs custom actions on a set of IOing systems established by a given ICD.
+    By specifying a callback function, you can iterate over multiple IOing systems and apply specific logic to each system.
     This is useful when you need to perform system-specific operations, such as querying, configuring, or logging properties
-    for each drawing system. The function provides a robust mechanism for handling multiple systems in a streamlined way.
+    for each IOing system. The function provides a robust mechanism for handling multiple systems in a streamlined way.
 */
 
-AVX afxUnit AvxInvokeDrawSystems
+AFX afxUnit AfxInvokeIommus
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
 
-    // The starting index for the enumeration of drawing systems. 
+    // The starting index for the enumeration of IOing systems. 
     // It specifies which system to start processing from.
     afxUnit first,
 
     // The user-defined data that will be passed to the callback function.
     void *udd,
 
-    // A callback function that will be invoked for each drawing system being enumerated.
-    afxBool(*f)(void*, afxDrawSystem),
+    // A callback function that will be invoked for each IOing system being enumerated.
+    afxBool(*f)(void*, afxIommu),
 
-    // The number of drawing systems to process starting from the first index. 
-    // The function will invoke the callback for each of these drawing systems.
+    // The number of IOing systems to process starting from the first index. 
+    // The function will invoke the callback for each of these IOing systems.
     afxUnit cnt
 );
 
 /*
-    The AvxEvokeDrawSystems() function retrieves and process drawing systems in one go.
+    The AfxEvokeIommus() function retrieves and process IOing systems in one go.
     It not only retrieves the systems but also invokes a callback function on each one to determine when push it to the @systems array,
     enabling you to perform custom logic while working with the retrieved systems.
-    This function is useful when you need to both enumerate drawing systems and apply specific actions or checks to each system.
+    This function is useful when you need to both enumerate IOing systems and apply specific actions or checks to each system.
 */
 
-AVX afxUnit AvxEvokeDrawSystems
+AFX afxUnit AfxEvokeIommus
 (
     // The installable client driver (ICD) module identifier.
     afxUnit icd,
 
-    // The index of the first drawing system to retrieve. 
-    // This allows you to start processing from a specific drawing system rather than always starting from the first.
+    // The index of the first IOing system to retrieve. 
+    // This allows you to start processing from a specific IOing system rather than always starting from the first.
     afxUnit first,
 
     // The user-defined data that will be passed to the callback function.
     void* udd,
 
-    // The callback function that will be invoked for each drawing system.
-    afxBool(*f)(void*, afxDrawSystem),
+    // The callback function that will be invoked for each IOing system.
+    afxBool(*f)(void*, afxIommu),
 
-    // The number of drawing systems to process starting from the first index. 
+    // The number of IOing systems to process starting from the first index. 
     // This specifies how many systems the function should attempt to retrieve.
     afxUnit cnt,
 
-    // An array where the retrieved drawing systems will be stored. 
-    // The function will fill this array with the actual drawing systems that were retrieved, up to the number @cnt.
-    afxDrawSystem systems[]
+    // An array where the retrieved IOing systems will be stored. 
+    // The function will fill this array with the actual IOing systems that were retrieved, up to the number @cnt.
+    afxIommu systems[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
-    The AvxGetSystemIcd() function retrieves the ICD (Installable Client Driver) running a specific drawing system. 
-    This allows the application to determine which implementation is being used for the drawing system and to perform 
+    The AfxGetSystemIcd() function retrieves the ICD (Installable Client Driver) running a specific IOing system. 
+    This allows the application to determine which implementation is being used for the IOing system and to perform 
     further actions with the corresponding driver or module.
 */
 
-AVX afxModule       AvxGetSystemIcd
+AFX afxModule       AfxGetSystemIcd
 (
-    // The drawing system for which the ICD is being queried.
-    afxDrawSystem   dsys
+    // The IOing system for which the ICD is being queried.
+    afxIommu   iom
 );
 
 /*
-    The AvxResolveSystemSymbols() function retrieves the address of a device-specific function that allows you to 
+    The AfxResolveSystemSymbols() function retrieves the address of a device-specific function that allows you to 
     dynamically load Vulkan function pointers for a device object at runtime. It is part of Qwadro's extensible and 
     dynamic approach, enabling developers to load Qwadro functions based on their needs, instead of hardcoding everything.
 
     Returns the number of procedures found and retrieved.
 */
 
-AVX afxUnit         AvxResolveSystemSymbols
+AFX afxUnit         AfxResolveSystemSymbols
 (
-    // The established drawing system.
-    afxDrawSystem   dsys, 
+    // The established IOing system.
+    afxIommu   iom, 
 
     // The number of requested procedures.
     afxUnit         cnt, 
@@ -249,18 +222,18 @@ AVX afxUnit         AvxResolveSystemSymbols
 );
 
 /*
-    The AvxGetDrawBridges() function retrieves drawing bridges for a established drawing system. 
-    Drawing bridges are components that link and provide communication between an established system and its working devices. 
+    The AfxGetIoBridges() function retrieves IOing bridges for a established IOing system. 
+    Ioing bridges are components that link and provide communication between an established system and its working devices. 
     This function allows applications to query and retrieve information about the established bridges, 
     which can be useful when dealing with systems that involve multiple hardware/software interfaces.
 
     Returns the number of arranged bridges. If @bridges is NIL, it returns the total number of bridges from the base index.
 */
 
-AVX afxUnit         AvxGetDrawBridges
+AFX afxUnit         AfxGetIoBridges
 (
-    // The established drawing system.
-    afxDrawSystem   dsys, 
+    // The established IOing system.
+    afxIommu   iom, 
 
     // The base index to begin the enumeration of the bridges.
     afxUnit         baseIdx, 
@@ -268,30 +241,30 @@ AVX afxUnit         AvxGetDrawBridges
     // The number of bridges to be retrieved.
     afxUnit         cnt, 
 
-    // An array where the function will store the retrieved drawing bridges.
-    afxDrawBridge   bridges[]
+    // An array where the function will store the retrieved IOing bridges.
+    afxIoBridge   bridges[]
 );
 
 /*
-    The AvxChooseDrawBridges() function provides a way to select specific drawing bridges in an established drawing system, 
+    The AfxChooseIoBridges() function provides a way to select specific IOing bridges in an established IOing system, 
     filtered by device ID. The function returns the selected bridges in an array and allows the application 
     to filter the available bridges based on the provided indices. This is useful for applications that need to work 
-    with multiple bridges or interfaces between components in a drawing system, such as managing communication between 
+    with multiple bridges or interfaces between components in a IOing system, such as managing communication between 
     the CPU and GPU or between different parts of the graphics pipeline.
 
-    Returns the number of arranged draw bridges.
+    Returns the number of arranged IO bridges.
 */
 
-AVX afxUnit         AvxChooseDrawBridges
+AFX afxUnit         AfxChooseIoBridges
 (
-    // The established drawing system.
-    afxDrawSystem   dsys, 
+    // The established IOing system.
+    afxIommu   iom, 
 
     // An optional device ID for which the bridges must be linked against.
     afxUnit         ddevId, 
 
-    // An optional bitmask describing the drawing device's port capabilities for which bridges must be linked against. 
-    avxAptitude     caps,
+    // An optional bitmask describing the IOing device's port capabilities for which bridges must be linked against. 
+    afxAptitude     caps,
 
     afxMask         exuMask,
 
@@ -301,12 +274,12 @@ AVX afxUnit         AvxChooseDrawBridges
     // The maximum number of bridges to be selected and returned.
     afxUnit         maxCnt, 
 
-    // An array that will hold the selected drawing bridges.
-    afxDrawBridge   bridges[]
+    // An array that will hold the selected IOing bridges.
+    afxIoBridge   bridges[]
 );
 
 /*
-    The AvxWaitForDrawSystem() function waits for a drawing system to become ready, ensuring synchronization between the 
+    The AfxWaitForIommu() function waits for a IOing system to become ready, ensuring synchronization between the 
     application and the graphics context. It is particularly useful for managing asynchronous tasks or ensuring the system 
     is in a stable state before proceeding with further operations. It provides a way to wait for completion or readiness 
     while managing timeouts for better control over the execution flow.
@@ -314,19 +287,19 @@ AVX afxUnit         AvxChooseDrawBridges
     If the system is not ready within the given @timeout, the function may return an error or a timeout code.
 */
 
-AVX afxError        AvxWaitForDrawSystem
+AFX afxError        AfxWaitForIommu
 (
-    // The drawing system that you want to wait for.
-    afxDrawSystem   dsys, 
+    // The IOing system that you want to wait for.
+    afxIommu   iom, 
     
     // The timeout value that defines how long the function should wait before returning. 
-    // It is expressed in microseconds and defines how long to wait for the drawing system 
-    // to be ready or for the drawing operation to complete.
+    // It is expressed in microseconds and defines how long to wait for the IOing system 
+    // to be ready or for the IOing operation to complete.
     afxUnit64       timeout
 );
 
 /*
-    The AvxWaitForDrawBridges() function waits for a specific bridge in a drawing system to become ready or finish its operation. 
+    The AfxWaitForIoBridges() function waits for a specific bridge in a IOing system to become ready or finish its operation. 
     It is useful for synchronizing tasks in graphics pipelines or handling communication between multiple devices. 
     By providing a timeout, it ensures that the function does not block indefinitely and allows you to proceed with other 
     operations if the bridge does not become ready in time. This function is useful in contexts where bridges or execution 
@@ -335,23 +308,23 @@ AVX afxError        AvxWaitForDrawSystem
     If the bridge does not reach the ready state within the timeout, the function might return an error.
 */
 
-AVX afxError        AvxWaitForDrawBridges
+AFX afxError        AfxWaitForIoBridges
 (
-    // The drawing system to which the specific bridge belongs.
-    afxDrawSystem   dsys, 
+    // The IOing system to which the specific bridge belongs.
+    afxIommu   iom, 
 
     // The timeout period that the function should wait for the bridge to become ready or to complete its operation. 
     // The time is expressed in microseconds, and the function will stop waiting once this period has elapsed.
     afxUnit64       timeout,
 
     // The index of the execution unit (bridge) that needs to be waited on. 
-    // If the drawing system has multiple bridges or execution units (e.g., for communication between different components or devices), 
+    // If the IOing system has multiple bridges or execution units (e.g., for communication between different components or devices), 
     // this index identifies the particular bridge you're concerned with.
     afxMask         exuMask
 );
 
 /*
-    The AvxWaitForDrawQueue() function waits for a specific queue in a drawing system to become ready or finish its tasks. 
+    The AfxWaitForIoQueue() function waits for a specific queue in a IOing system to become ready or finish its tasks. 
     It is useful for managing synchronization in systems that utilize multiple command queues, ensuring that one queue's 
     operations are complete before continuing with the next phase of processing. The timeout parameter provides control 
     over how long to wait, preventing the system from hanging indefinitely.
@@ -359,43 +332,31 @@ AVX afxError        AvxWaitForDrawBridges
     If the queue does not become ready within this time frame, the function will return an error.
 */
 
-AVX afxError        AvxWaitForDrawQueue
+AFX afxError        AfxWaitForIoQueue
 (
-    // The drawing system that contains the queue.
-    afxDrawSystem   dsys,
+    // The IOing system that contains the queue.
+    afxIommu   iom,
 
     // The timeout period defines how long the function will wait for the queue to become ready. 
     // The time is specified in microseconds.
     afxUnit64       timeout,
 
-    // The execution unit index, which likely refers to a specific queue or processing unit within the drawing system.
+    // The execution unit index, which likely refers to a specific queue or processing unit within the IOing system.
     // This helps to identify which execution unit's queue you are waiting for, especially if there are multiple queues in the system.
     afxUnit         exuIdx,
 
     // The queue you want to wait for. 
-    // Drawing systems often have multiple command queues for various tasks like graphics, compute, or transfer operations. 
+    // Ioing systems often have multiple command queues for various tasks like graphics, compute, or transfer operations. 
     // The queId specifies which queue's state should be checked.
     afxUnit         queId
 );
 
-AVX void AvxGetEnabledSystemFeatures
+AFX afxUnit AfxTestForEnabledSystemExtensions
 (
-    afxDrawSystem dsys, 
-    avxFeatures* features
-);
-
-AVX afxUnit AvxTestForEnabledSystemExtensions
-(
-    afxDrawSystem dsys, 
+    afxIommu iom, 
     afxUnit cnt, 
     afxString const* exts, 
     afxBool enabled[]
 );
 
-AVX avxClipSpaceDepth AvxGetSystemClipSpaceDepth
-(
-    afxDrawSystem dsys,
-    afxReal* rangeEpsilon
-);
-
-#endif//AVX_DRAW_SYSTEM_H
+#endif//AFX_IOMMU_H
