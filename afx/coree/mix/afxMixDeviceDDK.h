@@ -20,7 +20,7 @@
 #ifndef AMX_DEVICE_DDK_H
 #define AMX_DEVICE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/mix/afxMixSystem.h"
 #include "amxAudioDDK.h"
 #include "afxMixContextDDK.h"

@@ -27,7 +27,7 @@
 #ifndef AMX_MIX_DEVICE_H
 #define AMX_MIX_DEVICE_H
 
-#include "qwadro/exec/afxDevice.h"
+#include "qwadro/afxDevice.h"
 #include "qwadro/mix/afxMixBridge.h"
 #include "qwadro/mix/afxSink.h"
 

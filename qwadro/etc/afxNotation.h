@@ -20,8 +20,8 @@
 #ifndef AFX_NOTATION_H
 #define AFX_NOTATION_H
 
-#include "qwadro/base/afxUri.h"
-#include "qwadro/mem/afxArray.h"
+#include "qwadro/afxUri.h"
+#include "qwadro/afxArray.h"
 
 
 

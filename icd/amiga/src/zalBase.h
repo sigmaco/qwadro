@@ -67,7 +67,7 @@
 
 
 #include "qwadro/mix/afxMixSystem.h"
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 #include "../qwadro/afx/coree/mix/amxIcd.h"
 
 #ifndef AMX_DRV_SRC

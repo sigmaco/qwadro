@@ -25,7 +25,7 @@
 #ifndef AVX_FENCE_DDK_H
 #define AVX_FENCE_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 AFX_DECLARE_STRUCT(_avxIddFenc);

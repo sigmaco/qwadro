@@ -3,9 +3,9 @@
 
 #define _AFX_CORE_C
 #define _AFX_SCRIPT_C
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "../xss/xss.h"
-#include "qwadro/exec/afxConsole.h"
+#include "qwadro/afxConsole.h"
 
 AFX void GenAcqObj(xssVm vm);
 AFX void GenRelObj(void* data);

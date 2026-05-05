@@ -37,7 +37,7 @@
 
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/draw/afxDrawDefs.h"
-#include "qwadro/mem/afxArray.h"
+#include "qwadro/afxArray.h"
 
 // In RW3, RpGeometry is like a arxMesh. 
 // It holds vertices and triangles splited in a group of mesh sections (RpMeshHeader), 

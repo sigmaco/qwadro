@@ -23,7 +23,7 @@
 
 #include "qwadro/anim/arxCurve.h"
 #include "qwadro/math/afxTransform.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 
 typedef enum arxGestureFlag
 {

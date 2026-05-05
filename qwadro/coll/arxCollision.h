@@ -21,7 +21,7 @@
 #define ASX_COLLISION_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/base/afxFixedString.h"
+#include "qwadro/afxFixedString.h"
 #include "qwadro/cad/arxMesh.h"
 
 AFX_DEFINE_HANDLE(asxShape);

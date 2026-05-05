@@ -22,11 +22,11 @@
 #ifndef AFX_MANIFEST_H
 #define AFX_MANIFEST_H
 
-#include "qwadro/exec/afxDebug.h"
-#include "qwadro/base/afxFcc.h"
-#include "qwadro/mem/afxMemory.h"
-#include "qwadro/mem/afxMappedString.h"
-#include "qwadro/base/afxUri.h"
+#include "qwadro/afxDebug.h"
+#include "qwadro/afxFcc.h"
+#include "qwadro/afxMemory.h"
+#include "qwadro/afxMappedString.h"
+#include "qwadro/afxUri.h"
 
 AFX_DEFINE_STRUCT(afxManifest)
 {

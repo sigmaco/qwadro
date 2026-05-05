@@ -20,7 +20,7 @@
 #ifndef ACX_WARP_DEFS_H
 #define ACX_WARP_DEFS_H
 
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 #ifndef __e2serpro__

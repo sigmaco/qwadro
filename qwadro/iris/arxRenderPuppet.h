@@ -22,7 +22,7 @@
 
 #include "qwadro/sim/arxSimDefs.h"
 #include "qwadro/draw/afxDrawDefs.h"
-#include "qwadro/mem/afxArray.h"
+#include "qwadro/afxArray.h"
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/scene/arxNode.h"
 

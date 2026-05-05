@@ -25,7 +25,7 @@
 #define AVX_TRANSFERENCE_H
 
 #include "qwadro/draw/avxRasterIo.h"
-#include "qwadro/base/afxWarp.h"
+#include "qwadro/afxWarp.h"
 #include "qwadro/draw/avxSampler.h"
 #include "qwadro/draw/avxBuffer.h"
 #include "qwadro/draw/avxViewport.h"

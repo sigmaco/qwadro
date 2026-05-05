@@ -24,7 +24,7 @@
 #ifndef AUX_ENVIRONMENT_DDK_H
 #define AUX_ENVIRONMENT_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxEnvironment.h"

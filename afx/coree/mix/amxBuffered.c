@@ -39,7 +39,7 @@ _AMX afxError AmxMakeBufferedRing(amxBufferedRing* rng, amxBuffer mbuf, afxSize 
     if (mbuf)
     {
         AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &mbuf);
-        rng->basePtr = AvxGetBufferMap(mbuf, bufRange, bufRange);
+        rng->basePtr = AmxGetBufferMap(mbuf, bufRange, bufRange);
 
         if (!rng->basePtr)
         {

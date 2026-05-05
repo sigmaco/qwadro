@@ -25,7 +25,7 @@
 #ifndef AVX_IOMMU_DDK_H
 #define AVX_IOMMU_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 typedef enum _avxMemFlag

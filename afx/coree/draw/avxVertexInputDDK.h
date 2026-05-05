@@ -25,7 +25,7 @@
 #ifndef AVX_VERTEX_INPUT_DDK_H
 #define AVX_VERTEX_INPUT_DDK_H
 
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
 AFX_DECLARE_STRUCT(_avxIddVin);

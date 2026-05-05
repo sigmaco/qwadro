@@ -16,7 +16,7 @@
 
 #include "zglDefs.h"
 #include "zglDdrv.h"
-#include "qwadro/exec/afxSystem.h"
+#include "qwadro/afxSystem.h"
 
 ZGLINL void ZglBindTextureUnit(zglDpu* dpu, GLuint unit, GLenum target, GLuint texture)
 {

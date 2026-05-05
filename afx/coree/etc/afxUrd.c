@@ -25,7 +25,7 @@
 #include <string.h>
 
 #define _AFX_URD_C
-#include "../io/afxIoDDK.h"
+#include "../afxIoDDK.h"
 #include "qwadro/etc/afxUrd.h"
 
 #define LOWORD(l) ((afxUnit16)(l))

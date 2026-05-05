@@ -25,7 +25,7 @@
 #define AUX_DISPLAY_DDK_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "../exec/afxSystemDDK.h"
+#include "../afxSystemDDK.h"
 #include "qwadro/draw/avxViewport.h"
 #include "qwadro/ux/afxShell.h"
 //#include "qwadro/../../dep_/vgl1/vgl1.h"

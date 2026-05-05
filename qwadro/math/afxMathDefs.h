@@ -43,8 +43,8 @@
 #define AFX_MATH_DEFS_H
 
 #include <math.h>
-#include "qwadro/exec/afxDebug.h"
-#include "qwadro/base/afxSimd.h"
+#include "qwadro/afxDebug.h"
+#include "qwadro/afxSimd.h"
 //#include <stdalign.h>
 
 #ifdef AFX_OS_WINDOWS

@@ -24,8 +24,8 @@
 #ifndef AUX_UX_DEFS_H
 #define AUX_UX_DEFS_H
 
-#include "qwadro/exec/afxSystem.h"
-#include "qwadro/base/afxRect.h"
+#include "qwadro/afxSystem.h"
+#include "qwadro/afxRect.h"
 
 #ifndef __e2mmux__
 #   ifdef _DEBUG
