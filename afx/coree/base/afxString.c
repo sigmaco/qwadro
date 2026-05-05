@@ -222,6 +222,39 @@ _AFXINL afxBool AfxFindChar(afxString const* s, afxUnit from, afxInt ch, afxBool
     return FALSE;
 }
 
+_AFXINL afxString AfxSkipWhitespaces(afxString const* s)
+{
+    /*
+        If we parsing is failing earlier, combining this with your scan call helps a lot.
+
+        Using isspace(instead of checking just ' ') correctly handles spaces ' ',
+        tabs '\t', newlines '\n', carriage returns, etc.
+    */
+
+    if (s->len == 0)
+    {
+        return AFX_STRING_EMPTY;
+    }
+
+    afxString sr;
+    afxChar const* p = s->start;
+    afxUnit len = s->len;
+
+    afxSize i = 0;
+    while (i < len && AfxIsspace((unsigned char)p[i])) {
+        i++;
+    }
+
+    len -= i;
+    
+    if (len) // when len is equal to zero, AfxMakeString will try to measure it if a pointer is offered.
+        AfxMakeString(&sr, AFX_MIN(len, s->cap), &p[i], len);
+    else
+        sr = AFX_STRING_EMPTY;
+    
+    return sr;
+}
+
 _AFXINL afxString AfxFindSubstrings(afxString const* s, afxUnit from, afxBool ci, afxUnit cnt, afxString const substrings[], afxUnit* matchedIdx)
 {
     afxError err = { 0 };

@@ -18,6 +18,26 @@
 #include "../qwadro/icd/amiga/src/zalInteropWasapi.h"
 //#include "qowBase.h"
 
+_QOW afxError _QowSinkPauseCb(afxSink asi, afxBool pause)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
+
+    _ZalWasapiPause(&asi->idd.wasapi, pause);
+
+    return err;
+}
+
+_QOW afxError _QowSinkResetCb(afxSink asi)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
+
+    _ZalWasapiReset(&asi->idd.wasapi);
+
+    return err;
+}
+
 _QOW afxError _QowSinkLockCb(afxSink asi, afxUnit64 timeout, afxMask exuMask, afxUnit minFrameCnt, amxBufferedTrack* room)
 {
     afxError err = { 0 };
@@ -101,7 +121,7 @@ _QOW afxError _QowSinkDtorCb(afxSink asi)
 
     afxMixDevice sdev = AfxGetHost(asi);
 
-    _ZalWasapiStartStop(&asi->idd.wasapi, FALSE);
+    _ZalWasapiPause(&asi->idd.wasapi, 1);
 
     if (_ZalWasapiDestroy(&asi->idd.wasapi))
     {
@@ -136,7 +156,7 @@ _QOW afxError _QowSinkCtorCb(afxSink asi, void** args, afxUnit invokeNo)
         return err;
     }
     
-    if (_ZalWasapiCreate(&asi->idd.wasapi, asi->m.fmt, asi->m.chanCnt, asi->m.freq))
+    if (_ZalWasapiCreate(&asi->idd.wasapi, asi->m.fmt, asi->m.chanCnt, asi->m.freq, cfg->latency, 0, FALSE))
     {
         AfxThrowError();
     }
@@ -144,8 +164,10 @@ _QOW afxError _QowSinkCtorCb(afxSink asi, void** args, afxUnit invokeNo)
     asi->m.flushCb = _QowSinkFlushCb;
     asi->m.lockCb = _QowSinkLockCb;
     asi->m.unlockCb = _QowSinkUnlockCb;
+    asi->m.pauseCb = _QowSinkPauseCb;
+    asi->m.resetCb = _QowSinkResetCb;
 
-    _ZalWasapiStartStop(&asi->idd.wasapi, TRUE);
+    _ZalWasapiPause(&asi->idd.wasapi, 0);
 
     return err;
 }

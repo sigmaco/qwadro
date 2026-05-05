@@ -67,6 +67,16 @@ _AMX afxError _AmxMpuWork_SinkCb(amxMpu* mpu, _amxIoReqPacket* work)
 {
     afxError err = { 0 };
 
+    audio_ringbuffer_advance_write(&work->Sink.ops[0].sink->rb, work->Sink.ops[0].sampleCnt);
+
+    //work->Sink.sink->pushCb(work->Sink.sink, work->Sink.buf, &work->Sink.seg);
+    return err;
+}
+
+_AMX afxError _AmxMpuWork_DrinkCb(amxMpu* mpu, _amxIoReqPacket* work)
+{
+    afxError err = { 0 };
+
     //work->Sink.sink->pushCb(work->Sink.sink, work->Sink.buf, &work->Sink.seg);
     return err;
 }
@@ -294,6 +304,7 @@ _AMX _amxIoReqLut const _AMX_MPU_IORP_VMT =
     .Callback = _AmxMpuWork_CallbackCb,
     .Execute = _AmxMpuWork_ExecuteCb,
     .Sink = _AmxMpuWork_SinkCb,
+    .Drink = _AmxMpuWork_DrinkCb,
     .Transfer = _AmxMpuWork_TransferCb,
     //.Remap = _AmxMpuWork_RemapCb,
 };
@@ -397,10 +408,11 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         }
     }
 #endif
-#if 0
-    afxSink sink;
+#if !0
+    //afxSink sink;
     afxUnit i = 0;
-    while (AfxEnumerateObjects(_AmxMsysGetSinkClass(AfxGetHost(mexu)), i++, 1, (afxObject*)&sink))
+    /*afxClass* */sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
+    while (AfxEnumerateObjects(sinkCls, i++, 1, (afxObject*)&sink))
     {
         if (sink->flushCb)
             sink->flushCb(sink);
@@ -525,20 +537,5 @@ _AMX afxError _AmxMexu_PingCb(afxMixBridge mexu, afxUnit queIdx)
     mexu->schedCnt += 1;
     AfxSignalCondition(&mexu->schedCnd);
     AfxUnlockMutex(&mexu->schedCndMtx);
-    return err;
-}
-
-_AMX afxError _AmxMqueSinkBuffers(afxMixQueue mque, afxUnit cnt, amxFlush presentations[])
-{
-    afxError err = { 0 };
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        amxFlush* pres = &presentations[i];
-
-        afxSink sink = NIL;// pres->sink;
-        AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
-
-    }
     return err;
 }

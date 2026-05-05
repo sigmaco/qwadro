@@ -31,13 +31,16 @@
 
 AVX afxError AvxCmdAdjustCurtainsSIGMA
 (
-    afxDrawContext      dctx, 
+    afxDrawContext dctx, 
+
     // the first curtain rectangle whose state is updated by the command.
-    afxUnit             baseIdx,
+    afxUnit baseIdx,
+
      // the number of curtain rectangles updated by the command.
-    afxUnit             cnt,
+    afxUnit cnt,
+
      // an array of afxRect structures defining curtain rectangles.
-    afxRect const       rects[]
+    afxRect const rects[]
 );
 
 /*
@@ -46,8 +49,9 @@ AVX afxError AvxCmdAdjustCurtainsSIGMA
 
 AVX afxError AvxCmdSetRasterizationSamplesEXT
 (
-    afxDrawContext      dctx,
-    afxUnit             sampleLvl
+    afxDrawContext dctx,
+
+    afxUnit sampleLvl
 );
 
 /*
@@ -56,10 +60,12 @@ AVX afxError AvxCmdSetRasterizationSamplesEXT
 
 AVX afxError AvxCmdSetSampleMaskEXT
 (
-    afxDrawContext      dctx,
-    afxUnit             sampleLvl,
+    afxDrawContext dctx,
+
+    afxUnit sampleLvl,
+
     // An array of mask values, where the array size is based on the sampleLvl parameter.
-    afxMask const       sampleMasks[AVX_MAX_SAMPLE_MASKS]
+    afxMask const sampleMasks[AVX_MAX_SAMPLE_MASKS]
 );
 
 /*
@@ -68,8 +74,9 @@ AVX afxError AvxCmdSetSampleMaskEXT
 
 AVX afxError AvxCmdSwitchAlphaToCoverageEXT
 (
-    afxDrawContext      dctx,
-    afxBool             enable
+    afxDrawContext dctx,
+
+    afxBool enable
 );
 
 /*
@@ -78,8 +85,9 @@ AVX afxError AvxCmdSwitchAlphaToCoverageEXT
 
 AVX afxError AvxCmdSwitchAlphaToOneEXT
 (
-    afxDrawContext      dctx,
-    afxBool             enable
+    afxDrawContext dctx,
+
+    afxBool enable
 );
 
 /*
@@ -88,10 +96,13 @@ AVX afxError AvxCmdSwitchAlphaToOneEXT
 
 AVX afxError AvxCmdSwitchColorBlendingEXT
 (
-    afxDrawContext      dctx,
-    afxUnit             first,
-    afxUnit             cnt,
-    afxBool const       enabled[]
+    afxDrawContext dctx,
+
+    afxUnit first,
+
+    afxUnit cnt,
+
+    afxBool const enabled[]
 );
 
 /*
@@ -100,9 +111,12 @@ AVX afxError AvxCmdSwitchColorBlendingEXT
 
 AVX afxError AvxCmdChangeColorBlendEquationEXT
 (
-    afxDrawContext      dctx,
-    afxUnit             first,
-    afxUnit             cnt,
+    afxDrawContext dctx,
+
+    afxUnit first,
+
+    afxUnit cnt,
+
     avxColorBlend const equations[]
 );
 
@@ -112,10 +126,13 @@ AVX afxError AvxCmdChangeColorBlendEquationEXT
 
 AVX afxError AvxCmdSetColorWriteMaskEXT
 (
-    afxDrawContext      dctx,
-    afxUnit             first,
-    afxUnit             cnt,
-    avxColorMask const  writeMasks[]
+    afxDrawContext dctx,
+
+    afxUnit first,
+
+    afxUnit cnt,
+
+    avxColorMask const writeMasks[]
 );
 
 /*
@@ -124,8 +141,9 @@ AVX afxError AvxCmdSetColorWriteMaskEXT
 
 AVX afxError AvxCmdSwitchLogicOpEXT
 (
-    afxDrawContext      dctx,
-    afxBool             enabled
+    afxDrawContext dctx,
+
+    afxBool enabled
 );
 
 /*
@@ -134,8 +152,9 @@ AVX afxError AvxCmdSwitchLogicOpEXT
 
 AVX afxError AvxCmdSetDepthClampEnableEXT
 (
-    afxDrawContext      dctx,
-    afxBool             enabled
+    afxDrawContext dctx,
+
+    afxBool enabled
 );
 
 /*
@@ -144,13 +163,16 @@ AVX afxError AvxCmdSetDepthClampEnableEXT
 
 AVX afxError AvxCmdDiscardRectanglesEXT
 (
-    afxDrawContext      dctx,
+    afxDrawContext dctx,
+
     // The first discard rectangle whose state is updated by the command.
-    afxUnit             first,
+    afxUnit first,
+
     // The number of discard rectangles whose state are updated by the command.
-    afxUnit             cnt,
+    afxUnit cnt,
+
     // An array of afxRect structures specifying discard rectangles.
-    afxRect const*      rects
+    afxRect const* rects
 );
 
 #endif//AVX_RASTERIZATION_EXT_H

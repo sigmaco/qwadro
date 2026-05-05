@@ -525,6 +525,111 @@ _AMX afxError _AmxMqueCohereMappedBuffers(afxMixQueue mque, afxUnit flushCnt, am
     return err;
 }
 
+_AMX afxError _AmxMqueSinkBuffers(afxMixQueue mque, afxUnit cnt, amxFlush presentations[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxFlush* pres = &presentations[i];
+
+        afxSink sink = NIL;// pres->sink;
+        AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+    }
+    return err;
+}
+
+_AMX afxError _AmxMqueFlushSinks(afxMixQueue mque, afxUnit cnt, amxFlush const flushes[])
+{
+    afxError err = { 0 };
+    // mque must be a valid afxMixQueue handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MQUE, 1, &mque);
+
+    if (!AfxTryLockMutex(&mque->iorpChnMtx))
+        return afxError_TIMEOUT;
+
+    afxCmdId cmdId;
+    _amxIoReqPacket* iorp;
+
+    if (_AmxMquePushIoReqPacket(mque, _AMX_GET_STD_IORP_ID(Sink), sizeof(iorp->Sink) + (cnt * sizeof(iorp->Sink.ops[0])), &cmdId, &iorp))
+    {
+        AfxThrowError();
+    }
+    else
+    {
+        AFX_ASSERT(iorp);
+
+        for (afxUnit i = 0; i < cnt; i++)
+        {
+            iorp->Sink.opCnt = 1;
+
+            afxSink sink = flushes[i].sink;
+            AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+            iorp->Sink.ops[i].sink = sink;
+            iorp->Sink.ops[i].sampleCnt = flushes[i].sampleCnt;
+            iorp->Sink.ops[i].wait = flushes[i].wait;
+            iorp->Sink.ops[i].waitValue = flushes[i].waitValue;
+            iorp->Sink.ops[i].signal = flushes[i].signal;
+            iorp->Sink.ops[i].signalValue = flushes[i].signalValue;
+        }
+    }
+
+    AfxUnlockMutex(&mque->iorpChnMtx);
+
+    afxMixBridge mexu = AfxGetHost(mque);
+    AFX_ASSERT_OBJECTS(afxFcc_MEXU, 1, &mexu);
+    _AmxMexu_PingCb(mexu, 0);
+
+    return err;
+}
+
+_AMX afxError _AmxMqueRefillSinks(afxMixQueue mque, afxUnit cnt, amxCaption const captions[])
+{
+    afxError err = { 0 };
+    // mque must be a valid afxMixQueue handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MQUE, 1, &mque);
+
+    if (!AfxTryLockMutex(&mque->iorpChnMtx))
+        return afxError_TIMEOUT;
+
+    afxCmdId cmdId;
+    _amxIoReqPacket* iorp;
+
+    if (_AmxMquePushIoReqPacket(mque, _AMX_GET_STD_IORP_ID(Drink), sizeof(iorp->Drink) + (cnt * sizeof(iorp->Drink.ops[0])), &cmdId, &iorp))
+    {
+        AfxThrowError();
+    }
+    else
+    {
+        AFX_ASSERT(iorp);
+
+        for (afxUnit i = 0; i < cnt; i++)
+        {
+            iorp->Drink.opCnt = 1;
+
+            afxSink sink = captions[i].sink;
+            AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+            iorp->Drink.ops[i].sink = sink;
+            iorp->Drink.ops[i].sampleCnt = captions[i].sampleCnt;
+            iorp->Drink.ops[i].wait = captions[i].wait;
+            iorp->Drink.ops[i].waitValue = captions[i].waitValue;
+            iorp->Drink.ops[i].signal = captions[i].signal;
+            iorp->Drink.ops[i].signalValue = captions[i].signalValue;
+        }
+    }
+
+    AfxUnlockMutex(&mque->iorpChnMtx);
+
+    afxMixBridge mexu = AfxGetHost(mque);
+    AFX_ASSERT_OBJECTS(afxFcc_MEXU, 1, &mexu);
+    _AmxMexu_PingCb(mexu, 0);
+
+    return err;
+}
+
 _AMX afxError _AmxMqueDtorCb(afxMixQueue mque)
 {
     afxError err = { 0 };

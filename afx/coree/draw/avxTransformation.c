@@ -214,7 +214,7 @@ _AVX afxError AvxCmdSwitchFrontFace(afxDrawContext dctx, afxBool cw)
     return err;
 }
 
-_AVX afxError AvxCmdChangeCullMode(afxDrawContext dctx, avxCullMode mode)
+_AVX afxError AvxCmdAlterCullMode(afxDrawContext dctx, avxCullMode mode)
 {
     afxError err = { 0 };
     // dctx must be a valid afxDrawContext handle.

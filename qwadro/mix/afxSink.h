@@ -156,14 +156,15 @@ AFX_DEFINE_STRUCT(afxSinkInterface)
     afxError(*ioctl)(afxSink, afxUnit, ...);
 };
 
-AMX afxMixDevice    AfxGetAudioSinkDevice(afxSink sink);
-AMX afxMixSystem    AmxGetSinkHost(afxSink sink);
+AMX afxMixDevice AfxGetAudioSinkDevice(afxSink sink);
 
-AMX afxError        AmxGetSinkIdd(afxSink sink, afxUnit code, void* dst);
+AMX afxMixSystem AmxGetSinkHost(afxSink sink);
+
+AMX afxError AmxGetSinkIdd(afxSink sink, afxUnit code, void* dst);
 
 // Connection
 
-AMX afxError        AfxMuteAudioSink(afxSink sink, afxBool mute);
+AMX afxError AfxMuteAudioSink(afxSink sink, afxBool mute);
 
 AFX_DEFINE_STRUCT(amxBufferedTrack)
 {
@@ -185,13 +186,13 @@ AFX_DEFINE_STRUCT(amxBufferedAudio)
     afxUnit     w, h, d;
 };
 
-AMX afxError        AmxGetSinkTrack
+AMX afxError AmxGetSinkTrack
 (
     afxSink sink, 
     amxAudio* track
 );
 
-AMX afxError        AmxLockSinkBuffer
+AMX afxError AmxLockSinkBuffer
 (
     afxSink sink, 
     afxUnit64 timeout, 
@@ -200,7 +201,7 @@ AMX afxError        AmxLockSinkBuffer
     amxBufferedTrack* room
 );
 
-AMX afxError        AmxUnlockSinkBuffer
+AMX afxError AmxUnlockSinkBuffer
 (
     afxSink sink, 
     afxFlags flags
@@ -208,9 +209,9 @@ AMX afxError        AmxUnlockSinkBuffer
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AMX afxError        AfxConfigureAudioSink(afxMixSystem msys, afxSinkConfig* cfg);
+AMX afxError AfxConfigureAudioSink(afxMixSystem msys, afxSinkConfig* cfg);
 
-AMX afxError        AfxOpenAudioSink(afxMixSystem msys, afxSinkConfig const* cfg, afxSink* sink);
+AMX afxError AfxOpenAudioSink(afxMixSystem msys, afxSinkConfig const* cfg, afxSink* sink);
 
 AFX_DEFINE_STRUCT(amxSink)
 // Media sinks. Stream sinks handle the actual processing of data on each stream.
@@ -226,5 +227,30 @@ afxError AmxSetSinkClock(amxSink msnk, afxClock* clock);
 
 // Requests a sample from the media source.
 afxError AmxRequestStreamSample(amxSink msnk);
+
+
+AMX afxError AmxFlushSinks
+(
+    // The mixing system where the outputs will be presented.
+    afxMixSystem msys,
+
+    // The number of outputs to be presented. This indicates how many items in the @echos array should be processed.
+    afxUnit cnt,
+
+    amxFlush const flushes[],
+
+    afxUnit queueingMap[]
+);
+
+AMX afxError AmxRefillSinks
+(
+    afxMixSystem msys, 
+    
+    afxUnit cnt, 
+    
+    amxCaption const captions[], 
+    
+    afxUnit queueingMap[]
+);
 
 #endif//AMX_SINK_H

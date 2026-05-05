@@ -155,9 +155,22 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     // The DPU can not busy-wait. So, it just drop a WaitSync() and proceed immediately.
 
+    afxBool reallyWait = FALSE;
+
     afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
-    if (((fenc->m.flags & avxFenceFlag_TIMELINE) && (value < curVal))
-        || (value != curVal))
+
+    if (fenc->m.flags & avxFenceFlag_TIMELINE)
+    {
+        if (value < curVal)
+            reallyWait = TRUE;
+    }
+    else
+    {
+        if (value != curVal)
+            reallyWait = TRUE;
+    }
+
+    if (reallyWait)
     {
         GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
 
@@ -245,44 +258,121 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
     }
 #endif
 
-    // The DPU spawns a new fence, atomic-exchance it, then set the event to unblock render threads.
-    // Other DPUs should not rely on kernel event but on the GL fence itself.
+    afxBool reallyFence = FALSE;
 
-    GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-    AFX_ASSERT(gl->IsSync(glHandle));
-    glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+    afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
 
-    // Flush() is required so the other context sees the fence immediately.
-    gl->Flush();
-
-    if (glHandle)
-    {
-        AFX_ASSERT(gl->IsSync(glHandle));
-        gl->DeleteSync(glHandle);
-    }
-
-#if 0
     if (fenc->m.flags & avxFenceFlag_TIMELINE)
     {
-        AfxIncAtom64(&fenc->m.value);
+        if (value < curVal)
+            reallyFence = TRUE;
     }
     else
     {
-        AfxStoreAtom64(&fenc->m.value, value);
+        if (value != curVal)
+            reallyFence = TRUE;
     }
 
-    SetEvent(fenc->hEventW32);
-#else
-    //_ZglFencSignalOnHostCb(fenc, value);
-#endif
-
-    //AFX_ASSERT(!AfxGetLinker(&fenc->onSignalChain));
-    if (!AfxGetLinker(&fenc->onSignalChain))
+    if (reallyFence)
     {
-        AfxPushLink(&fenc->onSignalChain, &dpu->fenceSignalChain);
-    }
-    fenc->nextValueToSignal = value;
+        // The DPU spawns a new fence, atomic-exchance it, then set the event to unblock render threads.
+        // Other DPUs should not rely on kernel event but on the GL fence itself.
 
+        GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        AFX_ASSERT(gl->IsSync(glHandle));
+        glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+
+        // Flush() is required so the other context sees the fence immediately.
+        gl->Flush();
+
+        if (glHandle)
+        {
+            AFX_ASSERT(gl->IsSync(glHandle));
+            gl->DeleteSync(glHandle);
+        }
+
+        fenc->nextValueToSignal = value;
+        err = afxError_TIMEOUT;
+
+        /*
+            Bail out with TIMEOUT.
+            The next iteration should go through the test path.
+        */
+    }
+    else
+    {
+        GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+
+        if (glHandle)
+        {
+            AFX_ASSERT(gl->IsSync(glHandle));
+
+            // To block all CPU operations until a sync object is signaled, you call this function:
+            GLenum rslt = gl->ClientWaitSync(glHandle, GL_SYNC_FLUSH_COMMANDS_BIT, /*timeout*/0); _ZglThrowErrorOccuried();
+
+            /*
+                This function will not return until one of two things happens: the sync​ object parameter becomes signaled, or a number of nanoseconds greater than or equal to the timeout​ parameter passes.
+                If timeout​ is zero, the function will simply check to see if the sync object is signaled and return immediately.
+                Note that the fact that timeout​ is in nanoseconds does not imply that this function has true nanosecond granularity in its timeout; you are only guaranteed that at least that much time will pass.
+            */
+
+            switch (rslt)
+            {
+            case GL_ALREADY_SIGNALED:
+            {
+                // the sync object was signaled before the function was called.
+#if 0
+                AfxStoreAtom32(&fenc->m.signaled, 1);
+                //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+                SetEvent(fenc->hEventW32);
+#else
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                    _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
+                break;
+            }
+            case GL_CONDITION_SATISFIED:
+            {
+                // the sync object was signaled within the given timeout period.
+#if 0
+                AfxStoreAtom32(&fenc->m.signaled, 1);
+                //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+                SetEvent(fenc->hEventW32);
+#else
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                    _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
+                break;
+            }
+            case GL_TIMEOUT_EXPIRED:
+            {
+                // the sync object did not signal within the given timeout period.
+                err = afxError_TIMEOUT;
+                break;
+            }
+            case GL_WAIT_FAILED:
+            default:
+            {
+                // If an OpenGL Error occurred, then GL_WAIT_FAILED will be returned in addition to raising an error.
+                // Set event anyway, to unlock wait for infinite time.
+
+#if 0
+                SetEvent(fenc->hEventW32);
+#else
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                    _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
+#endif
+                err = afxError_UNKNOWN;
+                break;
+            }
+            }
+        }
+        else
+        {
+            if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                _ZglFencSignalOnHostCb(fenc, value);
+        }
+    }
     return err;
 }
 

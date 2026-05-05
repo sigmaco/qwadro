@@ -96,6 +96,10 @@ int main(int argc, char const* argv[])
     AfxGetClock(&startClock);
     lastClock = startClock;
 
+    afxReal64 ft = 0;
+    afxUnit fpsi = 0;
+    afxUnit fps = 0;
+
     afxBool readyToRender = TRUE;
 
     while (1)
@@ -114,8 +118,16 @@ int main(int argc, char const* argv[])
         if (!readyToRender)
             continue;
 
+        if (ct - ft >= 1.0)
+        {
+            fps = fpsi;
+            fpsi = 0;
+            ft = ct;
+        }
+        ++fpsi;
+
         afxUnit outBufIdx = 0;
-        if (AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx))
+        if (AfxFailed(AvxLockSurfaceBuffer(dout, AFX_TIMEOUT_IGNORED, NIL, NIL, &outBufIdx)))
         {
             AfxThrowError();
         }
@@ -125,7 +137,7 @@ int main(int argc, char const* argv[])
             afxDrawContext dctx = drawContexts[outBufIdx];
             afxBool compiled = FALSE;
 
-            if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
+            if (AfxFailed(AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE)))
             {
                 AfxThrowError();
             }
@@ -148,7 +160,7 @@ int main(int argc, char const* argv[])
                 dps.ds[0].clearVal.depth = 1.0;
                 dps.ds[0].clearVal.stencil = 0;
 
-                if (afxError_NONE == AvxCmdCommenceDrawScope(dctx, &dps))
+                if (AfxSucceded(AvxCmdCommenceDrawScope(dctx, &dps)))
                 {
                     avxViewport vp = AVX_VIEWPORT(0, 0, area.area.w, area.area.h, 0, 1);
                     AvxCmdAdjustViewports(dctx, 0, 1, &vp);
@@ -156,7 +168,7 @@ int main(int argc, char const* argv[])
                     AvxCmdConcludeDrawScope(dctx);
                 }
 
-                if (AvxCompileDrawCommands(dctx))
+                if (AfxFailed(AvxCompileDrawCommands(dctx)))
                 {
                     AfxThrowError();
                 }
@@ -175,7 +187,7 @@ int main(int argc, char const* argv[])
                 subm.dctx = dctx;
                 subm.signal = drawCompletedFence;
 
-                if (AvxExecuteDrawCommands(dsys, 1, &subm, &dqueIdx))
+                if (AfxFailed(AvxExecuteDrawCommands(dsys, 1, &subm, &dqueIdx)))
                 {
                     AfxThrowError();
                     AvxUnlockSurfaceBuffer(dout, outBufIdx);
@@ -190,7 +202,7 @@ int main(int argc, char const* argv[])
                 pres.dout = dout;
                 pres.bufIdx = outBufIdx;
 
-                if (AvxPresentSurfaces(dsys, 1, &pres, NIL))
+                if (AfxFailed(AvxPresentSurfaces(dsys, 1, &pres, NIL)))
                 {
                     AfxThrowError();
                 }
@@ -198,6 +210,8 @@ int main(int argc, char const* argv[])
                 {
                     presented = TRUE;
                 }
+
+                AfxFormatWindowTitle(wnd, "FPS %u %u", fps, 0);
             }
             else
             {

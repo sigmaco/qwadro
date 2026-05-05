@@ -30,7 +30,7 @@
 //#define AFX_R(_raw_string_literal_) "\n" #_raw_string_literal_
 //#define AFX_R(_raw_string_literal_) _Pragma (#_raw_string_literal_)
 
-afxChar const wireBaryVshCode[] = AFX_R(
+afxString const wireBaryVshCode = AFX_STATIC_STRING_R(
     // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
     // Vertex shader. Basic pass-through for barycentric-based wireframe.
 
@@ -55,7 +55,7 @@ afxChar const wireBaryVshCode[] = AFX_R(
     }
 );
 
-afxChar const wireBaryFshCode[] = AFX_R(
+afxString const wireBaryFshCode = AFX_STATIC_STRING_R(
     // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
     // Fragment Shader. Barycentric-based wireframe.
     
@@ -94,7 +94,7 @@ avxPipelineConfig const wireBaryPipc =
     .depthCompareOp = avxCompareOp_LESS
 };
 
-afxChar const wireVshCode[] = AFX_R(
+afxString const wireVshCode = AFX_STATIC_STRING_R(
     // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
     // Vertex shader. Basic pass-through for wireframe.
 
@@ -117,7 +117,7 @@ afxChar const wireVshCode[] = AFX_R(
     }
 );
 
-afxChar const wireFshCode[] = AFX_R(
+afxString const wireFshCode = AFX_STATIC_STRING_R(
     // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP
     // Fragment Shader. Wireframe.
     
@@ -125,10 +125,10 @@ afxChar const wireFshCode[] = AFX_R(
     
     PUSH(pushes)
     {
-    mat4 uM; // transform matrix
-    vec3 uWireColor; // = vec3(1.0, 1.0, 1.0);
-    float uWireThickness; // = 0.02;
-    vec3 uFillColor; // = vec3(0.1, 0.1, 0.1);
+        mat4 uM; // transform matrix
+        vec3 uWireColor; // = vec3(1.0, 1.0, 1.0);
+        float uWireThickness; // = 0.02;
+        vec3 uFillColor; // = vec3(0.1, 0.1, 0.1);
     };
 
     OUT(0, vec4, FragColor);

@@ -61,7 +61,7 @@ AFX_DEFINE_STRUCT(_auxDdiEnv)
     afxBool(*hasClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags);
     afxUnit(*getClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags, afxString*);
     afxError(*setClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags, afxString const*);
-    afxBool(*getCurs)(afxEnvironment, afxUnit seat, afxRect*,afxWindow,afxRect*,afxRect*);
+    afxBool(*getCurs)(afxEnvironment, afxUnit seat, afxWindow,afxBool onFrame,afxRect*);
     afxError(*fseCb)(afxEnvironment,afxWindow,afxBool);
     afxError(*focusCb)(afxEnvironment, afxUnit seat, afxWindow, afxFocusFlags);
     afxError(*drawBgCb)(afxEnvironment, afxDrawContext, afxFlags);

@@ -54,12 +54,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireBaryFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireBaryVshCode, 0)))
+            if (AvxCompileShader(codb, &specs[0].prog, &wireBaryVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireBaryFshCode, 0)))
+            if (AvxCompileShader(codb, &specs[1].prog, &wireBaryFshCode))
             {
                 AfxThrowError();
             }
@@ -107,12 +107,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, AfxMakeString(&s, 0, wireVshCode, 0)))
+            if (AvxCompileShader(codb, &specs[0].prog, &wireVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, AfxMakeString(&s, 0, wireFshCode, 0)))
+            if (AvxCompileShader(codb, &specs[1].prog, &wireFshCode))
             {
                 AfxThrowError();
             }
@@ -568,6 +568,54 @@ void ArxDrawLine(arxRenderContext rctx, afxV3d origin, afxV3d target)
     AfxV3dCopy(verts[1], target);
 
     AvxCmdDraw(dctx, 2, 1, 0, 0);
+}
+
+void ArxDrawLines(arxRenderContext rctx, afxUnit cnt, afxRect const rects[])
+{
+    afxDrawContext dctx = rctx->frames[rctx->frameIdx].drawDctx;
+
+    afxV3d* verts = ArxPostVertices(rctx, cnt * 2, sizeof(afxV3d), NIL, 0);
+
+    afxUnit stride = sizeof(rects[0]);
+    AfxStream2(cnt, rects, stride, verts, sizeof(afxV3d));
+    // AfxStream should take a inner offset to allow us to work with a UD stride.
+
+    AvxCmdDraw(dctx, cnt * 2, 1, 0, 0);
+}
+
+void ArxDrawStrippedLines(arxRenderContext rctx, afxUnit vtxCnt, afxReal const vertices[], afxUnit vecSiz)
+{
+    afxDrawContext dctx = rctx->frames[rctx->frameIdx].drawDctx;
+
+    afxError err = { 0 };
+    AFX_ASSERT(vtxCnt >= 2);
+
+    afxBool indexed = FALSE;
+
+    if (indexed)
+    {
+        afxUnit stride = sizeof(vertices) * vecSiz;
+        afxV3d* verts = ArxPostVertices(rctx, vtxCnt, sizeof(afxV3d), vertices, stride);
+
+        afxUnit16* indices = ArxPostVertexIndices(rctx, vtxCnt - 1, sizeof(afxUnit16), NIL, 0);
+
+        for (afxUnit i = 0, j = 0; i < vtxCnt - 1; ++i)
+        {
+            indices[j++] = i;      // Start index for this segment
+            indices[j++] = i + 1;  // End index for this segment
+        }
+
+        AvxCmdDrawIndexed(dctx, vtxCnt - 1, 1, 0, 0, 0);
+    }
+    else
+    {
+        afxV3d* verts = ArxPostVertices(rctx, vtxCnt, sizeof(afxV3d), NIL, 0);
+        
+        afxUnit stride = sizeof(vertices) * vecSiz;
+        AfxStream2(vtxCnt, vertices, stride, verts, sizeof(afxV3d));
+
+        AvxCmdDraw(dctx, vtxCnt, 1, 0, 0);
+    }
 }
 
 void drawWireSphere(arxRenderContext rctx, afxM4d const m, afxReal radius, afxUnit lats, afxUnit longs)

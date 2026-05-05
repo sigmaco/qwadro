@@ -581,8 +581,8 @@ _AFX afxError _AfxSysCtorCb(afxSystem sys, void** args, afxUnit invokeNo)
     afxClassConfig xssClsCfg = _AFX_XSS_CLASS_CONFIG;
     AfxMountClass(&sys->xssCls, NIL, classes, &xssClsCfg);
 
-    afxClassConfig exuClsCfg = _AFX_EXU_CLASS_CONFIG;
-    AfxMountClass(&sys->exuCls, NIL, classes, &exuClsCfg);
+    //afxClassConfig exuClsCfg = _AFX_EXU_CLASS_CONFIG;
+    //AfxMountClass(&sys->exuCls, NIL, classes, &exuClsCfg);
 
     afxThreadConfig thrCfg = { 0 };
     thrCfg.tid = (sys->primeTid = AfxGetTid());
@@ -616,8 +616,8 @@ _AFX afxError _AfxSysCtorCb(afxSystem sys, void** args, afxUnit invokeNo)
                 AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &e2coree);
                 sys->e2coree = e2coree;
 
-                if (AfxAcquireIoBridge(&cfg->exus[0], &sys->primeExu))
-                    AfxThrowError();
+                //if (AfxAcquireIoBridge(&cfg->exus[0], &sys->primeExu))
+                  //  AfxThrowError();
 
 
                 {

@@ -111,7 +111,7 @@ _ZGL afxError DpuBindAndSyncBuf(zglDpu* dpu, GLenum glTarget, avxBuffer buf, afx
             _ZglThrowErrorOccuried();
             afxBool bound = FALSE;
 
-            if ((!keepBound) && (glTarget == buf->glTarget) && gl->CreateBuffers && gl->NamedBufferStorage)
+            if ((!keepBound) && (glTarget == buf->glTarget) && gl->CreateBuffers && dpu->hasDsa)
             {
                 gl->CreateBuffers(1, &glHandle); _ZglThrowErrorOccuried();
                 gl->NamedBufferStorage(glHandle, buf->m.reqSiz, NIL, buf->glGenAccess); _ZglThrowErrorOccuried();
@@ -210,7 +210,7 @@ _ZGL afxError DpuCopyBuffer(zglDpu* dpu, avxBuffer src, avxBuffer dst, afxUnit o
     GLenum glTargetDst = dst->glTarget;
 #endif
 
-    if (gl->CopyNamedBufferSubData)
+    if (dpu->hasDsa)
     {
         DpuBindAndSyncBuf(dpu, glTargetSrc, src, FALSE); // sync
         DpuBindAndSyncBuf(dpu, glTargetDst, dst, FALSE); // sync
@@ -252,7 +252,7 @@ _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit rang
     GLenum glTarget = buf->glTarget;
 #endif
 
-    if (gl->ClearNamedBufferSubData)
+    if (dpu->hasDsa)
     {
         DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
         gl->ClearNamedBufferSubData(buf->glHandle, GL_R32UI, offset, range, GL_R32UI, GL_UNSIGNED_INT, &data); _ZglThrowErrorOccuried();
@@ -265,7 +265,7 @@ _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit rang
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
     }
-    else if (gl->MapNamedBufferRange)
+    else if (dpu->hasDsa)
     {
         DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
 
@@ -317,7 +317,7 @@ _ZGL afxError DpuDumpBuffer(zglDpu* dpu, avxBuffer buf, afxByte* dst, afxUnit op
             // LINEAR VERSION
             afxUnit bufRange = AFX_MIN(op->rowCnt * op->srcStride, AvxGetBufferCapacity(buf, op->srcOffset));
 
-            if (gl->GetNamedBufferSubData)
+            if (dpu->hasDsa)
             {
                 if (!bufSynced)
                 {
@@ -342,7 +342,7 @@ _ZGL afxError DpuDumpBuffer(zglDpu* dpu, avxBuffer buf, afxByte* dst, afxUnit op
             // STRIDED VERSION
             afxUnit bufRange = AFX_MIN(op->rowCnt * op->srcStride, AvxGetBufferCapacity(buf, op->srcOffset));
 
-            if (gl->MapNamedBufferRange)
+            if (dpu->hasDsa)
             {
                 if (!bufSynced)
                 {
@@ -422,7 +422,7 @@ _ZGL afxError DpuUpdateBuffer(zglDpu* dpu, avxBuffer buf, afxByte const* src, af
             // LINEAR VERSION
             afxUnit bufRange = AFX_MIN(op->rowCnt * op->dstStride, AvxGetBufferCapacity(buf, op->dstOffset));
 
-            if (gl->NamedBufferSubData)
+            if (dpu->hasDsa)
             {
                 if (!bufSynced)
                 {
@@ -447,7 +447,7 @@ _ZGL afxError DpuUpdateBuffer(zglDpu* dpu, avxBuffer buf, afxByte const* src, af
             // STRIDED VERSION
             afxUnit bufRange = AFX_MIN(op->rowCnt * op->dstStride, AvxGetBufferCapacity(buf, op->dstOffset));
 
-            if (gl->MapNamedBufferRange)
+            if (dpu->hasDsa)
             {
                 if (!bufSynced)
                 {
@@ -520,7 +520,7 @@ _ZGL afxError _DpuDownloadBuffer(zglDpu* dpu, avxBuffer buf, afxStream out, afxU
         avxBufferIo const* op = &ops[i];
         afxUnit bufRange = AFX_MIN(op->rowCnt * op->srcStride, AvxGetBufferCapacity(buf, op->srcOffset));
 
-        if (gl->MapNamedBufferRange)
+        if (dpu->hasDsa)
         {
             if (!bufSynced)
             {
@@ -600,7 +600,7 @@ _ZGL afxError _DpuUploadBuffer(zglDpu* dpu, avxBuffer buf, afxStream in, afxUnit
         avxBufferIo const* op = &ops[i];
         afxUnit bufRange = AFX_MIN(op->rowCnt * op->dstStride, AvxGetBufferCapacity(buf, op->dstOffset));
         
-        if (gl->MapNamedBufferRange)
+        if (dpu->hasDsa)
         {
             if (!bufSynced)
             {
@@ -715,7 +715,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
 #endif
         {
 
-            if (gl->MapNamedBufferRange)
+            if (dpu->hasDsa)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
                 buf->m.storage[0].mapPtr = gl->MapNamedBufferRange(buf->glHandle, offset, range, buf->glMapRangeAccess); _ZglThrowErrorOccuried();
@@ -744,7 +744,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
     {
         AFX_ASSERT(buf->m.storage[0].mapPtr);
 
-        if (gl->UnmapNamedBuffer)
+        if (dpu->hasDsa)
         {
             DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
             gl->UnmapNamedBuffer(buf->glHandle); _ZglThrowErrorOccuried();
@@ -1151,7 +1151,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 #else
             GLenum glTarget = buf->glTarget;
 #endif
-            if (gl->FlushMappedNamedBufferRange)
+            if (dpu->hasDsa)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
                 gl->FlushMappedNamedBufferRange(buf->glHandle, map->offset, map->range); _ZglThrowErrorOccuried();
@@ -1198,6 +1198,8 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
         }
     }
 
+    subm->hdr.completed = 1;
+
     return err;
 }
 
@@ -1219,7 +1221,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
 #else
             GLenum glTarget = buf->glTarget;
 #endif
-            if (gl->UnmapNamedBuffer)
+            if (dpu->hasDsa)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
                 gl->UnmapNamedBuffer(buf->glHandle); _ZglThrowErrorOccuried();
@@ -1263,7 +1265,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
 #endif
             void* ptr = NIL;
 
-            if (gl->MapNamedBufferRange)
+            if (dpu->hasDsa)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE); // sync
                 ptr = gl->MapNamedBufferRange(buf->glHandle, map->offset, map->range, buf->glMapRangeAccess); _ZglThrowErrorOccuried();
@@ -1315,6 +1317,8 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             AfxDisposeObjects(1, &buf);
         }
     }
+
+    subm->hdr.completed = 1;
 
     return err;
 }

@@ -589,6 +589,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                                     gl->ActiveTexture(GL_TEXTURE0 + glUnit); _ZglThrowErrorOccuried();
                                     gl->BindTexture(glTarget, glFixedTboHandle); _ZglThrowErrorOccuried();
                                     gl->TexBuffer(glTarget, GL_RGBA32F, NIL); _ZglThrowErrorOccuried();
+                                    gl->BindTexture(glTarget, 0); _ZglThrowErrorOccuried();
                                 }
                             }
                         }
@@ -611,7 +612,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                                 {
                                     DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE);
 
-                                    if (offset || (range < buf->m.reqSiz))
+                                    if (offset || (range && (range < buf->m.reqSiz)))
                                     {
                                         if (gl->TextureBufferRange)
                                         {
@@ -645,7 +646,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                                     gl->ActiveTexture(GL_TEXTURE0 + glUnit); _ZglThrowErrorOccuried();
                                     gl->BindTexture(glTarget, glFixedTboHandle); _ZglThrowErrorOccuried();
 
-                                    if (offset || (range == buf->m.reqSiz))
+                                    if (offset || (range && (range < buf->m.reqSiz)))
                                     {
                                         gl->TexBufferRange(glTarget, buf->glTexIntFmt, buf->glHandle, offset, range); _ZglThrowErrorOccuried();
                                     }

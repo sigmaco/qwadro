@@ -384,6 +384,19 @@ void audio_ringbuffer_free(AudioRingBuffer* rb) {
     rb->buffer = NULL;
 }
 
+void audio_ringbuffer_advance_write(AudioRingBuffer* rb, size_t frames) {
+    for (size_t i = 0; i < frames; ++i) {
+        size_t index = (rb->write_pos % rb->capacity) * rb->channels;
+        //AfxCopy(&rb->buffer[rb->bufStride * index], &input[srcStride * i * rb->channels], sizeof(AFX_MAX(1, AFX_MIN(rb->bufStride, srcStride))) * rb->channels);
+        rb->write_pos++;
+
+        // Overwrite oldest data if buffer is full
+        if (rb->write_pos - rb->read_pos > rb->capacity) {
+            rb->read_pos = rb->write_pos - rb->capacity;
+        }
+    }
+}
+
 void audio_ringbuffer_write(AudioRingBuffer* rb, const afxByte* input, afxUnit srcStride, size_t frames) {
     for (size_t i = 0; i < frames; ++i) {
         size_t index = (rb->write_pos % rb->capacity) * rb->channels;
@@ -404,6 +417,19 @@ size_t audio_ringbuffer_read(AudioRingBuffer* rb, afxByte* output, afxUnit dstSt
     for (size_t i = 0; i < to_read; ++i) {
         size_t index = ((rb->read_pos + i) % rb->capacity) * rb->channels;
         AfxCopy(&output[dstStride * i * rb->channels], &rb->buffer[rb->bufStride * index], sizeof(AFX_MAX(1, AFX_MIN(rb->bufStride, dstStride))) * rb->channels);
+    }
+
+    rb->read_pos += to_read;
+    return to_read;
+}
+
+size_t audio_ringbuffer_advance_read(AudioRingBuffer* rb, size_t max_frames) {
+    size_t available = rb->write_pos - rb->read_pos;
+    size_t to_read = (available < max_frames) ? available : max_frames;
+
+    for (size_t i = 0; i < to_read; ++i) {
+        size_t index = ((rb->read_pos + i) % rb->capacity) * rb->channels;
+        //AfxCopy(&output[dstStride * i * rb->channels], &rb->buffer[rb->bufStride * index], sizeof(AFX_MAX(1, AFX_MIN(rb->bufStride, dstStride))) * rb->channels);
     }
 
     rb->read_pos += to_read;

@@ -311,3 +311,166 @@ _AMX afxError AfxOpenAudioSink(afxMixSystem msys, afxSinkConfig const* cfg, afxS
     *sink = snk;
     return err;
 }
+
+_AMX afxError AmxFlushSinks(afxMixSystem msys, afxUnit cnt, amxFlush const flushes[], afxUnit queueingMap[])
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(flushes);
+    AFX_ASSERT(cnt);
+
+    /*
+        Any writes to memory backing the images referenced by the pImageIndices and pSwapchains members of pPresentInfo,
+        that are available before vkQueuePresentKHR is executed, are automatically made visible to the read access performed by the presentation engine.
+        This automatic visibility operation for an image happens-after the semaphore signal operation, and happens-before the presentation engine accesses the image.
+
+        Queueing an image for presentation defines a set of queue operations, including waiting on the semaphores and submitting a presentation request to the presentation engine.
+        However, the scope of this set of queue operations does not include the actual processing of the image by the presentation engine.
+    */
+
+    for (afxUnit doutIt = 0; doutIt < cnt; doutIt++)
+    {
+        amxFlush const* pres = &flushes[doutIt];
+
+        afxSink sink = pres->sink;
+        if (!sink)
+        {
+            AFX_ASSERT(sink);
+            continue;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+        afxUnit sampleCnt = pres->sampleCnt;
+        if (sampleCnt >= sink->samplesPerFrame)
+        {
+            AFX_ASSERT_RANGE(sink->samplesPerFrame, sampleCnt, 1);
+            continue;
+        }
+
+        afxMask exuMask = pres->exuMask;
+        afxUnit exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, NIL, exuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        afxUnit nextExuIdx = AfxRandom2(0, exuCnt - 1);
+
+        afxBool queued = FALSE;
+
+        while (1)
+        {
+            for (afxUnit exuIdx = nextExuIdx; exuIdx < exuCnt; exuIdx++)
+            {
+                nextExuIdx = 0;
+
+                if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+
+                afxMixBridge mexu;
+                if (!AmxGetMixBridges(msys, exuIdx, 1, &mexu))
+                {
+                    AfxThrowError();
+                    return err;
+                }
+
+                afxError err2 = _AmxMexuFlushSinks(mexu, 1, &flushes[doutIt], queueingMap);
+                err = err2;
+
+                if (!err2)
+                {
+                    queued = TRUE;
+                    break; // for --- iterate bridges
+                }
+
+                if ((err2 == afxError_TIMEOUT) || (err2 == afxError_BUSY))
+                {
+                    continue;
+                }
+
+                AfxThrowError();
+            }
+
+            if (err || queued)
+                break; // while --- find bridges
+        }
+
+        if (err || queued)
+            break; // for
+    }
+    return err;
+}
+
+_AMX afxError AmxRefillSinks(afxMixSystem msys, afxUnit cnt, amxCaption const captions[], afxUnit queueingMap[])
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &msys);
+    AFX_ASSERT(captions);
+    AFX_ASSERT(cnt);
+
+    for (afxUnit doutIt = 0; doutIt < cnt; doutIt++)
+    {
+        amxCaption const* cap = &captions[doutIt];
+
+        afxSink sink = cap->sink;
+        if (!sink)
+        {
+            AFX_ASSERT(sink);
+            continue;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+        afxUnit sampleCnt = cap->sampleCnt;
+        if (sampleCnt >= sink->samplesPerFrame)
+        {
+            AFX_ASSERT_RANGE(sink->samplesPerFrame, sampleCnt, 1);
+            continue;
+        }
+
+        afxMask exuMask = cap->exuMask;
+        afxUnit exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, NIL, exuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        afxUnit nextExuIdx = AfxRandom2(0, exuCnt - 1);
+
+        afxBool queued = FALSE;
+
+        while (1)
+        {
+            for (afxUnit exuIdx = nextExuIdx; exuIdx < exuCnt; exuIdx++)
+            {
+                nextExuIdx = 0;
+
+                if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+
+                afxMixBridge mexu;
+                if (!AmxGetMixBridges(msys, exuIdx, 1, &mexu))
+                {
+                    AfxThrowError();
+                    return err;
+                }
+
+                afxError err2 = _AmxMexuRefillSinks(mexu, 1, &captions[doutIt], queueingMap);
+                err = err2;
+
+                if (!err2)
+                {
+                    queued = TRUE;
+                    break; // for --- iterate bridges
+                }
+
+                if ((err2 == afxError_TIMEOUT) || (err2 == afxError_BUSY))
+                {
+                    continue;
+                }
+
+                AfxThrowError();
+            }
+
+            if (err || queued)
+                break; // while --- find bridges
+        }
+
+        if (err || queued)
+            break; // for
+    }
+    return err;
+}

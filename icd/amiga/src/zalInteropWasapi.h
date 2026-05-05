@@ -59,11 +59,13 @@ AFX_DEFINE_STRUCT(zalWasapi)
     void*   lockedInPtr;
 };
 
-ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afxUnit sampRate);
+ZAL afxError _ZalWasapiCreate(zalWasapi* idd, amxFormat fmt, afxUnit chCnt, afxUnit sampRate, afxUnit latency/*scaler*/, afxUnit periodicity/*ns*/, afxBool exclusive);
 ZAL afxError _ZalWasapiDestroy(zalWasapi* idd);
-ZAL afxError _ZalWasapiStartStop(zalWasapi* idd, afxBool start);
 ZAL afxError _ZalWasapiReadCapture(zalWasapi* idd, afxUnit frameCap, void* dst, afxUnit* frameCnt);
 ZAL afxError _ZalWasapiWriteParture(zalWasapi* idd, afxUnit frameCnt, void const* src);
+
+ZAL afxError _ZalWasapiPause(zalWasapi* idd, afxBool pause);
+ZAL afxError _ZalWasapiReset(zalWasapi* idd);
 
 ZAL afxUnit     wasapiInputGetLength(zalWasapi* idd);
 ZAL afxError    wasapiInputUnlock(zalWasapi* idd, afxUnit frameCnt);

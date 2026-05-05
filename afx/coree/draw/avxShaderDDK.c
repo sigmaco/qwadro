@@ -82,16 +82,15 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
 
     static afxString const keywords[] =
     {
-        AFX_STRING("IN"),
-        AFX_STRING("OUT"),
-        AFX_STRING("UNIFORM"),
-        AFX_STRING("TEXTURE"),
-        AFX_STRING("BUFFER"),
-        AFX_STRING("FETCH"),
-        AFX_STRING("PUSH"),
-        AFX_STRING("INC"),
-        AFX_STRING("INCLUDE"),
-        AFX_STRING("#include"),
+        AFX_STRING("IN("),
+        AFX_STRING("OUT("),
+        AFX_STRING("UNIFORM("),
+        AFX_STRING("TEXTURE("),
+        AFX_STRING("BUFFER("),
+        AFX_STRING("FETCH("),
+        AFX_STRING("PUSH("),
+        AFX_STRING("INCLUDE("),
+        AFX_STRING("#include "),
     };
 
     // Shared among cases.
@@ -104,7 +103,8 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
     {
         line = AfxExcerptStringLine(code, base);
 
-        if (!line.len) break;
+        if (!line.len)
+            break;
 
         afxUnit sepPosn;
         if (AfxFindChar(&line, 0, ';', FALSE, FALSE, &sepPosn))
@@ -117,7 +117,9 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         base += strStep;
 
         afxUnit keywIdx;
+        line = AfxSkipWhitespaces(&line);
         afxString excerpt = AfxFindSubstrings(&line, 0, FALSE, ARRAY_SIZE(keywords), keywords, &keywIdx);
+
 
         if (!excerpt.len)
             continue;
@@ -128,7 +130,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 fmtName = { 0 };
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " IN(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " IN( %u , %32[A-Za-z0-9] , %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
 
             if (fnd == 3)
             {
@@ -158,7 +160,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 fmtName = { 0 };
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " OUT(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " OUT( %u , %32[A-Za-z0-9] , %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
 
             if (fnd == 3)
             {
@@ -187,7 +189,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 varName = { 0 };
             afxString32 layoutName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " UNIFORM(%u, %u, %32[A-Za-z0-9_], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " UNIFORM( %u , %u , %32[A-Za-z0-9_] , %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, varName.buf);
 
             if (fnd == 4)
             {
@@ -221,7 +223,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         {
             afxString32 varName = { 0 };
             afxString32 typeName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " TEXTURE(%u, %u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &set, &binding, typeName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " TEXTURE( %u , %u , %32[A-Za-z0-9] , %32[a-zA-Z0-9_] );", &set, &binding, typeName.buf, varName.buf);
 
             if (fnd == 4)
             {
@@ -266,7 +268,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
             afxString32 varName = { 0 };
             afxString32 layoutName = { 0 };
             afxString32 accessName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " BUFFER(%u, %u, %32[A-Za-z0-9], %32[A-Za-z0-9], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, accessName.buf, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " BUFFER( %u , %u , %32[A-Za-z0-9], %32[A-Za-z0-9] , %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, accessName.buf, varName.buf);
 
             if (fnd == 5)
             {
@@ -300,7 +302,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         case 5: // FETCH
         {
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " FETCH(%u, %u, %32[A-Za-z0-9_] )", &set, &binding, varName.buf);
+            afxUnit fnd = AfxScanString(&line, " FETCH( %u , %u , %32[A-Za-z0-9_] )", &set, &binding, varName.buf);
 
             if (fnd == 3)
             {
@@ -333,7 +335,7 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
         case 6: // PUSH
         {
             afxString32 varName = { 0 };
-            afxUnit fnd = AfxScanString(&line, " PUSH(%32[A-Za-z0-9_] )", varName.buf);
+            afxUnit fnd = AfxScanString(&line, " PUSH( %32[A-Za-z0-9_] )", varName.buf);
 
             if (fnd == 1)
             {
@@ -343,14 +345,12 @@ _AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* 
             }
             break;
         }
-        case 7: // INC
-        case 8: // INCLUDE
-        case 9: // #include
+        case 7: // INCLUDE
+        case 8: // #include
         {
             afxChar buf[128] = { 0 };
             afxBool fnd = AfxScanString(&line, "#include <%128[^>]>\n", buf);
-            if (!fnd) fnd = AfxScanString(&line, "INC(%128[^>])\n", buf);
-            if (!fnd) fnd = AfxScanString(&line, "INCLUDE(%128[^>])\n", buf);
+            if (!fnd) fnd = AfxScanString(&line, " INCLUDE(%128[^;)]);", buf);
 #if !0
             afxStream inc;
             afxStreamInfo iobi = { 0 };
@@ -412,29 +412,36 @@ _AVX afxError _AvxLoadGlScript(afxStream file, afxArray* fCode)
 
     while (!AfxReadFileLine(file, &line.s))
     {
-        afxString excerpt = AfxFindSubstring(&line.s, 0, FALSE, &AFX_STRING("#include "));
+        //afxString excerpt = AfxFindSubstring(&line.s, 0, FALSE, &AFX_STRING("#include "));
 
-        if (excerpt.len)
+        //if (excerpt.len)
         {
             afxBool fnd = AfxScanString(&line.s, "#include <%128[^>]>\n", buf);
 
             if (!fnd)
+                fnd = AfxScanString(&line.s, " INCLUDE(%128[^;)]); ", buf);
+
+            if (!fnd)
                 fnd = AfxScanString(&line.s, "#inc <%128[^>]>\n", buf);
 
-            afxUri incUri;
-            AfxMakeUri(&incUri, 0, buf, 0);
-
-            if (AfxReopenFile(inc, &incUri, afxFileFlag_R)) AfxThrowError();
-            else
+            if (fnd == 1)
             {
-                //afxChar* room = AfxPushArrayUnits(&bp->codes, line.s.len + 3, &baseChar, NIL);
-                //AfxDumpString(&AFX_STRING("// "), 0, 3, room);
-                //AfxDumpString(&line.s, 0, line.s.len, &room[3]);
+                afxUri incUri;
+                AfxMakeUri(&incUri, 0, buf, 0);
 
-                if (_AvxLoadGlScript(inc, fCode))
+                if (AfxReopenFile(inc, &incUri, afxFileFlag_R))
                     AfxThrowError();
+                else
+                {
+                    //afxChar* room = AfxPushArrayUnits(&bp->codes, line.s.len + 3, &baseChar, NIL);
+                    //AfxDumpString(&AFX_STRING("// "), 0, 3, room);
+                    //AfxDumpString(&line.s, 0, line.s.len, &room[3]);
+
+                    if (_AvxLoadGlScript(inc, fCode))
+                        AfxThrowError();
+                }
+                continue;
             }
-            continue;
         }
 
         void* room = AfxPushArrayUnits(fCode, line.s.len, &baseChar, NIL, 0);
@@ -444,7 +451,8 @@ _AVX afxError _AvxLoadGlScript(afxStream file, afxArray* fCode)
     return err;
 }
 
-_AVX afxError _AvxConvertToGlsl(afxString const* src, afxArray* fCode)
+#if 0
+_AVX afxError _AvxConvertToGlsl(_avxGlslConversor const* cfg, afxString const* src, afxArray* fCode)
 {
     afxError err = { 0 };
 
@@ -454,23 +462,332 @@ _AVX afxError _AvxConvertToGlsl(afxString const* src, afxArray* fCode)
     iobi.flags = afxIoFlag_READABLE;
     AfxAcquireStream(1, &iobi, &inc);
 
+    static afxString const keywords[] =
+    {
+        AFX_STRING("IN("),
+        AFX_STRING("OUT("),
+        AFX_STRING("UNIFORM("),
+        AFX_STRING("TEXTURE("),
+        AFX_STRING("BUFFER("),
+        AFX_STRING("FETCH("),
+        AFX_STRING("PUSH("),
+        AFX_STRING("INCLUDE("),
+        AFX_STRING("#include "),
+    };
+
     afxChar buf[2048] = { 0 };
     afxUnit baseChar;
     afxString line;
-    
+
+    // Shared among cases.
+    afxUnit location = 0;
+    afxUnit set = 0, binding = 0, resCnt = 1;
+
     afxUnit base = 0;
     while ((line = AfxExcerptStringLine(src, base)), line.len)
     {
-        base += line.len;
-        afxString excerpt = AfxFindSubstring(&line, 0, FALSE, &AFX_STRING("#include "));
+        afxUnit keywIdx;
+        afxString skip;
+        skip = AfxSkipWhitespaces(&line);
+
+        if (skip.len != line.len)
+            base += line.len - skip.len;
+
+        line = skip;
+
+        afxString excerpt = AfxFindSubstrings(&line, 0, FALSE, ARRAY_SIZE(keywords), keywords, &keywIdx);
+
+        afxUnit sepPosn;
+        if (AfxFindChar(&excerpt, 0, ';', FALSE, FALSE, &sepPosn))
+        {
+            if (excerpt.len > sepPosn)
+                excerpt.len = sepPosn + 1;
+        }
+
+        afxUnit strStep = excerpt.len;
+        base += strStep;
+
+        afxBool shouldContinue = FALSE;
 
         if (excerpt.len)
         {
-            afxBool fnd = AfxScanString(&line, "#include <%128[^>]>\n", buf);
+            switch (keywIdx)
+            {
+            case 0: // IN
+            {
+                afxString32 fmtName = { 0 };
+                afxString32 varName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " IN(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
 
-            if (!fnd)
-                fnd = AfxScanString(&line, "#inc <%128[^>]>\n", buf);
+                if (fnd == 3)
+                {
+                    AfxMakeString(&fmtName.s, 0, fmtName.buf, 0);
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
 
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+                    AfxFormatString(&sss.s, "\nlayout(location = %u) in %s %s;\n", location, fmtName.buf, varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 1: // OUT
+            {
+                afxString32 fmtName = { 0 };
+                afxString32 varName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " OUT(%u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &location, fmtName.buf, varName.buf);
+
+                if (fnd == 3)
+                {
+                    AfxMakeString(&fmtName.s, 0, fmtName.buf, 0);
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+                    AfxFormatString(&sss.s, "\nlayout(location = %u) out %s %s;\n", location, fmtName.buf, varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 2: // UNIFORM
+            {
+                afxString32 varName = { 0 };
+                afxString32 layoutName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " UNIFORM(%u, %u, %32[A-Za-z0-9_], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, varName.buf);
+
+                if (fnd == 4)
+                {
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+
+                    if (cfg->bindUniform)
+                        AfxFormatString(&sss.s, "\nlayout(binding = %u, %s) uniform %s\n", binding, layoutName.buf, varName.buf);
+                    else
+                        AfxFormatString(&sss.s, "\nlayout(%s) uniform %s\n", layoutName.buf, varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 3: // TEXTURE
+            {
+                afxString32 varName = { 0 };
+                afxString32 typeName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " TEXTURE(%u, %u, %32[A-Za-z0-9], %32[a-zA-Z0-9_] );", &set, &binding, typeName.buf, varName.buf);
+
+                if (fnd == 4)
+                {
+                    AfxMakeString(&typeName.s, 0, typeName.buf, 0);
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+
+                    if (cfg->bindUniform)
+                        AfxFormatString(&sss.s, "\nlayout(binding = %u) uniform %s %s;\n", binding, typeName.buf, varName.buf);
+                    else
+                        AfxFormatString(&sss.s, "\nlayout(%s) uniform %s %s;\n", typeName.buf, varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 4: // BUFFER
+            {
+                afxString32 varName = { 0 };
+                afxString32 layoutName = { 0 };
+                afxString32 accessName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " BUFFER(%u, %u, %32[A-Za-z0-9], %32[A-Za-z0-9], %32[A-Za-z0-9_] )", &set, &binding, layoutName.buf, accessName.buf, varName.buf);
+
+                if (fnd == 5)
+                {
+                    AfxMakeString(&accessName.s, 0, accessName.buf, 0);
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+
+                    if (cfg->bindUniform)
+                        AfxFormatString(&sss.s, "\nlayout(binding = %u, %s) %s buffer %s\n", binding, layoutName, accessName.buf, varName.buf);
+                    else
+                        AfxFormatString(&sss.s, "\nlayout(%s) %s buffer %s\n", layoutName, accessName.buf, varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 5: // FETCH
+            {
+                afxString32 varName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " FETCH(%u, %u, %32[A-Za-z0-9_] )", &set, &binding, varName.buf);
+
+                if (fnd == 3)
+                {
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+
+                    if (cfg->bindUniform)
+                        AfxFormatString(&sss.s, "\nlayout(binding = %u) uniform %s %s;\n", binding, "usamplerBuffer", varName.buf);
+                    else
+                        AfxFormatString(&sss.s, "\nlayout(%s) uniform %s %s;\n", "usamplerBuffer", varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 6: // PUSH
+            {
+                afxString32 varName = { 0 };
+                afxUnit fnd = AfxScanString(&line, " PUSH(%32[A-Za-z0-9_] )", varName.buf);
+
+                if (fnd == 1)
+                {
+                    AfxMakeString(&varName.s, 0, varName.buf, 0);
+
+                    afxString128 sss;
+                    AfxMakeString128(&sss, NIL);
+
+                    AfxFormatString(&sss.s, "\nlayout(%s) uniform %s \n", "std140", varName.buf);
+
+                    void* room = AfxPushArrayUnits(fCode, sss.s.len, &baseChar, NIL, 0);
+                    AfxDumpString(&sss.s, 0, sss.s.len, room);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            case 7: // INCLUDE
+            case 8: // #include
+            {
+                afxBool fnd = AfxScanString(&line, "#include <%128[^>]>", buf);
+
+                if (!fnd)
+                    fnd = AfxScanString(&line, " INCLUDE(%128[^;)]); ", buf);
+
+                if (fnd == 1)
+                {
+                    afxUri incUri;
+                    AfxMakeUri(&incUri, 0, buf, 0);
+                    if (AfxReopenFile(inc, &incUri, afxFileFlag_R))
+                    {
+                        AfxThrowError();
+                        break;
+                    }
+
+                    afxArray array2;
+                    AfxMakeArray(&array2, 1, 512, 0, 0);
+
+                    if (_AvxLoadGlScript(inc, &array2))
+                        AfxThrowError();
+
+                    afxString s;
+                    AfxMakeString(&s, 0, array2.bytemap, array2.pop);
+                    if (_AvxConvertToGlsl(cfg, &s, fCode))
+                        AfxThrowError();
+
+                    AfxEmptyArray(&array2, FALSE, FALSE);
+
+                    shouldContinue = TRUE;
+                }
+                break;
+            }
+            default: AfxThrowError(); break;
+            }
+
+        }
+
+        if (shouldContinue)
+            continue;
+
+        void* room = AfxPushArrayUnits(fCode, line.len, &baseChar, NIL, 0);
+        AfxDumpString(&line, 0, line.len, room);
+    }
+    AfxDisposeObjects(1, &inc);
+    return err;
+}
+#endif
+
+
+_AVX afxError _AvxConvertToGlsl(_avxGlslConversor const* cfg, afxString const* src, afxArray* fCode)
+{
+    afxError err = { 0 };
+
+    afxStream inc;
+    afxStreamInfo iobi = { 0 };
+    iobi.usage = afxIoUsage_FILE;
+    iobi.flags = afxIoFlag_READABLE;
+    AfxAcquireStream(1, &iobi, &inc);
+
+    static afxString const keywords[] =
+    {
+#if 0
+        AFX_STRING("IN("),
+        AFX_STRING("OUT("),
+        AFX_STRING("UNIFORM("),
+        AFX_STRING("TEXTURE("),
+        AFX_STRING("BUFFER("),
+        AFX_STRING("FETCH("),
+        AFX_STRING("PUSH("),
+#endif
+        AFX_STRING("INCLUDE("),
+        AFX_STRING("#include "),
+    };
+
+    afxChar buf[2048] = { 0 };
+    afxUnit baseChar;
+    afxString line;
+
+    // Shared among cases.
+    afxUnit location = 0;
+    afxUnit set = 0, binding = 0, resCnt = 1;
+
+    afxUnit base = 0;
+    while ((line = AfxExcerptStringLine(src, base)), line.len)
+    {
+        afxUnit sepPosn;
+        if (AfxFindChar(&line, 0, ';', FALSE, FALSE, &sepPosn))
+        {
+            if (line.len > sepPosn)
+                line.len = sepPosn + 1;
+        }
+
+        afxUnit strStep = line.len;
+        base += strStep;
+
+        afxUnit keywIdx;
+        afxString excerpt = AfxFindSubstrings(&line, 0, FALSE, ARRAY_SIZE(keywords), keywords, &keywIdx);
+
+        afxBool fnd = AfxScanString(&line, "#include <%128[^>]>", buf);
+
+        if (!fnd)
+            fnd = AfxScanString(&line, " INCLUDE(%128[^;)]); ", buf);
+
+        if (fnd == 1)
+        {
             afxUri incUri;
             AfxMakeUri(&incUri, 0, buf, 0);
             if (AfxReopenFile(inc, &incUri, afxFileFlag_R))
@@ -487,10 +804,11 @@ _AVX afxError _AvxConvertToGlsl(afxString const* src, afxArray* fCode)
 
             afxString s;
             AfxMakeString(&s, 0, array2.bytemap, array2.pop);
-            _AvxConvertToGlsl(&s, fCode);
+            if (_AvxConvertToGlsl(cfg, &s, fCode))
+                AfxThrowError();
 
             AfxEmptyArray(&array2, FALSE, FALSE);
-            
+
             continue;
         }
 

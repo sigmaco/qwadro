@@ -370,7 +370,7 @@ _AVX afxError _AvxDoutUnlockBufferCb(afxSurface dout, afxUnit bufIdx)
     return err;
 }
 
-_AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[])
+_AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[])
 {
     afxError err = { 0 };
 
@@ -437,7 +437,7 @@ _AVX afxError _AvxDquePresentBuffers(afxDrawQueue dque, afxUnit cnt, avxPresenta
     return err;
 }
 
-_AVX afxError _AvxDqueCaptureBuffers(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[])
+_AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[])
 {
     afxError err = { 0 };
 

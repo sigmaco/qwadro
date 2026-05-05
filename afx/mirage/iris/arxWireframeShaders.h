@@ -22,12 +22,12 @@
 
 #include "arxMaterialShaders.h"
 
-ARX afxChar const wireBaryVshCode[];
-ARX afxChar const wireBaryFshCode[];
+ARX afxString const wireBaryVshCode;
+ARX afxString const wireBaryFshCode;
 ARX avxPipelineConfig const wireBaryPipc;
 
-ARX afxChar const wireVshCode[];
-ARX afxChar const wireFshCode[];
+ARX afxString const wireVshCode;
+ARX afxString const wireFshCode;
 ARX avxPipelineConfig const wirePipc;
 
 #endif//ARX_WIREFRAME_SHADERS_H

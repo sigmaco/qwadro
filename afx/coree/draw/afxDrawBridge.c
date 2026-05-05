@@ -356,7 +356,7 @@ _AVX afxError _AvxDexuQueryResults(afxDrawBridge dexu, avxQueryPool qryp, avxQue
     return err;
 }
 
-_AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[])
+_AVX afxError _AvxDexuPresentSurfaces(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dexu must be a valid afxDrawBridge handle.
@@ -371,7 +371,7 @@ _AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresent
     {
         AFX_ASSERT_OBJECTS(afxFcc_DQUE, 1, &dque);
 
-        afxError err2 = _AvxDquePresentBuffers(dque, cnt, presentations);
+        afxError err2 = _AvxDquePresentSurfaces(dque, cnt, presentations);
 
         if (!err2)
         {
@@ -393,7 +393,7 @@ _AVX afxError _AvxDexuPresentBuffers(afxDrawBridge dexu, afxUnit cnt, avxPresent
     return err;
 }
 
-_AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
+_AVX afxError _AvxDexuScanSurfaces(afxDrawBridge dexu, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dexu must be a valid afxDrawBridge handle.
@@ -408,7 +408,7 @@ _AVX afxError _AvxDexuCaptureBuffers(afxDrawBridge dexu, afxUnit cnt, avxCaption
     {
         AFX_ASSERT_OBJECTS(afxFcc_DQUE, 1, &dque);
 
-        afxError err2 = _AvxDqueCaptureBuffers(dque, cnt, captions);
+        afxError err2 = _AvxDqueScanSurfaces(dque, cnt, captions);
 
         if (!err2)
         {

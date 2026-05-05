@@ -299,7 +299,7 @@ _ZGL void _DpuPlacePipelineBarrier(zglDpu* dpu, avxBusStage dstStage, avxBusAcce
     */
 
     GLbitfield flags = NIL;
-    gl->MemoryBarrier(glMask ? glMask : GL_ALL_BARRIER_BITS);
+    gl->MemoryBarrier(glMask ? glMask : GL_ALL_BARRIER_BITS); _ZglThrowErrorOccuried();
 }
 
 _ZGL void DpuDraw(zglDpu* dpu, avxDrawIndirect const* data)
@@ -782,34 +782,76 @@ _ZGL afxError _DpuWork_ExecuteCb(zglDpu* dpu, _avxIoReqPacket* work)
     glVmt const* gl = dpu->gl;
     afxUnit cnt = work->Execute.cmdbCnt;
 
+    afxBool firstTime = FALSE;
+
+    if (work->hdr.pulled == 0)
+    {
+        work->hdr.pulled = 1;
+        AfxGetClock(&work->hdr.pullTime);
+        work->hdr.dpuId = dpu->m.portId;
+        firstTime = TRUE;
+    }
+
     for (afxUnit i = 0; i < cnt; i++)
     {
-        if (work->Execute.cmdbs[i].wait)
+        afxBool waited = FALSE;
+
+        if (firstTime)
         {
-            _DpuWaitForFence(dpu, work->Execute.cmdbs[i].wait, work->Execute.cmdbs[i].waitValue);
-            // Require flush.
+            if (work->Execute.cmdbs[i].wait)
+            {
+                _DpuWaitForFence(dpu, work->Execute.cmdbs[i].wait, work->Execute.cmdbs[i].waitValue);
+                // Require flush.
+                waited = TRUE;
+            }
+
+
+            afxDrawContext dctx = work->Execute.cmdbs[i].dctx;
+            AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+
+            if (_AvxDpuRollContext(&dpu->m, dctx))
+            {
+
+            }
+
+            // Must be disposed because AvxSubmitDrawCommands() reacquires it.
+            AfxDisposeObjects(1, &dctx);
+
+            err = afxError_INCOMPLETE;
         }
 
-        afxDrawContext dctx = work->Execute.cmdbs[i].dctx;
-        AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-
-        _AvxDpuRollContext(&dpu->m, dctx);
-
-        // Must be disposed because AvxSubmitDrawCommands() reacquires it.
-        AfxDisposeObjects(1, &dctx);
+        // If it is not the first iteration...
+        // We never test at the first iteration.
 
         if (work->Execute.cmdbs[i].signal)
         {
             //_ZglSignalFence(dpu, iorp->Execute.signal);
-            _DpuSignalFence(dpu, work->Execute.cmdbs[i].signal, work->Execute.cmdbs[i].signalValue);
+
+            afxError err2 = _DpuSignalFence(dpu, work->Execute.cmdbs[i].signal, work->Execute.cmdbs[i].signalValue);
+
+            if (err2 == afxError_TIMEOUT)
+            {
+                err = afxError_TIMEOUT;
+            }
+            else /*if (err2 == afxError_SUCCESS)*/
+            {
+                AfxGetClock(&work->hdr.complTime);
+                work->hdr.completed = 1;
+            }
         }
         else
         {
-            /*
-                glFlush() here is needed because glWaitSync() is called when the DPU must wait for fence signal,
-                where this function stalls the command queue.
-            */
-            gl->Flush(); _ZglThrowErrorOccuried();
+            if (waited)
+            {
+                /*
+                    glFlush() here is needed because glWaitSync() is called when the DPU must wait for fence signal,
+                    where this function stalls the command queue.
+                */
+                gl->Flush(); _ZglThrowErrorOccuried();
+            }
+
+            AfxGetClock(&work->hdr.complTime);
+            work->hdr.completed = 1;
         }
     }
     return err;
@@ -818,191 +860,232 @@ _ZGL afxError _DpuWork_ExecuteCb(zglDpu* dpu, _avxIoReqPacket* work)
 _ZGL afxError _DpuWork_Transfer(zglDpu* dpu, _avxIoReqPacket* subm)
 {
     afxError err = { 0 };
+    glVmt const* gl = dpu->gl;
     //AfxAssertObject(dexu, afxFcc_DEXU);
 
-    if (subm->Transfer.wait)
+    afxBool firstTime = FALSE;
+
+    if (subm->hdr.pulled == 0)
     {
-        _DpuWaitForFence(dpu, subm->Transfer.wait, subm->Transfer.waitValue);
-        // Require flush.
+        subm->hdr.pulled = 1;
+        AfxGetClock(&subm->hdr.pullTime);
+        subm->hdr.dpuId = dpu->m.portId;
+        firstTime = TRUE;
     }
 
-    switch (subm->Transfer.srcFcc)
+    afxBool waited = FALSE;
+
+    if (firstTime)
     {
-    case NIL:
-    {
-        switch (subm->Transfer.dstFcc)
+        if (subm->Transfer.wait)
         {
-        case afxFcc_BUF: // raw to buf
-        {
-            avxBuffer buf = subm->Transfer.dst.buf;
-            AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-
-            if (DpuUpdateBuffer(dpu, subm->Transfer.dst.buf, subm->Transfer.src.src, subm->Transfer.opCnt, subm->Transfer.bufOps))
-                AfxThrowError();
-
-            AfxDisposeObjects(1, &buf);
-            break;
+            _DpuWaitForFence(dpu, subm->Transfer.wait, subm->Transfer.waitValue);
+            // Require flush.
+            waited = TRUE;
         }
-        case afxFcc_RAS: // raw to ras
-        {
-            if (_DpuUpdateRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.src, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
 
-            avxRaster ras = subm->Transfer.dst.ras;
-            AfxDisposeObjects(1, &ras);
-            break;
-        }
+        switch (subm->Transfer.srcFcc)
+        {
         case NIL:
         {
-            for (afxUnit i = 0; i < subm->Transfer.opCnt; i++)
+            switch (subm->Transfer.dstFcc)
             {
-                afxByte* dstAt = (afxByte*)(subm->Transfer.dst.dst) + subm->Transfer.bufOps[i].dstOffset;
-                afxByte const* srcAt = (afxByte const*)(subm->Transfer.src.src) + subm->Transfer.bufOps[i].srcOffset;
-                AfxStream2(subm->Transfer.bufOps[i].rowCnt, srcAt, subm->Transfer.bufOps[i].srcStride, dstAt, subm->Transfer.bufOps[i].dstStride);
+            case afxFcc_BUF: // raw to buf
+            {
+                avxBuffer buf = subm->Transfer.dst.buf;
+                AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
+
+                if (DpuUpdateBuffer(dpu, subm->Transfer.dst.buf, subm->Transfer.src.src, subm->Transfer.opCnt, subm->Transfer.bufOps))
+                    AfxThrowError();
+
+                AfxDisposeObjects(1, &buf);
+                break;
+            }
+            case afxFcc_RAS: // raw to ras
+            {
+                if (_DpuUpdateRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.src, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                avxRaster ras = subm->Transfer.dst.ras;
+                AfxDisposeObjects(1, &ras);
+                break;
+            }
+            case NIL:
+            {
+                for (afxUnit i = 0; i < subm->Transfer.opCnt; i++)
+                {
+                    afxByte* dstAt = (afxByte*)(subm->Transfer.dst.dst) + subm->Transfer.bufOps[i].dstOffset;
+                    afxByte const* srcAt = (afxByte const*)(subm->Transfer.src.src) + subm->Transfer.bufOps[i].srcOffset;
+                    AfxStream2(subm->Transfer.bufOps[i].rowCnt, srcAt, subm->Transfer.bufOps[i].srcStride, dstAt, subm->Transfer.bufOps[i].dstStride);
+                }
+                break;
+            }
+            default: AfxThrowError(); break;
+            }
+            break;
+        }
+        case afxFcc_BUF:
+        {
+            switch (subm->Transfer.dstFcc)
+            {
+            case afxFcc_BUF: // buf to buf
+            {
+                if (DpuCopyBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.bufCpyOps))
+                    AfxThrowError();
+
+                avxBuffer src = subm->Transfer.src.buf;
+                AfxDisposeObjects(1, &src);
+                avxBuffer dst = subm->Transfer.dst.buf;
+                AfxDisposeObjects(1, &dst);
+                break;
+            }
+            case afxFcc_RAS:
+            {
+                if (DpuUnpackRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.buf, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                avxBuffer buf = subm->Transfer.src.buf;
+                avxRaster ras = subm->Transfer.dst.ras;
+                AfxDisposeObjects(1, &ras);
+                AfxDisposeObjects(1, &buf);
+                break;
+            }
+            case NIL: // buf to raw
+            {
+                if (DpuDumpBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.bufOps))
+                    AfxThrowError();
+
+                avxBuffer buf = subm->Transfer.src.buf;
+                AfxDisposeObjects(1, &buf);
+                break;
+            }
+            case afxFcc_IOB: // buf to iob
+            {
+                if (_DpuDownloadBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.iob, subm->Transfer.opCnt, subm->Transfer.bufOps))
+                    AfxThrowError();
+
+                afxStream iob = subm->Transfer.dst.iob;
+                avxBuffer buf = subm->Transfer.src.buf;
+                AfxDisposeObjects(1, &buf);
+                AfxDisposeObjects(1, &iob);
+                break;
+            }
+            default: AfxThrowError(); break;
+            }
+            break;
+        }
+        case afxFcc_RAS:
+        {
+            switch (subm->Transfer.dstFcc)
+            {
+            case NIL: // ras to raw
+            {
+                if (_DpuDumpRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                avxRaster ras = subm->Transfer.src.ras;
+                AfxDisposeObjects(1, &ras);
+                break;
+            }
+            case afxFcc_BUF:
+            {
+                if (DpuPackRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.buf, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                avxBuffer buf = subm->Transfer.dst.buf;
+                avxRaster ras = subm->Transfer.src.ras;
+                AfxDisposeObjects(1, &ras);
+                AfxDisposeObjects(1, &buf);
+                break;
+            }
+            case afxFcc_RAS:
+            {
+                if (DpuCopyRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.ras, subm->Transfer.opCnt, subm->Transfer.rasCpyOps))
+                    AfxThrowError();
+
+                avxRaster dst = subm->Transfer.dst.ras;
+                avxRaster src = subm->Transfer.src.ras;
+                AfxDisposeObjects(1, &dst);
+                AfxDisposeObjects(1, &src);
+                break;
+            }
+            case afxFcc_IOB: // ras to iob
+            {
+                if (_DpuDownloadRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.iob, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                afxStream iob = subm->Transfer.dst.iob;
+                avxRaster ras = subm->Transfer.src.ras;
+                AfxDisposeObjects(1, &ras);
+                AfxDisposeObjects(1, &iob);
+                break;
+            }
+            default: AfxThrowError(); break;
+            }
+            break;
+        }
+        case afxFcc_IOB:
+        {
+            switch (subm->Transfer.dstFcc)
+            {
+            case afxFcc_BUF: // iob to buf
+            {
+                if (_DpuUploadBuffer(dpu, subm->Transfer.dst.buf, subm->Transfer.src.iob, subm->Transfer.opCnt, subm->Transfer.bufOps))
+                    AfxThrowError();
+
+                afxStream iob = subm->Transfer.src.iob;
+                avxBuffer buf = subm->Transfer.dst.buf;
+                AfxDisposeObjects(1, &buf);
+                AfxDisposeObjects(1, &iob);
+                break;
+            }
+            case afxFcc_RAS: // iob to ras
+            {
+                if (_DpuUploadRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.iob, subm->Transfer.opCnt, subm->Transfer.rasOps))
+                    AfxThrowError();
+
+                avxRaster ras = subm->Transfer.dst.ras;
+                afxStream iob = subm->Transfer.src.iob;
+                AfxDisposeObjects(1, &ras);
+                AfxDisposeObjects(1, &iob);
+                break;
+            }
+            default: AfxThrowError(); break;
             }
             break;
         }
         default: AfxThrowError(); break;
         }
-        break;
-    }
-    case afxFcc_BUF:
-    {
-        switch (subm->Transfer.dstFcc)
-        {
-        case afxFcc_BUF: // buf to buf
-        {
-            if (DpuCopyBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.bufCpyOps))
-                AfxThrowError();
-
-            avxBuffer src = subm->Transfer.src.buf;
-            AfxDisposeObjects(1, &src);
-            avxBuffer dst = subm->Transfer.dst.buf;
-            AfxDisposeObjects(1, &dst);
-            break;
-        }
-        case afxFcc_RAS:
-        {
-            if (DpuUnpackRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.buf, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
-
-            avxBuffer buf = subm->Transfer.src.buf;
-            avxRaster ras = subm->Transfer.dst.ras;
-            AfxDisposeObjects(1, &ras);
-            AfxDisposeObjects(1, &buf);
-            break;
-        }
-        case NIL: // buf to raw
-        {
-            if (DpuDumpBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.bufOps))
-                AfxThrowError();
-
-            avxBuffer buf = subm->Transfer.src.buf;
-            AfxDisposeObjects(1, &buf);
-            break;
-        }
-        case afxFcc_IOB: // buf to iob
-        {
-            if (_DpuDownloadBuffer(dpu, subm->Transfer.src.buf, subm->Transfer.dst.iob, subm->Transfer.opCnt, subm->Transfer.bufOps))
-                AfxThrowError();
-
-            afxStream iob = subm->Transfer.dst.iob;
-            avxBuffer buf = subm->Transfer.src.buf;
-            AfxDisposeObjects(1, &buf);
-            AfxDisposeObjects(1, &iob);
-            break;
-        }
-        default: AfxThrowError(); break;
-        }
-        break;
-    }
-    case afxFcc_RAS:
-    {
-        switch (subm->Transfer.dstFcc)
-        {
-        case NIL: // ras to raw
-        {
-            if (_DpuDumpRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.dst, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
-
-            avxRaster ras = subm->Transfer.src.ras;
-            AfxDisposeObjects(1, &ras);
-            break;
-        }
-        case afxFcc_BUF:
-        {
-            if (DpuPackRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.buf, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
-
-            avxBuffer buf = subm->Transfer.dst.buf;
-            avxRaster ras = subm->Transfer.src.ras;
-            AfxDisposeObjects(1, &ras);
-            AfxDisposeObjects(1, &buf);
-            break;
-        }
-        case afxFcc_RAS:
-        {
-            if (DpuCopyRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.ras, subm->Transfer.opCnt, subm->Transfer.rasCpyOps))
-                AfxThrowError();
-
-            avxRaster dst = subm->Transfer.dst.ras;
-            avxRaster src = subm->Transfer.src.ras;
-            AfxDisposeObjects(1, &dst);
-            AfxDisposeObjects(1, &src);
-            break;
-        }
-        case afxFcc_IOB: // ras to iob
-        {
-            if (_DpuDownloadRaster(dpu, subm->Transfer.src.ras, subm->Transfer.dst.iob, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
-
-            afxStream iob = subm->Transfer.dst.iob;
-            avxRaster ras = subm->Transfer.src.ras;
-            AfxDisposeObjects(1, &ras);
-            AfxDisposeObjects(1, &iob);
-            break;
-        }
-        default: AfxThrowError(); break;
-        }
-        break;
-    }
-    case afxFcc_IOB:
-    {
-        switch (subm->Transfer.dstFcc)
-        {
-        case afxFcc_BUF: // iob to buf
-        {
-            if (_DpuUploadBuffer(dpu, subm->Transfer.dst.buf, subm->Transfer.src.iob, subm->Transfer.opCnt, subm->Transfer.bufOps))
-                AfxThrowError();
-
-            afxStream iob = subm->Transfer.src.iob;
-            avxBuffer buf = subm->Transfer.dst.buf;
-            AfxDisposeObjects(1, &buf);
-            AfxDisposeObjects(1, &iob);
-            break;
-        }
-        case afxFcc_RAS: // iob to ras
-        {
-            if (_DpuUploadRaster(dpu, subm->Transfer.dst.ras, subm->Transfer.src.iob, subm->Transfer.opCnt, subm->Transfer.rasOps))
-                AfxThrowError();
-
-            avxRaster ras = subm->Transfer.dst.ras;
-            afxStream iob = subm->Transfer.src.iob;
-            AfxDisposeObjects(1, &ras);
-            AfxDisposeObjects(1, &iob);
-            break;
-        }
-        default: AfxThrowError(); break;
-        }
-        break;
-    }
-    default: AfxThrowError(); break;
     }
 
     if (subm->Transfer.signal)
     {
         //_ZglSignalFence(dpu, iorp->Execute.signal);
-        _DpuSignalFence(dpu, subm->Transfer.signal, subm->Transfer.signalValue);
+        afxError err2 = _DpuSignalFence(dpu, subm->Transfer.signal, subm->Transfer.signalValue);
+
+        if (err2 == afxError_TIMEOUT)
+        {
+            err = afxError_TIMEOUT;
+        }
+        else /*if (err2 == afxError_SUCCESS)*/
+        {
+            AfxGetClock(&subm->hdr.complTime);
+            subm->hdr.completed = 1;
+        }
+    }
+    else
+    {
+        if (waited)
+        {
+            /*
+                glFlush() here is needed because glWaitSync() is called when the DPU must wait for fence signal,
+                where this function stalls the command queue.
+            */
+            gl->Flush(); _ZglThrowErrorOccuried();
+        }
+
+        AfxGetClock(&subm->hdr.complTime);
+        subm->hdr.completed = 1;
     }
 
     return err;
@@ -1432,6 +1515,9 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
             if (dque->m.exuIdx != dexu->m.exuIdx)
                 continue;
 
+            if (dque->m.iorpChn.cnt == 0)
+                continue;
+
             if (AfxTryLockMutex(&dque->m.iorpChnMtx))
             {
 #if 0
@@ -1450,7 +1536,7 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
                         2 better fit iterCnt once it can iterate again after a Flush and/or Yield and mainly after a Finish
                         without unlocking and relocking the mutex.
                     */
-                    afxUnit iterCnt = 2;
+                    afxUnit iterCnt = 1;
 
                     while (iterCnt--)
                     {
@@ -1459,6 +1545,19 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
                         {
                             AFX_ASSERT(dque->m.iorpChn.cnt);
 
+                            AFX_ASSERT(iorpVmt->f[iorp->hdr.id]);
+                            if (afxError_TIMEOUT == iorpVmt->f[iorp->hdr.id](dpu, iorp))
+                            {
+                                continue; // AFX_ITERATE_CHAIN_B2F
+                            }
+                            else
+                            {
+                                AFX_ASSERT(iorp->hdr.completed == 1);
+                                // if we have not to wait, delete it right now.
+                                _AvxDquePopIoReqPacket(dque, iorp);
+                            }
+
+#if 0
                             if (iorp->hdr.pulled == 0)
                             {
                                 iorp->hdr.pulled = 1;
@@ -1467,7 +1566,7 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
 
                                 AFX_ASSERT(iorpVmt->f[iorp->hdr.id]);
                                 if (afxError_TIMEOUT == iorpVmt->f[iorp->hdr.id](dpu, iorp))
-                                    continue;
+                                    continue; // AFX_ITERATE_CHAIN_B2F
 
 #ifdef _FLUSH_ON_IOREQ_EXECUTION
                                 gl->Flush();
@@ -1578,6 +1677,7 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
 #endif//_USE_REAL_GL_FENCES
                                 }
                             }
+#endif//0
                         }
 #ifdef _USE_SINGLE_GL_FENCES
                         if (!singleGlFence && mustWaitCnt)

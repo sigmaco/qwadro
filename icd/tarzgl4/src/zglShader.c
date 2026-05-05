@@ -306,7 +306,8 @@ _ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxShader codb, avxPipeline pip)
             {
                 afxString cbs;
                 AfxMakeString(&cbs, 0, slot->code, slot->codeLen);
-                _AvxConvertToGlsl(&cbs, &code);
+                _avxGlslConversor conversor = { 0 };
+                _AvxConvertToGlsl(&conversor, &cbs, &code);
             }
         }
         AfxPushArrayUnits(&code, 1, &nullTermArrel, (afxChar[]) { 0 }, 0);

@@ -170,7 +170,7 @@ _ARX afxError ArxDrawBodies(arxRenderer scn, arxContext sctx, afxDrawContext dct
             //AvxCmdSetCullMode(dctx, NIL);
             //AvxCmdSwitchFrontFace(dctx, AfxRandom2(0, 1));
 
-            //AvxCmdSwitchDepthTesting(dctx, TRUE);
+            //AvxCmdEnableDepthTesting(dctx, TRUE);
             //AvxCmdEnableDepthWrite(dctx, TRUE);
 
             AvxCmdBindBuffers(dctx, avxBus_GFX, 3, 30, 1, (avxBufferedMap[]) { {.buf = scn->framesets[scn->frameIdx].objUbo} });
@@ -304,7 +304,7 @@ _ARX afxError ArxBeginSceneCapture(arxRenderer scn, arxCamera cam, arxSimulation
                     //AvxCmdSetCullMode(dctx, NIL);
                     //AvxCmdSwitchFrontFace(dctx, AfxRandom2(0, 1));
 
-                    //AvxCmdSwitchDepthTesting(dctx, TRUE);
+                    //AvxCmdEnableDepthTesting(dctx, TRUE);
                     //AvxCmdEnableDepthWrite(dctx, TRUE);
 
 
@@ -412,7 +412,7 @@ _ARX afxError ArxCmdDrawBodies(afxDrawContext dctx, arxRenderer rnd, afxReal dt,
                 //AvxCmdSwitchFrontFace(dctx, AfxRandom2(0, 1));
 
 
-                //AvxCmdSwitchDepthTesting(dctx, TRUE);
+                //AvxCmdEnableDepthTesting(dctx, TRUE);
                 //AvxCmdEnableDepthWrite(dctx, TRUE);
 
                 AvxCmdBindBuffers(dctx, avxBus_GFX, 3, 30, 1, (avxBufferedMap[]) { {.buf = rnd->framesets[rnd->frameIdx].objUbo } });

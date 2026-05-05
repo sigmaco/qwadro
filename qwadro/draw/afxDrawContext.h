@@ -71,8 +71,8 @@
 #ifndef AVX_DRAW_CONTEXT_H
 #define AVX_DRAW_CONTEXT_H
 
-#include "qwadro/draw/avxDrawing.h"
-#include "qwadro/draw/avxProvision.h"
+#include "qwadro/draw/avxBus.h"
+#include "qwadro/draw/avxBusEXT.h"
 #include "qwadro/draw/afxDrawBridge.h"
 
 typedef enum avxCmdFlag
@@ -198,6 +198,16 @@ AVX afxDrawContext AvxGetCommandPool
     afxDrawContext dctx
 );
 
+AVX afxCmdId AvxGetLastCommandId
+(
+    afxDrawContext dctx
+);
+
+AVX afxCmdId AvxGetNextCommandId
+(
+    afxDrawContext dctx
+);
+
 /*
     Exhausting a draw context recycles all of the resources from all of the auxiliary contexts allocated from the pool context back to the pool context. All draw contexts that have been allocated from the pool context are put in the initial state.
 */
@@ -231,14 +241,103 @@ AVX afxError AvxCompileDrawCommands
     afxDrawContext dctx
 );
 
-AVX afxCmdId AvxGetLastCommandId
+  //////////////////////////////////////////////////////////////////////////////
+ // BASIC COMMANDS                                                           //
+//////////////////////////////////////////////////////////////////////////////
+
+/*
+    AvxCmdCommenceDebugScope(), AvxCmdConcludeDebugScope(), and AvxCmdMarkDebugMilestone().
+
+    These functions let you annotate a draw context (afxDrawContext) with debug scopes and milestones.
+    Tools like GPU debuggers, frame analyzers, profilers, or custom logging systems can use these annotations to show:
+     - hierarchical regions of GPU work
+     - named events or markers
+     - color-coded debug ranges
+
+    They do not affect rendering but make GPU command streams easier to inspect.
+*/
+
+/*
+    The AvxCmdCommenceDebugScope() method starts (opens) a debug scope within the draw context.
+    It marks the beginning of a labeled section of GPU work.
+    All commands recorded after this call will be considered part of this debug region until AvxCmdConcludeDebugScope is called.
+*/
+
+AVX afxError AvxCmdCommenceDebugScope
 (
+    // The draw context being annotated.
+    afxDrawContext dctx,
+
+    // A string label for the region (e.g., "Shadow Pass").
+    afxString const*name,
+
+    // Optional color to visually represent this region in debugging tools.
+    avxColor const color
+);
+
+/*
+    The AvxCmdConcludeDebugScope() ends (closes) the most recently opened debug scope.
+    It completes the region started by AvxCmdCommenceDebugScope.
+    Scopes must be properly nested and balanced.
+
+*/
+
+AVX afxError AvxCmdConcludeDebugScope
+(
+    // The draw context being annotated.
     afxDrawContext dctx
 );
 
-AVX afxCmdId AvxGetNextCommandId
+/*
+    The AvxCmdMarkDebugMilestone() method inserts a single debug marker at the current point in the command stream.
+    It does not create a region. It represents an instantaneous "event" or "checkpoint" in the GPU command flow.
+    Shows up as a point marker in profilers or debugging tools.
+*/
+
+AVX afxError AvxCmdMarkDebugMilestone
 (
-    afxDrawContext dctx
+    // The draw context being annotated.
+    afxDrawContext dctx,
+
+    // A string that describes what the milestone represents (e.g., "Upload Complete").
+    afxString const*name,
+
+    // Optional color for the marker.
+    avxColor const color
+);
+
+/*
+    The AvxCmdExecuteCommands() method records a command into a primary draw context (dctx) that causes a list of secondary draw contexts (aux[]) to be executed when the primary context is submitted.
+    This is essentially the same concept as secondary command buffers in Vulkan or D3D12 bundles.
+
+    Primary draw context is the main command stream you submit to the GPU.
+    Secondary draw context is composed of pre-recorded command sequences which can be reused or inserted into primaries.
+    AvxCmdExecuteCommands() inserts these secondary sequences into the primary command flow.
+
+    A secondary that does not have the "simultaneous use" capability can only be used by one primary at a time.
+    If you try to use it in multiple primaries at once, the engine invalidates the others to prevent undefined behavior.
+    This is nearly identical to Vulkan's VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT.
+    Why this exists? A non-simultaneous-use secondary may contain internal state that cannot be safely reused while
+    it is already queued or being recorded in another context.
+
+    If the nested draw context feature is enabled it is valid usage for AvxCmdExecuteCommands() to also be recorded to a secondary draw context.
+    This means:
+     - Secondary contexts can contain calls to AvxCmdExecuteCommands.
+     - In other words, secondary-of-secondary nesting is allowed if enabled.
+     - You can build hierarchies of reusable command sequences.
+    This matches Vulkan’s inheriting and nested secondary command buffer support.
+*/
+
+AVX afxError AvxCmdExecuteCommands
+(
+    // The draw context that will side-load other contexts.
+    afxDrawContext dctx,
+
+    // The number of auxiliary contexts to be inlined.
+    afxUnit cnt,
+
+    // An ordinal array of @cnt auxiliary draw context handles, which are recorded to execute in the main draw context.
+    afxDrawContext auxs[]
 );
 
 #endif//AVX_DRAW_CONTEXT_H

@@ -79,6 +79,7 @@ AFX_DEFINE_UNION(_amxIoReqLut)
         void* Execute;
         void* Transfer;
         void* Sink;
+        void* Drink;
         void* Remap;
         void* SyncMaps;
     };
@@ -168,9 +169,29 @@ AFX_DEFINE_UNION(_amxIoReqPacket)
             afxUnit32   signalReserved;
 
             afxSink     sink;
-            afxUnit     bufIdx;
+            afxUnit     sampleCnt;
         } AFX_SIMD      ops[];
     } Sink;
+    struct
+    {
+        _amxIoReqPacketHdr hdr;
+
+        afxUnit         opCnt;
+        struct
+        {
+            amxFence    wait;
+            afxUnit64   waitValue;
+            amxBusStage waitStageMask;
+            afxUnit32   waitReserved;
+            amxFence    signal;
+            afxUnit64   signalValue;
+            amxBusStage signalStageMask;
+            afxUnit32   signalReserved;
+
+            afxSink     sink;
+            afxUnit     sampleCnt;
+        } AFX_SIMD      ops[];
+    } Drink;
     struct
     {
         _amxIoReqPacketHdr hdr;
@@ -233,5 +254,8 @@ AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufferRe
 AMX afxError _AmxMqueCohereMappedBuffers(afxMixQueue mque, afxUnit flushCnt, amxBufferedMap const flushes[], afxUnit fetchCnt, amxBufferedMap const fetches[]);
 
 AMX afxError _AmxMqueSinkBuffers(afxMixQueue mque, afxUnit cnt, amxFlush presentations[]);
+
+AMX afxError _AmxMqueFlushSinks(afxMixQueue mque, afxUnit cnt, amxFlush const flushes[]);
+AMX afxError _AmxMqueRefillSinks(afxMixQueue mque, afxUnit cnt, amxCaption const captions[]);
 
 #endif//AMX_QUEUE_DDK_H

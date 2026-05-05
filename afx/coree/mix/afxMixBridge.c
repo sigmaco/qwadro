@@ -350,13 +350,13 @@ _AMX afxError _AmxMexuCohereMappedBuffers(afxMixBridge mexu, afxBool discard, af
     return err;
 }
 
-_AMX afxError _AmxMexuSinkBuffers(afxMixBridge mexu, afxUnit cnt, amxFlush presentations[])
+_AMX afxError _AmxMexuFlushSinks(afxMixBridge mexu, afxUnit cnt, amxFlush const flushes[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @mexu must be a valid afxMixBridge handle.
     AFX_ASSERT_OBJECTS(afxFcc_MEXU, 1, &mexu);
     AFX_ASSERT(cnt);
-    AFX_ASSERT(presentations);
+    AFX_ASSERT(flushes);
 
     afxMixQueue mque;
     afxUnit queIdx = 0;
@@ -365,10 +365,53 @@ _AMX afxError _AmxMexuSinkBuffers(afxMixBridge mexu, afxUnit cnt, amxFlush prese
     {
         AFX_ASSERT_OBJECTS(afxFcc_MQUE, 1, &mque);
 
-        afxError err2 = _AmxMqueSinkBuffers(mque, cnt, presentations);
+        afxError err2 = _AmxMqueFlushSinks(mque, cnt, flushes);
 
         if (!err2)
         {
+            if (queueingMap)
+            {
+                for (afxUnit j = 0; j < cnt; j++)
+                    queueingMap[j] = queIdx;
+            }
+            queued = TRUE;
+            break; // while
+        }
+
+        if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+            continue; // while
+
+        err = err2;
+        AfxThrowError();
+    }
+    return err;
+}
+
+_AMX afxError _AmxMexuRefillSinks(afxMixBridge mexu, afxUnit cnt, amxCaption const captions[], afxUnit queueingMap[])
+{
+    afxError err = { 0 };
+    // @mexu must be a valid afxMixBridge handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MEXU, 1, &mexu);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(captions);
+
+    afxMixQueue mque;
+    afxUnit queIdx = 0;
+    afxBool queued = FALSE;
+    while (AmxGetMixQueues(mexu, queIdx++, 1, &mque))
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MQUE, 1, &mque);
+
+        afxError err2 = _AmxMqueRefillSinks(mque, cnt, captions);
+
+        if (!err2)
+        {
+            if (queueingMap)
+            {
+                for (afxUnit j = 0; j < cnt; j++)
+                    queueingMap[j] = queIdx;
+            }
+
             queued = TRUE;
             break; // while
         }

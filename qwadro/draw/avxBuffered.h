@@ -29,25 +29,32 @@
 
 AFX_DEFINE_STRUCT(avxBufferedRing)
 {
-    afxUnit     rounds;
-    afxSize     blockSiz;
-    afxUnit     blockAlign;
     avxBuffer   buf;
-    afxSize     maxSiz;
-    afxUnit     blockCnt;
+    afxSize     bufBase;
+    afxUnit     bufRange;
     afxByte*    basePtr;
     afxSize     currOffset;
+    afxUnit     blockAlign;
+    afxSize     blockSiz;
+    afxUnit     blockCnt;
+    afxUnit     rounds;
 };
 
 AVX afxError AvxMakeBufferedRing
 (
-    avxBufferedRing* rng, 
-    afxUnit rounds, 
-    afxUnit blockSiz, 
-    afxUnit blockAlign, 
-    avxBuffer buf, 
-    afxSize bufCap, 
-    void* mapped
+    avxBufferedRing* rng,
+
+    avxBuffer buf,
+
+    afxSize bufBase,
+
+    afxUnit bufRange,
+
+    afxUnit blockSiz,
+
+    afxUnit blockAlign,
+
+    afxUnit rounds
 );
 
 AVX afxSize AvxCycleBufferedRing

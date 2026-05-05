@@ -928,7 +928,7 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
                     return err;
                 }
 
-                afxError err2 = _AvxDexuPresentBuffers(dexu, 1, &presentations[doutIt], queueingMap);
+                afxError err2 = _AvxDexuPresentSurfaces(dexu, 1, &presentations[doutIt], queueingMap);
                 err = err2;
 
                 if (!err2)
@@ -955,7 +955,7 @@ _AVX afxError AvxPresentSurfaces(afxDrawSystem dsys, afxUnit cnt, avxPresentatio
     return err;
 }
 
-_AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
+_AVX afxError AvxScanSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption const captions[], afxUnit queueingMap[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -1005,7 +1005,7 @@ _AVX afxError AvxCaptureSurfaces(afxDrawSystem dsys, afxUnit cnt, avxCaption con
                     return err;
                 }
 
-                afxError err2 = _AvxDexuCaptureBuffers(dexu, 1, &captions[doutIt], queueingMap);
+                afxError err2 = _AvxDexuScanSurfaces(dexu, 1, &captions[doutIt], queueingMap);
                 err = err2;
 
                 if (!err2)

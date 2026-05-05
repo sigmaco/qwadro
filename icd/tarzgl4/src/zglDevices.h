@@ -62,6 +62,8 @@ AFX_DEFINE_STRUCT(zglDpu)
 
     afxUnit             dbgScopeStackTop;
 
+    afxBool hasDsa;
+
     // NEXT TRANSFORMATION AND CLIPPING STATE
     afxUnit             nextVpCnt; // 0
     avxViewport         nextVps[ZGL_MAX_VIEWPORTS];

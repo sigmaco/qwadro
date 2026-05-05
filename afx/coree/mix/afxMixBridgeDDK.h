@@ -72,6 +72,8 @@ AMX afxError _AmxMexuRemapBuffers(afxMixBridge mexu, afxBool unmap, afxUnit cnt,
 AMX afxError _AmxMexuCohereMappedBuffers(afxMixBridge mexu, afxBool discard, afxUnit cnt, amxBufferedMap const maps[]);
 AMX afxError _AmxMexuTransferMixMemory(afxMixBridge mexu, amxTransference* ctrl, afxUnit opCnt, void const* ops);
 AMX afxError _AmxMexuSinkBuffers(afxMixBridge mexu, afxUnit cnt, amxFlush presentations[]);
+AMX afxError _AmxMexuFlushSinks(afxMixBridge mexu, afxUnit cnt, amxFlush const flushes[], afxUnit queueingMap[]);
+AMX afxError _AmxMexuRefillSinks(afxMixBridge mexu, afxUnit cnt, amxCaption const captions[], afxUnit queueingMap[]);
 
 AMX afxError _AmxMexu_PingCb(afxMixBridge mexu, afxUnit queIdx);
 
