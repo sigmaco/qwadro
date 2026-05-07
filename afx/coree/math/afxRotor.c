@@ -38,10 +38,6 @@ _AFXINL void AfxWedgeBiv3d(afxV3d biv, afxV3d const u, afxV3d const v)
     biv[2] = u[1] * v[2] - u[2] * v[1]; // YZ    
 }
 
-
-_AFX afxRotor AFX_ROTOR_ZERO = { 0, 0, 0, 0 };
-_AFX afxRotor AFX_ROTOR_IDENTITY = { 0, 0, 0, 1 };
-
 _AFXINL void AfxResetRotor(afxRotor r)
 {
     afxError err = { 0 };

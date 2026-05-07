@@ -77,6 +77,9 @@ AFX_DEFINE_STRUCT(afxUri)
     afxUnit16   dir, qry; // max AFX_U16_MAX long
 };
 
+#define AFX_URI_BLANK() \
+    (afxUri) { 0 };
+
 AFX_DEFINE_STRUCT(afxUri8) { afxUri uri; afxByte buf[8]; };
 AFX_DEFINE_STRUCT(afxUri32) { afxUri uri; afxByte buf[32]; };
 AFX_DEFINE_STRUCT(afxUri128) { afxUri uri; afxByte buf[128]; };

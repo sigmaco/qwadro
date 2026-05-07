@@ -19,14 +19,6 @@
 
 #include "avxIcd.h"
 
-avxOrigin const AVX_ORIGIN_ZERO = { 0, 0, 0 };
-avxOrigin const AVX_ORIGIN_MIN = { AFX_I32_MIN, AFX_I32_MIN, AFX_I32_MIN };
-avxOrigin const AVX_ORIGIN_MAX = { AFX_I32_MAX, AFX_I32_MAX, AFX_I32_MAX };
-
-avxRange const AVX_RANGE_ZERO = { 0, 0, 0 };
-avxRange const AVX_RANGE_MIN = { 1, 1, 1 };
-avxRange const AVX_RANGE_MAX = { AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX };
-
 // EXTENT
 
 _AVXINL avxRange AvxMinRange(avxRange const a, avxRange const b)

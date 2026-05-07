@@ -19,14 +19,6 @@
 
 #include "qwadro/afxRect.h"
 
-afxRect const AFX_RECT_ZERO = { 0, 0, 0, 0 };
-afxRect const AFX_RECT_MIN = { AFX_I32_MIN, AFX_I32_MIN, 1, 1 };
-afxRect const AFX_RECT_MAX = { AFX_I32_MAX, AFX_I32_MAX, AFX_U32_MAX, AFX_U32_MAX };
-
-afxLayeredRect const AFX_LAYERED_RECT_ZERO = { { 0, 0, 0, 0 }, 0, 0 };
-afxLayeredRect const AFX_LAYERED_RECT_MIN = { { AFX_I32_MIN, AFX_I32_MIN, 1, 1 }, 0, 1 };
-afxLayeredRect const AFX_LAYERED_RECT_MAX = { { AFX_I32_MAX, AFX_I32_MAX, AFX_U32_MAX, AFX_U32_MAX }, AFX_U32_MAX, AFX_U32_MAX };
-
 _AFXINL afxUnit AfxGetRectSize(afxRect const* rc)
 {
     afxError err = { 0 };

@@ -103,7 +103,7 @@ _AFX afxError AfxWaitForIdleIoBridge(afxIoBridge exu, afxUnit64 timeout)
     return err;
 }
 
-_AFX afxError _AfxExuTransferVideoMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops)
+_AFX afxError _AfxExuTransferMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops)
 {
     afxError err = { 0 };
     // @exu must be a valid afxIoBridge handle.

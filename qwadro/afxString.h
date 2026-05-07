@@ -87,6 +87,9 @@ AFX_DEFINE_STRUCT(afxString)
     (afxString) {   .len = (afxUnit)((sizeof((text_)) / sizeof((text_)[0])) - sizeof(afxChar)), \
                     .cap = 0, .start = (afxChar const*)(text_) }
 
+#define AFX_STRING_EMPTY \
+     AFX_STRING("")
+
 #define AFX_STRING_R(...) AFX_STRING(#__VA_ARGS__)
 
 // AFX_STATIC_STRING deploys a initialized afxString with literal macro data.
@@ -94,50 +97,53 @@ AFX_DEFINE_STRUCT(afxString)
     .len = (afxUnit)((sizeof((#__VA_ARGS__)) / sizeof((#__VA_ARGS__)[0])) - sizeof(afxChar)), \
     .cap = 0, .start = (afxChar const*)(#__VA_ARGS__) }
 
-
-AFX afxString const     AFX_STRING_EMPTY;
-
 // NOTE: When 'cap' is zero, a string can't be modified.
 //#define AfxAssertString(str_) AFX_ASSERT3(((afxChar*)&((str_)->fcc))[0] == 's', ((afxChar*)&((str_)->fcc))[1] == 't', ((afxChar*)&((str_)->fcc))[2] == 'r')
 
 // used for formatted string input with %.*s specifier. // %.*s
 #define AfxPushString(str_) ((str_) ? ((str_)->len) : 0), ((str_) ? ((str_)->start) : "")
 
-AFX afxString*          AfxMakeString
+AFX afxString* AfxMakeString
 // Wraps constant (read-only) data as a Qwadro string.
 (
     afxString* s, 
+
     afxUnit cap, 
+
     void const *start, 
+
     afxUnit len
 );
 
-AFX afxChar const*      AfxGetStringData
+AFX afxChar const* AfxGetStringData
 (
-    afxString const*    s, 
-    afxUnit             base
+    afxString const* s, 
+
+    afxUnit base
 );
 
-AFX afxChar*            AfxGetStringStorage
+AFX afxChar* AfxGetStringStorage
 (
-    afxString const*    s, 
-    afxUnit             base
+    afxString const* s, 
+
+    afxUnit base
 );
 
-AFX afxUnit             AfxGetStringLength
+AFX afxUnit AfxGetStringLength
 (
-    afxString const*    s
+    afxString const* s
 );
 
-AFX afxUnit             AfxGetStringCapacity
+AFX afxUnit AfxGetStringCapacity
 (
-    afxString const*    s, 
-    afxUnit             from
+    afxString const* s, 
+
+    afxUnit from
 );
 
-AFX afxBool             AfxIsStringEmpty
+AFX afxBool AfxIsStringEmpty
 (
-    afxString const*    s
+    afxString const* s
 );
 
 /*
@@ -146,11 +152,13 @@ AFX afxBool             AfxIsStringEmpty
     Safe length adjustment. Clamps length if it exceeds bounds.
 */
 
-AFX afxString           AfxExcerptString
+AFX afxString AfxExcerptString
 (
-    afxString const*    src, 
-    afxUnit             from, 
-    afxUnit             len
+    afxString const* src, 
+
+    afxUnit from, 
+
+    afxUnit len
 );
 
 /*
@@ -161,10 +169,11 @@ AFX afxString           AfxExcerptString
     Use in loop to read line-by-line from an afxString.
 */
 
-AFX afxString           AfxExcerptStringLine
+AFX afxString AfxExcerptStringLine
 (
-    afxString const*    s,
-    afxUnit             from
+    afxString const* s,
+
+    afxUnit from
 );
 
 /*
@@ -172,17 +181,20 @@ AFX afxString           AfxExcerptStringLine
 
 */
 
-AFX afxUnit             AfxCopyString
+AFX afxUnit AfxCopyString
 // Return the number of characters that could not be copied due to capacity limits.
 (
     // The destination string.
-    afxString*          dst,
+    afxString* dst,
+
     // The destination offset to start copying at.
-    afxUnit             at,
+    afxUnit at,
+
     // The source string.
-    afxString const*    src,
+    afxString const* src,
+
     // The source offset to start copying from.
-    afxUnit             from
+    afxUnit from
 );
 
 /*
@@ -192,36 +204,43 @@ AFX afxUnit             AfxCopyString
 
 */
 
-AFX afxUnit             AfxCopySubstring
+AFX afxUnit AfxCopySubstring
 // Return the number of characters that could not be copied due to capacity limits.
 (
     // The destination string.
-    afxString*          dst,
+    afxString* dst,
+
     // The destination offset to start copying at.
-    afxUnit             at,
+    afxUnit at,
+
     // The source string.
-    afxString const*    src,
+    afxString const* src,
+
     // The source offset to start copying from.
-    afxUnit             from,
+    afxUnit from,
+
     // How many characters to copy.
-    afxUnit             len
+    afxUnit len
 );
 
 /*
     The AfxMoveString() function is just a wrappter for AfxMoveSubstring() which automatically determine the length.
 */
 
-AFX afxUnit             AfxMoveString
+AFX afxUnit AfxMoveString
 // Return the number of characters that could not be copied due to capacity limits.
 (
     // The destination string.
-    afxString*          dst,
+    afxString* dst,
+
     // The destination offset to start copying at.
-    afxUnit             at,
+    afxUnit at,
+
     // The source string.
-    afxString const*    src,
+    afxString const* src,
+
     // The source offset to start copying from.
-    afxUnit             from
+    afxUnit from
 );
 
 /*
@@ -230,19 +249,23 @@ AFX afxUnit             AfxMoveString
     to be safely copied when both maps partially or totally the same buffer memory.
 */
 
-AFX afxUnit             AfxMoveSubstring
+AFX afxUnit AfxMoveSubstring
 // Return the number of characters that could not be copied due to capacity limits.
 (
     // The destination string.
-    afxString*          dst,
+    afxString* dst,
+
     // The destination offset to start copying at.
-    afxUnit             at,
+    afxUnit at,
+
     // The source string.
-    afxString const*    src,
+    afxString const* src,
+
     // The source offset to start copying from.
-    afxUnit             from,
+    afxUnit from,
+
     // How many characters to copy.
-    afxUnit             len
+    afxUnit len
 );
 
 /*
@@ -251,15 +274,17 @@ AFX afxUnit             AfxMoveSubstring
     This function is designed to be both efficient and informative for overflow detection.
 */
 
-AFX afxUnit             AfxCatenateStrings
+AFX afxUnit AfxCatenateStrings
 // Return the number of characters that could not be appended due to capacity limits.
 (
     // The destination string.
-    afxString*          s, 
+    afxString* s, 
+
     // The count of strings.
-    afxUnit             cnt, 
+    afxUnit cnt, 
+
     // An array of source strings.
-    afxString const     src[]
+    afxString const src[]
 );
 
 /*
@@ -270,16 +295,18 @@ AFX afxUnit             AfxCatenateStrings
     If the length is zero, treat the string as null-terminated and measure it. Otherwise, treat it as a fixed-size buffer.
 */
 
-AFX afxUnit             AfxCatenateString
+AFX afxUnit AfxCatenateString
 // Return the number of characters that could not be appended due to capacity limits.
 (
     // The destination string.
-    afxString*          s, 
+    afxString* s, 
+
     // The start of the raw string.
-    afxChar const*      start,
+    afxChar const* start,
+
     // The optional length of the raw string.
     // If not specified, it will be measured internally.
-    afxUnit             len
+    afxUnit len
 );
 
 /*
@@ -290,17 +317,20 @@ AFX afxUnit             AfxCatenateString
     Adds a null terminator if space allows. Returns the number of characters not inserted.
 */
 
-AFX afxUnit             AfxInsertString
+AFX afxUnit AfxInsertString
 // Returns the number of characters not inserted.
 (
     // The destination string.
-    afxString*          dst,
+    afxString* dst,
+
     // The starting position at destination string.
-    afxUnit             at,
+    afxUnit at,
+
     // The number of source strings to insert.
-    afxUnit             cnt,
+    afxUnit cnt,
+
     // An array of source strings to insert.
-    afxString const     src[]
+    afxString const src[]
 );
 
 /*
@@ -308,14 +338,16 @@ AFX afxUnit             AfxInsertString
     Shifts the tail left to fill the gap. Returns the number of characters actually erased.
 */
 
-AFX afxUnit             AfxEraseString
+AFX afxUnit AfxEraseString
 (
     // The string to be partially or totally erased.
-    afxString*          s,
+    afxString* s,
+
     // The position to start erasing from.
-    afxUnit             from,
+    afxUnit from,
+
     // The length to be erased.
-    afxUnit             range
+    afxUnit range
 );
 
 /*
@@ -323,48 +355,48 @@ AFX afxUnit             AfxEraseString
     Return zero if strings are equal.
 */
 
-AFX afxResult           AfxCompareString
+AFX afxResult AfxCompareString
 (
     // The Qwadro string.
-    afxString const*    s,
+    afxString const* s,
 
     // The offset where to start comparing within the Qwadro string.
-    afxUnit             from,
+    afxUnit from,
 
     // The pointer to the raw string to be compared against.
-    afxChar const*      start,
+    afxChar const* start,
 
     // The length of the raw string to compare (the number of characters).
-    afxUnit             len,
+    afxUnit len,
 
     // A flag that specifies whether the comparison should be case-insensitive or not.
-    afxBool             ci
+    afxBool ci
 );
 
 /*
     The AfxCompareStrings() function is just a wrapper for AfxCompareSubstrings() which automatically determines the length.
 */
 
-AFX afxBool             AfxCompareStrings
+AFX afxBool AfxCompareStrings
 (
     // The source string.
-    afxString const*    s,
+    afxString const* s,
 
     // The position in the string from which comparison should start.
-    afxUnit             from,
+    afxUnit from,
 
     // Case-insensitive flag.
-    afxBool             ci,
+    afxBool ci,
 
     // The number of strings in the @others array.
-    afxUnit             cnt,
+    afxUnit cnt,
 
     // The array of strings to compare against.
-    afxString const     others[],
+    afxString const others[],
 
     // A pointer to store the index of the matched string.
     // Can be NIL if you only want the boolean result.
-    afxUnit*            matchedIdx
+    afxUnit* matchedIdx
 );
 
 /*
@@ -376,29 +408,29 @@ AFX afxBool             AfxCompareStrings
     Return the index of the first matched other string or AFX_INVALID_INDEX. Can be used in switch/case statements.
 */
 
-AFX afxBool             AfxCompareSubstrings
+AFX afxBool AfxCompareSubstrings
 (
     // The source string.
-    afxString const*    s,
+    afxString const* s,
 
     // The position in the string from which comparison should start.
-    afxUnit             from,
+    afxUnit from,
 
     // The length in the string up to where comparison should end.
-    afxUnit             len,
+    afxUnit len,
 
     // Case-insensitive flag.
-    afxBool             ci,
+    afxBool ci,
 
     // The number of strings in the @others array.
-    afxUnit             cnt,
+    afxUnit cnt,
 
     // The array of strings to compare against.
-    afxString const     others[],
+    afxString const others[],
 
     // A pointer to store the index of the matched string.
     // Can be NIL if you only want the boolean result.
-    afxUnit*            matchedIdx
+    afxUnit* matchedIdx
 );
 
 /*
@@ -406,21 +438,26 @@ AFX afxBool             AfxCompareSubstrings
     it should be AFX_INVALID_INDEX. When reverse is TRUE, it finds the last occurrence of the character starting from from.
 */
 
-AFX afxBool             AfxFindChar
+AFX afxBool AfxFindChar
 // Returns TRUE if a character is found.
 (
     // The source string.
-    afxString const*    s, 
+    afxString const* s, 
+
     // The position to start searching from.
-    afxUnit             from, 
+    afxUnit from, 
+
     // The character to be searched.
-    afxInt              ch, 
+    afxInt ch, 
+
     // Flag indicating to use case-insensite comparison.
-    afxBool             ci, 
+    afxBool ci, 
+
     // Flag indicating to go reversely (backward to start).
-    afxBool             reversely, 
+    afxBool reversely, 
+
     // A pointer to hold the position of a found char.
-    afxUnit*            posn
+    afxUnit* posn
 );
 
 /*
@@ -431,16 +468,19 @@ AFX afxBool             AfxFindChar
     .cap is 0 because it’s just a view.
 */
 
-AFX afxString           AfxFindSubstring
+AFX afxString AfxFindSubstring
 (
     // The source string.
-    afxString const*    s, 
+    afxString const* s, 
+
     // The position to start looking from.
-    afxUnit             from,
+    afxUnit from,
+
     // Flag indicating case-insensitive comparison.
-    afxBool             ci,
+    afxBool ci,
+
     // The substring to look for.
-    afxString const*    substring
+    afxString const* substring
 );
 
 /*
@@ -451,14 +491,19 @@ AFX afxString           AfxFindSubstring
     Does not allocate memory. Wraps the pointer directly.
 */
 
-AFX afxString           AfxFindSubstrings
+AFX afxString AfxFindSubstrings
 (
-    afxString const*    s, 
-    afxUnit             from, 
-    afxBool             ci, 
-    afxUnit             cnt, 
-    afxString const     substrings[], 
-    afxUnit*            matchedIdx
+    afxString const* s, 
+
+    afxUnit from, 
+
+    afxBool ci, 
+
+    afxUnit cnt, 
+
+    afxString const substrings[], 
+
+    afxUnit* matchedIdx
 );
 
 AFX afxString AfxSkipWhitespaces
@@ -466,40 +511,51 @@ AFX afxString AfxSkipWhitespaces
     afxString const* s
 );
 
-AFX afxUnit             AfxFormatString
+AFX afxUnit AfxFormatString
 (
-    afxString*          s, 
-    afxChar const*      fmt, 
-                        ...
+    afxString* s, 
+
+    afxChar const* fmt, 
+
+    ...
 );
 
-AFX afxUnit             AfxFormatStringArg
+AFX afxUnit AfxFormatStringArg
 (
-    afxString*          s, 
-    afxChar const*      fmt, 
-    va_list             args
+    afxString* s, 
+
+    afxChar const* fmt, 
+
+    va_list args
 );
 
-AFX afxResult           AfxScanString
+AFX afxResult AfxScanString
 (
-    afxString const*    s, 
-    afxChar const*      fmt, 
-                        ...
+    afxString const* s, 
+
+    afxChar const* fmt, 
+
+    ...
 );
 
-AFX afxResult           AfxScanStringArg
+AFX afxResult AfxScanStringArg
 (
-    afxString const*    s, 
-    afxChar const*      fmt, 
-    va_list             args
+    afxString const* s, 
+
+    afxChar const* fmt, 
+
+    va_list args
 );
 
-AFX afxResult           AfxDumpString
+AFX afxResult AfxDumpString
 (
-    afxString const*    s, 
-    afxUnit             base, 
-    afxUnit             range, 
-    void*               dst
+    afxString const* s, 
+
+    afxUnit base, 
+
+    afxUnit range, 
+
+    void* dst
 );
 
 /*
@@ -510,11 +566,13 @@ AFX afxResult           AfxDumpString
     Returns the length of the exported string as wide-character (UTF-16) string.
 */
 
-AFX afxUnit             AfxDumpStringAsUtf16
+AFX afxUnit AfxDumpStringAsUtf16
 (
-    afxString const*    s, 
-    afxUnit             bufCap, 
-    wchar_t*            wideBuf
+    afxString const* s, 
+
+    afxUnit bufCap, 
+
+    wchar_t* wideBuf
 );
 
 /*
@@ -525,11 +583,13 @@ AFX afxUnit             AfxDumpStringAsUtf16
     Returns the length of the imported string as Qwadro native (UTF-8) string.
 */
 
-AFX afxUnit             AfxLoadStringAsUtf16
+AFX afxUnit AfxLoadStringAsUtf16
 (
-    afxString*          s, 
-    wchar_t const*      wideStr, 
-    afxUnit             wideStrLen
+    afxString* s, 
+
+    wchar_t const* wideStr, 
+
+    afxUnit wideStrLen
 );
 
 // TODO GetAs(s, szScheme, pvData) -> GetAs(s, "%x", data)
@@ -556,12 +616,13 @@ AFX afxError            AfxReadString(afxString* s, afxStream in, afxUnit len);
     Does not deallocate or free memory; it simply clears the metadata, so the strings appear "empty".
 */
 
-AFX void                AfxResetStrings
+AFX void AfxResetStrings
 (
     // The number of strings to reset.
-    afxUnit             cnt, 
+    afxUnit cnt, 
+
     // An array of strings to reset.
-    afxString           strings[]
+    afxString strings[]
 );
 
 /*
@@ -574,10 +635,11 @@ AFX void                AfxResetStrings
     Optionally null-terminates at index 0 for safety with legacy functions or interop with C APIs.
 */
 
-AFX void                AfxClearStrings
+AFX void AfxClearStrings
 (
-    afxUnit             cnt, 
-    afxString           strings[]
+    afxUnit cnt, 
+
+    afxString strings[]
 );
 
 

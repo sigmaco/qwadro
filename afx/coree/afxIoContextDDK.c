@@ -26,7 +26,7 @@
 #define _AFX_IO_BRIDGE_C
 #define _AFX_IO_QUEUE_C
 #define _AFX_IO_CONTEXT_C
-#include "../afxSystemDDK.h"
+#include "afxSystemDDK.h"
 
 _AFX afxError AfxCmdCommenceDebugScope(afxIoContext ctx, afxString const* name, afxV4d const color)
 {

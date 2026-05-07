@@ -316,7 +316,7 @@ _AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmissio
             afxDrawContext dctx = subms[i].dctx;
             AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
             AfxReacquireObjects(1, &dctx);
-            AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_DEFERRED));
+            AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_INCURRENT));
             
             if (dctx->state != avxContextState_INTERNAL_EXECUTING)
             {
@@ -325,7 +325,7 @@ _AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmissio
             }
             else
             {
-                AFX_ASSERT(dctx->cmdFlags & avxCmdFlag_SHARED);
+                AFX_ASSERT(dctx->cmdFlags & avxCmdFlag_CONCURRENT);
             }
 
             iorp->Execute.cmdbs[i].dctx = dctx;

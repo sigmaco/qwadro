@@ -21,6 +21,11 @@
 #define _ARX_CURVE_C
 #include "../scene/arxIcd.h"
 
+_ARX afxError ArxUnpackCurve(arxCurve c)
+{
+
+}
+
 _ARX afxError ArxBufferizeCurve(arxCurve c, arxBufferedMap const* mmap)
 {
     afxError err = { 0 };

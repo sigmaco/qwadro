@@ -114,7 +114,7 @@ AFX afxError AfxResetFences
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Return the IO system witch this fence belongs to.
+// Return the IO system which this fence belongs to.
 AFX afxIommu AfxGetFenceHost
 (
     afxFence fenc

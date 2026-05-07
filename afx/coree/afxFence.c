@@ -20,7 +20,7 @@
 
 #define _AFX_CORE_C
 #define _AFX_FENCE_C
-#include "../afxSystemDDK.h"
+#include "afxSystemDDK.h"
 
 _AFX afxIommu AfxGetFenceHost(afxFence fenc)
 {

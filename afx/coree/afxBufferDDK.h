@@ -28,6 +28,7 @@
 
 //#include "afxIommuDDK.h"
 #include "qwadro/afxBuffered.h"
+#include "qwadro/math/afxVector.h"
 
 AFX_DECLARE_STRUCT(_afxDdiBuf);
 AFX_DECLARE_STRUCT(_afxIddBuf);

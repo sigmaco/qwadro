@@ -22,7 +22,14 @@
 
 #include "qwadro/math/afxQuaternion.h"
 
-AFX afxRotor AFX_ROTOR_IDENTITY;
+#define AFX_ROTOR(b01_, b02_, b12_, a_) \
+    (afxRotor){ (b01_), (b02_), (b12_), (a_) }
+
+#define AFX_ROTOR_ZERO \
+    AFX_ROTOR( 0, 0, 0, 0 )
+
+#define AFX_ROTOR_IDENTITY \
+    AFX_ROTOR( 0, 0, 0, 1 )
 
 // Bivector
 

@@ -219,7 +219,7 @@ AFX_OBJECT(afxIoContext)
     afxContextFlags     flags;
     afxIoContext        pool;
     afxChain            classes;
-    afxClass            dctxCls;
+    afxClass            ctxCls;
     afxInterlockedQueue recycQue;
     afxCmdFlags         cmdFlags;
     afxContextState     state;
@@ -246,7 +246,7 @@ AFX afxError _AfxCtxDiscardCb(afxIoContext ctx, afxBool freeRes);
 AFX afxError _AfxCtxPrepareCb(afxIoContext ctx, afxBool purge, afxCmdFlags flags);
 AFX afxError _AfxCtxExhaustCb(afxIoContext ctx, afxBool freeMem);
 
-AFX afxClass const*     _AfxDctxGetCtxClass(afxIoContext dctx);
+AFX afxClass const* _AfxCtxGetCtxClass(afxIoContext dctx);
 AFX afxContextState _AfxCtxGetStatus(afxIoContext dctx);
 
 AFX afxClassConfig const _AFX_CLASS_CONFIG_CTX;

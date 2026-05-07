@@ -53,23 +53,33 @@ AFX_DEFINE_STRUCT(avxRange)
     afxUnit w, h, d;
 };
 
-AVX avxOrigin const AVX_ORIGIN_ZERO;
-AVX avxOrigin const AVX_ORIGIN_MIN;
-AVX avxOrigin const AVX_ORIGIN_MAX;
+#define AVX_ORIGIN(x_, y_, z_) \
+    (avxOrigin) {   .x = (afxInt)(x_), \
+                    .y = (afxInt)(y_), \
+                    .z = (afxInt)(z_) }
 
-AVX avxRange const AVX_RANGE_ZERO;
-AVX avxRange const AVX_RANGE_MIN;
-AVX avxRange const AVX_RANGE_MAX;
+#define AVX_ORIGIN_ZERO \
+    AVX_RANGE( 0, 0, 0 )
 
-#define AVX_RANGE(w_, h_, d_) (avxRange){ \
-    .w = (afxUnit)(w_), \
-    .h = (afxUnit)(h_), \
-    .d = (afxUnit)(d_) }
+#define AVX_ORIGIN_MIN \
+    AVX_RANGE( AFX_I32_MIN, AFX_I32_MIN, AFX_I32_MIN )
 
-#define AVX_ORIGIN(x_, y_, z_) (avxOrigin){ \
-    .x = (afxInt)(x_), \
-    .y = (afxInt)(y_), \
-    .z = (afxInt)(z_) }
+#define AVX_ORIGIN_MAX \
+    AVX_RANGE( AFX_I32_MAX, AFX_I32_MAX, AFX_I32_MAX )
+
+#define AVX_RANGE(w_, h_, d_) \
+    (avxRange){ .w = (afxUnit)(w_), \
+                .h = (afxUnit)(h_), \
+                .d = (afxUnit)(d_) }
+
+#define AVX_RANGE_ZERO \
+    AVX_RANGE( 0, 0, 0 )
+
+#define AVX_RANGE_MIN \
+    AVX_RANGE( 1, 1, 1 )
+
+#define AVX_RANGE_MAX \
+    AVX_RANGE( AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX )
 
 AVXINL avxRange AvxMinRange(avxRange const a, avxRange const b);
 AVXINL avxRange AvxMaxRange(avxRange const a, avxRange const b);
@@ -139,19 +149,17 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, avxViewport)
     The floating-point viewport bounds are represented with an implementation-dependent precision.
 */
 
-#define AVX_VIEWPORT(x_, y_, w_, h_, minDepth_, maxDepth_) (avxViewport){ \
-    .origin = { (afxReal)(x_), (afxReal)(y_) }, \
-    .extent = { (afxReal)(w_), (afxReal)(h_) }, \
-    .minDepth = (afxReal)(minDepth_), \
-    .maxDepth = (afxReal)(maxDepth_) }
+#define AVX_VIEWPORT(x_, y_, w_, h_, minDepth_, maxDepth_) \
+    (avxViewport) { .origin = { (afxReal)(x_), (afxReal)(y_) }, \
+                    .extent = { (afxReal)(w_), (afxReal)(h_) }, \
+                    .minDepth = (afxReal)(minDepth_), \
+                    .maxDepth = (afxReal)(maxDepth_) }
 
-#define AVX_VIEWPORT_MIN (avxViewport){ \
-    .origin = { AFX_R32_MIN, AFX_R32_MIN }, \
-    .extent = { 1, 1 } };
+#define AVX_VIEWPORT_MIN \
+    AVX_VIEWPORT( AFX_R32_MIN, AFX_R32_MIN, 1, 1, 0 0);
 
-#define AVX_VIEWPORT_MAX (avxViewport){ \
-    .origin = { AFX_R32_MAX, AFX_R32_MAX }, \
-    .extent = { AFX_R32_MAX, AFX_R32_MAX } };
+#define AVX_VIEWPORT_MAX \
+    AVX_VIEWPORT( AFX_R32_MAX, AFX_R32_MAX , AFX_R32_MAX, AFX_R32_MAX, 1, 1 );
 
 AVXINL void AfxMakeViewport
 (

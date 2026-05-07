@@ -25,7 +25,7 @@
 #ifndef AFX_FENCE_DDK_H
 #define AFX_FENCE_DDK_H
 
-#include "../afxSystemDDK.h"
+#include "afxSystemDDK.h"
 #include "qwadro/afxIommu.h"
 
 AFX_DECLARE_STRUCT(_afxIddFenc);
