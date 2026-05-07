@@ -754,6 +754,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_CANV =
     .name = "Canvas",
     .desc = "Fixed-Function Buffered Canvas",
     .fixedSiz = sizeof(AFX_OBJECT(avxCanvas)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxCanvCtorCb,
     .dtor = (void*)_AvxCanvDtorCb
 };

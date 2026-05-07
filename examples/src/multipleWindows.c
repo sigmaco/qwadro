@@ -144,7 +144,7 @@ int main(int argc, char const* argv[])
                 afxDrawContext dctx = drawContexts[outBufIdx];
                 afxBool compiled = FALSE;
 
-                if (AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE))
+                if (AvxPrepareDrawCommands(dctx, FALSE, NIL))
                 {
                     AfxThrowError();
                 }

@@ -125,7 +125,8 @@ _AVX afxError AvxPrepareDrawCommands(afxDrawContext dctx, afxBool purge, avxCmdF
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
     // dctx must not be in the PENDING state.
-    if (dctx->state >= avxContextState_PENDING)
+    if ((dctx->state >= avxContextState_PENDING)
+        && (dctx->state != avxContextState_INVALID))
     {
         AFX_ASSERT(!(dctx->state >= avxContextState_PENDING));
         err = afxError_BUSY;

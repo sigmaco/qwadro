@@ -387,6 +387,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_LIGA =
     .name = "Ligature",
     .desc = "Pipeline Resourcing Ligature",
     .fixedSiz = sizeof(AFX_OBJECT(avxLigature)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxLigaCtorCb,
     .dtor = (void*)_AvxLigaDtorCb
 };

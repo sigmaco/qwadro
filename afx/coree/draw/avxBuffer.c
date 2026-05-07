@@ -383,6 +383,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_BUF =
     .name = "Buffer",
     .desc = "Video Memory Buffer", // AVX Buffer
     .fixedSiz = sizeof(AFX_OBJECT(avxBuffer)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxBufCtorCb,
     .dtor = (void*)_AvxBufDtorCb
 };

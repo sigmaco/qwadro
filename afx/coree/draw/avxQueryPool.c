@@ -92,6 +92,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_QRYP =
     .name = "QueryPool",
     .desc = "Managed Query Pool",
     .fixedSiz = sizeof(AFX_OBJECT(avxQueryPool)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxQrypCtorCb,
     .dtor = (void*)_AvxQrypDtorCb
 };

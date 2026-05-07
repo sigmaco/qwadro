@@ -1232,6 +1232,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_PIP =
     .name = "Pipeline",
     .desc = "Device-Execution Pipeline",
     .fixedSiz = sizeof(AFX_OBJECT(avxPipeline)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxPipCtorCb,
     .dtor = (void*)_AvxPipDtorCb
 };

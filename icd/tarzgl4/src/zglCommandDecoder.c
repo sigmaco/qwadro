@@ -499,10 +499,10 @@ _ZGL _avxCmdLut const cmdDevmt =
 };
 
 
-_ZGL afxError _DpuRollContext(avxDpu* dpu, afxDrawContext dctx)
+_ZGL afxError _DpuRollContext(zglDpu* dpu, afxDrawContext dctx)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
-    _AvxDpuRollContext(dpu, dctx);
+    _AvxDpuRollContext(&dpu->m, dctx);
 }

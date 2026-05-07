@@ -498,6 +498,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_SAMP =
     .name = "Sampler",
     .desc = "Fixed-Function Texture Sampler",
     .fixedSiz = sizeof(AFX_OBJECT(avxSampler)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxSampCtorCb,
     .dtor = (void*)_AvxSampDtorCb
 };

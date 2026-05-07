@@ -109,4 +109,6 @@ ZGL _avxCmdLut const cmdDevmt;
 
 ZGL void _DpuEndOfCommands(zglDpu* dpu);
 
+ZGL afxError _DpuRollContext(zglDpu* dpu, afxDrawContext dctx);
+
 #endif//ZGL_COMMANDS_H

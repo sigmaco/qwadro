@@ -209,9 +209,6 @@ int main(int argc, char const* argv[])
         }
         else
         {
-            afxBool compiled = FALSE;
-            afxBool presented = FALSE;
-
 #if WAIT_FOR_FRAME
             afxDrawContext dctx = drawContexts[outBufIdx];
 #else
@@ -220,8 +217,13 @@ int main(int argc, char const* argv[])
             afxDrawContext dctx;
             AvxAcquireDrawContexts(dsys, NIL, &dci, 1, &dctx);
 #endif
+            avxFence drawCompletedFence = NIL;
+            avxFence waitReadyBufFence = NIL;
+            afxBool compiled = FALSE;
+            afxBool presented = FALSE;
 
-            if (AfxFailed(AvxPrepareDrawCommands(dctx, FALSE, avxCmdFlag_ONCE)))
+
+            if (AfxFailed(AvxPrepareDrawCommands(dctx, FALSE, NIL)))
             {
                 AfxThrowError();
             }
@@ -286,7 +288,7 @@ int main(int argc, char const* argv[])
                     AfxM4dScaling(ssm, AFX_V3D(2, 2, 1));
                     ArxPushTransform(rctx, ssm);
 
-#if 0
+#if !0
                     for (afxUnit i = 0; i < 200; i++)
                     {
                         afxReal r1 = 100 - i / 2;
@@ -323,61 +325,51 @@ int main(int argc, char const* argv[])
                 else
                 {
                     compiled = TRUE;
+
+#if DONOT_FENCE_COMPLETION
+                    avxFence drawCompletedFence = NIL;
+#else
+                    drawCompletedFence = frameCompleteSems[outBufIdx];
+#endif
+#if DO_NOT_FENCE_READY_BUFFER
+                    avxFence waitReadyBufFence = NIL;
+#else
+                    waitReadyBufFence = frameReadySems[outBufIdx];
+#endif
+
+                    avxSubmission subm = { 0 };
+                    subm.dctx = dctx;
+                    //subm.wait = sema;
+                    //subm.waitValue = nextFrameId - frameCap;
+#if WAIT_FOR_FRAME
+                    subm.signal = sema;
+                    subm.signalValue = nextFrameId++;
+#endif
+
+                    if (AfxFailed(AvxExecuteDrawCommands(dsys, 1, &subm, NIL)))
+                    {
+                        AfxThrowError();
+                    }
+
+                    /*
+                        Synchronization:
+
+                        After preparing the drawing commands, it synchronizes with the graphics hardware to ensure the surface
+                        buffer is updated correctly and waits for completion before moving to the next frame.
+                    */
+
+                    //AfxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuIdx);
+                    //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
                 }                
             }
 
-            if (!compiled)
-            {
-#if WAIT_FOR_FRAME
-                AvxExhaustDrawContext(dctx, TRUE);
-#else
-                AfxDisposeObjects(1, &dctx);
-#endif
-            }
-            else
-            {
-#if DONOT_FENCE_COMPLETION
-                avxFence drawCompletedFence = NIL;
-#else
-                avxFence drawCompletedFence = frameCompleteSems[outBufIdx];
-#endif
-#if DO_NOT_FENCE_READY_BUFFER
-                avxFence waitReadyBufFence = NIL;
-#else
-                avxFence waitReadyBufFence = frameReadySems[outBufIdx];
-#endif
-
-                avxSubmission subm = { 0 };
-                subm.dctx = dctx;
-                //subm.wait = sema;
-                //subm.waitValue = nextFrameId - frameCap;
-#if WAIT_FOR_FRAME
-                subm.signal = sema;
-                subm.signalValue = nextFrameId++;
-#endif
-
-                if (AfxFailed(AvxExecuteDrawCommands(dsys, 1, &subm, NIL)))
-                {
-                    AfxThrowError();
-                }
-
 #ifndef WAIT_FOR_FRAME
-                AfxDisposeObjects(1, &dctx);
+            AfxDisposeObjects(1, &dctx);
 #endif
 
-                /*
-                    Synchronization:
-
-                    After preparing the drawing commands, it synchronizes with the graphics hardware to ensure the surface
-                    buffer is updated correctly and waits for completion before moving to the next frame.
-                */
-
-                //AfxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuIdx);
-                //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
-            }
-            
             AfxDoUx(0, AFX_TIMEOUT_INFINITE);
 
+            if (compiled)
             {
                 avxPresentation pres = { 0 };
                 //pres.wait = subm.signal;

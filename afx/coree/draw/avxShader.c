@@ -627,6 +627,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_CODB =
     .name = "Shader",
     .desc = "Pipeline-Execution Shader",
     .fixedSiz = sizeof(AFX_OBJECT(avxShader)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxShdCtorCb,
     .dtor = (void*)_AvxShdDtorCb
 };
