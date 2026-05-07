@@ -151,7 +151,7 @@ static afxBufferedPumpStash create_new_chunk(afxBufferedPump* pump, afxSize size
 }
 
 // Initialize the buffered pump
-_AFX afxError AfxDeployBufferedPump(afxBufferedPump* pump, afxBufferUsage usage, afxBufferFlags flags, afxUnit minChunkSiz, afxUnit blockAlign, afxUnit rounds, afxIoSystem xsys)
+_AFX afxError AfxDeployBufferedPump(afxBufferedPump* pump, afxBufferUsage usage, afxBufferFlags flags, afxUnit minChunkSiz, afxUnit blockAlign, afxUnit rounds, afxIommu xsys)
 {
     afxError err = { 0 };
 

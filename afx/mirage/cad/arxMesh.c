@@ -161,8 +161,12 @@ _ARXINL afxError ArxReformMesh(arxMesh msh, afxUnit baseMorphIdx, afxUnit cnt, a
         mshm->flags = in->flags;
         mshm->baseVtx = in->baseVtx;
 
+        mshm->affectedAttrCnt = in->affectedAttrCnt;
+
         if (in->affectedAttrs && morphIdx != 0)
+        {
             mshm->affectedAttrs = in->affectedAttrs;
+        }
 
         ArxRecomputeMeshBounds(msh, morphIdx, 0, msh->secCnt, 0);
     }

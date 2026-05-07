@@ -830,6 +830,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DQUE =
     .name = "DrawQueue",
     .desc = "Device-Execution Queue",
     .fixedSiz = sizeof(AFX_OBJECT(afxDrawQueue)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxDqueCtorCb,
     .dtor = (void*)_AvxDqueDtorCb
 };

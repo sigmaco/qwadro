@@ -1,4 +1,4 @@
-![Logo](doc/qwadro-banner-2048x520-bg-t.png)
+![Logo](doc/qwadro-logo-IoxVM-crop-banner.png)
 
 This is a project that embeds documentation as part of its codebase instead of using Doxygen-markup commentary convention. 
 It is intended to be used by AI-powered and automation tools to generate ever-green documentation, and may be conturbated to be consumed by an end user.
@@ -101,6 +101,8 @@ It is a modernized, modular replacement for traditional GL "bootstrapping", resp
 Bridging the OpenGL Core-like front-end to the VGI DDI.
 
 Instead of deeply mixing state handling with driver logic, AVX isolates the GL runtime from the low-level backend.
+
+Despite being based on OpenGL, AVX is not bound to OpenGL, but only have it as a reference for capabilities, while proceed to be backed by Vulkan at some time (as it was sometime in past).
 
 ## Advanced Multimedia Synthesis Extensions (AMX)
 A unified, distributed, hardware-accelerated multimedia processing effort.

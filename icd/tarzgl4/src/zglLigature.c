@@ -492,7 +492,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                     }
                     break;
                 }
-                case avxShaderParam_IMAGE:
+                case avxShaderParam_IMAGE: // storage image
                 {
                     avxRaster ras = dpu->nextLs[set][binding].ras;
                     afxBool rebindRas = FALSE;
@@ -601,8 +601,36 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                             {
                                 AFX_ASSERT(AvxGetBufferUsage(buf, avxBufferUsage_TENSOR) == avxBufferUsage_TENSOR);
                                 DpuBindAndSyncBuf(dpu, glTarget, buf, FALSE);
+
+                                if (offset || (range && (range < buf->m.reqSiz)))
+                                {
+                                    if (gl->TextureBufferRange)
+                                    {
+                                        gl->TextureBufferRange(glFixedTboHandle, buf->glTexIntFmt, buf->glHandle, offset, range); _ZglThrowErrorOccuried();
+                                    }
+                                    else
+                                    {
+                                        gl->ActiveTexture(GL_TEXTURE0 + glUnit); _ZglThrowErrorOccuried();
+                                        gl->BindTexture(glTarget, glFixedTboHandle); _ZglThrowErrorOccuried();
+                                        gl->TexBufferRange(glTarget, buf->glTexIntFmt, buf->glHandle, offset, range); _ZglThrowErrorOccuried();
+                                    }
+                                }
+                                else
+                                {
+                                    if (gl->TextureBuffer)
+                                    {
+                                        gl->TextureBuffer(glFixedTboHandle, buf->glHandle, buf->glHandle); _ZglThrowErrorOccuried();
+                                    }
+                                    else
+                                    {
+                                        gl->ActiveTexture(GL_TEXTURE0 + glUnit); _ZglThrowErrorOccuried();
+                                        gl->BindTexture(glTarget, glFixedTboHandle); _ZglThrowErrorOccuried();
+                                        gl->TexBuffer(glTarget, buf->glTexIntFmt, buf->glHandle); _ZglThrowErrorOccuried();
+                                    }
+                                }
+
                                 AFX_ASSERT(gl->BindImageTexture);
-                                gl->BindImageTexture(glUnit, buf->glHandle, 0, FALSE, 0, GL_READ_WRITE, buf->glTexIntFmt);
+                                gl->BindImageTexture(glUnit, glFixedTboHandle, 0, FALSE, 0, GL_READ_WRITE, buf->glTexIntFmt);
                             }
                             else
                             {
@@ -616,7 +644,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                                     {
                                         if (gl->TextureBufferRange)
                                         {
-                                            gl->TextureBufferRange(glFixedTboHandle, buf->glHandle, buf->glHandle, offset, range); _ZglThrowErrorOccuried();
+                                            gl->TextureBufferRange(glFixedTboHandle, buf->glTexIntFmt, buf->glHandle, offset, range); _ZglThrowErrorOccuried();
                                         }
                                         else
                                         {

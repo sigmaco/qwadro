@@ -22,6 +22,8 @@
 #define _AFX_POOL_ZERO_ON_RECLAMATION (FALSE)
 #define _AFX_POOL_ZERO_ON_PAGINATION (FALSE)
 
+#define KEEP_ATLEAST_ONE_POOL_PAGE
+
 _AFXINL afxBool AfxIsAnValidPoolUnit(afxPool* pool, afxSize idx)
 {
     afxError err = { 0 };
@@ -646,8 +648,12 @@ _AFX afxError AfxReclaimPoolUnits(afxPool* pool, afxHere const dbg, afxUnit cnt,
         --pool->totalUsedCnt;
 
         AFX_ASSERT(!AfxGetPoolUnit(pool, idx, NIL));
-
-        if (0 == pag->usedCnt)
+        if ((0 == pag->usedCnt)
+#ifdef KEEP_ATLEAST_ONE_POOL_PAGE
+            // Avoid reallocation every time (mainly for device IO contexts).
+            && (pool->pageCnt > 1)
+#endif
+            )
         {
             DeletePoolPage(pool, pageIdx);
         }

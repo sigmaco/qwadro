@@ -573,6 +573,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_RAS =
     .name = "Raster",
     .desc = "Formatted Video Buffer",
     .fixedSiz = sizeof(AFX_OBJECT(avxRaster)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxRasCtorCb,
     .dtor = (void*)_AvxRasDtorCb
 };

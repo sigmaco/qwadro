@@ -105,7 +105,7 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
             if (!(dctx->cmdFlags & avxCmdFlag_RECURRENT))
             {
                 dctx->state = avxContextState_INVALID;
-                AvxPrepareDrawCommands(dctx, FALSE, NIL);
+                //AvxPrepareDrawCommands(dctx, FALSE, NIL);
             }
             else
             {

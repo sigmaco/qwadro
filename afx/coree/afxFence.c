@@ -33,7 +33,7 @@ _AFX afxIommu AfxGetFenceHost(afxFence fenc)
     return iom;
 }
 
-_AFX afxUnit64 _AfxFencSW_GetValueCb(afxFence fenc)
+_AFX afxUnit64 _AfxFenc_GetValueCbSW(afxFence fenc)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
@@ -56,7 +56,7 @@ _AFX afxUnit64 AfxGetFenceValue(afxFence fenc)
     return value;
 }
 
-_AFX afxError _AfxFencSW_SignalCb(afxFence fenc, afxUnit64 value)
+_AFX afxError _AfxFenc_SignalCbSW(afxFence fenc, afxUnit64 value)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
@@ -89,7 +89,7 @@ _AFX afxError AfxSignalFence(afxFence fenc, afxUnit64 value)
     return err;
 }
 
-_AFX afxError _AfxFencSW_WaitCb(afxFence fenc, afxUnit64 value, afxUnit64 timeout)
+_AFX afxError _AfxFenc_WaitCbSW(afxFence fenc, afxUnit64 value, afxUnit64 timeout)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
@@ -119,9 +119,9 @@ _AFX afxError AfxWaitForFence(afxFence fenc, afxUnit64 value, afxUnit64 timeout)
 
 _AFX _afxDdiFenc const _AFX_FENC_DDI =
 {
-    .waitCb = _AfxFencSW_WaitCb,
-    .signalCb = _AfxFencSW_SignalCb,
-    .evalCb = _AfxFencSW_GetValueCb,
+    .waitCb = _AfxFenc_WaitCbSW,
+    .signalCb = _AfxFenc_SignalCbSW,
+    .evalCb = _AfxFenc_GetValueCbSW,
 };
 
 _AFX afxError _AfxFencDtorCb(afxFence fenc)
@@ -184,7 +184,7 @@ _AFX afxError AfxAcquireFences(afxIommu iom, afxUnit cnt, afxFenceInfo const inf
     return err;
 }
 
-_AFX afxError _AfxIomSW_WaitForFencesCb(afxIommu iom, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, afxFence const fences[], afxUnit64 const values[])
+_AFX afxError _AfxIom_WaitForFencesCbSW(afxIommu iom, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, afxFence const fences[], afxUnit64 const values[])
 {
     afxError err = { 0 };
     AFX_ASSERT(fences);

@@ -63,9 +63,17 @@ _AVX afxError _AvxFencSW_SignalCb(avxFence fenc, afxUnit64 value)
 
     if (fenc->flags & avxFenceFlag_TIMELINE)
     {
-        AFX_ASSERT(value > (afxUnit64)AfxLoadAtom64(&fenc->value));
-        AfxStoreAtom64(&fenc->value, (afxInt64)value);
-        //AfxIncAtom64(&fenc->value);
+        afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->value);
+
+        if (value > curVal)
+        {
+            AfxStoreAtom64(&fenc->value, (afxInt64)value);
+            //AfxIncAtom64(&fenc->value);
+        }
+        else
+        {
+            AFX_ASSERT(value > curVal);
+        }
     }
     else
     {
@@ -161,6 +169,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_FENC =
     .name = "Fence",
     .desc = "Device-Synchronization Fence",
     .fixedSiz = sizeof(AFX_OBJECT(avxFence)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxFencCtorCb,
     .dtor = (void*)_AvxFencDtorCb
 };

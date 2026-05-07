@@ -64,10 +64,10 @@ AFX_OBJECT(afxFence)
 AFX afxClassConfig const _AFX_CLASS_CONFIG_FENC;
 
 
-AFX afxError _AfxIomSW_WaitForFencesCb(afxIommu iom, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, afxFence const fences[], afxUnit64 const values[]);
+AFX afxError _AfxIom_WaitForFencesCbSW(afxIommu iom, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, afxFence const fences[], afxUnit64 const values[]);
 
-AFX afxUnit64 _AfxFencSW_GetValueCb(afxFence fenc);
-AFX afxError _AfxFencSW_SignalCb(afxFence fenc, afxUnit64 value);
-AFX afxError _AfxFencSW_WaitCb(afxFence fenc, afxUnit64 value, afxUnit64 timeout);
+AFX afxUnit64 _AfxFenc_GetValueCbSW(afxFence fenc);
+AFX afxError _AfxFenc_SignalCbSW(afxFence fenc, afxUnit64 value);
+AFX afxError _AfxFenc_WaitCbSW(afxFence fenc, afxUnit64 value, afxUnit64 timeout);
 
 #endif//AFX_FENCE_DDK_H

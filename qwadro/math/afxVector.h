@@ -17,6 +17,13 @@
 
 // This code is part of SIGMA Advanced Math Extensions for Qwadro
 
+/*
+    A vector is a specific type of tensor that has one dimension and represents a quantity with both magnitude and direction, 
+    while a tensor is a more general mathematical object that can represent relationships between multiple vectors and scalars, 
+    and can have multiple dimensions. Tensors include vectors as well as scalars and higher-order tensors, 
+    which can describe more complex relationships.
+*/
+
 #ifndef AFX_VECTOR_H
 #define AFX_VECTOR_H
 

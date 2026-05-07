@@ -26,6 +26,8 @@
 #   define _ARX_DBG_MESH_SANITIZE_ARGS 1
 #endif
 
+// unpack mesh geometry
+
 _ARX afxError ArxUpdateVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, afxUnit baseVtx, afxUnit vtxCnt, void const* src, afxUnit32 srcStride)
 {
     afxError err = { 0 };
@@ -207,6 +209,8 @@ _ARX afxError ArxExportMeshDataDeindexed(arxMesh msh, afxUnit attrIdx, afxUnit m
 }
 
 // UPDATE/DUMP INDEXES /////////////////////////////////////////////////////////
+
+// unpack mesh topology
 
 _ARX afxError ArxUpdateMeshIndices(arxMesh msh, afxUnit baseTriIdx, afxUnit triCnt, void const* src, afxUnit srcIdxSiz)
 {

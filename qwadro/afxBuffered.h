@@ -114,7 +114,7 @@ AFX_DEFINE_STRUCT(afxBufferedPump)
 
     afxBufferUsage bufUsage;
 
-    afxIoSystem xsys;
+    afxIommu xsys;
 };
 
 AFX afxError AfxDeployBufferedPump
@@ -131,7 +131,7 @@ AFX afxError AfxDeployBufferedPump
 
     afxUnit rounds,
 
-    afxIoSystem xsys
+    afxIommu xsys
 );
 
 AFX void* AfxRequestBufferedPump

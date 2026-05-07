@@ -25,11 +25,11 @@
 
 #define _AFX_BUFFER_HOSTSIDE_ALWAYS_FULLY_MAPPED TRUE
 
-_AFX afxIoSystem AfxGetBufferHost(afxBuffer buf)
+_AFX afxIommu AfxGetBufferHost(afxBuffer buf)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-    afxIoSystem iom = AfxGetHost(buf);
+    afxIommu iom = AfxGetHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
     return iom;
 }
@@ -131,7 +131,7 @@ _AFX afxError AfxUnmapBuffer(afxBuffer buf, afxBool wait)
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     AFX_ASSERT(AfxGetBufferFlags(buf, afxBufferFlag_RW));
 
-    afxIoSystem iom = AfxGetBufferHost(buf);
+    afxIommu iom = AfxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     afxBufferedMap map = { 0 };
@@ -160,7 +160,7 @@ _AFX afxError AfxMapBuffer(afxBuffer buf, afxSize offset, afxUnit range, afxFlag
     map.range = range;
     map.flags = flags;
 
-    afxIoSystem iom = AfxGetBufferHost(buf);
+    afxIommu iom = AfxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     void* holder;
@@ -188,7 +188,7 @@ _AFX afxError AfxCohereMappedBuffer(afxBuffer buf, afxSize offset, afxUnit range
     map.range = range;
     map.flags = flags;
 
-    afxIoSystem iom = AfxGetBufferHost(buf);
+    afxIommu iom = AfxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     if (AfxCohereMappedBuffers(iom, invalidate, 1, &map))
@@ -202,7 +202,7 @@ _AFX afxError _AfxBufDtorCb(afxBuffer buf)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 
-    afxIoSystem iom = AfxGetBufferHost(buf);
+    afxIommu iom = AfxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
 
     while (buf->storage[0].mapPtr)
@@ -218,7 +218,7 @@ _AFX afxError _AfxBufDtorCb(afxBuffer buf)
         AfxDisposeObjects(1, &buf->base);
     }
 
-    //afxIoSystem iom = AfxGetBufferHost(buf);
+    //afxIommu iom = AfxGetBufferHost(buf);
     if (_AfxDsysGetDdi(iom)->deallocBufCb(iom, 1, &buf))
     {
         AfxThrowError();
@@ -232,7 +232,7 @@ _AFX afxError _AfxBufCtorCb(afxBuffer buf, void** args, afxUnit invokeNo)
     afxResult err = NIL;
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 
-    afxIoSystem iom = AfxGetBufferHost(buf);
+    afxIommu iom = AfxGetBufferHost(buf);
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
     afxBufferInfo const* bufi = args[1] ? ((afxBufferInfo const*)args[1]) + invokeNo : NIL;
     AFX_ASSERT(bufi && bufi->size && bufi->usage);
@@ -382,7 +382,7 @@ _AFX afxClassConfig const _AFX_CLASS_CONFIG_BUF =
 {
     .fcc = afxFcc_BUF,
     .name = "Buffer",
-    .desc = "Video Memory Buffer", // AFX Buffer
+    .desc = "I/O Memory Buffer", // AFX Buffer
     .fixedSiz = sizeof(AFX_OBJECT(afxBuffer)),
     .ctor = (void*)_AfxBufCtorCb,
     .dtor = (void*)_AfxBufDtorCb
@@ -390,7 +390,7 @@ _AFX afxClassConfig const _AFX_CLASS_CONFIG_BUF =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFX afxError AfxAcquireBuffers(afxIoSystem iom, afxUnit cnt, afxBufferInfo const infos[], afxBuffer buffers[])
+_AFX afxError AfxAcquireBuffers(afxIommu iom, afxUnit cnt, afxBufferInfo const infos[], afxBuffer buffers[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);
@@ -423,7 +423,7 @@ _AFX afxError AfxAcquireBuffers(afxIoSystem iom, afxUnit cnt, afxBufferInfo cons
     
     if (err) return err;
 
-    afxClass* cls = (afxClass*)_AfxDsysGetDdi(iom)->bufCls(iom);
+    afxClass* cls = (afxClass*)_AfxIomGetDdi(iom)->bufCls(iom);
     AFX_ASSERT_CLASS(cls, afxFcc_BUF);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { iom, (void*)infos, NIL }))
@@ -517,7 +517,7 @@ _AFX afxError AfxAcquireBuffers(afxIoSystem iom, afxUnit cnt, afxBufferInfo cons
     return err;
 }
 
-_AFX afxError AfxReacquireBuffers(afxIoSystem iom, afxUnit cnt, afxMetabufferInfo const infos[], afxBuffer buffers[])
+_AFX afxError AfxReacquireBuffers(afxIommu iom, afxUnit cnt, afxMetabufferInfo const infos[], afxBuffer buffers[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_IOM, 1, &iom);

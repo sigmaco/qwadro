@@ -79,6 +79,10 @@ AFX_OBJECT(afxIommu)
 
     afxChain            classes;
     afxClass            semaphores;
+    afxClass            fencCls;
+    afxClass            exuCls;
+    afxClass            ctxCls;
+    afxClass            bufCls;
 
     afxBool             running;
     afxUnit             bridgeCnt; // one per bridge
@@ -86,12 +90,6 @@ AFX_OBJECT(afxIommu)
     afxMask             ioExuMask;
     afxMask             dedIoExuMask;
 
-    //afxChain classes;
-
-    afxClass            bufCls;
-    afxClass            exuCls;
-    afxClass            fencCls;
-    afxClass            ctxCls;
 
     struct
     {

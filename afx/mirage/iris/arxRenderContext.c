@@ -1123,10 +1123,10 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
         }
         frame->frameReady = fences[0];
         frame->frameAvail = fences[1];
+        frame->frameAvailNextValue = 0;
+        frame->frameReadyNextValue = 0;
         //AvxSignalFence(fences[0], 1);
         //AvxSignalFence(fences[1], 1);
-        //frame->frameAvailNextValue = AFX_U64_MAX;
-        //frame->frameReadyNextValue = AFX_U64_MAX;
     }
 
     AfxMakeArena(&rctx->cmdArena, NIL, AfxHere());

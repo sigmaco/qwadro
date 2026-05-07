@@ -26,7 +26,7 @@
 #include "qwadro/afxBuffered.h"
 #include "qwadro/afxFence.h"
 
-#define AFX_MAX_BRIDGES_PER_SYSTEM (32)
+#define AFX_MAX_BRIDGES_PER_IOMMU (32)
 
 typedef enum afxEventId
 {
@@ -64,7 +64,7 @@ AFX_DEFINE_STRUCT(afxIommuConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    afxIoBridgeConfig   exus[AFX_MAX_BRIDGES_PER_SYSTEM];
+    afxIoBridgeConfig   exus[AFX_MAX_BRIDGES_PER_IOMMU];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.

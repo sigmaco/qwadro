@@ -1,4 +1,5 @@
-﻿..\src\helloWindow.c(115): warning : unused variable 'dt' [-Wunused-variable]
+﻿..\src\helloWindow.c(109): warning : unused variable 'dt' [-Wunused-variable]
+..\src\helloWindow.c(85): warning : unused variable 'frameCap' [-Wunused-variable]
 ..\src\helloWindow.c(37): warning : unused parameter 'argc' [-Wunused-parameter]
 ..\src\helloWindow.c(37): warning : unused parameter 'argv' [-Wunused-parameter]
 lld-link : warning : /debug:fastlink unsupported; using /debug:full

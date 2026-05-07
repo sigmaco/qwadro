@@ -653,6 +653,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_VIN =
     .name = "VertexInput",
     .desc = "Fixed-Function Vertex Declaration",
     .fixedSiz = sizeof(AFX_OBJECT(avxVertexInput)),
+    .unitsPerPage = 4,
     .ctor = (void*)_AvxVtxdCtorCb,
     .dtor = (void*)_AvxVtxdDtorCb
 };

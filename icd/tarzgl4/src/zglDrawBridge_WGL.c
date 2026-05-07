@@ -809,7 +809,7 @@ _ZGL afxError _DpuWork_ExecuteCb(zglDpu* dpu, _avxIoReqPacket* work)
             afxDrawContext dctx = work->Execute.cmdbs[i].dctx;
             AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
-            if (_AvxDpuRollContext(&dpu->m, dctx))
+            if (_DpuRollContext(dpu, dctx))
             {
 
             }
