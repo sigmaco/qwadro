@@ -20,7 +20,7 @@
 #ifndef AMX_QUEUE_DDK_H
 #define AMX_QUEUE_DDK_H
 
-#include "amxStorageDDK.h"
+#include "amxBufferDDK.h"
 
 AFX_DECLARE_UNION(_amxIoReqPacket);
 AFX_DECLARE_UNION(_amxIoReqLut);

@@ -78,7 +78,7 @@ AFX_OBJECT(afxMixContext)
     amxLimits const* devLimits; // dbg copies
     amxFeatures const*enabledFeatures; // dbg copies
 
-    amxAptitude         caps;
+    amxService         caps;
     afxMask             exuMask;
     afxAtom32           submCnt; // number of submissions
     afxMask64           submQueMask; // one for each queue where this dctx was submitted into.

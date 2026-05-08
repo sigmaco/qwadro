@@ -429,3 +429,137 @@ _ACX afxError AcxAcquireBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferInfo c
 
     return err;
 }
+
+_ACX afxError _AcxSsysRemapBuffersCb_SW(afxWarpSystem ssys, afxBool unmap, afxUnit cnt, _acxBufferRemapping const maps[])
+{
+    afxError err = { 0 };
+    // @ssys must be a valid afxWarpSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_SSYS, 1, &ssys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AcxSsysGetIoExuMask(ssys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxWarpBridge mexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, dedIoExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AcxSexuRemapBuffers(mexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, ioExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AcxSexuRemapBuffers(mexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}
+
+_ACX afxError _AcxSsysCohereMappedBuffersCb_SW(afxWarpSystem ssys, afxBool discard, afxUnit cnt, acxBufferedMap const maps[])
+{
+    afxError err = { 0 };
+    // @ssys must be a valid afxWarpSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_SSYS, 1, &ssys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AcxSsysGetIoExuMask(ssys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxWarpBridge mexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, dedIoExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AcxSexuCohereMappedBuffers(mexu, discard, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AcxChooseWarpBridges(ssys, AFX_INVALID_INDEX, acxService_DMA, ioExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AcxSexuCohereMappedBuffers(mexu, discard, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}

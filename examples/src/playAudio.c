@@ -32,7 +32,7 @@ int main(int argc, char const* argv[])
     afxUnit dIcd = 0;
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
-    dsyc.caps = avxAptitude_GFX;
+    dsyc.caps = avxService_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
     AvxConfigureDrawSystem(dIcd, &dsyc);
@@ -45,7 +45,7 @@ int main(int argc, char const* argv[])
     afxUnit mIcd = 0;
     afxMixSystem msys;
     amxSystemConfig msyc = { 0 };
-    msyc.caps = amxAptitude_SFX;
+    msyc.caps = amxService_SFX;
     msyc.accel = afxAcceleration_MPU;
     msyc.dsys = dsys; // integrate our draw system
     msyc.exuCnt = 1;

@@ -28,39 +28,15 @@
 
 #define AFX_MAX_BRIDGES_PER_IOMMU (32)
 
-typedef enum afxEventId
-{
-    afxEventId_FENCE,
-    afxEventId_EXECUTE,
-    afxEventId_PRESENT,
-    afxEventId_UPLOAD,
-    afxEventId_DOWNLOAD,
-    afxEventId_PREFETCH,
-    afxEventId_REFRESH,
-    afxEventId_RECONNECT,
-    afxEventId_EXTENT,
-} afxEventId;
-
-AFX_DEFINE_STRUCT(afxEvent)
-{
-    afxEventId  id;
-    afxBool     posted, accepted;
-    void*       udd[1];
-};
-
 AFX_DEFINE_STRUCT(afxIommuConfig)
 // The system-wide settings and parameters prefered/required for acquisition.
 {
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    afxAptitude         caps;
+    afxService          caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
-    // The number of system extensions to be enabled.
-    afxUnit             extCnt;
-    // An array of Qwadro strings containing the names of extensions to enable for the desired system.
-    afxString const*    exts;
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.

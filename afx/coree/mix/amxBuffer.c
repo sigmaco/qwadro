@@ -429,3 +429,137 @@ _AMX afxError AmxAcquireBuffers(afxMixSystem msys, afxUnit cnt, amxBufferInfo co
 
     return err;
 }
+
+_AMX afxError _AmxMsysRemapBuffersCb_SW(afxMixSystem msys, afxBool unmap, afxUnit cnt, _amxBufferRemapping const maps[])
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AmxMsysGetIoExuMask(msys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxMixBridge mexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, dedIoExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AmxMexuRemapBuffers(mexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, ioExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AmxMexuRemapBuffers(mexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}
+
+_AMX afxError _AmxMsysCohereMappedBuffersCb_SW(afxMixSystem msys, afxBool discard, afxUnit cnt, amxBufferedMap const maps[])
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AmxMsysGetIoExuMask(msys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxMixBridge mexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, dedIoExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AmxMexuCohereMappedBuffers(mexu, discard, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AmxChooseMixBridges(msys, AFX_INVALID_INDEX, amxService_DMA, ioExuMask, exuIdx++, 1, &mexu))
+        {
+            queErr = _AmxMexuCohereMappedBuffers(mexu, discard, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}

@@ -28,7 +28,7 @@ AFX_DEFINE_STRUCT(_acxSdevReg)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
-    acxAptitude         capabilities;
+    acxService         capabilities;
     acxFeatures         features;
     acxLimits           limits;
     afxUnit             minQueCnt; // usually 3
@@ -64,7 +64,7 @@ AFX_OBJECT(afxWarpDevice)
     void*               udd;
 
     afxAcceleration     acceleration;
-    acxAptitude         capabilities;
+    acxService         capabilities;
     acxFeatures         features;
     acxLimits           limits;
     afxUnit             minQueCnt; // usually 3

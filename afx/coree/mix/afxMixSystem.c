@@ -182,6 +182,90 @@ _AMX afxClass const* _AmxMsysGetSndsClass(afxMixSystem msys)
     return cls;
 }
 
+_AMX afxError _AmxMsysTransferCb_SW(afxMixSystem msys, amxTransference* ctrl, afxUnit opCnt, void const* ops)
+{
+    afxError err = { 0 };
+    // @msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(opCnt);
+    AFX_ASSERT(ctrl);
+    AFX_ASSERT(ops);
+
+    afxMask msysIoExuMask = msys->ioExuMask;
+    afxMask exuMask = ctrl->exuMask;
+    afxUnit exuCnt = msys->bridgeCnt;
+    afxUnit firstExuIdx = AfxRandom2(0, exuCnt - 1);
+
+    AFX_ASSERT(!exuMask || (msysIoExuMask & exuMask));
+
+    afxBool queued = FALSE;
+
+    while (1)
+    {
+        for (afxUnit exuIdx = firstExuIdx; exuIdx < exuCnt; exuIdx++)
+        {
+            firstExuIdx = 0;
+
+            // Skip non-transfer-capable EXUs.
+            if (!(msysIoExuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            // Try to pick one of the dedicated ones when EXUs are not specified.
+            if ((!exuMask) && msys->dedIoExuMask && (!(msys->dedIoExuMask & AFX_BITMASK(exuIdx))))
+                continue; // for
+#if 0
+            // if a mask is specified and it is not one of the existing dedicated EXUs in mask.
+            if (msys->dedIoExuMask)
+            {
+                if (exuMask)
+                {
+                    if ((exuMask & msys->dedIoExuMask))
+                    {
+                        if (!(msys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                            continue;
+                    }
+                }
+                else
+                {
+
+                }
+
+                if (exuMask && (msys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+            }
+#endif
+
+            afxMixBridge mexu;
+            if (!AmxGetMixBridges(msys, exuIdx, 1, &mexu))
+            {
+                AfxThrowError();
+                continue;
+            }
+
+            afxError err2 = _AmxMexuTransferMixMemory(mexu, ctrl, opCnt, ops);
+
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // for
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // for
+
+            AfxThrowError();
+        }
+
+        if (err || queued) break; // while --- find bridges
+    }
+    return err;
+}
+
 _AMX _amxDdiMsys const _AMX_MSYS_IMPL =
 {
 #if 0
@@ -224,7 +308,7 @@ _AMX afxUnit AmxGetMixBridges(afxMixSystem msys, afxUnit baseIdx, afxUnit cnt, a
     return rslt;
 }
 
-_AMX afxUnit AmxChooseMixBridges(afxMixSystem msys, afxUnit mdevId, amxAptitude caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxMixBridge bridges[])
+_AMX afxUnit AmxChooseMixBridges(afxMixSystem msys, afxUnit mdevId, amxService caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxMixBridge bridges[])
 {
     afxError err = { 0 };
     // msys must be a valid afxMixSystem handle.
@@ -563,20 +647,20 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         amxDeviceInfo capsi;
         AmxQueryMixCapabilities(mdev, &capsi);
 
-        if ((capsi.capabilities & amxAptitude_DMA) == amxAptitude_DMA)
+        if ((capsi.capabilities & amxService_DMA) == amxService_DMA)
             msys->ioExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (amxAptitude_DMA | amxAptitude_PCX | amxAptitude_SFX)) == amxAptitude_DMA)
+        if ((capsi.capabilities & (amxService_DMA | amxService_PCX | amxService_SFX)) == amxService_DMA)
             msys->dedIoExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & amxAptitude_PCX) == amxAptitude_PCX)
+        if ((capsi.capabilities & amxService_PCX) == amxService_PCX)
             msys->cfxExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (amxAptitude_PCX | amxAptitude_SFX)) == amxAptitude_PCX)
+        if ((capsi.capabilities & (amxService_PCX | amxService_SFX)) == amxService_PCX)
             msys->dedCfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & amxAptitude_SFX) == amxAptitude_SFX)
+        if ((capsi.capabilities & amxService_SFX) == amxService_SFX)
             msys->gfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxAptitude_PRESENT) == avxAptitude_PRESENT)
+        if ((capsi.capabilities & avxService_PRESENT) == avxService_PRESENT)
             msys->videoExuMask |= AFX_BITMASK(i);
     }
 
@@ -715,7 +799,7 @@ _AMX afxError AmxConfigureMixSystem(afxUnit icd, amxSystemConfig* cfg)
     AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
-    amxAptitude caps = cfg->caps;
+    amxService caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
 
     afxModule drv;

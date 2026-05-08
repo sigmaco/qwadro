@@ -62,7 +62,7 @@ int main(int argc, char const* argv[])
     afxUnit avxIcd = 0;
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
-    dsyc.caps = avxAptitude_GFX;
+    dsyc.caps = avxService_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
     AvxConfigureDrawSystem(avxIcd, &dsyc);
@@ -114,22 +114,22 @@ int main(int argc, char const* argv[])
 
     afxDrawContext drawContexts[MAX_FRAMES_IN_FLIGHT];
     avxContextConfig ctxi = { 0 };
-    ctxi.caps = avxAptitude_GFX;
+    ctxi.caps = avxService_GFX;
     AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
     avxFence frameReadySems[MAX_FRAMES_IN_FLIGHT];
     avxFence frameCompleteSems[MAX_FRAMES_IN_FLIGHT];
     avxFenceInfo frameSemsInfos[MAX_FRAMES_IN_FLIGHT] = { 0 };
-    frameSemsInfos[0].flags = avxFenceFlag_TIMELINE;
-    frameSemsInfos[1].flags = avxFenceFlag_TIMELINE;
-    frameSemsInfos[2].flags = avxFenceFlag_TIMELINE;
+    frameSemsInfos[0].flags = avxFenceFlag_PROGRESSIVE;
+    frameSemsInfos[1].flags = avxFenceFlag_PROGRESSIVE;
+    frameSemsInfos[2].flags = avxFenceFlag_PROGRESSIVE;
     AvxAcquireFences(dsys, frameCap, frameSemsInfos, frameReadySems);
     AvxAcquireFences(dsys, frameCap, frameSemsInfos, frameCompleteSems);
 
     avxFence sema;
     avxFenceInfo semi = { 0 };
-    semi.flags = avxFenceFlag_TIMELINE;
+    semi.flags = avxFenceFlag_PROGRESSIVE;
     AvxAcquireFences(dsys, 1, &semi, &sema);
 
     arxRenderContext rctx;
@@ -213,7 +213,7 @@ int main(int argc, char const* argv[])
             afxDrawContext dctx = drawContexts[outBufIdx];
 #else
             avxContextConfig dci = { 0 };
-            dci.caps = avxAptitude_GFX;
+            dci.caps = avxService_GFX;
             afxDrawContext dctx;
             AvxAcquireDrawContexts(dsys, NIL, &dci, 1, &dctx);
 #endif

@@ -193,7 +193,7 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
     static amxDeviceInfo const portCaps[] =
     {
         {
-            .capabilities = amxAptitude_SFX | amxAptitude_DMA,
+            .capabilities = amxService_SFX | amxService_DMA,
             .minQueCnt = 2,
             .maxQueCnt = 16,
             .acceleration = afxAcceleration_CPU
@@ -272,7 +272,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_SFX | amxAptitude_DMA | amxAptitude_PCX | amxAptitude_SINK,
+            .capabilities = amxService_SFX | amxService_DMA | amxService_PCX | amxService_SINK,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,
@@ -286,7 +286,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_DMA | amxAptitude_PCX,
+            .capabilities = amxService_DMA | amxService_PCX,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,
@@ -300,7 +300,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_DMA,
+            .capabilities = amxService_DMA,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,
@@ -314,7 +314,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
             .dev.type = afxDeviceType_SOUND,
 
             .features = features,
-            .capabilities = amxAptitude_SINK,
+            .capabilities = amxService_SINK,
             .acceleration = afxAcceleration_MPU,
             .minQueCnt = 2,
             .maxQueCnt = 16,

@@ -20,7 +20,7 @@
 #ifndef ACX_QUEUE_DDK_H
 #define ACX_QUEUE_DDK_H
 
-#include "acxStorageDDK.h"
+#include "acxBufferDDK.h"
 
 AFX_DECLARE_UNION(_acxIoReqPacket);
 AFX_DECLARE_UNION(_acxIoReqLut);

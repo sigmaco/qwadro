@@ -616,7 +616,7 @@ _AVX afxError AvxAcquireSamplers(afxDrawSystem dsys, afxUnit cnt, avxSamplerConf
 
     // dsys must support at least one bridge with one of the GRAPHICS or COMPUTE capabilities.    
     afxDrawBridge dexu;
-    afxBool bridgedFound = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_GFX/* | avxAptitude_PCX*/, NIL, 0, 1, &dexu);
+    afxBool bridgedFound = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_GFX/* | avxService_PCX*/, NIL, 0, 1, &dexu);
     AFX_ASSERT(bridgedFound);
 
     afxClass* cls = (afxClass*)_AvxDsysGetDdi(dsys)->sampCls(dsys);

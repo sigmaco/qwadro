@@ -55,7 +55,7 @@ AFX_DEFINE_STRUCT(amxLimits)
 
 AFX_DEFINE_STRUCT(amxDeviceInfo)
 {
-    amxAptitude     capabilities;
+    amxService     capabilities;
     afxAcceleration acceleration;
     afxUnit         minQueCnt; // usually 3
     afxUnit         maxQueCnt; // the count of queues in this port. Each port must support at least one queue.

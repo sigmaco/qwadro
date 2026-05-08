@@ -31,7 +31,7 @@ AFX_DEFINE_STRUCT(_avxDdevReg)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
-    avxAptitude         capabilities;
+    avxService         capabilities;
     avxFeatures         features;
     avxLimits           limits;
     afxUnit             minQueCnt; // usually 3
@@ -69,7 +69,7 @@ AFX_OBJECT(afxDrawDevice)
     void*               udd;
 
     afxAcceleration     acceleration;
-    avxAptitude         capabilities;
+    avxService         capabilities;
     avxFeatures         features;
     avxLimits           limits;
     afxUnit             minQueCnt; // usually 3

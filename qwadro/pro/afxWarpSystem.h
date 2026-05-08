@@ -32,7 +32,7 @@ AFX_DEFINE_STRUCT(acxSystemConfig)
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    acxAptitude         caps;
+    acxService         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
     // The features to be enabled.
@@ -222,7 +222,7 @@ ACX afxUnit AcxChooseWarpBridges
     afxUnit mdevId,
 
     // An optional bitmask describing the warping device's port capabilities for which bridges must be linked against. 
-    acxAptitude caps,
+    acxService caps,
 
     afxMask exuMask,
 

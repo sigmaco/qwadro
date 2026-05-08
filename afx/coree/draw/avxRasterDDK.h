@@ -25,7 +25,58 @@
 #ifndef AVX_RASTER_DDK_H
 #define AVX_RASTER_DDK_H
 
-#include "avxIommuDDK.h"
+#include "avxBufferDDK.h"
+
+AFX_DEFINE_STRUCT(_avxRasStorage)
+{
+    afxLink iommu;
+    // binding
+    afxUnit mmu; // memory holder
+    afxSize size; // offset into memory holder bound to this storage block.
+    // Persistent mapping required at acquisition. Do not allow unmapping.
+    afxBool     permanentlyMapped;
+    afxAtom32   pendingRemap;
+    afxSize     mapOffset;
+    afxUnit     mapRange;
+    afxFlags    mapFlags;
+    afxByte*    mapPtr; // used by mapping
+    union
+    {
+        struct
+        {
+            union
+            {
+                afxSize     addr;
+                afxByte*    bytemap;
+                afxUnit8*   u8;
+                afxUnit16*  u16;
+                afxUnit32*  u32;
+                afxInt8*    i8;
+                afxInt16*   i16;
+                afxInt32*   i32;
+                afxReal32*  f32;
+                afxReal64*  f64;
+                afxV2d*     f32v2;
+                afxV3d*     f32v3;
+                afxV4d*     f32v4;
+            };
+            afxBool external;
+        } host;
+        struct
+        {
+            int fd;
+        } fd;
+        struct
+        {
+            afxString type;
+            union
+            {
+                void* handle;
+                void* name;
+            };
+        } w32;
+    };
+};
 
 AFX_DECLARE_STRUCT(_avxDdiRas);
 AFX_DECLARE_STRUCT(_avxIddRas);
@@ -79,5 +130,12 @@ AVX afxClassConfig const _AVX_CLASS_CONFIG_RAS;
 AVXINL void _AvxSanitizeRasterIo(avxRaster ras, afxSize bufCap, afxUnit cnt, avxRasterIo const raw[], avxRasterIo san[]);
 AVXINL void _AvxSanitizeRasterCopy(avxRaster ras, avxRaster src, afxUnit cnt, avxRasterCopy const raw[], avxRasterCopy san[]);
 AVXINL void _AvxSanitizeRasterRegion(avxRaster ras, afxUnit cnt, avxRasterRegion const raw[], avxRasterRegion san[]);
+
+AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[]);
+AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[]);
+
+AVXINL void _AvxAllocateRasters(afxUnit cnt, avxRaster rasters[]);
+
+AVXINL void* _AvxGetClientRasterData(avxRaster ras, afxSize from);
 
 #endif//AVX_RASTER_DDK_H
