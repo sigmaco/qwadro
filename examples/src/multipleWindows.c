@@ -50,7 +50,7 @@ int main(int argc, char const* argv[])
     afxUnit avxIcd = 0;
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
-    dsyc.caps = avxAptitude_GFX;
+    dsyc.caps = avxService_GFX;
     dsyc.accel = afxAcceleration_DPU;
     dsyc.exuCnt = 1;
     AvxConfigureDrawSystem(avxIcd, &dsyc);
@@ -89,7 +89,7 @@ int main(int argc, char const* argv[])
 
     afxDrawContext drawContexts[FRAMES_IN_FLIGHT];
     avxContextConfig ctxi = { 0 };
-    ctxi.caps = avxAptitude_GFX;
+    ctxi.caps = avxService_GFX;
     AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
     AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 

@@ -894,7 +894,7 @@ _ARX afxError ArxBeginScene(arxRenderContext rctx, afxDrawContext transferDctx, 
     {
         afxDrawContext dctx;
         avxContextConfig ctxi = { 0 };
-        ctxi.caps = avxAptitude_DMA;
+        ctxi.caps = avxService_DMA;
         AvxAcquireDrawContexts(rctx->dsys, NIL, &ctxi, 1, &dctx);
         
         if (frame->transferDctx)
@@ -916,7 +916,7 @@ _ARX afxError ArxBeginScene(arxRenderContext rctx, afxDrawContext transferDctx, 
     {
         afxDrawContext dctx;
         avxContextConfig ctxi = { 0 };
-        ctxi.caps = avxAptitude_GFX;
+        ctxi.caps = avxService_GFX;
         AvxAcquireDrawContexts(rctx->dsys, NIL, &ctxi, 1, &dctx);
 
         if (frame->drawDctx)
@@ -1113,8 +1113,8 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
 
         avxFence fences[2] = { 0 };
         avxFenceInfo fencesInfo[2] = { 0 };
-        fencesInfo[0].flags = avxFenceFlag_TIMELINE;
-        fencesInfo[1].flags = avxFenceFlag_TIMELINE;
+        fencesInfo[0].flags = avxFenceFlag_PROGRESSIVE;
+        fencesInfo[1].flags = avxFenceFlag_PROGRESSIVE;
         fencesInfo[0].initialVal = 0;
         fencesInfo[1].initialVal = 0; // start avail already signaled
         if (AvxAcquireFences(dsys, 2, fencesInfo, fences))

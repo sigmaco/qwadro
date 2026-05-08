@@ -26,7 +26,7 @@
 #define AVX_SYSTEM_DDK_H
 
 #include "afxDrawBridgeDDK.h"
-#include "avxIommuDDK.h"
+//#include "avxIommuDDK.h"
 #include "avxFenceDDK.h"
 #include "avxPipelineDDK.h"
 #include "avxQueryPoolDDK.h"
@@ -156,8 +156,6 @@ AFX_OBJECT(afxDrawSystem)
     afxClass            fencCls;
     afxClass            dctxCls;
 
-    afxStringBase       shdStrb;
-
     afxBool             nonRhcs;
     avxClipSpaceDepth   clipSpaceDepth;
     afxReal             clipSpaceDepthRangeEpsilon;
@@ -174,9 +172,6 @@ AFX_OBJECT(afxDrawSystem)
 //AFX_STATIC_ASSERT(offsetof(AFX_OBJECT(afxDrawSystem), m) == 0x00, "");
 #endif
 #endif//_AVX_DRAW_SYSTEM_C
-
-AVX afxClassConfig const _AVX_CLASS_CONFIG_DSYS;
-AVX _avxDdiDsys const _AVX_DDI_DSYS;
 
 AVX _avxDdiDsys const* _AvxDsysGetDdi(afxDrawSystem dsys);
 AVX afxMask _AvxDsysGetIoExuMask(afxDrawSystem dsys, afxMask* dedIoExuMask);
@@ -195,25 +190,16 @@ AVX afxClass const* _AvxDsysSW_GetSampClassCb(afxDrawSystem dsys);
 AVX afxClass const* _AvxDsysSW_GetShdClassCb(afxDrawSystem dsys);
 AVX afxClass const* _AvxDsysSW_GetVinClassCb(afxDrawSystem dsys);
 
-AVX afxError    _AvxLoadGlScript(afxStream file, afxArray* fCode);
-
-AVX afxBool     AvxGetShaderStringBase(afxDrawSystem dsys, afxStringBase* base);
-
-AVX afxClass const* _AvxDsysSW_GetFencClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetQrypClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetVinClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetRasClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetBufClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetSampClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetPipClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetCanvClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetShdClassCb(afxDrawSystem dsys);
-AVX afxClass const* _AvxDsysSW_GetLigaClassCb(afxDrawSystem dsys);
 AVX afxClass const* _AvxDsysSW_GetTxdClassCb(afxDrawSystem dsys);
 
 AVX avxFeatures const* _AvxDsysGetReqFeatures(afxDrawSystem dsys);
 AVX avxLimits const* _AvxDsysGetLimits(afxDrawSystem dsys);
 
+AVX afxClassConfig const _AVX_CLASS_CONFIG_DSYS;
+AVX _avxDdiDsys const _AVX_DDI_DSYS;
+
 AVX afxClassConfig const _AVX_CLASS_CONFIG_TXD;
+
+AVX afxError _AvxDsysSW_TransferCb(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops);
 
 #endif//AVX_SYSTEM_DDK_H

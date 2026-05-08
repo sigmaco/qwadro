@@ -67,7 +67,7 @@ typedef enum amxContextFlag
 
 AFX_DEFINE_STRUCT(amxContextConfig)
 {
-    amxAptitude     caps;
+    amxService     caps;
     afxMask         exuMask;
     amxContextFlags flags;
     amxCmdFlags     cmdFlags;

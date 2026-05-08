@@ -195,7 +195,7 @@ _ACX afxError acxIcdHook(afxModule icd, afxUri const* manifest)
 
             .features = features,
 
-            .capabilities = acxAptitude_DMA,
+            .capabilities = acxService_DMA,
             .minQueCnt = 2,
             .maxQueCnt = 16,
         },

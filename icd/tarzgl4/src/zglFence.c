@@ -159,7 +159,7 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
 
-    if (fenc->m.flags & avxFenceFlag_TIMELINE)
+    if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
     {
         if (value < curVal)
             reallyWait = TRUE;
@@ -262,7 +262,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
 
-    if (fenc->m.flags & avxFenceFlag_TIMELINE)
+    if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
     {
         if (value < curVal)
             reallyFence = TRUE;
@@ -326,7 +326,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
                 //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
                 SetEvent(fenc->hEventW32);
 #else
-                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
                     _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
 #endif
                 break;
@@ -339,7 +339,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
                 //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
                 SetEvent(fenc->hEventW32);
 #else
-                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
                     _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
 #endif
                 break;
@@ -359,7 +359,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 #if 0
                 SetEvent(fenc->hEventW32);
 #else
-                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+                if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
                     _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
 #endif
                 err = afxError_UNKNOWN;
@@ -369,7 +369,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
         }
         else
         {
-            if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_TIMELINE)))
+            if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
                 _ZglFencSignalOnHostCb(fenc, value);
         }
     }
@@ -486,7 +486,7 @@ _ZGL afxError _ZglFencWaitOnHostCb(avxFence fenc, afxUnit64 value, afxUnit64 tim
     {
         afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
 
-        if (fenc->m.flags & avxFenceFlag_TIMELINE)
+        if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
         {
             if (value > curVal)
             {

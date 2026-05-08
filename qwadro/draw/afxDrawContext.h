@@ -100,7 +100,7 @@ typedef enum avxContextFlag
 
 AFX_DEFINE_STRUCT(avxContextConfig)
 {
-    avxAptitude     caps;
+    avxService     caps;
     afxMask         exuMask;
     avxContextFlags flags;
     avxCmdFlags     cmdFlags;
@@ -187,10 +187,10 @@ AVX afxMask AvxGetCommandPort
     afxMask exuMask
 );
 
-AVX avxAptitude AvxGetCommandAptitude
+AVX avxService AvxGetCommandAptitude
 (
     afxDrawContext dctx, 
-    avxAptitude caps
+    avxService caps
 );
 
 AVX afxDrawContext AvxGetCommandPool

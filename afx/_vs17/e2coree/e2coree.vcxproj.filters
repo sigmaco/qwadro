@@ -987,9 +987,6 @@
     <ClInclude Include="..\..\..\qwadro\draw\avxBuffered.h">
       <Filter>coree\draw\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\draw\avxIommuDDK.h">
-      <Filter>coree\draw\io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\qwadro\draw\avxRaster.h">
       <Filter>coree\draw\io</Filter>
     </ClInclude>
@@ -1023,17 +1020,11 @@
     <ClInclude Include="..\..\..\qwadro\mix\amxBuffered.h">
       <Filter>coree\mix\io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\coree\pro\acxStorageDDK.h">
-      <Filter>coree\pro\io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\coree\pro\acxBufferDDK.h">
       <Filter>coree\pro\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\pro\acxBuffer.h">
       <Filter>coree\pro\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\coree\mix\amxStorageDDK.h">
-      <Filter>coree\mix\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\qwadro\afxBuffered.h">
       <Filter>coree\mem</Filter>
@@ -1683,9 +1674,6 @@
     <ClCompile Include="..\..\coree\draw\afxDrawContext.c">
       <Filter>coree\draw</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\draw\afxDrawContextDDK.c">
-      <Filter>coree\draw</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\draw\afxDrawDevice.c">
       <Filter>coree\draw</Filter>
     </ClCompile>
@@ -1854,12 +1842,6 @@
     <ClCompile Include="..\..\coree\draw\avxBufferIo.c">
       <Filter>coree\draw\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxIommu.c">
-      <Filter>coree\draw\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\draw\avxIommuDDK.c">
-      <Filter>coree\draw\io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\draw\avxRaster.c">
       <Filter>coree\draw\io</Filter>
     </ClCompile>
@@ -1887,17 +1869,11 @@
     <ClCompile Include="..\..\coree\mix\amxBufferIo.c">
       <Filter>coree\mix\io</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\pro\acxStorage.c">
-      <Filter>coree\pro\io</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\pro\acxBufferIo.c">
       <Filter>coree\pro\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\pro\acxBuffer.c">
       <Filter>coree\pro\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\mix\amxStorage.c">
-      <Filter>coree\mix\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\afxBufferIo.c">
       <Filter>coree\mem</Filter>
@@ -1909,9 +1885,6 @@
       <Filter>coree\mem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\afxIommu.c">
-      <Filter>coree\io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\afxIoContextDDK.c">
       <Filter>coree\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\afxFence.c">

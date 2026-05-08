@@ -30,27 +30,27 @@
 
 #define AMX_MAX_QUEUES_PER_BRIDGE (32)
 
-typedef enum amxAptitude
+typedef enum amxService
 {
     // Supports transfers via direct memory access.
-    amxAptitude_DMA     = AFX_BITMASK(0),
+    amxService_DMA     = AFX_BITMASK(0),
     // Supports sound effects.
-    amxAptitude_SFX     = AFX_BITMASK(1),
+    amxService_SFX     = AFX_BITMASK(1),
     // Supports video effects.
-    amxAptitude_VFX     = AFX_BITMASK(2),
+    amxService_VFX     = AFX_BITMASK(2),
     // Supports general purpose computation.
-    amxAptitude_PCX     = AFX_BITMASK(3),
+    amxService_PCX     = AFX_BITMASK(3),
     // Supports on-device output.
-    amxAptitude_SINK    = AFX_BITMASK(4),
+    amxService_SINK    = AFX_BITMASK(4),
     // Supports video acceleration on input/output.
-    amxAptitude_VAIO    = AFX_BITMASK(5),
-} amxAptitude;
+    amxService_VAIO    = AFX_BITMASK(5),
+} amxService;
 
 AFX_DEFINE_STRUCT(amxBridgeConfig)
 {
     afxUnit         mdevId;
     afxAcceleration acceleration;
-    amxAptitude     capabilities; // specifies capabilities of queues in a port.
+    amxService     capabilities; // specifies capabilities of queues in a port.
     afxUnit         minQueCnt;
     afxReal const*  queuePriority;
 };

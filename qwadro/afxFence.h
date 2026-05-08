@@ -44,7 +44,7 @@ typedef enum afxFenceFlag
     afxFenceFlag_CPU        = AFX_BITMASK(0),
     // The fence is a timeline semaphore.
     // If not present, it is a binary semaphore.
-    afxFenceFlag_TIMELINE   = AFX_BITMASK(1),
+    afxFenceFlag_PROGRESSIVE   = AFX_BITMASK(1),
     // The fence has been imported from other API.
     afxFenceFlag_EXTERNAL   = AFX_BITMASK(2)
 } afxFenceFlags;
@@ -98,7 +98,7 @@ AFX afxError AfxWaitForFences
     afxFence const fences[],
 
     // An array of @cnt timeline values.
-    // Optinal. Only for afxFenceFlag_TIMELINE.
+    // Optinal. Only for afxFenceFlag_PROGRESSIVE.
     afxUnit64 const values[]
 );
 

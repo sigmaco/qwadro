@@ -24,21 +24,21 @@
 
 #define ACX_MAX_QUEUES_PER_BRIDGE (32)
 
-typedef enum acxAptitude
+typedef enum acxService
 {
     // Supports transfers via direct memory access.
-    acxAptitude_DMA     = AFX_BITMASK(0),
+    acxService_DMA     = AFX_BITMASK(0),
     // Supports general purpose computation.
-    acxAptitude_PCX     = AFX_BITMASK(1),
+    acxService_PCX     = AFX_BITMASK(1),
     // Supports parallel threaded execution.
-    acxAptitude_PTX     = AFX_BITMASK(2),
-} acxAptitude;
+    acxService_PTX     = AFX_BITMASK(2),
+} acxService;
 
 AFX_DEFINE_STRUCT(acxBridgeConfig)
 {
     afxUnit         sdevId;
     afxAcceleration acceleration;
-    acxAptitude     capabilities; // specifies capabilities of queues in a port.
+    acxService     capabilities; // specifies capabilities of queues in a port.
     afxUnit         minQueCnt;
     afxReal const*  queuePriority;
 };

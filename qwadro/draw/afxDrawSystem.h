@@ -76,7 +76,7 @@ AFX_DEFINE_STRUCT(avxSystemConfig)
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    avxAptitude         caps;
+    avxService         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
     // The features to be enabled.
@@ -291,7 +291,7 @@ AVX afxUnit         AvxChooseDrawBridges
     afxUnit         ddevId, 
 
     // An optional bitmask describing the drawing device's port capabilities for which bridges must be linked against. 
-    avxAptitude     caps,
+    avxService     caps,
 
     afxMask         exuMask,
 

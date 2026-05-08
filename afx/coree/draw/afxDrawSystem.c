@@ -31,6 +31,7 @@
 //#define _AVX_SURFACE_C
 //#define _AVX_DRAW_INPUT_C
 #define _AVX_BUFFER_C
+#define _AVX_RASTER_C
 #include "avxIcd.h"
 #define _AUX_UX_C
 #include "../ux/auxIcd.h"
@@ -198,6 +199,557 @@ _AVX afxClass const* _AvxDsysSW_GetTxdClassCb(afxDrawSystem dsys)
     return cls;
 }
 
+_AVX afxError _AvxDsysSW_TransferCb(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops)
+{
+    afxError err = { 0 };
+    // @dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(opCnt);
+    AFX_ASSERT(ctrl);
+    AFX_ASSERT(ops);
+
+    afxMask dsysIoExuMask = dsys->ioExuMask;
+    afxMask exuMask = ctrl->exuMask;
+    afxUnit exuCnt = dsys->bridgeCnt;
+    afxUnit firstExuIdx = AfxRandom2(0, exuCnt - 1);
+
+    AFX_ASSERT(!exuMask || (dsysIoExuMask & exuMask));
+
+    afxBool queued = FALSE;
+
+    while (1)
+    {
+        for (afxUnit exuIdx = firstExuIdx; exuIdx < exuCnt; exuIdx++)
+        {
+            firstExuIdx = 0;
+
+            // Skip non-transfer-capable EXUs.
+            if (!(dsysIoExuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            // Try to pick one of the dedicated ones when EXUs are not specified.
+            if ((!exuMask) && dsys->dedIoExuMask && (!(dsys->dedIoExuMask & AFX_BITMASK(exuIdx))))
+                continue; // for
+#if 0
+            // if a mask is specified and it is not one of the existing dedicated EXUs in mask.
+            if (dsys->dedIoExuMask)
+            {
+                if (exuMask)
+                {
+                    if ((exuMask & dsys->dedIoExuMask))
+                    {
+                        if (!(dsys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                            continue;
+                    }
+                }
+                else
+                {
+
+                }
+
+                if (exuMask && (dsys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+            }
+#endif
+
+            afxDrawBridge dexu;
+            if (!AvxGetDrawBridges(dsys, exuIdx, 1, &dexu))
+            {
+                AfxThrowError();
+                continue;
+            }
+
+            afxError err2 = _AvxDexuTransferVideoMemory(dexu, ctrl, opCnt, ops);
+
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // for
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // for
+
+            AfxThrowError();
+        }
+
+        // Try again
+        if (err == afxError_TIMEOUT || err == afxError_BUSY)
+            continue; // while
+
+        if (err || queued)
+            break; // while --- find bridges
+    }
+    return err;
+}
+
+_AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[])
+{
+    afxError err = { 0 };
+    // @dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AvxDsysGetIoExuMask(dsys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxDrawBridge dexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
+        {
+            queErr = _AvxDexuRemapBuffers(dexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, exuIdx++, 1, &dexu))
+        {
+            queErr = _AvxDexuRemapBuffers(dexu, unmap, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}
+
+_AVX afxError _AvxDsysSW_CohereMappedBuffersCb(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[])
+{
+    afxError err = { 0 };
+    // @dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(maps);
+
+    afxError queErr;
+    afxBool queued = FALSE;
+
+    afxMask dedIoExuMask;
+    afxMask ioExuMask = _AvxDsysGetIoExuMask(dsys, &dedIoExuMask);
+    afxUnit exuIdx = 0;
+    afxDrawBridge dexu;
+    afxUnit exuCnt;
+
+    // Firstly, try to put them in a dedicated queue.
+    if (dedIoExuMask)
+    {
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
+        {
+            queErr = _AvxDexuCohereMappedBuffers(dexu, invalidate, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+
+    // If we can not put them in a dedicated queue, try to put them in a shared one.
+    if (!queued)
+    {
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, 0, 0, NIL);
+        AFX_ASSERT(exuCnt);
+        exuIdx = 0;
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, exuIdx++, 1, &dexu))
+        {
+            queErr = _AvxDexuCohereMappedBuffers(dexu, invalidate, cnt, maps);
+            err = queErr;
+
+            if (!queErr)
+            {
+                queued = TRUE;
+                break; // while
+            }
+
+            if (queErr == afxError_TIMEOUT || queErr == afxError_BUSY)
+                continue; // while
+
+            AfxThrowError();
+        }
+    }
+    return err;
+}
+
+AFX_DEFINE_STRUCT(avxMemoryReq)
+{
+    afxSize     size;
+    afxSize     align;
+    uint32_t    memType;
+};
+
+AFX_DEFINE_STRUCT(avxBufferStorage)
+{
+    afxSize     size;
+    afxSize     align;
+    uint32_t    memType;
+};
+
+AFX_DEFINE_STRUCT(avxRasterStorage)
+{
+    afxSize     size;
+    afxSize     align;
+    uint32_t    memType;
+};
+
+_AVX void _AvxGetRasterMemoryRequirements(afxDrawSystem dsys, avxRaster ras, avxMemoryReq* req)
+{
+    avxMemoryReq req2;
+    req2.align = ras->reqAlign;
+    req2.size = ras->reqSiz;
+    req2.memType = ras->reqMemType;
+    *req = req2;
+}
+
+_AVX void _AvxGetBufferMemoryRequirements(afxDrawSystem dsys, avxBuffer buf, avxMemoryReq* req)
+{
+    avxMemoryReq req2 = { 0 };
+    req2.align = buf->reqAlign;
+    req2.size = buf->reqSiz;
+    req2.memType = buf->reqMemType;
+}
+
+_AVX void _GetImageSubresourceLayout(afxDrawSystem dsys, avxRaster ras, afxUnit lodIdx, afxUnit layerIdx, avxRasterArrangement* layout)
+{
+    avxFormat fmt = ras->fmt;
+    avxFormatDescription pfd;
+    AvxDescribeFormats(1, &fmt, &pfd);
+
+    avxRasterArrangement lay2 = { 0 };
+    afxWarp whd = { ras->whd.w, ras->whd.h, ras->whd.d };
+    afxBool is3d = !!AvxGetRasterFlags(ras, avxRasterFlag_3D);
+
+    if (AvxGetRasterFlags(ras, avxRasterFlag_MULTISAMP))
+    {
+        while (lodIdx--)
+        {
+            afxUnit rowStride = AFX_ALIGN_SIZE(whd.w * pfd.stride, AFX_SIMD_ALIGNMENT);
+            afxUnit imgStride = AFX_ALIGN_SIZE(whd.h * rowStride, AFX_SIMD_ALIGNMENT);
+            lay2.offset += whd.d * imgStride;
+
+            whd.w = AFX_MAX(1, whd.w * 2);
+            whd.h = AFX_MAX(1, whd.h * 2);
+            if (is3d) whd.d = AFX_MAX(1, whd.d * 2);
+        }
+
+        afxUnit rowStride = AFX_ALIGN_SIZE(whd.w * pfd.stride, AFX_SIMD_ALIGNMENT);
+        afxUnit imgStride = AFX_ALIGN_SIZE(whd.h * rowStride, AFX_SIMD_ALIGNMENT);
+
+        lay2.rowStride = rowStride;
+        lay2.imgStride = imgStride;
+    }
+    else
+    {
+        while (lodIdx--)
+        {
+            afxUnit rowStride = AFX_ALIGN_SIZE(whd.w * pfd.stride, AFX_SIMD_ALIGNMENT);
+            afxUnit imgStride = AFX_ALIGN_SIZE(whd.h * rowStride, AFX_SIMD_ALIGNMENT);
+            lay2.offset += whd.d * imgStride;
+
+            whd.w = AFX_MAX(1, whd.w >> 1);
+            whd.h = AFX_MAX(1, whd.h >> 1);
+            if (is3d) whd.d = AFX_MAX(1, whd.d >> 1);
+        }
+
+        afxUnit rowStride = AFX_ALIGN_SIZE(whd.w * pfd.stride, AFX_SIMD_ALIGNMENT);
+        afxUnit imgStride = AFX_ALIGN_SIZE(whd.h * rowStride, AFX_SIMD_ALIGNMENT);
+
+        lay2.rowStride = rowStride;
+        lay2.imgStride = imgStride;
+    }
+}
+
+_AVX afxError _AvxCommitBuffers(afxDrawSystem dsys, afxUnit exuIdx, afxUnit cnt, avxBuffer buffers[], avxFence wait, avxFence signal)
+{
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxBuffer buf = buffers[i];
+
+        if (!buf->storage[0].host.addr)
+        {
+            AfxAllocate(buf->reqSiz, AVX_BUFFER_ALIGNMENT, AfxHere(), (void**)&buf->storage[0].host.addr);
+        }
+    }
+}
+
+_AVX afxError _AvxCommitRasters(afxDrawSystem dsys, afxUnit exuIdx, afxUnit cnt, avxRaster rasters[], avxFence wait, avxFence signal)
+{
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxRaster ras = rasters[i];
+
+        if (!ras->storage[0].host.addr)
+        {
+            AfxAllocate(ras->reqSiz, ras->reqAlign, AfxHere(), (void**)&ras->storage[0].host.addr);
+        }
+    }
+}
+
+_AVX afxCmdId AvxCmdPageInRasterSIGMA(afxDrawContext dctx, avxRaster ras, afxUnit rgnCnt, avxRasterRegion const rgns[]);
+_AVX afxCmdId AvxCmdPageOutRasterSIGMA(afxDrawContext dctx, avxRaster ras, afxUnit rgnCnt, avxRasterRegion const rgns[]);
+
+_AVX afxCmdId _AvxCmdRegenerateMipmapsSIGMA(afxDrawContext dctx, afxFlags flags, afxUnit rasCnt, avxRaster rasters[])
+{
+    for (afxUnit rasIt = 0; rasIt < rasCnt; rasIt++)
+    {
+        avxRaster ras = rasters[rasIt];
+        afxUnit mipLevels = ras->mipCnt;
+        afxUnit mipWidth = ras->whd.w;
+        afxUnit mipHeight = ras->whd.h;
+
+        for (afxUnit i = 1; i < mipLevels; i++)
+        {
+            AvxCmdDeclareBarrier(dctx, avxBusStage_TRANSFER, NIL);
+
+            // Set up blit
+            avxRasterBlit blit =
+            {
+                .src.lodIdx = i - 1,
+                .src.whd = { mipWidth, mipHeight, 1 },
+                .dst.lodIdx = i,
+                .dst.whd = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 }
+            };
+            AvxCmdBlitRaster(dctx, ras, 1, &blit, ras, avxTexelFilter_LINEAR);
+
+            // Update dimensions for next level
+            mipWidth = mipWidth > 1 ? mipWidth / 2 : 1;
+            mipHeight = mipHeight > 1 ? mipHeight / 2 : 1;
+        }
+    }
+}
+
+AFX_DEFINE_STRUCT(avxRasterAllocation)
+{
+    avxRaster   ras;
+    afxUnit     iommu;
+    afxSize     offset;
+    afxFlags    flags;
+    afxError    rslt;
+};
+
+AFX_DEFINE_STRUCT(avxBufferAllocation)
+{
+    avxBuffer   buf;
+    afxUnit     iommu;
+    afxSize     offset;
+    afxFlags    flags;
+    afxError    rslt;
+};
+
+_AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxRaster ras = rasters[i];
+        _avxRasStorage* bufs = &ras->storage[0];
+
+        if (ras->flags & avxRasterFlag_FOREIGN)
+        {
+            bufs->host.bytemap = NIL;
+            bufs->size = 0;
+        }
+        else
+        {
+            if (bufs->host.bytemap)
+            {
+                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                {
+                    AfxThrowError();
+                }
+            }
+            bufs->size = 0;
+        }
+    }
+    return err;
+}
+
+_AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxRasterInfo const* info = &infos[i];
+        avxRaster ras = rasters[i];
+        _avxRasStorage* bufs = &ras->storage[0];
+
+        if (ras->flags & avxRasterFlag_FOREIGN)
+        {
+            avxExorasterInfo const* info2 = (void*)info;
+            //bufs->offset = info->from;
+            AFX_ASSERT((!info2->resrvdS) || (info2->resrvdS && ras->reqSiz));
+            bufs->host.bytemap = (afxByte*)info2->resrvdA;
+            bufs->host.external = TRUE;
+            bufs->size = info2->resrvdS;
+        }
+        else
+        {
+            if (AfxAllocate(ras->reqSiz, ras->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            {
+                AfxThrowError();
+            }
+            bufs->host.external = FALSE;
+            bufs->size = ras->reqSiz;
+        }
+    }
+    return err;
+}
+
+_AVXINL afxError _AvxDsysSW_DeallocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxBuffer buf = buffers[i];
+        _avxBufStorage* bufs = &buf->storage[0];
+
+        if (buf->flags & avxBufferFlag_F)
+        {
+            bufs->host.bytemap = NIL;
+            bufs->size = 0;
+        }
+        else
+        {
+            if (bufs->host.bytemap)
+            {
+                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                {
+                    AfxThrowError();
+                }
+            }
+            bufs->size = 0;
+        }
+    }
+    return err;
+}
+
+_AVXINL afxError _AvxDsysSW_AllocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        avxBufferInfo const* info = &infos[i];
+        avxBuffer buf = buffers[i];
+        _avxBufStorage* bufs = &buf->storage[0];
+
+        if (buf->flags & avxBufferFlag_F)
+        {
+            //bufs->offset = info->from;
+            AFX_ASSERT((!info->dataSiz) || (info->dataSiz && buf->reqSiz));
+            bufs->host.bytemap = info->data;
+            bufs->host.external = TRUE;
+            bufs->size = info->dataSiz;
+        }
+        else
+        {
+            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            {
+                AfxThrowError();
+            }
+            bufs->host.external = FALSE;
+            bufs->size = buf->reqSiz;
+        }
+    }
+    return err;
+}
+
+_AVXINL void AvxCommitRasterStorage()
+{
+
+}
+
+AFX_DEFINE_STRUCT(avxBufferPaging)
+{
+    avxBuffer       buf;
+    afxSize         base;
+    afxSize         range;
+    //afxUnit         iommu;
+    //afxSize         offset;
+    afxFlags        flags;
+    afxError        rslt;
+};
+
+AFX_DEFINE_STRUCT(avxRasterPaging)
+{
+    avxRaster       ras;
+    avxRasterRegion rgn;
+    //afxUnit         iommu;
+    //afxSize         offset;
+    afxFlags        flags;
+    afxError        rslt;
+};
+
+/*
+    void NamedBufferPageCommitmentEXT(uint buffer,
+                                          intptr offset,
+                                          sizeiptr size,
+                                          boolean commit);
+    void TexturePageCommitmentEXT(uint texture,
+                                      int level,
+                                      int xoffset,
+                                      int yoffset,
+                                      int zoffset,
+                                      sizei width,
+                                      sizei height,
+                                      sizei depth,
+                                      boolean commit);
+*/
+
 _AVX _avxDdiDsys const _AVX_DDI_DSYS =
 {
     .fencCls = _AvxDsysSW_GetFencClassCb,
@@ -315,18 +867,6 @@ _AVX afxUnit AvxResolveSystemSymbols(afxDrawSystem dsys, afxUnit cnt, afxString 
     return rslt;
 }
 
-_AVX afxBool AvxGetShaderStringBase(afxDrawSystem dsys, afxStringBase* base)
-{
-    afxError err = { 0 };
-    // @dsys must be a valid afxDrawSystem handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    AFX_ASSERT(base);
-    afxStringBase strb = dsys->shdStrb;
-    AFX_TRY_ASSERT_OBJECTS(afxFcc_STRB, 1, &strb);
-    *base = dsys->shdStrb;
-    return !!strb;
-}
-
 _AVX afxUnit AvxGetDrawBridges(afxDrawSystem dsys, afxUnit baseIdx, afxUnit cnt, afxDrawBridge bridges[])
 {
     afxError err = { 0 };
@@ -352,7 +892,7 @@ _AVX afxUnit AvxGetDrawBridges(afxDrawSystem dsys, afxUnit baseIdx, afxUnit cnt,
     return rslt;
 }
 
-_AVX afxUnit AvxChooseDrawBridges(afxDrawSystem dsys, afxUnit ddevId, avxAptitude caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxDrawBridge bridges[])
+_AVX afxUnit AvxChooseDrawBridges(afxDrawSystem dsys, afxUnit ddevId, avxService caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxDrawBridge bridges[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -506,9 +1046,6 @@ _AVX afxError _AvxDsysDtorCb(afxDrawSystem dsys)
     for (afxUnit j = dsys->exuCnt; j-- > 0;)
         while (!AfxDisposeObjects(1, &dsys->exus[j]));
 #endif
-
-    if (dsys->shdStrb)
-        AfxDisposeObjects(1, &dsys->shdStrb);
 
     if (dsys->bridges)
     {
@@ -710,20 +1247,20 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         avxDeviceInfo capsi;
         AvxQueryDrawCapabilities(ddev, &capsi);
 
-        if ((capsi.capabilities & avxAptitude_DMA) == avxAptitude_DMA)
+        if ((capsi.capabilities & avxService_DMA) == avxService_DMA)
             dsys->ioExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (avxAptitude_DMA | avxAptitude_PCX | avxAptitude_GFX)) == avxAptitude_DMA)
+        if ((capsi.capabilities & (avxService_DMA | avxService_PCX | avxService_GFX)) == avxService_DMA)
             dsys->dedIoExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxAptitude_PCX) == avxAptitude_PCX)
+        if ((capsi.capabilities & avxService_PCX) == avxService_PCX)
             dsys->cfxExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (avxAptitude_PCX | avxAptitude_GFX)) == avxAptitude_PCX)
+        if ((capsi.capabilities & (avxService_PCX | avxService_GFX)) == avxService_PCX)
             dsys->dedCfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxAptitude_GFX) == avxAptitude_GFX)
+        if ((capsi.capabilities & avxService_GFX) == avxService_GFX)
             dsys->gfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxAptitude_PRESENT) == avxAptitude_PRESENT)
+        if ((capsi.capabilities & avxService_PRESENT) == avxService_PRESENT)
             dsys->videoExuMask |= AFX_BITMASK(i);
     }
 
@@ -739,15 +1276,10 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
             
         if (!err)
         {
-            if (AfxAcquireStringCatalogs(1, &dsys->shdStrb))
-                AfxThrowError();
-
             {
                 dsys->running = TRUE;
             }
 
-            if (err && dsys->shdStrb)
-                AfxDisposeObjects(1, &dsys->shdStrb);
         }
     }
 
@@ -886,7 +1418,7 @@ _AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
         AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
     }
 
-    avxAptitude caps = cfg->caps;
+    avxService caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
 
     if (0 == cfg->exuCnt)

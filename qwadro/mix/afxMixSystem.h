@@ -51,7 +51,7 @@ AFX_DEFINE_STRUCT(amxSystemConfig)
     afxUnit             verMajor;
     afxUnit             verMinor;
     // The functions to be capable on bridged devices.
-    amxAptitude         caps;
+    amxService         caps;
     // The acceleration to be available on bridged devices.
     afxAcceleration     accel;
     // The features to be enabled.
@@ -241,7 +241,7 @@ AMX afxUnit AmxChooseMixBridges
     afxUnit mdevId,
 
     // An optional bitmask describing the mixing device's port capabilities for which bridges must be linked against. 
-    amxAptitude caps,
+    amxService caps,
 
     afxMask exuMask,
 

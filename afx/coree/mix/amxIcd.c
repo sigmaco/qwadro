@@ -354,7 +354,7 @@ _AMX afxError amxIcdHook(afxModule icd, afxUri const* manifest)
             //.dev.ioctl = (void*)_ZalSdevIoctrlCb,
             //.relinkAsioCb = _ZalRelinkAsioWasapiCb,
 
-            .capabilities = amxAptitude_SFX | amxAptitude_DMA,
+            .capabilities = amxService_SFX | amxService_DMA,
             .minQueCnt = 2,
             .maxQueCnt = 16,
         },

@@ -78,7 +78,7 @@ AFX_OBJECT(afxWarpContext)
     acxLimits const*    devLimits; // dbg copies
     acxFeatures const*  enabledFeatures; // dbg copies
 
-    acxAptitude         caps;
+    acxService         caps;
     afxMask             exuMask;
     afxAtom32           submCnt; // number of submissions
     afxMask64           submQueMask; // one for each queue where this dctx was submitted into.

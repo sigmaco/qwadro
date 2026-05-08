@@ -32,7 +32,7 @@ AFX_DEFINE_STRUCT(_amxMdevReg)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
-    amxAptitude         capabilities;
+    amxService         capabilities;
     amxFeatures         features;
     amxLimits           limits;
     afxUnit             minQueCnt; // usually 3
@@ -68,7 +68,7 @@ AFX_OBJECT(afxMixDevice)
     void*               udd;
 
     afxAcceleration     acceleration;
-    amxAptitude         capabilities;
+    amxService         capabilities;
     amxFeatures         features;
     amxLimits           limits;
     afxUnit             minQueCnt; // usually 3

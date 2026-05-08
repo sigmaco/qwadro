@@ -61,7 +61,7 @@ _AFX afxError _AfxFenc_SignalCbSW(afxFence fenc, afxUnit64 value)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
 
-    if (fenc->flags & afxFenceFlag_TIMELINE)
+    if (fenc->flags & afxFenceFlag_PROGRESSIVE)
     {
         AFX_ASSERT(value > (afxUnit64)AfxLoadAtom64(&fenc->value));
         AfxStoreAtom64(&fenc->value, (afxInt64)value);
@@ -207,7 +207,7 @@ _AFX afxError _AfxIom_WaitForFencesCbSW(afxIommu iom, afxUnit64 timeout, afxBool
                 if (!dfen) continue;
                 AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &dfen);
 
-                if (dfen->flags & afxFenceFlag_TIMELINE)
+                if (dfen->flags & afxFenceFlag_PROGRESSIVE)
                 {
                     AFX_ASSERT(values);
                     // vkWaitSemaphores waits until the semaphore value is greater than or equal to the specified value.
@@ -246,7 +246,7 @@ _AFX afxError _AfxIom_WaitForFencesCbSW(afxIommu iom, afxUnit64 timeout, afxBool
 
             while (1)
             {
-                if (dfen->flags & afxFenceFlag_TIMELINE)
+                if (dfen->flags & afxFenceFlag_PROGRESSIVE)
                 {
                     AFX_ASSERT(values);
                     // vkWaitSemaphores waits until the semaphore value is greater than or equal to the specified value.
@@ -309,7 +309,7 @@ _AFX afxError AfxResetFences(afxIommu iom, afxUnit cnt, afxFence const fences[])
         // Does the new synchronization primitive allow resetting its payload?
         // No, allowing the payload value to “go backwards” is problematic. 
         // Applications looking for reset behavior should create a new instance of the synchronization primitive instead.
-        if (!(dfen->flags & afxFenceFlag_TIMELINE))
+        if (!(dfen->flags & afxFenceFlag_PROGRESSIVE))
         {
             AfxStoreAtom64(&dfen->signaled, 0);
         }

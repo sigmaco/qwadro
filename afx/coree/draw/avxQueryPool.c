@@ -131,10 +131,10 @@ _AVX afxError _AvxDsysSW_ResetQrypCb(afxDrawSystem dsys, avxQueryPool qryp, afxU
     // Firstly, try to put them in a dedicated queue.
     if (dedIoExuMask)
     {
-        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, dedIoExuMask, 0, 0, NIL);
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, 0, 0, NIL);
         AFX_ASSERT(exuCnt);
         exuIdx = 0;
-        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
         {
             queErr = _AvxDexuResetQueries(dexu, qryp, base, cnt);
             err = queErr;
@@ -155,10 +155,10 @@ _AVX afxError _AvxDsysSW_ResetQrypCb(afxDrawSystem dsys, avxQueryPool qryp, afxU
     // If we can not put them in a dedicated queue, try to put them in a shared one.
     if (!queued)
     {
-        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, ioExuMask, 0, 0, NIL);
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, 0, 0, NIL);
         AFX_ASSERT(exuCnt);
         exuIdx = 0;
-        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, ioExuMask, exuIdx++, 1, &dexu))
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, exuIdx++, 1, &dexu))
         {
             queErr = _AvxDexuResetQueries(dexu, qryp, base, cnt);
             err = queErr;
@@ -195,10 +195,10 @@ _AVX afxResult _AvxDsysSW_GetQrypRsltCb(afxDrawSystem dsys, avxQueryPool qryp, a
     // Firstly, try to put them in a dedicated queue.
     if (dedIoExuMask)
     {
-        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, dedIoExuMask, 0, 0, NIL);
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, 0, 0, NIL);
         AFX_ASSERT(exuCnt);
         exuIdx = 0;
-        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, dedIoExuMask, exuIdx++, 1, &dexu))
         {
             queErr = _AvxDexuQueryResults(dexu, qryp, flags, base, cnt, dstCap, dst, stride);
             err = queErr;
@@ -219,10 +219,10 @@ _AVX afxResult _AvxDsysSW_GetQrypRsltCb(afxDrawSystem dsys, avxQueryPool qryp, a
     // If we can not put them in a dedicated queue, try to put them in a shared one.
     if (!queued)
     {
-        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, ioExuMask, 0, 0, NIL);
+        exuCnt = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, 0, 0, NIL);
         AFX_ASSERT(exuCnt);
         exuIdx = 0;
-        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxAptitude_DMA, ioExuMask, exuIdx++, 1, &dexu))
+        while (AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_DMA, ioExuMask, exuIdx++, 1, &dexu))
         {
             queErr = _AvxDexuQueryResults(dexu, qryp, flags, base, cnt, dstCap, dst, stride);
             err = queErr;

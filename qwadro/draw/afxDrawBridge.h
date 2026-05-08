@@ -57,22 +57,22 @@
 
 #define AVX_MAX_QUEUES_PER_BRIDGE (32)
 
-typedef enum avxAptitude
+typedef enum avxService
 // Flags specifying the facilities on a draw device for performing a specified task.
 {
     // Supports transfer ops via direct memory access.
-    avxAptitude_DMA      = AFX_BITMASK(0),
+    avxService_DMA      = AFX_BITMASK(0),
     // Supports graphics ops, including transformation, tesselation, rasterization and resampling.
-    avxAptitude_GFX      = AFX_BITMASK(1),
+    avxService_GFX      = AFX_BITMASK(1),
     // Support deferred presentation.
-    avxAptitude_PRESENT  = AFX_BITMASK(2),
+    avxService_PRESENT  = AFX_BITMASK(2),
     // Supports programmable general purpose parallel computation.
-    avxAptitude_PCX     = AFX_BITMASK(3),
+    avxService_PCX     = AFX_BITMASK(3),
     // Supports fixed-function YUV video encoding/decoding.
-    avxAptitude_VCX     = AFX_BITMASK(4),
+    avxService_VCX     = AFX_BITMASK(4),
     // Supports raytracing ops
-    avxAptitude_RTX      = AFX_BITMASK(5),
-} avxAptitude;
+    avxService_RTX      = AFX_BITMASK(5),
+} avxService;
 
 AFX_DEFINE_STRUCT(avxBridgeConfig)
 {
@@ -80,7 +80,7 @@ AFX_DEFINE_STRUCT(avxBridgeConfig)
 
     afxAcceleration acceleration;
 
-    avxAptitude     capabilities; // specifies capabilities of queues in a port.
+    avxService     capabilities; // specifies capabilities of queues in a port.
 
     afxUnit         minQueCnt;
 

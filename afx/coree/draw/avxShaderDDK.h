@@ -81,6 +81,8 @@ AFX_OBJECT(avxShader)
 AVX afxClassConfig const _AVX_CLASS_CONFIG_CODB;
 
 AVX afxError _AvxLoadGlScript(afxStream file, afxArray* fCode);
+
+AVX afxError _AvxLoadGlScript(afxStream file, afxArray* fCode);
 AVX afxError _AvxScanGlScript(afxString const* code, afxArray* fIns, afxArray* fOuts, afxArray* fResources, afxString* pushConstsName);
 
 AFX_DEFINE_STRUCT(_avxGlslConversor)

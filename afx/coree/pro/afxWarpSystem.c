@@ -93,6 +93,90 @@ _ACX afxClass const* _AcxSsysGetBufClass(afxWarpSystem ssys)
     return cls;
 }
 
+_ACX afxError _AcxSsysTransferCb_SW(afxWarpSystem ssys, acxTransference* ctrl, afxUnit opCnt, void const* ops)
+{
+    afxError err = { 0 };
+    // @ssys must be a valid afxWarpSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_SSYS, 1, &ssys);
+    AFX_ASSERT(opCnt);
+    AFX_ASSERT(ctrl);
+    AFX_ASSERT(ops);
+
+    afxMask ssysIoExuMask = ssys->ioExuMask;
+    afxMask exuMask = ctrl->exuMask;
+    afxUnit exuCnt = ssys->bridgeCnt;
+    afxUnit firstExuIdx = AfxRandom2(0, exuCnt - 1);
+
+    AFX_ASSERT(!exuMask || (ssysIoExuMask & exuMask));
+
+    afxBool queued = FALSE;
+
+    while (1)
+    {
+        for (afxUnit exuIdx = firstExuIdx; exuIdx < exuCnt; exuIdx++)
+        {
+            firstExuIdx = 0;
+
+            // Skip non-transfer-capable EXUs.
+            if (!(ssysIoExuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            if (exuMask && !(exuMask & AFX_BITMASK(exuIdx)))
+                continue; // for
+
+            // Try to pick one of the dedicated ones when EXUs are not specified.
+            if ((!exuMask) && ssys->dedIoExuMask && (!(ssys->dedIoExuMask & AFX_BITMASK(exuIdx))))
+                continue; // for
+#if 0
+            // if a mask is specified and it is not one of the existing dedicated EXUs in mask.
+            if (ssys->dedIoExuMask)
+            {
+                if (exuMask)
+                {
+                    if ((exuMask & ssys->dedIoExuMask))
+                    {
+                        if (!(ssys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                            continue;
+                    }
+                }
+                else
+                {
+
+                }
+
+                if (exuMask && (ssys->dedIoExuMask & AFX_BITMASK(exuIdx)))
+                    continue;
+            }
+#endif
+
+            afxWarpBridge mexu;
+            if (!AcxGetWarpBridges(ssys, exuIdx, 1, &mexu))
+            {
+                AfxThrowError();
+                continue;
+            }
+
+            afxError err2 = _AcxSexuTransferWarpMemory(mexu, ctrl, opCnt, ops);
+
+            err = err2;
+
+            if (!err2)
+            {
+                queued = TRUE;
+                break; // for
+            }
+
+            if (err2 == afxError_TIMEOUT || err2 == afxError_BUSY)
+                continue; // for
+
+            AfxThrowError();
+        }
+
+        if (err || queued) break; // while --- find bridges
+    }
+    return err;
+}
+
 _ACX _acxDdiSsys const _ACX_SSYS_IMPL =
 {
 #if 0
@@ -135,7 +219,7 @@ _ACX afxUnit AcxGetWarpBridges(afxWarpSystem ssys, afxUnit baseIdx, afxUnit cnt,
     return rslt;
 }
 
-_ACX afxUnit AcxChooseWarpBridges(afxWarpSystem ssys, afxUnit sdevId, acxAptitude caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxWarpBridge bridges[])
+_ACX afxUnit AcxChooseWarpBridges(afxWarpSystem ssys, afxUnit sdevId, acxService caps, afxMask exuMask, afxUnit first, afxUnit maxCnt, afxWarpBridge bridges[])
 {
     afxError err = { 0 };
     // ssys must be a valid afxWarpSystem handle.
@@ -430,14 +514,14 @@ _ACX afxError _AcxSsysCtorCb(afxWarpSystem ssys, void** args, afxUnit invokeNo)
         acxDeviceInfo capsi;
         AcxQueryWarpCapabilities(sdev, &capsi);
 
-        if ((capsi.capabilities & acxAptitude_DMA) == acxAptitude_DMA)
+        if ((capsi.capabilities & acxService_DMA) == acxService_DMA)
             ssys->ioExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (acxAptitude_DMA | acxAptitude_PCX)) == acxAptitude_DMA)
+        if ((capsi.capabilities & (acxService_DMA | acxService_PCX)) == acxService_DMA)
             ssys->dedIoExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & acxAptitude_PCX) == acxAptitude_PCX)
+        if ((capsi.capabilities & acxService_PCX) == acxService_PCX)
             ssys->cfxExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (acxAptitude_PCX)) == acxAptitude_PCX)
+        if ((capsi.capabilities & (acxService_PCX)) == acxService_PCX)
             ssys->dedCfxExuMask |= AFX_BITMASK(i);
     }
 
@@ -558,7 +642,7 @@ _ACX afxError AcxConfigureWarpSystem(afxUnit icd, acxSystemConfig* cfg)
         return err;
     }
 
-    acxAptitude caps = cfg->caps;
+    acxService caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
 
     if (icd != AFX_INVALID_INDEX)
