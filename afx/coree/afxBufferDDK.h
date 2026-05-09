@@ -157,4 +157,8 @@ AFXINL void _AfxSanitizeBufferIo
     afxBufferIo san[]
 );
 
+AFXINL afxError _AfxIomSW_DeallocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuffer buffers[]);
+
+AFXINL afxError _AfxIomSW_AllocateBuffersCb(afxIommu iom, afxUnit cnt, afxBufferInfo const infos[], afxBuffer buffers[]);
+
 #endif//AFX_BUFFER_DDK_H

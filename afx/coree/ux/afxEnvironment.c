@@ -551,31 +551,43 @@ _AUX afxClassConfig const _AUX_ENV_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError AfxConfigureEnvironment(afxUnit icd, afxEnvironmentConfig const* cfg)
+_AUX afxError _AuxIcdConfigureEnvSW(afxModule auxIcd, afxEnvironmentConfig* cfg)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &auxIcd);
+    AFX_ASSERT(AfxTestModule(auxIcd, afxModuleFlag_ICD | afxModuleFlag_AUX));
     AFX_ASSERT(cfg);
 
-    if (!cfg)
+    if (cfg->dsys)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg->dsys);
+    }
+
+    if (cfg->msys)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &cfg->msys);
+    }
+
+    return err;
+}
+
+_AUX afxError AfxConfigureEnvironment(afxModule auxIcd, afxEnvironmentConfig const* cfg)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &auxIcd);
+
+    if (!AfxTestModule(auxIcd, afxModuleFlag_ICD | afxModuleFlag_AUX))
     {
         AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
         return err;
     }
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    if (icd != AFX_INVALID_INDEX)
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AuxGetDdi(auxIcd)->cfgEnvCb(auxIcd, cfg)))
     {
-        afxModule drv;
-        if (!_AuxGetIcd(sys, icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AUX));
+        AfxThrowError();
+        return err;
     }
 
     if (cfg->dsys)
@@ -591,52 +603,13 @@ _AUX afxError AfxConfigureEnvironment(afxUnit icd, afxEnvironmentConfig const* c
     return err;
 }
 
-_AUX afxError AfxEstablishEnvironment(afxUnit icd, afxEnvironmentConfig const* cfg, afxEnvironment* environment)
+_AUX afxError _AuxIcdEstablishEnvSW(afxModule auxIcd, afxEnvironmentConfig const* cfg, afxEnvironment* environment)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &auxIcd);
+    AFX_ASSERT(AfxTestModule(auxIcd, afxModuleFlag_ICD | afxModuleFlag_AUX));
     AFX_ASSERT(environment);
     AFX_ASSERT(cfg);
-
-    if (!cfg)
-    {
-        AfxThrowError();
-        return err;
-    }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxClass* envCls = NIL;
-    afxModule drv = NIL;
-
-    if (icd != AFX_INVALID_INDEX)
-    {
-        if (!_AuxGetIcd(sys, icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AUX));
-
-        envCls = (afxClass*)_AuxIcdGetEnvClass(drv);
-        AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
-    }
-    else
-    {
-        static afxBool clsInited = FALSE;
-        static afxClass staticEnvCls = { 0 };
-
-        if (!clsInited)
-        {
-            AfxMountClass(&staticEnvCls, NIL, NIL, &_AUX_ENV_CLASS_CONFIG);
-            clsInited = TRUE;
-        }
-
-        envCls = &staticEnvCls;
-        AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
-    }
 
     _auxEnvAcq cfg2 = { 0 };
     cfg2.cfg = *cfg;
@@ -652,10 +625,38 @@ _AUX afxError AfxEstablishEnvironment(afxUnit icd, afxEnvironmentConfig const* c
     cfg2.cfg.udd = cfg->udd;
     cfg2.cfg.name = cfg->name;
 
+    afxClass* envCls = (afxClass*)_AuxIcdGetEnvClass(auxIcd);
     AFX_ASSERT_CLASS(envCls, afxFcc_ENV);
 
     afxEnvironment env;
-    if (AfxAcquireObjects(envCls, 1, (afxObject*)&env, (void const*[]) { drv, &cfg2, NIL }))
+    if (AfxFailed(AfxAcquireObjects(envCls, 1, (afxObject*)&env, (void const*[]) { auxIcd, &cfg2, NIL })))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    *environment = env;
+
+    return err;
+}
+
+_AUX afxError AfxEstablishEnvironment(afxModule auxIcd, afxEnvironmentConfig const* cfg, afxEnvironment* environment)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &auxIcd);
+    AFX_ASSERT(environment);
+    AFX_ASSERT(cfg);
+
+    if (!AfxTestModule(auxIcd, afxModuleFlag_ICD | afxModuleFlag_AUX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    afxEnvironment env = NIL;
+    if (AfxFailed(_AuxGetDdi(auxIcd)->acqEnvCb(auxIcd, cfg, &env)))
     {
         AfxThrowError();
         return err;

@@ -700,128 +700,26 @@ _AMX afxClassConfig const _AMX_MSYS_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AMX afxUnit AmxEnumerateMixSystems(afxUnit icd, afxUnit first, afxUnit cnt, afxMixSystem systems[])
+_AMX afxError _AmxIcdConfigureMsysSW(afxModule amxIcd, amxSystemConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT(systems);
-    AFX_ASSERT(cnt);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-
-    afxClass const* cls = _AmxIcdGetMsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
-
-    rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)systems);
-    AFX_ASSERT_OBJECTS(afxFcc_MSYS, rslt, systems);
-
-    return rslt;
-}
-
-_AMX afxUnit AmxEvokeMixSystems(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, afxMixSystem), afxUnit cnt, afxMixSystem systems[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT(systems);
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(f);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-    
-    afxClass const* cls = _AmxIcdGetMsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
-    
-    rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)systems);
-    AFX_ASSERT_OBJECTS(afxFcc_MSYS, rslt, systems);
-
-    return rslt;
-}
-
-_AMX afxUnit AmxInvokeMixSystems(afxUnit icd, afxUnit first, void *udd, afxBool(*f)(void*, afxMixSystem), afxUnit cnt)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(f);
-    afxUnit rslt = 0;
-    
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-    
-    afxClass const* cls = _AmxIcdGetMsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
-
-    rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
-
-    return rslt;
-}
-
-_AMX afxError AmxConfigureMixSystem(afxUnit icd, amxSystemConfig* cfg)
-{
-    afxError err = { 0 };
-
-    if (!cfg)
-    {
-        AFX_ASSERT(cfg);
-        AfxThrowError();
-        return err;
-    }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX));
+    AFX_ASSERT(cfg);
 
     amxService caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
-
-    afxModule drv;
-    AFX_ASSERT(icd != AFX_INVALID_INDEX);
-    if (!_AmxGetIcd(sys, icd, &drv))
-    {
-        AfxThrowError();
-        return err;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-    AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AMX));
 
     if (0 == cfg->exuCnt)
     {
         cfg->exuCnt = 0;
 
-        for (afxUnit i = 0; i < AVX_MAX_BRIDGES_PER_SYSTEM; i++)
+        for (afxUnit i = 0; i < AVX_MAX_BRIDGES; i++)
         {
             afxUnit mdevId = i;
 
             afxMixDevice mdev;
-            if (AmxEnumerateMixDevices(icd, mdevId, 1, &mdev))
+            if (AmxEnumerateMixDevices(amxIcd, mdevId, 1, &mdev))
             {
                 AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &mdev);
 
@@ -856,10 +754,10 @@ _AMX afxError AmxConfigureMixSystem(afxUnit icd, amxSystemConfig* cfg)
             capsi.minQueCnt = cfg->exus[i].minQueCnt;
 
             afxUnit mdevId;
-            if (AmxChooseMixDevices(icd, &capsi, NIL, NIL, 1, &mdevId))
+            if (AmxChooseMixDevices(amxIcd, &capsi, NIL, NIL, 1, &mdevId))
             {
                 afxMixDevice mdev;
-                AmxEnumerateMixDevices(icd, mdevId, 1, &mdev);
+                AmxEnumerateMixDevices(amxIcd, mdevId, 1, &mdev);
                 AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &mdev);
 
                 AmxQueryMixCapabilities(mdev, &capsi);
@@ -882,75 +780,46 @@ _AMX afxError AmxConfigureMixSystem(afxUnit icd, amxSystemConfig* cfg)
 #endif
         }
     }
+
     return err;
 }
 
-_AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afxMixSystem* system)
+_AMX afxError AmxConfigureMixSystem(afxModule amxIcd, amxSystemConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT(icd != AFX_INVALID_INDEX);
-    AFX_ASSERT(system);
-    AFX_ASSERT(cfg);
 
-    if (!cfg)
+    if (!AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AmxGetDdi(amxIcd)->cfgMsysCb(amxIcd, cfg)))
     {
         AfxThrowError();
         return err;
     }
-    else
-    {
-        AFX_ASSERT(cfg->exuCnt);
 
-        if (!cfg->exuCnt)
-        {
-            AfxThrowError();
-            return err;
-        }
-    }
+    return err;
+}
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxClass* msysCls = NIL;
-    afxModule drv = NIL;
-
-    if (icd != AFX_INVALID_INDEX)
-    {
-        if (!_AmxGetIcd(sys, icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AMX));
-
-        msysCls = (afxClass*)_AmxIcdGetMsysClass(drv);
-        AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
-
-    }
-    else
-    {
-        static afxBool clsInited = FALSE;
-        static afxClass staticMsysCls = { 0 };
-
-        if (!clsInited)
-        {
-            AfxMountClass(&staticMsysCls, NIL, NIL, &_AMX_MSYS_CLASS_CONFIG);
-            clsInited = TRUE;
-        }
-
-        msysCls = &staticMsysCls;
-        AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
-    }
+_AMX afxError _AmxIcdEstablishMsysSW(afxModule amxIcd, amxSystemConfig const* cfg, afxMixSystem* system)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX));
+    AFX_ASSERT(system);
+    AFX_ASSERT(cfg);
 
     // Acquire bridges and queues
     afxUnit totalSqueCnt = 0;
-    afxUnit baseQueIdx[AMX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
-    _amxMexuAcq bridgeCfg[AMX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
+    afxUnit baseQueIdx[AMX_MAX_BRIDGES] = { 0 };
+    _amxMexuAcq bridgeCfg[AMX_MAX_BRIDGES] = { 0 };
     afxUnit bridgeCnt = 0;
 
-    AFX_ASSERT_RANGE(AMX_MAX_BRIDGES_PER_SYSTEM, 0, cfg->exuCnt);
+    AFX_ASSERT_RANGE(AMX_MAX_BRIDGES, 0, cfg->exuCnt);
 
     for (afxUnit i = 0; i < cfg->exuCnt; i++)
     {
@@ -979,7 +848,7 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
             continue;
 
         afxMixDevice mdev;
-        if (!AmxEnumerateMixDevices(icd, exuCfg->mdevId, 1, &mdev))
+        if (!AmxEnumerateMixDevices(amxIcd, exuCfg->mdevId, 1, &mdev))
         {
             AfxThrowError();
             break;
@@ -1024,13 +893,14 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
     cfg2.cfg.udd = cfg->udd;
     cfg2.cfg.tag = cfg->tag;
     cfg2.cfg.dsys = cfg->dsys;
-    
+
     cfg2.bridgeCfg = &bridgeCfg[0];
 
+    afxClass* msysCls = (afxClass*)_AmxIcdGetMsysClass(amxIcd);
     AFX_ASSERT_CLASS(msysCls, afxFcc_MSYS);
 
     afxMixSystem msys;
-    if (AfxAcquireObjects(msysCls, 1, (afxObject*)&msys, (void const*[]) { drv, &cfg2 }))
+    if (AfxAcquireObjects(msysCls, 1, (afxObject*)&msys, (void const*[]) { amxIcd, &cfg2 }))
     {
         AfxThrowError();
         return err;
@@ -1038,5 +908,103 @@ _AMX afxError AmxEstablishMixSystem(afxUnit icd, amxSystemConfig const* cfg, afx
 
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
     *system = msys;
+
     return err;
+}
+
+_AMX afxError AmxEstablishMixSystem(afxModule amxIcd, amxSystemConfig const* cfg, afxMixSystem* system)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(system);
+    AFX_ASSERT(cfg);
+
+    if (!AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    afxMixSystem msys = NIL;
+    if (AfxFailed(_AmxGetDdi(amxIcd)->acqMsysCb(amxIcd, cfg, &msys)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    *system = msys;
+
+    return err;
+}
+
+_AMX afxUnit AmxEnumerateMixSystems(afxModule amxIcd, afxUnit first, afxUnit cnt, afxMixSystem systems[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT(systems);
+    AFX_ASSERT(cnt);
+    afxUnit rslt = 0;
+
+    if (AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AmxIcdGetMsysClass(amxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
+
+    rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)systems);
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, rslt, systems);
+
+    return rslt;
+}
+
+_AMX afxUnit AmxEvokeMixSystems(afxModule amxIcd, afxUnit first, void* udd, afxBool(*f)(void*, afxMixSystem), afxUnit cnt, afxMixSystem systems[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT(systems);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(f);
+    afxUnit rslt = 0;
+
+    if (AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AmxIcdGetMsysClass(amxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
+
+    rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)systems);
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, rslt, systems);
+
+    return rslt;
+}
+
+_AMX afxUnit AmxInvokeMixSystems(afxModule amxIcd, afxUnit first, void *udd, afxBool(*f)(void*, afxMixSystem), afxUnit cnt)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(f);
+    afxUnit rslt = 0;
+
+    if (AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AmxIcdGetMsysClass(amxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_MSYS);
+
+    rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
+
+    return rslt;
 }

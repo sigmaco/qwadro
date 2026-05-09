@@ -239,7 +239,23 @@ _AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg)
     return err;
 }
 
-_AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
+static _auxDdiIcd ddi =
+{
+    .cfgEnvCb = _AuxIcdConfigureEnvSW,
+    .acqEnvCb = _AuxIcdEstablishEnvSW,
+    .getEnvClsCb = _AuxIcdGetEnvClass,
+};
+
+_AUX _auxDdiIcd const* _AuxGetDdi(afxModule auxIcd)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &auxIcd);
+    AFX_ASSERT(AfxTestModule(auxIcd, afxModuleFlag_ICD | afxModuleFlag_AUX));
+    
+    return &ddi;
+}
+
+_AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* auxIcd)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
@@ -257,7 +273,36 @@ _AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
 
         break;
     }
-    AFX_ASSERT(driver);
-    *driver = icd;
+    AFX_ASSERT(auxIcd);
+    *auxIcd = icd;
     return found;
+}
+
+_AUX afxError AfxGetShell(afxUnit unit, afxModule* auxIcd)
+{
+    afxError err = { 0 };
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (unit != AFX_INVALID_INDEX)
+    {
+        afxModule drv;
+        if (!(_AuxGetIcd(sys, unit, &drv)))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AUX));
+
+        *auxIcd = drv;
+    }
+    else
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+
+    return err;
 }

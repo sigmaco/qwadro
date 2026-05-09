@@ -122,27 +122,39 @@ ARX afxError ArxUplinkTxds(arxScenario scio, afxUnit baseSlot, afxUnit slotCnt, 
 ARX void ArxQueryLodErrorTolerance
 (
     arxScenario scio, 
+
     afxReal allowedErr, 
+
     afxReal *allowedErrEnd, 
+
     afxReal *allowedErrScaler
 );
 
 ARX void ArxComputeSimilarity
 (
     arxScenario scio, 
+
     afxReal unitsPerMeter, 
+
     afxV3d const right, 
+
     afxV3d const up, 
+
     afxV3d const back, 
+
     afxV3d const origin, 
+
     afxM3d ltm, 
+
     afxM3d iltm, 
+
     afxV3d atv
 );
 
 ARX afxUnit ArxRecenterAllPulleyClocks
 (
     arxScenario scio, 
+
     afxReal dCurrentClock
 );
 
@@ -150,14 +162,17 @@ ARX afxUnit ArxRecenterAllPulleyClocks
 
 ARX afxError ArxConfigureScenario
 (
-    afxUnit icd, 
+    afxModule arxIcd,
+
     arxScenarioConfig* cfg
 );
 
 ARX afxError ArxAcquireScenario
 (
-    afxUnit icd,
+    afxModule arxIcd,
+
     arxScenarioConfig const* cfg, 
+
     arxScenario* input
 );
 

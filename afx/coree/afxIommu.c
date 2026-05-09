@@ -131,14 +131,14 @@ _AFX afxError _AfxIomSW_TransferCb(afxIommu iom, afxTransference* ctrl, afxUnit 
             }
 #endif
 
-            afxIoBridge dexu;
-            if (!AfxGetIoBridges(iom, exuIdx, 1, &dexu))
+            afxIoBridge exu;
+            if (!AfxGetIoBridges(iom, exuIdx, 1, &exu))
             {
                 AfxThrowError();
                 continue;
             }
 
-            afxError err2 = _AfxExuTransferVideoMemory(dexu, ctrl, opCnt, ops);
+            afxError err2 = _AfxExuTransferVideoMemory(exu, ctrl, opCnt, ops);
 
             err = err2;
 
@@ -301,7 +301,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
 _AFX _afxDdiIom const _AFX_DDI_IOM =
 {
     .fencCls = _AfxIomSW_GetFencClassCb,
-    .dexuCls = _AfxIomSW_GetExuClassCb,
+    .exuCls = _AfxIomSW_GetExuClassCb,
     .bufCls = _AfxIomSW_GetBufClassCb,
 
     .transferCb = _AfxIomSW_TransferCb,
@@ -311,7 +311,7 @@ _AFX _afxDdiIom const _AFX_DDI_IOM =
     .allocBufCb = _AfxIomSW_AllocateBuffersCb,
     .deallocBufCb = _AfxIomSW_DeallocateBuffersCb,
 
-    .waitFencCb = _AfxIomSW_WaitForFencesCb,
+    .waitFencCb = _AfxIom_WaitForFencesCbSW,
 };
 
 _AFX afxModule AfxGetIommuIcd(afxIommu iom)
@@ -696,8 +696,8 @@ _AFX afxUnit AfxInvokeIoIommus(afxUnit icd, afxUnit first, void *udd, afxBool(*f
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
-    afxIommu sys;
-    AfxGetIommu(&sys);
+    afxSystem sys;
+    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxModule mdle;
@@ -723,8 +723,8 @@ _AFX afxUnit AfxEvokeIoIommus(afxUnit icd, afxUnit first, void* udd, afxBool(*f)
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
-    afxIommu sys;
-    AfxGetIommu(&sys);
+    afxSystem sys;
+    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxModule mdle;
@@ -751,8 +751,8 @@ _AFX afxUnit AfxEnumerateIoIommus(afxUnit icd, afxUnit first, afxUnit cnt, afxIo
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
-    afxIommu sys;
-    AfxGetIommu(&sys);
+    afxSystem sys;
+    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxModule mdle;
@@ -807,17 +807,17 @@ _AFX afxError AfxConfigureIoIommu(afxUnit icd, afxIommuConfig* cfg)
     {
         cfg->exuCnt = 0;
 
-        for (afxUnit i = 0; i < AFX_MAX_BRIDGES_PER_SYSTEM; i++)
+        for (afxUnit i = 0; i < AFX_MAX_BRIDGES; i++)
         {
-            afxUnit ddevId = i;
+            afxUnit devId = i;
             
-            afxIoDevice ddev;
-            if (AfxEnumerateIoDevices(icd, ddevId, 1, &ddev))
+            afxDevice dev;
+            if (AfxEnumerateIoDevices(icd, devId, 1, &dev))
             {
-                AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
+                AFX_ASSERT_OBJECTS(afxFcc_DEV, 1, &dev);
 
                 afxDeviceInfo capsi;
-                AfxQueryIoCapabilities(ddev, &capsi);
+                AfxQueryIoCapabilities(dev, &capsi);
 
                 if (caps && !(caps & capsi.capabilities))
                     continue;
@@ -827,7 +827,7 @@ _AFX afxError AfxConfigureIoIommu(afxUnit icd, afxIommuConfig* cfg)
 
                 cfg->exus[cfg->exuCnt].capabilities = capsi.capabilities;
                 cfg->exus[cfg->exuCnt].acceleration = capsi.acceleration;
-                cfg->exus[cfg->exuCnt].ddevId = ddevId;
+                cfg->exus[cfg->exuCnt].devId = devId;
                 cfg->exus[cfg->exuCnt].minQueCnt = capsi.minQueCnt;
                 cfg->exus[cfg->exuCnt].queuePriority = NIL;
                 ++cfg->exuCnt;
@@ -845,21 +845,19 @@ _AFX afxError AfxConfigureIoIommu(afxUnit icd, afxIommuConfig* cfg)
             capsi.acceleration = cfg->exus[i].acceleration ? cfg->exus[i].acceleration : accel;
             capsi.capabilities = cfg->exus[i].capabilities ? cfg->exus[i].capabilities : caps;
             capsi.minQueCnt = cfg->exus[i].minQueCnt;
-            capsi.clipSpaceDepth = cfg->clipSpcDepth;
-            capsi.nonRhcs = FALSE;
 
-            afxUnit ddevId;
-            if (AfxChooseIoDevices(icd, &capsi, NIL, NIL, 1, &ddevId))
+            afxUnit devId;
+            if (AfxChooseIoDevices(icd, &capsi, NIL, NIL, 1, &devId))
             {
                 afxDevice dev;
-                AfxEnumerateIoDevices(icd, ddevId, 1, &dev);
+                AfxEnumerateIoDevices(icd, devId, 1, &dev);
                 AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &dev);
 
-                AfxQueryIoCapabilities(ddev, &capsi);
+                AfxQueryIoCapabilities(dev, &capsi);
 
                 cfg->exus[cfg->exuCnt].capabilities = capsi.capabilities;
                 cfg->exus[cfg->exuCnt].acceleration = capsi.acceleration;
-                cfg->exus[cfg->exuCnt].ddevId = ddevId;
+                cfg->exus[cfg->exuCnt].devId = devId;
                 cfg->exus[cfg->exuCnt].minQueCnt = capsi.minQueCnt;
                 cfg->exus[cfg->exuCnt].queuePriority = NIL;
                 ++cfg->exuCnt;
@@ -902,8 +900,8 @@ _AFX afxError AfxEstablishIoIommu(afxUnit icd, afxIommuConfig const* cfg, afxIom
         }
     }
 
-    afxIommu sys;
-    AfxGetIommu(&sys);
+    afxSystem sys;
+    AfxGetSystem(&sys);
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
 
     afxClass* iomCls = NIL;
@@ -939,15 +937,15 @@ _AFX afxError AfxEstablishIoIommu(afxUnit icd, afxIommuConfig const* cfg, afxIom
 
     // Acquire bridges and queues
     afxUnit totalDqueCnt = 0;
-    afxUnit baseQueIdx[AFX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
-    _afxDexuAcq bridgeCfg[AFX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
+    afxUnit baseQueIdx[AFX_MAX_BRIDGES] = { 0 };
+    _afxExuAcq bridgeCfg[AFX_MAX_BRIDGES] = { 0 };
     afxUnit bridgeCnt = 0;
 
-    AFX_ASSERT_RANGE(AFX_MAX_BRIDGES_PER_SYSTEM, 0, cfg->exuCnt);
+    AFX_ASSERT_RANGE(AFX_MAX_BRIDGES, 0, cfg->exuCnt);
 
     for (afxUnit i = 0; i < cfg->exuCnt; i++)
     {
-        afxBridgeConfig const* exuCfg = &cfg->exus[i];
+        afxIoBridgeConfig const* exuCfg = &cfg->exus[i];
 
         afxUnit bridgeIdx = AFX_INVALID_INDEX;
 
@@ -972,7 +970,7 @@ _AFX afxError AfxEstablishIoIommu(afxUnit icd, afxIommuConfig const* cfg, afxIom
             continue;
 
         afxDevice dev;
-        if (!AfxEnumerateIoDevices(icd, exuCfg->ddevId, 1, &dev))
+        if (!AfxEnumerateIoDevices(icd, exuCfg->devId, 1, &dev))
         {
             AfxThrowError();
             break;
@@ -998,7 +996,7 @@ _AFX afxError AfxEstablishIoIommu(afxUnit icd, afxIommuConfig const* cfg, afxIom
 
         bridgeCfg[bridgeCnt].exuIdx = bridgeCnt;
         bridgeCfg[bridgeCnt].minQueCnt = minQueCnt;
-        bridgeCfg[bridgeCnt].dqueClsCfg = &_AFX_CLASS_CONFIG_XQUE;
+        bridgeCfg[bridgeCnt].xqueClsCfg = &_AFX_CLASS_CONFIG_XQUE;
         //bridgeCfg[bridgeCnt].dctxClsCfg = &_AFX_CLASS_CONFIG_CTX;
         ++bridgeCnt;
     }
@@ -1011,8 +1009,8 @@ _AFX afxError AfxEstablishIoIommu(afxUnit icd, afxIommuConfig const* cfg, afxIom
     _afxIomAcq cfg2 = { 0 };
     cfg2.cfg = *cfg;
     cfg2.cfg.exuCnt = bridgeCnt;
-    cfg2.cfg.extCnt = cfg->extCnt;
-    cfg2.cfg.exts = cfg->exts;
+    //cfg2.cfg.extCnt = cfg->extCnt;
+    //cfg2.cfg.exts = cfg->exts;
     cfg2.cfg.udd = cfg->udd;
     cfg2.cfg.tag = cfg->tag;
 

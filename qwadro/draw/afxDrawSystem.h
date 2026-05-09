@@ -48,7 +48,7 @@
 #include "qwadro/draw/avxTransformationEXT.h"
 #include "qwadro/draw/avxRasterizationEXT.h"
 
-#define AVX_MAX_BRIDGES_PER_SYSTEM (32)
+#define AVX_MAX_BRIDGES (32)
 
 typedef enum avxEventId
 {
@@ -91,7 +91,7 @@ AFX_DEFINE_STRUCT(avxSystemConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    avxBridgeConfig     exus[AVX_MAX_BRIDGES_PER_SYSTEM];
+    avxBridgeConfig     exus[AVX_MAX_BRIDGES];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
@@ -101,7 +101,8 @@ AFX_DEFINE_STRUCT(avxSystemConfig)
 AVX afxError AvxConfigureDrawSystem
 (
     // The Id of the installable client driver.
-    afxUnit icd,
+    afxModule avxIcd,
+
     // A pointer to a system configuration structure.
     avxSystemConfig* cfg
 );
@@ -117,7 +118,7 @@ AVX afxError AvxEstablishDrawSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver
-    afxUnit icd,
+    afxModule avxIcd,
 
     // A configuration structure that holds the parameters required to establish and configure the drawing system.
     avxSystemConfig const* cfg,
@@ -137,7 +138,7 @@ AVX afxError AvxEstablishDrawSystem
 AVX afxUnit AvxEnumerateDrawSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule avxIcd,
 
     // The starting index for the enumeration. 
     // If you want to start enumerating from the first available drawing system, you would set this value to 0. 
@@ -162,7 +163,7 @@ AVX afxUnit AvxEnumerateDrawSystems
 AVX afxUnit AvxInvokeDrawSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule avxIcd,
 
     // The starting index for the enumeration of drawing systems. 
     // It specifies which system to start processing from.
@@ -189,7 +190,7 @@ AVX afxUnit AvxInvokeDrawSystems
 AVX afxUnit AvxEvokeDrawSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule avxIcd,
 
     // The index of the first drawing system to retrieve. 
     // This allows you to start processing from a specific drawing system rather than always starting from the first.

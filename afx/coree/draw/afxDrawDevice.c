@@ -735,23 +735,13 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DDEV =
 // IMPLEMENTATION DISCOVERY                                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxUnit AvxEnumerateDrawDevices(afxUnit icd, afxUnit first, afxUnit cnt, afxDrawDevice devices[])
+_AVX afxUnit AvxEnumerateDrawDevices(afxModule avxIcd, afxUnit first, afxUnit cnt, afxDrawDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return 0;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDdevClass(mdle);
+    afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
     
     AFX_ASSERT(cnt);
@@ -764,23 +754,13 @@ _AVX afxUnit AvxEnumerateDrawDevices(afxUnit icd, afxUnit first, afxUnit cnt, af
     return rslt;
 }
 
-_AVX afxUnit AvxInvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawDevice), afxUnit cnt)
+_AVX afxUnit AvxInvokeDrawDevices(afxModule avxIcd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawDevice), afxUnit cnt)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return 0;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDdevClass(mdle);
+    afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
 
     AFX_ASSERT(f);
@@ -789,23 +769,13 @@ _AVX afxUnit AvxInvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool
     return rslt;
 }
 
-_AVX afxUnit AvxEvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawDevice), afxUnit cnt, afxDrawDevice devices[])
+_AVX afxUnit AvxEvokeDrawDevices(afxModule avxIcd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawDevice), afxUnit cnt, afxDrawDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return 0;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDdevClass(mdle);
+    afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
 
     AFX_ASSERT(cnt);
@@ -818,27 +788,19 @@ _AVX afxUnit AvxEvokeDrawDevices(afxUnit icd, afxUnit first, void* udd, afxBool(
     return rslt;
 }
 
-_AVX afxUnit AvxChooseDrawDevices(afxUnit icd, avxDeviceInfo const* caps, avxFeatures const* features, avxLimits const* limits, afxUnit maxCnt, afxUnit ddevId[])
+_AVX afxUnit AvxChooseDrawDevices(afxModule avxIcd, avxDeviceInfo const* caps, avxFeatures const* features, avxLimits const* limits, afxUnit maxCnt, afxUnit ddevId[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
+    
+    afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
+    
     afxUnit rslt = 0;
     //AFX_ASSERT(limits);
     //AFX_ASSERT(features);
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-    afxClass const* cls = _AvxIcdGetDdevClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
-    
     afxDrawDevice ddev;
     for (afxUnit i = 0; TRUE; i++)
     {

@@ -29,7 +29,9 @@ int main(int argc, char const* argv[])
 
     // Set up the draw system
 
-    afxUnit dIcd = 0;
+    afxModule dIcd;
+    AfxGetAvx(0, &dIcd);
+
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxService_GFX;
@@ -42,7 +44,9 @@ int main(int argc, char const* argv[])
 
     // Set up the mix system
 
-    afxUnit mIcd = 0;
+    afxModule mIcd;
+    AfxGetAmx(0, &mIcd);
+
     afxMixSystem msys;
     amxSystemConfig msyc = { 0 };
     msyc.caps = amxService_SFX;
@@ -56,7 +60,9 @@ int main(int argc, char const* argv[])
 
     // Open an environment
 
-    afxUnit shIcd = 0;
+    afxModule shIcd;
+    AfxGetShell(0, &shIcd);
+
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system

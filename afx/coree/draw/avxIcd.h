@@ -40,12 +40,27 @@
 #include "dpu/avxDpuTransference.h"
 #include "dpu/avxDpuExecutor.h"
 
+AFX_DECLARE_STRUCT(_avxIddIcd);
+
+#ifndef _AVX_DRAW_C
+AFX_DECLARE_STRUCT(_avxDdiIcd);
+#else
+AFX_DEFINE_STRUCT(_avxDdiIcd)
+{
+    afxError(*cfgDsysCb)(afxModule, avxSystemConfig*);
+    afxError(*acqDsysCb)(afxModule, avxSystemConfig const*, afxDrawSystem*);
+    afxClass const*(*getDsysClsCb)(afxModule icd);
+};
+#endif
+
 AFX_DEFINE_STRUCT(_avxImplementation)
 {
     afxModule icd;
     afxClassConfig ddevCls;
     afxClassConfig dsysCls;
 };
+
+AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL];
 
 AVX afxClass const* _AvxIcdGetDdevClass(afxModule icd);
 AVX afxClass const* _AvxIcdGetDsysClass(afxModule icd);
@@ -56,6 +71,12 @@ AVX afxError _AvxIcdImplement(afxSystem sys, _avxImplementation const* cfg);
 
 AVX afxBool _AvxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
-AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL];
+AFX afxError AfxGetAvx(afxUnit unit, afxModule* avxIcd);
+
+AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg);
+
+AVX afxError _AvxIcdEstablishDsysSW(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system);
+
+AVX _avxDdiIcd const* _AvxGetDdi(afxModule avxIcd);
 
 #endif//AVX_ICD_H

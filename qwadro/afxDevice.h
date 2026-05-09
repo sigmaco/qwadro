@@ -25,6 +25,7 @@
 #include "qwadro/etc/afxManifest.h"
 #include "qwadro/afxClass.h"
 #include "qwadro/afxSemaphore.h"
+//#include "qwadro/afxIoBridge.h"
 
 typedef afxUnit32 afxCmdId;
 
@@ -89,12 +90,21 @@ typedef enum afxVendorId
     afxVendorId_NVIDIA  = AFX_MAKE_FCC('N', 'V', '\0', '\0'),
 } afxVendorId;
 
+typedef enum afxAptitude
+// Flags specifying the facilities on a IO device for performing a specified task.
+{
+    // Supports transfer ops via direct memory access.
+    afxAptitude_DMA = AFX_BITMASK(0),
+} afxAptitude;
+
 AFX_DEFINE_STRUCT(afxDeviceInfo)
 {
     afxString           urn; // device URN
     afxDeviceType       type;
     afxDeviceStatus     status;
     afxAcceleration     acceleration;
+    afxAptitude         capabilities;
+    afxUnit             minQueCnt;
     afxUnit32           hwVndId;
     afxUnit32           hwVndDevId;
     afxUnit32           swVndId;

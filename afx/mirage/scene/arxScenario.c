@@ -18,6 +18,7 @@
 // This code is part of SIGMA GL/2.
 // This file is part of Advanced RenderWare Extensions.
 
+#define _ARX_SIM_C
 #define _ARX_SCENARIO_C
 #include "arxIcd.h"
 
@@ -649,29 +650,16 @@ _ARX afxClassConfig const _ARX_SCIO_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_ARX afxError ArxConfigureScenario(afxUnit icd, arxScenarioConfig* cfg)
+_ARX afxError _ArxIcdConfigureScioSW(afxModule arxIcd, arxScenarioConfig* cfg)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &arxIcd);
+    AFX_ASSERT(AfxTestModule(arxIcd, afxModuleFlag_ICD | afxModuleFlag_ARX));
     AFX_ASSERT(cfg);
-
-    if (icd != AFX_INVALID_INDEX)
-    {
-        afxModule drv;
-        if (!_ArxGetIcd(icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_ARX));
-
-        afxClass* scioCls = (afxClass*)_ArxIcdGetScioClass(drv);
-        AFX_ASSERT_CLASS(scioCls, afxFcc_SCIO);
-    }
 
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    
+
     AfxV3dSet(cfg->right, 1, 0, 0);
     AfxV3dSet(cfg->up, 0, 1, 0);
     AfxV3dSet(cfg->back, 0, 0, 1);
@@ -683,47 +671,36 @@ _ARX afxError ArxConfigureScenario(afxUnit icd, arxScenarioConfig* cfg)
     return err;
 }
 
-_ARX afxError ArxAcquireScenario(afxUnit icd, arxScenarioConfig const* cfg, arxScenario* input)
+_ARX afxError ArxConfigureScenario(afxModule arxIcd, arxScenarioConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT(cfg);
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &arxIcd);
 
-    if (!cfg)
+    if (!AfxTestModule(arxIcd, afxModuleFlag_ICD | afxModuleFlag_ARX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_ArxGetDdi(arxIcd)->cfgScioCb(arxIcd, cfg)))
     {
         AfxThrowError();
         return err;
     }
 
-    afxClass* scioCls = NIL;
-    afxModule drv = NIL;
+    return err;
+}
 
-    if (icd != AFX_INVALID_INDEX)
-    {
-        if (!_ArxGetIcd(icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_ARX));
+_ARX afxError _ArxIcdAcquireScioSW(afxModule arxIcd, arxScenarioConfig const* cfg, arxScenario* scenario)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &arxIcd);
+    AFX_ASSERT(AfxTestModule(arxIcd, afxModuleFlag_ICD | afxModuleFlag_ARX));
+    AFX_ASSERT(scenario);
+    AFX_ASSERT(cfg);
 
-        scioCls = (afxClass*)_ArxIcdGetScioClass(drv);
-        AFX_ASSERT_CLASS(scioCls, afxFcc_SCIO);
-    }
-    else
-    {
-        static afxBool clsInited = FALSE;
-        static afxClass staticScioCls = { 0 };
-
-        if (!clsInited)
-        {
-            AfxMountClass(&staticScioCls, NIL, NIL, &_ARX_SCIO_CLASS_CONFIG);
-            clsInited = TRUE;
-        }
-
-        scioCls = &staticScioCls;
-        AFX_ASSERT_CLASS(scioCls, afxFcc_SCIO);
-    }
 
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -741,10 +718,11 @@ _ARX afxError ArxAcquireScenario(afxUnit icd, arxScenarioConfig const* cfg, arxS
     AfxV3dCopy(cfg2.origin, cfg->origin);
     AfxCopyBoxes(1, &cfg->extent, 0, &cfg2.extent, 0);
 
+    afxClass* scioCls = (afxClass*)_ArxIcdGetScioClass(arxIcd);
     AFX_ASSERT_CLASS(scioCls, afxFcc_SCIO);
 
     arxScenario scio;
-    if (AfxAcquireObjects(scioCls, 1, (afxObject*)&scio, (void const*[]) { drv, &cfg2 }))
+    if (AfxAcquireObjects(scioCls, 1, (afxObject*)&scio, (void const*[]) { arxIcd, &cfg2 }))
     {
         AfxThrowError();
         return err;
@@ -752,8 +730,35 @@ _ARX afxError ArxAcquireScenario(afxUnit icd, arxScenarioConfig const* cfg, arxS
 
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
 
-    AFX_ASSERT(input);
-    *input = scio;
+    AFX_ASSERT(scenario);
+    *scenario = scio;
+
+    return err;
+}
+
+_ARX afxError ArxAcquireScenario(afxModule arxIcd, arxScenarioConfig const* cfg, arxScenario* scenario)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &arxIcd);
+    AFX_ASSERT(scenario);
+    AFX_ASSERT(cfg);
+
+    if (!AfxTestModule(arxIcd, afxModuleFlag_ICD | afxModuleFlag_ARX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    arxScenario scio = NIL;
+    if (AfxFailed(_ArxGetDdi(arxIcd)->acqScioCb(arxIcd, cfg, &scio)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    *scenario = scio;
 
     return err;
 }

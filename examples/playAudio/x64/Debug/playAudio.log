@@ -1,5 +1,5 @@
-﻿..\src\playAudio.c(137): warning : unused variable 'ct' [-Wunused-variable]
-..\src\playAudio.c(138): warning : unused variable 'dt' [-Wunused-variable]
-..\src\playAudio.c(116): warning : unused variable 'readyToRender' [-Wunused-variable]
+﻿..\src\playAudio.c(143): warning : unused variable 'ct' [-Wunused-variable]
+..\src\playAudio.c(144): warning : unused variable 'dt' [-Wunused-variable]
+..\src\playAudio.c(122): warning : unused variable 'readyToRender' [-Wunused-variable]
 lld-link : warning : /debug:fastlink unsupported; using /debug:full
   playAudio.vcxproj -> E:\qwadro\repo\qwadro\_vs17\..\qwd\w64d\playAudio.exe

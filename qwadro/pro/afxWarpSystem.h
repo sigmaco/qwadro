@@ -24,7 +24,7 @@
 #include "qwadro/pro/afxWarpContext.h"
 #include "qwadro/pro/acxBuffer.h"
 
-#define ACX_MAX_BRIDGES_PER_SYSTEM (32)
+#define ACX_MAX_BRIDGES (32)
 
 AFX_DEFINE_STRUCT(acxSystemConfig)
 // The system-wide settings and parameters.
@@ -46,7 +46,7 @@ AFX_DEFINE_STRUCT(acxSystemConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    acxBridgeConfig     exus[ACX_MAX_BRIDGES_PER_SYSTEM];
+    acxBridgeConfig     exus[ACX_MAX_BRIDGES];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
@@ -57,7 +57,7 @@ ACX afxError AcxConfigureWarpSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver.
-    afxUnit icd,
+    afxModule acxIcd,
 
     // A configuration structure that holds the parameters required to establish and configure the warping system.
     acxSystemConfig* cfg
@@ -74,7 +74,7 @@ ACX afxError AcxEstablishWarpSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver
-    afxUnit icd, 
+    afxModule acxIcd,
 
     // A configuration structure that holds the parameters required to establish and configure the warping system.
     acxSystemConfig const* cfg, 
@@ -94,7 +94,7 @@ ACX afxError AcxEstablishWarpSystem
 ACX afxUnit AcxEnumerateWarpSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule acxIcd,
 
     // The starting index for the enumeration. 
     // If you want to start enumerating from the first available warping system, you would set this value to 0. 
@@ -119,7 +119,7 @@ ACX afxUnit AcxEnumerateWarpSystems
 ACX afxUnit AcxInvokeWarpSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule acxIcd,
 
     // The starting index for the enumeration of warping systems. 
     // It specifies which system to start processing from.
@@ -146,7 +146,7 @@ ACX afxUnit AcxInvokeWarpSystems
 ACX afxUnit AcxEvokeWarpSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule acxIcd,
 
     // The index of the first warping system to retrieve. 
     // This allows you to start processing from a specific warping system rather than always starting from the first.

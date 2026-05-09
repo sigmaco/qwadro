@@ -40,7 +40,7 @@
 #include "qwadro/afxConsole.h"
 // io
 #include "qwadro/afxData.h"
-#include "qwadro/afxIoBridge.h"
+#include "qwadro/afxIommu.h"
 #include "qwadro/afxSource.h"
 #include "qwadro/afxStorage.h"
 // math
@@ -99,6 +99,8 @@ AFX_DEFINE_STRUCT(afxHostSystemConfigExt)
 AFX_DEFINE_STRUCT(afxSystemConfig)
 // The system-wide settings and parameters.
 {
+    afxIommuConfig          iommu;
+
     afxUnit                 verMajor;
     afxUnit                 verMinor;
 

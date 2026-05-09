@@ -44,6 +44,7 @@ typedef enum afxModuleFlags
     afxModuleFlag_AJX   = AFX_BITMASK(17),
     afxModuleFlag_ADX   = AFX_BITMASK(18),
     afxModuleFlag_AZX   = AFX_BITMASK(19),
+    afxModuleFlag_AFX   = AFX_BITMASK(20),
 } afxModuleFlags;
 
 AFX afxModuleFlags      AfxTestModule(afxModule mdle, afxModuleFlags bitmask);
@@ -76,5 +77,12 @@ AFX afxError    AfxAcquireModule(afxUri const* uri, afxFlags flags, afxModule* m
 AFX afxUnit     AfxEnumerateModules(afxUnit first, afxUnit cnt, afxModule executables[]);
 
 AFX afxUnit     AfxInvokeModules(afxUnit first, afxUnit cnt, afxBool(*f)(afxModule, void*), void *udd);
+
+
+AFX afxError    AfxGetShell(afxUnit unit, afxModule* auxIcd);
+AFX afxError    AfxGetAvx(afxUnit unit, afxModule* avxIcd);
+AFX afxError    AfxGetAmx(afxUnit unit, afxModule* amxIcd);
+AFX afxError    AfxGetAcx(afxUnit unit, afxModule* acxIcd);
+AFX afxError    AfxGetArx(afxUnit unit, afxModule* arxIcd);
 
 #endif//AFX_MODULE_H

@@ -363,7 +363,7 @@ AFX_DEFINE_STRUCT(avxDeviceInfo)
 AVX afxUnit AvxChooseDrawDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule avxIcd,
 
     // The operations or features that the device must supports.
     avxDeviceInfo const* caps,
@@ -394,7 +394,7 @@ AVX afxUnit AvxChooseDrawDevices
 AVX afxUnit AvxEnumerateDrawDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule avxIcd, 
 
     // The number ordinal for the first draw device to start the iteration from.
     afxUnit first, 
@@ -417,7 +417,7 @@ AVX afxUnit AvxEnumerateDrawDevices
 AVX afxUnit AvxInvokeDrawDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule avxIcd,
 
     // The ordinal number for the first drawing device to start the iteration from.
     afxUnit first, 
@@ -445,7 +445,7 @@ AVX afxUnit AvxInvokeDrawDevices
 AVX afxUnit AvxEvokeDrawDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd,
+    afxModule avxIcd,
 
     // The ordinal number for the first drawing device to start the iteration from.
     afxUnit first, 

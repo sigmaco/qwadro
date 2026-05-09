@@ -21,16 +21,10 @@
 #define AFX_IO_BRIDGE_H
 
 #include "qwadro/afxDevice.h"
+#include "qwadro/afxIoQueue.h"
 #include "qwadro/afxFile.h"
 
 #define AFX_MAX_QUEUES_PER_BRIDGE (32)
-
-typedef enum afxAptitude
-// Flags specifying the facilities on a IO device for performing a specified task.
-{
-    // Supports transfer ops via direct memory access.
-    afxAptitude_DMA = AFX_BITMASK(0),
-} afxAptitude;
 
 AFX_DEFINE_STRUCT(afxIoBridgeConfig)
 {

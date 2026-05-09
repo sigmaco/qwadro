@@ -59,7 +59,9 @@ int main(int argc, char const* argv[])
         setting up graphics capabilities and acceleration settings.
     */
 
-    afxUnit avxIcd = 0;
+    afxModule avxIcd;
+    AfxGetAvx(0, &avxIcd);
+
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxService_GFX;
@@ -75,7 +77,9 @@ int main(int argc, char const* argv[])
         Sets up a window environment to display the graphics (afxWindowConfig).
     */
 
-    afxUnit auxIcd = 0;
+    afxModule auxIcd;
+    AfxGetShell(0, &auxIcd);
+
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system

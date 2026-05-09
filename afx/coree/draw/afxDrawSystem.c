@@ -1307,116 +1307,12 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DSYS =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxUnit AvxInvokeDrawSystems(afxUnit icd, afxUnit first, void *udd, afxBool(*f)(void*, afxDrawSystem), afxUnit cnt)
+_AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT(cnt);
-    AFX_ASSERT(f);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
-
-    rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
-
-    return rslt;
-}
-
-_AVX afxUnit AvxEvokeDrawSystems(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawSystem), afxUnit cnt, afxDrawSystem systems[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT(systems);
-    AFX_ASSERT(f);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
-
-    rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)systems);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, rslt, systems);
-
-    return rslt;
-}
-
-_AVX afxUnit AvxEnumerateDrawSystems(afxUnit icd, afxUnit first, afxUnit cnt, afxDrawSystem systems[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT(systems);
-    AFX_ASSERT(cnt);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AvxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-    afxClass const* cls = _AvxIcdGetDsysClass(mdle);
-    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
-
-    rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)systems);
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, rslt, systems);
-
-    return rslt;
-}
-
-_AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
-{
-    afxError err = { 0 };
-
-    if (!cfg)
-    {
-        AFX_ASSERT(cfg);
-        AfxThrowError();
-        return err;
-    }
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    if (icd != AFX_INVALID_INDEX)
-    {
-        afxModule drv;
-        AFX_ASSERT(icd != AFX_INVALID_INDEX);
-        if (!_AvxGetIcd(sys, icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
-    }
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX));
+    AFX_ASSERT(cfg);
 
     avxService caps = cfg->caps;
     afxAcceleration accel = cfg->accel;
@@ -1425,12 +1321,12 @@ _AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
     {
         cfg->exuCnt = 0;
 
-        for (afxUnit i = 0; i < AVX_MAX_BRIDGES_PER_SYSTEM; i++)
+        for (afxUnit i = 0; i < AVX_MAX_BRIDGES; i++)
         {
             afxUnit ddevId = i;
-            
+
             afxDrawDevice ddev;
-            if (AvxEnumerateDrawDevices(icd, ddevId, 1, &ddev))
+            if (AvxEnumerateDrawDevices(avxIcd, ddevId, 1, &ddev))
             {
                 AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
 
@@ -1467,10 +1363,10 @@ _AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
             capsi.nonRhcs = FALSE;
 
             afxUnit ddevId;
-            if (AvxChooseDrawDevices(icd, &capsi, NIL, NIL, 1, &ddevId))
+            if (AvxChooseDrawDevices(avxIcd, &capsi, NIL, NIL, 1, &ddevId))
             {
                 afxDrawDevice ddev;
-                AvxEnumerateDrawDevices(icd, ddevId, 1, &ddev);
+                AvxEnumerateDrawDevices(avxIcd, ddevId, 1, &ddev);
                 AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
 
                 AvxQueryDrawCapabilities(ddev, &capsi);
@@ -1497,71 +1393,44 @@ _AVX afxError AvxConfigureDrawSystem(afxUnit icd, avxSystemConfig* cfg)
     return err;
 }
 
-_AVX afxError AvxEstablishDrawSystem(afxUnit icd, avxSystemConfig const* cfg, afxDrawSystem* system)
+_AVX afxError AvxConfigureDrawSystem(afxModule avxIcd, avxSystemConfig* cfg)
 {
     afxError err = { 0 };
-    AFX_ASSERT(icd != AFX_INVALID_INDEX);
-    AFX_ASSERT(system);
-    AFX_ASSERT(cfg);
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
 
-    if (!cfg)
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AvxGetDdi(avxIcd)->cfgDsysCb(avxIcd, cfg)))
     {
         AfxThrowError();
         return err;
     }
-    else
-    {
-        AFX_ASSERT(cfg->exuCnt);
 
-        if (!cfg->exuCnt)
-        {
-            AfxThrowError();
-            return err;
-        }
-    }
+    return err;
+}
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+_AVX afxError _AvxIcdEstablishDsysSW(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX));
+    AFX_ASSERT(system);
+    AFX_ASSERT(cfg);
 
-    afxClass* dsysCls = NIL;
-    afxModule drv = NIL;
-
-    if (icd != AFX_INVALID_INDEX)
-    {
-        if (!_AvxGetIcd(sys, icd, &drv))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
-        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AVX));
-
-        dsysCls = (afxClass*)_AvxIcdGetDsysClass(drv);
-        AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
-    }
-    else
-    {
-        static afxBool inited = FALSE;
-        static afxClass staticDsysCls = { 0 };
-
-        if (!inited)
-        {
-            AfxMountClass(&staticDsysCls, NIL, NIL, &_AVX_CLASS_CONFIG_DSYS);
-            inited = TRUE;
-        }
-
-        dsysCls = &staticDsysCls;
-        AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
-    }
 
     // Acquire bridges and queues
     afxUnit totalDqueCnt = 0;
-    afxUnit baseQueIdx[AVX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
-    _avxDexuAcq bridgeCfg[AVX_MAX_BRIDGES_PER_SYSTEM] = { 0 };
+    afxUnit baseQueIdx[AVX_MAX_BRIDGES] = { 0 };
+    _avxDexuAcq bridgeCfg[AVX_MAX_BRIDGES] = { 0 };
     afxUnit bridgeCnt = 0;
 
-    AFX_ASSERT_RANGE(AVX_MAX_BRIDGES_PER_SYSTEM, 0, cfg->exuCnt);
+    AFX_ASSERT_RANGE(AVX_MAX_BRIDGES, 0, cfg->exuCnt);
 
     for (afxUnit i = 0; i < cfg->exuCnt; i++)
     {
@@ -1590,7 +1459,7 @@ _AVX afxError AvxEstablishDrawSystem(afxUnit icd, avxSystemConfig const* cfg, af
             continue;
 
         afxDrawDevice ddev;
-        if (!AvxEnumerateDrawDevices(icd, exuCfg->ddevId, 1, &ddev))
+        if (!AvxEnumerateDrawDevices(avxIcd, exuCfg->ddevId, 1, &ddev))
         {
             AfxThrowError();
             break;
@@ -1639,17 +1508,116 @@ _AVX afxError AvxEstablishDrawSystem(afxUnit icd, avxSystemConfig const* cfg, af
 
     cfg2.bridgeCfg = &bridgeCfg[0];
 
+    afxClass* dsysCls = (afxClass*)_AvxIcdGetDsysClass(avxIcd);
     AFX_ASSERT_CLASS(dsysCls, afxFcc_DSYS);
 
     afxDrawSystem dsys;
-    if (AfxAcquireObjects(dsysCls, 1, (afxObject*)&dsys, (void const*[]) { drv, &cfg2 }))
+    if (AfxAcquireObjects(dsysCls, 1, (afxObject*)&dsys, (void const*[]) { avxIcd, &cfg2 }))
     {
         AfxThrowError();
         return err;
     }
-    
+
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
     *system = dsys;
 
     return err;
+}
+
+_AVX afxError AvxEstablishDrawSystem(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(system);
+    AFX_ASSERT(cfg);
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return err;
+    }
+
+    afxDrawSystem dsys = NIL;
+    if (AfxFailed(_AvxGetDdi(avxIcd)->acqDsysCb(avxIcd, cfg, &dsys)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    *system = dsys;
+
+    return err;
+}
+
+_AVX afxUnit AvxInvokeDrawSystems(afxModule avxIcd, afxUnit first, void *udd, afxBool(*f)(void*, afxDrawSystem), afxUnit cnt)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(cnt);
+    AFX_ASSERT(f);
+    afxUnit rslt = 0;
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AvxIcdGetDsysClass(avxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
+
+    rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
+
+    return rslt;
+}
+
+_AVX afxUnit AvxEvokeDrawSystems(afxModule avxIcd, afxUnit first, void* udd, afxBool(*f)(void*, afxDrawSystem), afxUnit cnt, afxDrawSystem systems[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(systems);
+    AFX_ASSERT(f);
+    afxUnit rslt = 0;
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AvxIcdGetDsysClass(avxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
+
+    rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)systems);
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, rslt, systems);
+
+    return rslt;
+}
+
+_AVX afxUnit AvxEnumerateDrawSystems(afxModule avxIcd, afxUnit first, afxUnit cnt, afxDrawSystem systems[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(systems);
+    AFX_ASSERT(cnt);
+    afxUnit rslt = 0;
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return rslt;
+    }
+
+    afxClass const* cls = _AvxIcdGetDsysClass(avxIcd);
+    AFX_ASSERT_CLASS(cls, afxFcc_DSYS);
+
+    rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)systems);
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, rslt, systems);
+
+    return rslt;
 }
