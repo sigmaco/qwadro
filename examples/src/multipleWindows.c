@@ -47,7 +47,9 @@ int main(int argc, char const* argv[])
 
     // Set up the draw system
 
-    afxUnit avxIcd = 0;
+    afxModule avxIcd;
+    AfxGetAvx(0, &avxIcd);
+
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxService_GFX;
@@ -59,7 +61,9 @@ int main(int argc, char const* argv[])
 
     // Open a session
 
-    afxUnit auxIcd = 0;
+    afxModule auxIcd;
+    AfxGetShell(0, &auxIcd);
+
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system
@@ -86,12 +90,6 @@ int main(int argc, char const* argv[])
     // Operation contexts
 
     afxUnit frameCap = AFX_CLAMP(wcfg.dout.latency, 1, FRAMES_IN_FLIGHT);
-
-    afxDrawContext drawContexts[FRAMES_IN_FLIGHT];
-    avxContextConfig ctxi = { 0 };
-    ctxi.caps = avxService_GFX;
-    AvxAcquireDrawContexts(dsys, NIL, &ctxi, frameCap, drawContexts);
-    AFX_ASSERT_OBJECTS(afxFcc_DCTX, frameCap, drawContexts);
 
     // Run
 
@@ -141,8 +139,15 @@ int main(int argc, char const* argv[])
             else
             {
                 afxBool presented = FALSE;
-                afxDrawContext dctx = drawContexts[outBufIdx];
                 afxBool compiled = FALSE;
+
+                avxFence drawCompletedFence = NIL;
+
+                afxDrawContext dctx;
+                avxContextConfig ctxi = { 0 };
+                ctxi.caps = avxService_GFX;
+                AvxAcquireDrawContexts(dsys, NIL, &ctxi, 1, &dctx);
+                AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
 
                 if (AvxPrepareDrawCommands(dctx, FALSE, NIL))
                 {
@@ -182,27 +187,28 @@ int main(int argc, char const* argv[])
                     else
                     {
                         compiled = TRUE;
+
+                        avxSubmission subm = { 0 };
+                        subm.dctx = dctx;
+                        subm.signal = drawCompletedFence;
+
+                        if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
+                        {
+                            AfxThrowError();
+                            AvxUnlockSurfaceBuffer(dout, outBufIdx);
+                            continue;
+                        }
+
+                        //AvxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask, subm.baseQueIdx);
+                        //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
                     }
                 }
 
+                AfxDisposeObjects(1, &dctx);
+
                 if (compiled)
                 {
-                    avxFence drawCompletedFence = NIL;
-
-                    avxSubmission subm = { 0 };
-                    subm.dctx = dctx;
-                    subm.signal = drawCompletedFence;
-
-                    if (AvxExecuteDrawCommands(dsys, 1, &subm, NIL))
-                    {
-                        AfxThrowError();
-                        AvxUnlockSurfaceBuffer(dout, outBufIdx);
-                        continue;
-                    }
-
-                    //AvxWaitForDrawQueue(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask, subm.baseQueIdx);
-                    //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, subm.exuMask);
-
+                    
                     avxPresentation pres = { 0 };
                     pres.wait = drawCompletedFence;
                     pres.dout = dout;

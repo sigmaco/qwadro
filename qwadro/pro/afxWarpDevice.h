@@ -138,7 +138,7 @@ ACX void AcxQueryWarpCapabilities
 ACX afxUnit AcxEnumerateWarpDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd,
+    afxModule acxIcd,
 
     // The number ordinal for the first step device to start the iteration from.
     afxUnit first, 
@@ -161,7 +161,7 @@ ACX afxUnit AcxEnumerateWarpDevices
 ACX afxUnit AcxInvokeWarpDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule acxIcd, 
 
     // The ordinal number for the first warping device to start the iteration from.
     afxUnit first, 
@@ -189,7 +189,7 @@ ACX afxUnit AcxInvokeWarpDevices
 ACX afxUnit AcxEvokeWarpDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule acxIcd,
 
     // The ordinal number for the first warping device to start the iteration from.
     afxUnit first, 
@@ -219,7 +219,7 @@ ACX afxUnit AcxEvokeWarpDevices
 ACX afxUnit AcxChooseWarpDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd,
+    afxModule acxIcd,
 
     // The operations or features that the device must supports.
     acxDeviceInfo const* caps,

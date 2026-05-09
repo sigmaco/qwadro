@@ -20,6 +20,7 @@
 #define _AFX_SYSTEM_C
 #define _AFX_MODULE_C
 #define _AFX_SIM_C
+#define _ARX_SIM_C
 #include "arxIcd.h"
 
 afxBool arxInited = FALSE;
@@ -112,14 +113,27 @@ _ARX afxError _ArxIcdImplement(afxModule icd, afxClassConfig const* scioCls)
     return err;
 }
 
-_ARX afxBool _ArxGetIcd(afxUnit icdIdx, afxModule* driver)
+static _arxDdiIcd ddi =
+{
+    .cfgScioCb = _ArxIcdConfigureScioSW,
+    .acqScioCb = _ArxIcdAcquireScioSW,
+    .getScioClsCb = _ArxIcdGetScioClass,
+};
+
+_ARX _arxDdiIcd const* _ArxGetDdi(afxModule avxIcd)
 {
     afxError err = { 0 };
-    afxBool found = FALSE;
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
+    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX));
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
+    return &ddi;
+}
+
+_ARX afxBool _ArxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
+{
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool found = FALSE;
 
     if (_ArxAmendEcosystem(sys))
     {
@@ -142,6 +156,35 @@ _ARX afxBool _ArxGetIcd(afxUnit icdIdx, afxModule* driver)
     AFX_ASSERT(driver);
     *driver = icd;
     return found;
+}
+
+_AFX afxError AfxGetArx(afxUnit unit, afxModule* arxIcd)
+{
+    afxError err = { 0 };
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (unit != AFX_INVALID_INDEX)
+    {
+        afxModule drv;
+        if (!(_ArxGetIcd(sys, unit, &drv)))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_ARX));
+
+        *arxIcd = drv;
+    }
+    else
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+
+    return err;
 }
 
 _ARX afxError afxScmHook(afxModule mdle, afxManifest const* ini)

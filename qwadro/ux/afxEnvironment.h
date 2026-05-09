@@ -197,14 +197,14 @@ AFX_DEFINE_STRUCT(afxEnvironmentConfig)
 
 AUX afxError AfxConfigureEnvironment
 (
-    afxUnit icd, 
+    afxModule auxIcd, 
 
     afxEnvironmentConfig const* cfg
 );
 
 AUX afxError AfxEstablishEnvironment
 (
-    afxUnit icd,
+    afxModule auxIcd,
 
     afxEnvironmentConfig const* cfg, 
 

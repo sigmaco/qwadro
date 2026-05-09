@@ -26,7 +26,7 @@
 #include "qwadro/afxBuffered.h"
 #include "qwadro/afxFence.h"
 
-#define AFX_MAX_BRIDGES_PER_IOMMU (32)
+#define AFX_MAX_BRIDGES (32)
 
 AFX_DEFINE_STRUCT(afxIommuConfig)
 // The system-wide settings and parameters prefered/required for acquisition.
@@ -40,7 +40,7 @@ AFX_DEFINE_STRUCT(afxIommuConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    afxIoBridgeConfig   exus[AFX_MAX_BRIDGES_PER_IOMMU];
+    afxIoBridgeConfig   exus[AFX_MAX_BRIDGES];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
@@ -52,7 +52,7 @@ AFX afxError AfxConfigureIommu
     // The Id of the installable client driver.
     afxUnit icd,
     // A pointer to a system configuration structure.
-    afxSystemConfig* cfg
+    afxIommuConfig* cfg
 );
 
 /*
@@ -69,11 +69,11 @@ AFX afxError AfxEstablishIommu
     afxUnit icd,
 
     // A configuration structure that holds the parameters required to establish and configure the IOing system.
-    afxSystemConfig const* cfg,
+    afxIommuConfig const* cfg,
 
     // A pointer to an afxIommu where the created IOing system will be stored. 
     // The function will populate this pointer with the reference to the newly established IOing system.
-    afxIommu* system
+    afxIommu* iommu
 );
 
 /*
@@ -98,7 +98,7 @@ AFX afxUnit AfxEnumerateIommus
 
     // An array where the enumerated IOing systems will be stored. 
     // After the function call, the array will contain the IOing systems up to the requested count @cnt.
-    afxIommu systems[]
+    afxIommu iommus[]
 );
 
 /*
@@ -156,7 +156,7 @@ AFX afxUnit AfxEvokeIommus
 
     // An array where the retrieved IOing systems will be stored. 
     // The function will fill this array with the actual IOing systems that were retrieved, up to the number @cnt.
-    afxIommu systems[]
+    afxIommu iommus[]
 );
 
 ////////////////////////////////////////////////////////////////////////////////

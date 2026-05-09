@@ -36,6 +36,19 @@
 #include "amxAudioDDK.h"
 #include "amxTrackerDDK.h"
 
+AFX_DECLARE_STRUCT(_amxIddIcd);
+
+#ifndef _AMX_MIX_C
+AFX_DECLARE_STRUCT(_amxDdiIcd);
+#else
+AFX_DEFINE_STRUCT(_amxDdiIcd)
+{
+    afxError(*cfgMsysCb)(afxModule, amxSystemConfig*);
+    afxError(*acqMsysCb)(afxModule, amxSystemConfig const*, afxMixSystem*);
+    afxClass const*(*getMsysClsCb)(afxModule icd);
+};
+#endif
+
 AFX_DEFINE_STRUCT(_amxImplementation)
 {
     afxModule icd;
@@ -56,7 +69,13 @@ AMX afxClass const* _AmxIcdGetMdevClass(afxModule icd);
 AMX afxClass const* _AmxIcdGetMcdcClass(afxModule icd);
 AMX afxClass const* _AmxIcdGetMsysClass(afxModule icd);
 
+AFX afxError AfxGetAmx(afxUnit unit, afxModule* amxIcd);
 
+AMX afxError _AmxIcdConfigureMsysSW(afxModule amxIcd, amxSystemConfig* cfg);
+
+AMX afxError _AmxIcdEstablishMsysSW(afxModule amxIcd, amxSystemConfig const* cfg, afxMixSystem* system);
+
+AMX _amxDdiIcd const* _AmxGetDdi(afxModule amxIcd);
 
 AMX afxError _AmxIcdImplement(afxSystem sys, _amxImplementation const* cfg);
 AMX afxError _AmxIcdRegisterCodecs(afxModule icd, afxUnit cnt, _amxCodecReg const infos[], amxCodec codecs[]);

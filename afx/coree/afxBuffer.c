@@ -573,3 +573,63 @@ _AFX afxError AfxReacquireBuffers(afxIommu iom, afxUnit cnt, afxMetabufferInfo c
 
     return err;
 }
+
+_AFXINL afxError _AfxIomSW_DeallocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        afxBuffer buf = buffers[i];
+        _afxBufStorage* bufs = &buf->storage[0];
+
+        if (buf->flags & afxBufferFlag_F)
+        {
+            bufs->host.bytemap = NIL;
+            bufs->size = 0;
+        }
+        else
+        {
+            if (bufs->host.bytemap)
+            {
+                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                {
+                    AfxThrowError();
+                }
+            }
+            bufs->size = 0;
+        }
+    }
+    return err;
+}
+
+_AFXINL afxError _AfxIomSW_AllocateBuffersCb(afxIommu iom, afxUnit cnt, afxBufferInfo const infos[], afxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        afxBufferInfo const* info = &infos[i];
+        afxBuffer buf = buffers[i];
+        _afxBufStorage* bufs = &buf->storage[0];
+
+        if (buf->flags & afxBufferFlag_F)
+        {
+            //bufs->offset = info->from;
+            AFX_ASSERT((!info->dataSiz) || (info->dataSiz && buf->reqSiz));
+            bufs->host.bytemap = info->data;
+            bufs->host.external = TRUE;
+            bufs->size = info->dataSiz;
+        }
+        else
+        {
+            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            {
+                AfxThrowError();
+            }
+            bufs->host.external = FALSE;
+            bufs->size = buf->reqSiz;
+        }
+    }
+    return err;
+}

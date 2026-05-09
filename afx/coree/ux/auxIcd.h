@@ -33,6 +33,19 @@
 #include "afxShellDDK.h"
 #include "../hid/afxDisplayDDK.h"
 
+AFX_DECLARE_STRUCT(_auxIddIcd);
+
+#ifndef _AUX_UX_C
+AFX_DECLARE_STRUCT(_auxDdiIcd);
+#else
+AFX_DEFINE_STRUCT(_auxDdiIcd)
+{
+    afxError(*cfgEnvCb)(afxModule, afxEnvironmentConfig*);
+    afxError(*acqEnvCb)(afxModule, afxEnvironmentConfig const*, afxEnvironment*);
+    afxClass const*(*getEnvClsCb)(afxModule icd);
+};
+#endif
+
 AFX_DEFINE_STRUCT(_auxImplementation)
 {
     afxModule icd;
@@ -58,6 +71,14 @@ AUX afxError _AuxRegisterShells(afxModule icd, afxUnit cnt, _auxShellAcq const i
 
 AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg);
 
-AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
+AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* auxIcd);
+
+AFX afxError AfxGetShell(afxUnit unit, afxModule* auxIcd);
+
+AUX afxError _AuxIcdConfigureEnvSW(afxModule auxIcd, afxEnvironmentConfig* cfg);
+
+AUX afxError _AuxIcdEstablishEnvSW(afxModule auxIcd, afxEnvironmentConfig const* cfg, afxEnvironment* environment);
+
+AUX _auxDdiIcd const* _AuxGetDdi(afxModule auxIcd);
 
 #endif//AUX_ICD_H

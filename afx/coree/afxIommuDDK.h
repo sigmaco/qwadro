@@ -56,7 +56,7 @@ AFX_DEFINE_STRUCT(_afxDdiIom)
 
 AFX_DEFINE_STRUCT(_afxIomAcq)
 {
-    afxSystemConfig         cfg;
+    afxIommuConfig          cfg;
     _afxExuAcq*             bridgeCfg;
     afxClassConfig const*   bufClsCfg; // buffer
     afxClassConfig const*   exuClsCfg; // bridge

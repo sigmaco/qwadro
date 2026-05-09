@@ -43,7 +43,7 @@
 #include "qwadro/mix/amxTracker.h"
 #include "qwadro/mix/amxPump.h"
 
-#define AMX_MAX_BRIDGES_PER_SYSTEM (32)
+#define AMX_MAX_BRIDGES (32)
 
 AFX_DEFINE_STRUCT(amxSystemConfig)
 // The system-wide settings and parameters.
@@ -65,7 +65,7 @@ AFX_DEFINE_STRUCT(amxSystemConfig)
     // The number of bridged devices' execution ports.
     afxUnit             exuCnt;
     // An array of configurations for each bridged device.
-    amxBridgeConfig     exus[AMX_MAX_BRIDGES_PER_SYSTEM];
+    amxBridgeConfig     exus[AMX_MAX_BRIDGES];
     // User-defined data attached to the system.
     void*               udd;
     // Debugging string attached to the system.
@@ -76,7 +76,7 @@ AMX afxError AmxConfigureMixSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver.
-    afxUnit icd,
+    afxModule amxIcd,
 
     // A configuration structure that holds the parameters required to establish and configure the mixing system.
     amxSystemConfig* cfg
@@ -93,7 +93,7 @@ AMX afxError AmxEstablishMixSystem
 (
     // The installable client driver (ICD) identifier. 
     // This is an integer that uniquely identifies the driver
-    afxUnit icd, 
+    afxModule amxIcd,
 
     // A configuration structure that holds the parameters required to establish and configure the mixing system.
     amxSystemConfig const* cfg, 
@@ -113,7 +113,7 @@ AMX afxError AmxEstablishMixSystem
 AMX afxUnit AmxEnumerateMixSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule amxIcd,
 
     // The starting index for the enumeration. 
     // If you want to start enumerating from the first available mixing system, you would set this value to 0. 
@@ -138,7 +138,7 @@ AMX afxUnit AmxEnumerateMixSystems
 AMX afxUnit AmxInvokeMixSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule amxIcd,
 
     // The starting index for the enumeration of mixing systems. 
     // It specifies which system to start processing from.
@@ -165,7 +165,7 @@ AMX afxUnit AmxInvokeMixSystems
 AMX afxUnit AmxEvokeMixSystems
 (
     // The installable client driver (ICD) module identifier.
-    afxUnit icd,
+    afxModule amxIcd,
 
     // The index of the first mixing system to retrieve. 
     // This allows you to start processing from a specific mixing system rather than always starting from the first.

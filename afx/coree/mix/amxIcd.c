@@ -289,6 +289,22 @@ _AMX afxError _AmxIcdImplement(afxSystem sys, _amxImplementation const* cfg)
     return err;
 }
 
+static _amxDdiIcd ddi =
+{
+    .cfgMsysCb = _AmxIcdConfigureMsysSW,
+    .acqMsysCb = _AmxIcdEstablishMsysSW,
+    .getMsysClsCb = _AmxIcdGetMsysClass,
+};
+
+_AMX _amxDdiIcd const* _AmxGetDdi(afxModule amxIcd)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX));
+
+    return &ddi;
+}
+
 _AMX afxBool _AmxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
 {
     afxError err = { 0 };
@@ -311,6 +327,36 @@ _AMX afxBool _AmxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
     *driver = icd;
     return found;
 }
+
+_AFX afxError AfxGetAmx(afxUnit unit, afxModule* amxIcd)
+{
+    afxError err = { 0 };
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+
+    if (unit != AFX_INVALID_INDEX)
+    {
+        afxModule drv;
+        if (!(_AmxGetIcd(sys, unit, &drv)))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_AMX));
+
+        *amxIcd = drv;
+    }
+    else
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+
+    return err;
+}
+
 
 _AMX afxError amxIcdHook(afxModule icd, afxUri const* manifest)
 {

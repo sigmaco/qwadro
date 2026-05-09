@@ -182,53 +182,34 @@ _AMX afxClassConfig const _AMX_MDEV_CLASS_CONFIG =
 // IMPLEMENTATION DISCOVERY                                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AMX afxUnit AmxInvokeMixDevices(afxUnit icd, afxUnit first, void *udd, afxBool(*f)(void*, afxMixDevice), afxUnit cnt)
+_AMX afxUnit AmxInvokeMixDevices(afxModule amxIcd, afxUnit first, void *udd, afxBool(*f)(void*, afxMixDevice), afxUnit cnt)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
+
     AFX_ASSERT(cnt);
     AFX_ASSERT(f);
-    afxUnit rslt = 0;
-
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
     
-    afxClass const* cls = _AmxIcdGetMdevClass(mdle);
+    afxClass const* cls = _AmxIcdGetMdevClass(amxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_MDEV);
     
-    rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
+    afxUnit rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
 
     return rslt;
 }
 
-_AMX afxUnit AmxEvokeMixDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*,afxMixDevice), afxUnit cnt, afxMixDevice devices[])
+_AMX afxUnit AmxEvokeMixDevices(afxModule amxIcd, afxUnit first, void* udd, afxBool(*f)(void*,afxMixDevice), afxUnit cnt, afxMixDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
+
     AFX_ASSERT(devices);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-
-    afxClass const* cls = _AmxIcdGetMdevClass(mdle);
+    afxClass const* cls = _AmxIcdGetMdevClass(amxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_MDEV);
 
     rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)devices);
@@ -237,26 +218,17 @@ _AMX afxUnit AmxEvokeMixDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*
     return rslt;
 }
 
-_AMX afxUnit AmxEnumerateMixDevices(afxUnit icd, afxUnit first, afxUnit cnt, afxMixDevice devices[])
+_AMX afxUnit AmxEnumerateMixDevices(afxModule amxIcd, afxUnit first, afxUnit cnt, afxMixDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
+
     AFX_ASSERT(devices);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-    
-    afxClass const* cls = _AmxIcdGetMdevClass(mdle);
+    afxClass const* cls = _AmxIcdGetMdevClass(amxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_MDEV);
     
     rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)devices);
@@ -265,26 +237,17 @@ _AMX afxUnit AmxEnumerateMixDevices(afxUnit icd, afxUnit first, afxUnit cnt, afx
     return rslt;
 }
 
-_AMX afxUnit AmxChooseMixDevices(afxUnit icd, amxDeviceInfo const* caps, amxFeatures const* features, amxLimits const* limits, afxUnit maxCnt, afxUnit mdevId[])
+_AMX afxUnit AmxChooseMixDevices(afxModule amxIcd, amxDeviceInfo const* caps, amxFeatures const* features, amxLimits const* limits, afxUnit maxCnt, afxUnit mdevId[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &amxIcd);
+    AFX_ASSERT(AfxTestModule(amxIcd, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
+
     //AFX_ASSERT(limits);
     //AFX_ASSERT(features);
     afxUnit rslt = 0;
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
-    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
-
-    afxModule mdle;
-    if (!_AmxGetIcd(sys, icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_AMX) == (afxModuleFlag_ICD | afxModuleFlag_AMX));
-
-    afxClass const* cls = _AmxIcdGetMdevClass(mdle);
+    afxClass const* cls = _AmxIcdGetMdevClass(amxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_MDEV);
 
     afxMixDevice mdev;

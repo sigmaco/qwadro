@@ -28,7 +28,11 @@
 
 #include "qwadro/afxMemoryUtil.h"
 
-typedef enum afxFormat afxFormat;
+typedef enum afxFormat
+{
+    afxFormat_UNDEFINED,
+
+} afxFormat;
 
 // The value of AFX_BUFFER_SPARSE_PAGE_SIZE is the largest allowed value.
 // Smaller values are permitted and it is recommended to implementors that it be a power of two.

@@ -28,7 +28,7 @@
 //#include "afxIommuDDK.h"
 #include "afxIoContextDDK.h"
 #include "afxFenceDDK.h"
-#include "../afxBufferDDK.h"
+#include "afxBufferDDK.h"
 #include "qwadro/afxIoQueue.h"
 
 AFX_DECLARE_UNION(_afxIoReqPacket);

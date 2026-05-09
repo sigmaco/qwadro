@@ -46,6 +46,7 @@
 #define AFX_IO_QUEUE_H
 
 #include "qwadro/afxBuffer.h"
+#include "qwadro/math/afxVector.h"
 
 AFX_DEFINE_STRUCT(afxSubmission)
 {

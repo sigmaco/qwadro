@@ -136,14 +136,27 @@ _ACX afxError _AcxIcdImplement(afxModule icd, _acxImplementation const* cfg)
     return err;
 }
 
-_ACX afxBool _AcxGetIcd(afxUnit icdIdx, afxModule* driver)
+static _acxDdiIcd ddi =
+{
+    .cfgSsysCb = _AcxIcdConfigureSsysSW,
+    .acqSsysCb = _AcxIcdEstablishSsysSW,
+    .getSsysClsCb = _AcxIcdGetSsysClass,
+};
+
+_ACX _acxDdiIcd const* _AcxGetDdi(afxModule acxIcd)
 {
     afxError err = { 0 };
-    afxBool found = FALSE;
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &acxIcd);
+    AFX_ASSERT(AfxTestModule(acxIcd, afxModuleFlag_ICD | afxModuleFlag_ACX));
 
-    afxSystem sys;
-    AfxGetSystem(&sys);
+    return &ddi;
+}
+
+_ACX afxBool _AcxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
+{
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    afxBool found = FALSE;
 
     afxModule icd = NIL;
     while ((icdIdx < sys->acxIcdChain.cnt) && (icd = AFX_REBASE(AfxFindFirstLink(&sys->acxIcdChain, icdIdx), AFX_OBJ(afxModule), icd.acx)))
@@ -160,6 +173,35 @@ _ACX afxBool _AcxGetIcd(afxUnit icdIdx, afxModule* driver)
     AFX_ASSERT(driver);
     *driver = icd;
     return found;
+}
+
+_AFX afxError AfxGetAcx(afxUnit unit, afxModule* acxIcd)
+{
+    afxError err = { 0 };
+
+    afxSystem sys;
+    AfxGetSystem(&sys);
+    AFX_ASSERT_OBJECTS(afxFcc_SYS, 1, &sys);
+    
+    if (unit != AFX_INVALID_INDEX)
+    {
+        afxModule drv;
+        if (!(_AcxGetIcd(sys, unit, &drv)))
+        {
+            AfxThrowError();
+            return err;
+        }
+        AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
+        AFX_ASSERT(AfxTestModule(drv, afxModuleFlag_ICD | afxModuleFlag_ACX));
+
+        *acxIcd = drv;
+    }
+    else
+    {
+        err = afxError_NOT_IMPLEMENTED;
+    }
+
+    return err;
 }
 
 _ACX afxError acxIcdHook(afxModule icd, afxUri const* manifest)

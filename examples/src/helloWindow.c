@@ -46,7 +46,9 @@ int main(int argc, char const* argv[])
 
     // Set up the draw system
 
-    afxUnit avxIcd = 0;
+    afxModule avxIcd;
+    AfxGetAvx(0, &avxIcd);
+
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
     dsyc.caps = avxService_GFX;
@@ -58,7 +60,9 @@ int main(int argc, char const* argv[])
 
     // Open a session
 
-    afxUnit auxIcd = 0;
+    afxModule auxIcd;
+    AfxGetShell(0, &auxIcd);
+
     afxEnvironment env;
     afxEnvironmentConfig ecfg = { 0 };
     ecfg.dsys = dsys; // integrate our draw system
@@ -69,7 +73,6 @@ int main(int argc, char const* argv[])
     // Acquire a drawable surface
 
     afxWindow wnd;
-    afxSurface dout;
     afxWindowConfig wcfg = { 0 };
     wcfg.dout.dsys = dsys;
     //wcfg.dout.bins[0].fmt = avxFormat_BGRA4un;
@@ -77,6 +80,7 @@ int main(int argc, char const* argv[])
     AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
+    afxSurface dout;
     AfxGetWindowSurface(wnd, &dout);
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 

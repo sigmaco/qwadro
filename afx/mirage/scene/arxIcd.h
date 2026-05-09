@@ -27,12 +27,33 @@
 #include "../iris/arxRenderContextDDK.h"
 #include "../sim/asxImplementation.h"
 
+AFX_DECLARE_STRUCT(_arxIddIcd);
+
+#ifndef _ARX_SIM_C
+AFX_DECLARE_STRUCT(_arxDdiIcd);
+#else
+AFX_DEFINE_STRUCT(_arxDdiIcd)
+{
+    afxError(*cfgScioCb)(afxModule, arxScenarioConfig*);
+    afxError(*acqScioCb)(afxModule, arxScenarioConfig const*, arxScenario*);
+    afxClass const*(*getScioClsCb)(afxModule icd);
+};
+#endif
+
 ARX afxClass const* _ArxIcdGetScioClass(afxModule icd);
 
 ARX afxError _ArxIcdImplement(afxModule icd, afxClassConfig const* scioCls);
 
-ARX afxBool _ArxGetIcd(afxUnit icdIdx, afxModule* driver);
-
 ARX afxError _ArxAmendEcosystem(afxSystem sys);
+
+ARX afxBool _ArxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
+
+AFX afxError AfxGetArx(afxUnit unit, afxModule* arxIcd);
+
+ARX afxError _ArxIcdConfigureScioSW(afxModule arxIcd, arxScenarioConfig* cfg);
+
+ARX afxError _ArxIcdAcquireScioSW(afxModule arxIcd, arxScenarioConfig const* cfg, arxScenario* scenario);
+
+ARX _arxDdiIcd const* _ArxGetDdi(afxModule arxIcd);
 
 #endif//ARX_ICD_H

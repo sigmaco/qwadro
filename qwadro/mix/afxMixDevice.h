@@ -158,7 +158,7 @@ AMX void AmxQueryMixCapabilities
 AMX afxUnit AmxEnumerateMixDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd,
+    afxModule amxIcd,
 
     // The number ordinal for the first mix device to start the iteration from.
     afxUnit first, 
@@ -181,7 +181,7 @@ AMX afxUnit AmxEnumerateMixDevices
 AMX afxUnit AmxInvokeMixDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule amxIcd,
 
     // The ordinal number for the first mixing device to start the iteration from.
     afxUnit first, 
@@ -209,7 +209,7 @@ AMX afxUnit AmxInvokeMixDevices
 AMX afxUnit AmxEvokeMixDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd, 
+    afxModule amxIcd,
 
     // The ordinal number for the first mixing device to start the iteration from.
     afxUnit first, 
@@ -239,7 +239,7 @@ AMX afxUnit AmxEvokeMixDevices
 AVX afxUnit AmxChooseMixDevices
 (
     // The ordinal identifier for the installable client driver (ICD).
-    afxUnit icd,
+    afxModule amxIcd,
 
     // The operations or features that the device must supports.
     amxDeviceInfo const* caps,

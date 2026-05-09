@@ -179,22 +179,17 @@ _ACX afxClassConfig const _ACX_SDEV_CLASS_CONFIG =
 // IMPLEMENTATION DISCOVERY                                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-_ACX afxUnit AcxInvokeWarpDevices(afxUnit icd, afxUnit first, void *udd, afxBool(*f)(void*, afxWarpDevice), afxUnit cnt)
+_ACX afxUnit AcxInvokeWarpDevices(afxModule acxIcd, afxUnit first, void *udd, afxBool(*f)(void*, afxWarpDevice), afxUnit cnt)
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &acxIcd);
+    AFX_ASSERT(AfxTestModule(acxIcd, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
+    
     AFX_ASSERT(cnt);
     AFX_ASSERT(f);
     afxUnit rslt = 0;
 
-    afxModule mdle;
-    if (!_AcxGetIcd(icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
-    
-    afxClass const* cls = _AcxIcdGetSdevClass(mdle);
+    afxClass const* cls = _AcxIcdGetSdevClass(acxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_SDEV);
     
     rslt = AfxInvokeObjects(cls, (void*)f, udd, first, cnt);
@@ -202,22 +197,17 @@ _ACX afxUnit AcxInvokeWarpDevices(afxUnit icd, afxUnit first, void *udd, afxBool
     return rslt;
 }
 
-_ACX afxUnit AcxEvokeWarpDevices(afxUnit icd, afxUnit first, void* udd, afxBool(*f)(void*,afxWarpDevice), afxUnit cnt, afxWarpDevice devices[])
+_ACX afxUnit AcxEvokeWarpDevices(afxModule acxIcd, afxUnit first, void* udd, afxBool(*f)(void*,afxWarpDevice), afxUnit cnt, afxWarpDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &acxIcd);
+    AFX_ASSERT(AfxTestModule(acxIcd, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
+
     AFX_ASSERT(devices);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
-    afxModule mdle;
-    if (!_AcxGetIcd(icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
-
-    afxClass const* cls = _AcxIcdGetSdevClass(mdle);
+    afxClass const* cls = _AcxIcdGetSdevClass(acxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_SDEV);
 
     rslt = AfxEvokeObjects(cls, (void*)f, udd, first, cnt, (afxObject*)devices);
@@ -226,22 +216,17 @@ _ACX afxUnit AcxEvokeWarpDevices(afxUnit icd, afxUnit first, void* udd, afxBool(
     return rslt;
 }
 
-_ACX afxUnit AcxEnumerateWarpDevices(afxUnit icd, afxUnit first, afxUnit cnt, afxWarpDevice devices[])
+_ACX afxUnit AcxEnumerateWarpDevices(afxModule acxIcd, afxUnit first, afxUnit cnt, afxWarpDevice devices[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &acxIcd);
+    AFX_ASSERT(AfxTestModule(acxIcd, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
+
     AFX_ASSERT(devices);
     AFX_ASSERT(cnt);
     afxUnit rslt = 0;
 
-    afxModule mdle;
-    if (!_AcxGetIcd(icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
-    
-    afxClass const* cls = _AcxIcdGetSdevClass(mdle);
+    afxClass const* cls = _AcxIcdGetSdevClass(acxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_SDEV);
     
     rslt = AfxEnumerateObjects(cls, first, cnt, (afxObject*)devices);
@@ -250,22 +235,17 @@ _ACX afxUnit AcxEnumerateWarpDevices(afxUnit icd, afxUnit first, afxUnit cnt, af
     return rslt;
 }
 
-_ACX afxUnit AcxChooseWarpDevices(afxUnit icd, acxDeviceInfo const* caps, acxFeatures const* features, acxLimits const* limits, afxUnit maxCnt, afxUnit sdevId[])
+_ACX afxUnit AcxChooseWarpDevices(afxModule acxIcd, acxDeviceInfo const* caps, acxFeatures const* features, acxLimits const* limits, afxUnit maxCnt, afxUnit sdevId[])
 {
     afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &acxIcd);
+    AFX_ASSERT(AfxTestModule(acxIcd, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
+
     //AFX_ASSERT(limits);
     //AFX_ASSERT(features);
     afxUnit rslt = 0;
 
-    afxModule mdle;
-    if (!_AcxGetIcd(icd, &mdle))
-    {
-        return rslt;
-    }
-    AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &mdle);
-    AFX_ASSERT(AfxTestModule(mdle, afxModuleFlag_ICD | afxModuleFlag_ACX) == (afxModuleFlag_ICD | afxModuleFlag_ACX));
-
-    afxClass const* cls = _AcxIcdGetSdevClass(mdle);
+    afxClass const* cls = _AcxIcdGetSdevClass(acxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_SDEV);
 
     afxWarpDevice sdev;
