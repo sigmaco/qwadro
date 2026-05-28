@@ -353,17 +353,17 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         }\
         ");
 
-        avxShader codb;
-        AvxAcquireShaders(dsys, 1, NIL, &codb);
-        AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+        avxShader shd;
+        AvxAcquireShaders(dsys, 1, NIL, &shd);
+        AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
         avxShaderSpecialization specs[2] = { 0 };
         specs[0].stage = avxShaderType_VERTEX;
         specs[0].prog = AFX_STRING("fontVsh");
         specs[1].stage = avxShaderType_FRAGMENT;
         specs[1].prog = AFX_STRING("fontFsh");
-        AvxCompileShader(codb, &specs[0].prog, &fontVsh);
-        AvxCompileShader(codb, &specs[1].prog, &fontFsh);
+        AvxCompileShader(shd, &specs[0].prog, &fontVsh);
+        AvxCompileShader(shd, &specs[1].prog, &fontFsh);
 
         avxVertexInput vin;
         avxVertexLayout vlay = { 0 };
@@ -382,13 +382,15 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         pipb.cullMode = avxCullMode_BACK;
         pipb.primTop = avxTopology_TRI_LIST; // avxTopology_TRI_STRIP
         pipb.vin = vin;
-        pipb.codb = codb;
+        pipb.shd = shd;
         pipb.progCnt = 2;
         pipb.progSpecs = specs;
 
         AvxAssembleGfxPipelines(dsys, 1, &pipb, &pip);
         AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
+
         AfxDisposeObjects(1, &vin);
+        AfxDisposeObjects(1, &shd);
 
         avxBuffer fntDataBuf;
         avxBufferInfo vboSpec = { 0 };

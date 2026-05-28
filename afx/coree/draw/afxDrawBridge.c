@@ -157,7 +157,7 @@ _AVX afxError _AvxDexuTransferVideoMemory(afxDrawBridge dexu, avxTransference* c
     return err;
 }
 
-_AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[])
+_AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt, _avxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @dexu must be a valid afxDrawBridge handle.
@@ -431,7 +431,7 @@ _AVX afxError _AvxDexuScanSurfaces(afxDrawBridge dexu, afxUnit cnt, avxCaption c
     return err;
 }
 
-_AVX _avxDdiDexu const _AVX_DDI_DEXU =
+_AVX _avxDexuDdi const _AVX_DDI_DEXU =
 {
     .pingCb = _AvxDexu_PingCb
 };

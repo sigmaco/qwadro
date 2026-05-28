@@ -337,8 +337,8 @@ AFX_DEFINE_STRUCT(avxLimits)
 
 AFX_DEFINE_STRUCT(avxDeviceInfo)
 {
-    avxService         capabilities;
-    afxAcceleration     acceleration;
+    avxService          caps;
+    afxAcceleration     accel;
     afxUnit             minQueCnt; // usually 3
     afxUnit             maxQueCnt; // the count of queues in this port. Each port must support at least one queue.
     afxBool             nonRhcs;

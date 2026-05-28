@@ -40,7 +40,7 @@ _AVX afxError AvxMakeBufferedRing(avxBufferedRing* rng, avxBuffer buf, afxSize b
     if (buf)
     {
         AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-        rng->basePtr = AvxGetBufferMap(buf, bufRange, bufRange);
+        rng->basePtr = AvxGetBufferMap(buf, bufBase, bufRange);
         
         if (!rng->basePtr)
         {

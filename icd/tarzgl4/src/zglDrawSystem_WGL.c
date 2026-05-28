@@ -27,7 +27,7 @@ _ZGLINL afxError _ZglDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt,
     for (afxUnit i = 0; i < cnt; i++)
     {
         avxRaster ras = rasters[i];
-        _avxRasStorage* bufs = &ras->m.storage[0];
+        _avxRasMem* bufs = &ras->m.storage[0];
 
         if (ras->m.flags & avxRasterFlag_FOREIGN)
         {
@@ -59,7 +59,7 @@ _ZGLINL afxError _ZglDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
     {
         avxRasterInfo const* info = &infos[i];
         avxRaster ras = rasters[i];
-        _avxRasStorage* bufs = &ras->m.storage[0];
+        _avxRasMem* bufs = &ras->m.storage[0];
 
         if (ras->m.flags & avxRasterFlag_FOREIGN)
         {
@@ -92,7 +92,7 @@ _ZGLINL afxError _ZglDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt,
     for (afxUnit i = 0; i < cnt; i++)
     {
         avxBuffer buf = buffers[i];
-        _avxBufStorage* bufs = &buf->m.storage[0];
+        _avxBufMem* bufs = &buf->m.storage[0];
 
         if (buf->m.flags & avxBufferFlag_F)
         {
@@ -124,7 +124,7 @@ _ZGLINL afxError _ZglDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
     {
         avxBufferInfo const* info = &infos[i];
         avxBuffer buf = buffers[i];
-        _avxBufStorage* bufs = &buf->m.storage[0];
+        _avxBufMem* bufs = &buf->m.storage[0];
 
         if (buf->m.flags & avxBufferFlag_F)
         {
@@ -149,7 +149,7 @@ _ZGLINL afxError _ZglDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
     return err;
 }
 
-_ZGL _avxDdiDsys const _ZGL_DDI_DSYS =
+_ZGL _avxDsysDdi const _ZGL_DDI_DSYS =
 {
     .fencCls = _AvxDsysSW_GetFencClassCb,
     .dexuCls = _AvxDsysSW_GetDexuClassCb,

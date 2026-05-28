@@ -214,19 +214,19 @@ AFX_DEFINE_STRUCT(avxShaderSpecialization)
 
 AFX_DEFINE_STRUCT(avxPipelineConfig)
 {
-    // Bus which this pipeline will be executed.
-    // Probably will be removed by specialized acquision functions.
-    avxBus              bus;
-    // The avxShader to be used to assemble programmable functions.
-    avxShader         codb;
-    // A optional handle to a avxLigature object.
-    // If NIL, one new avxLigature object will be generated for the pipeline.
-    avxLigature         liga;
     // A debugging string assigned to the pipeline.
     afxString           tag;
     // An user-defined data assigned to the pipeline.
     void*               udd;
 
+    // Bus which this pipeline will be executed.
+    // Probably will be removed by specialized acquision functions.
+    avxBus              bus;
+    // A optional handle to a avxLigature object.
+    // If NIL, one new avxLigature object will be generated for the pipeline.
+    avxLigature         liga;
+    // The avxShader to be used to assemble programmable functions.
+    avxShader           shd;
     afxUnit             progCnt;
     avxShaderSpecialization const* progSpecs;
     afxUnit             specializedWorkGrpSiz[3];

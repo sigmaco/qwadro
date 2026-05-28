@@ -35,7 +35,7 @@ typedef enum _avxMemFlag
     _avxMemFlag_EMBEDDED = AFX_BITMASK(3) // on-chip memory
 } _avxMemFlags;
 
-AFX_DEFINE_STRUCT(_avxBufStorage)
+AFX_DEFINE_STRUCT(_avxBufMem)
 {
     afxLink iommu;
     // binding
@@ -87,7 +87,7 @@ AFX_DEFINE_STRUCT(_avxBufStorage)
     };
 };
 
-AFX_DEFINE_STRUCT(_avxBufferRemapping)
+AFX_DEFINE_STRUCT(_avxBufRemapping)
 {
     avxBuffer       buf;
     afxSize         offset;
@@ -97,8 +97,8 @@ AFX_DEFINE_STRUCT(_avxBufferRemapping)
     void**          placeholder;
 };
 
-AFX_DECLARE_STRUCT(_avxDdiBuf);
-AFX_DECLARE_STRUCT(_avxIddBuf);
+AFX_DECLARE_STRUCT(_avxBufDdi);
+AFX_DECLARE_STRUCT(_avxBufIdd);
 
 #ifdef _AVX_BUFFER_C
 #ifdef _AVX_BUFFER_IMPL
@@ -107,8 +107,8 @@ AFX_OBJECT(_avxBuffer)
 AFX_OBJECT(avxBuffer)
 #endif
 {
-    _avxDdiBuf const*   ddi;
-    _avxIddBuf*         idd;
+    _avxBufDdi const*   ddi;
+    _avxBufIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -129,7 +129,7 @@ AFX_OBJECT(avxBuffer)
     afxUnit             reqAlign;
     // required memory conditions for this storage block.
     afxFlags            reqMemType;
-    _avxBufStorage      storage[1]; // non-sparse
+    _avxBufMem      storage[1]; // non-sparse
     afxSize             storageOffset;
 };
 #endif//_AVX_BUFFER_C
@@ -147,6 +147,6 @@ AVXINL void _AvxAllocateBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo c
 AVXINL void* _AvxGetClientBufferData(avxBuffer buf, afxSize from);
 
 AVX afxError _AvxDsysSW_CohereMappedBuffersCb(afxDrawSystem dsys, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
-AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[]);
+AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufRemapping const maps[]);
 
 #endif//AVX_BUFFER_DDK_H

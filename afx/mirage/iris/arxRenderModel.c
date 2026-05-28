@@ -375,7 +375,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
 
         for (afxUnit i = 0; i < msh->attrCnt; i++)
         {
-            arxMeshAttr* attr = &msh->attrInfo[i];
+            _arxMshAttr* attr = &msh->attrInfo[i];
             avxFormat fmt = attr->fmt;
             AFX_ASSERT(fmt < avxFormat_TOTAL);
 
@@ -507,7 +507,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
                 {
                     if (cacheIdx[j] == srcIdx)
                     {
-                        arxMeshAttr* attr = &msh->attrInfo[j];
+                        _arxMshAttr* attr = &msh->attrInfo[j];
                         //AFX_ASSERT(data);
                         avxFormat fmt = attr->fmt;
                         AFX_ASSERT(fmt < avxFormat_TOTAL);

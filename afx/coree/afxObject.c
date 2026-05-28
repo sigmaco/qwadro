@@ -198,7 +198,7 @@ _AFXINL afxObjectFlags AfxClearObjectFlags(afxObject obj, afxObjectFlags flags)
     return (hdr->flags &= ~flags);
 }
 
-_AFXINL afxError AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxObjectStash const stashes[])
+_AFXINL afxError AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxAllocation const stashes[])
 {
     afxError err = { 0 };
     afxClass* cls = AfxGetClass(obj);
@@ -206,7 +206,7 @@ _AFXINL afxError AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxObjectSt
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxObjectStash const* stash = &stashes[i];
+        afxAllocation const* stash = &stashes[i];
         afxUnit alignedSiz = AFX_ALIGN_SIZE(stash->siz, AFX_MAX(AFX_SIMD_ALIGNMENT, stash->align));
         void* p = stash->cnt ? AfxRequestArena(aren, alignedSiz, AFX_MAX(1, stash->cnt), NIL, 0) : NIL;
 
@@ -216,7 +216,7 @@ _AFXINL afxError AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxObjectSt
 
             for (afxUnit j = i; j-- > 0;)
             {
-                afxObjectStash const* stash2 = &stashes[j];
+                afxAllocation const* stash2 = &stashes[j];
                 afxUnit alignedSiz = AFX_ALIGN_SIZE(stash2->siz, AFX_MAX(sizeof(void*), stash2->align));
                 AfxReclaimArena(aren, *stash2->var, AFX_MAX(1, stash2->cnt) * alignedSiz);
             }
@@ -226,7 +226,7 @@ _AFXINL afxError AfxAllocateInstanceData(afxObject obj, afxUnit cnt, afxObjectSt
     return err;
 }
 
-_AFXINL afxError AfxDeallocateInstanceData(afxObject obj, afxUnit cnt, afxObjectStash const stashes[])
+_AFXINL afxError AfxDeallocateInstanceData(afxObject obj, afxUnit cnt, afxAllocation const stashes[])
 {
     afxError err = { 0 };
     afxClass* cls = AfxGetClass(obj);
@@ -234,7 +234,7 @@ _AFXINL afxError AfxDeallocateInstanceData(afxObject obj, afxUnit cnt, afxObject
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxObjectStash const* stash = &stashes[i];
+        afxAllocation const* stash = &stashes[i];
 
         if (stash->cnt)
         {

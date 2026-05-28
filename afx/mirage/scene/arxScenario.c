@@ -455,7 +455,7 @@ _ARX afxError _ArxScioCtorCb(arxScenario scio, void** args, afxUnit invokeNo)
     afxModule drv = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &drv);
     AFX_ASSERT(args[1]);
-    _arxScioAcquisition const* cfg = ((_arxScioAcquisition const *)args[1]) + invokeNo;
+    _arxScioAcq const* cfg = ((_arxScioAcq const *)args[1]) + invokeNo;
 
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg->dsys);
     scio->dsys = cfg->dsys;
@@ -705,7 +705,7 @@ _ARX afxError _ArxIcdAcquireScioSW(afxModule arxIcd, arxScenarioConfig const* cf
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    _arxScioAcquisition cfg2 = { 0 };
+    _arxScioAcq cfg2 = { 0 };
     cfg2.cfg = *cfg;
     cfg2.dsys = dsys;
 

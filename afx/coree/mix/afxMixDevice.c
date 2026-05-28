@@ -100,7 +100,7 @@ _AMX afxBool AmxIsMixDeviceAcceptable(afxMixDevice mdev, amxFeatures const* feat
     return rslt;
 }
 
-_AMX _amxDdiMdev const _AMX_DDI_MDEV =
+_AMX _amxMdevDdi const _AMX_DDI_MDEV =
 {
     0
 };
@@ -127,7 +127,7 @@ _AMX afxError _AmxMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _amxMdevReg const* info = ((_amxMdevReg const *)args[1]) + invokeNo;
+    _amxMdevAcq const* info = ((_amxMdevAcq const *)args[1]) + invokeNo;
     AFX_ASSERT(info);
 
     if (_AFX_DEV_CLASS_CONFIG.ctor(&mdev->dev, (void*[]) { icd, (void*)&info->dev }, 0))
@@ -287,7 +287,7 @@ _AMX afxUnit AmxChooseMixDevices(afxModule amxIcd, amxDeviceInfo const* caps, am
     return rslt;
 }
 
-_AMX afxError _AmxIcdRegisterDevices(afxModule icd, afxUnit cnt, _amxMdevReg const infos[], afxMixDevice devices[])
+_AMX afxError _AmxIcdRegisterDevices(afxModule icd, afxUnit cnt, _amxMdevAcq const infos[], afxMixDevice devices[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);

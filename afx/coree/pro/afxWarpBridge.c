@@ -173,7 +173,7 @@ _ACX afxError _AcxSexuTransferWarpMemory(afxWarpBridge sexu, acxTransference* ct
     return err;
 }
 
-_ACX afxError _AcxSexuRemapBuffers(afxWarpBridge sexu, afxBool unmap, afxUnit cnt, _acxBufferRemapping const maps[])
+_ACX afxError _AcxSexuRemapBuffers(afxWarpBridge sexu, afxBool unmap, afxUnit cnt, _acxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @sexu must be a valid afxWarpBridge handle.

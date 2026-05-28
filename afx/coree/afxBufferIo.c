@@ -233,7 +233,7 @@ _AFX afxError AfxMapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[], vo
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= AFX_MAX_VERTEX_SOURCES);
     // Temporary array for mapping operations
-    _afxBufferRemapping remaps2[AFX_MAX_VERTEX_SOURCES];
+    _afxBufRemapping remaps2[AFX_MAX_VERTEX_SOURCES];
     // Count of operations to be processed
     afxUnit opCnt = 0;
 
@@ -410,7 +410,7 @@ _AFX afxError AfxUnmapBuffers(afxIommu iom, afxUnit cnt, afxBufferedMap maps[])
 
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= AFX_MAX_VERTEX_SOURCES);
-    _afxBufferRemapping unmaps2[AFX_MAX_VERTEX_SOURCES];
+    _afxBufRemapping unmaps2[AFX_MAX_VERTEX_SOURCES];
     // Count of buffers to unmap.
     afxUnit opCnt = 0;
 

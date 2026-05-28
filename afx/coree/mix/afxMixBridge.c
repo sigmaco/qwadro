@@ -235,7 +235,7 @@ _AMX afxError _AmxMexuTransferMixMemory(afxMixBridge mexu, amxTransference* ctrl
     return err;
 }
 
-_AMX afxError _AmxMexuRemapBuffers(afxMixBridge mexu, afxBool unmap, afxUnit cnt, _amxBufferRemapping const maps[])
+_AMX afxError _AmxMexuRemapBuffers(afxMixBridge mexu, afxBool unmap, afxUnit cnt, _amxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @mexu must be a valid afxMixBridge handle.

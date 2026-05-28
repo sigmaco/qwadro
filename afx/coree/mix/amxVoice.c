@@ -26,6 +26,18 @@
 
 // This is the sound of Z; the sound that creates a new dimension.
 
+/*
+    IXAudio2SourceVoice::GetState
+
+    Sinalizadores que controlam quais dados de estado de voz devem ser retornados. 
+    Os valores válidos são 0 ou XAUDIO2_VOICE_NOSAMPLESPLAYED. O valor padrão é 0. 
+    Se você especificar XAUDIO2_VOICE_NOSAMPLESPLAYED, GetState retornará apenas o estado do buffer, 
+    não o estado do sampler. GetState leva cerca de um terço do tempo para ser concluído quando 
+    você especifica XAUDIO2_VOICE_NOSAMPLESPLAYED.
+
+    Segundo a informação acima, SourceVoice do XAudio2 pode ser interpretado como um sampler com buffers.
+*/
+
 typedef enum amxVoiceState
 {
     amxVoiceState_STOP,
@@ -96,25 +108,25 @@ void loadVoicingInfo(amxVoice vs, const amxVoicingInfo* info)
     // Load Playback Info Into Voice.
     // This function populates your voice state from a dequeued amxVoicingInfo.
 
-    vs->srcBuf = info->srcBuf;
-    vs->srcOffset = info->srcOffset;
-    vs->srcRange = info->srcRange;
-    vs->srcStride = info->srcStride;
+    vs->src.buf = info->src.buf;
+    vs->src.offset = info->src.offset;
+    vs->src.range = info->src.range;
+    vs->src.stride = info->src.stride;
     vs->sampRate = info->sampleRate;
 
     //afxUnit totalSamples = vs->srcRange / info->srcBuf->fmtStride;
-    afxUnit totalSamples = vs->srcRange / info->srcStride;
+    afxUnit totalSamples = vs->src.range / info->src.stride;
     afxUnit playBegin = info->playBegin;
     afxUnit playLen = (info->playLen == 0) ? totalSamples : info->playLen;
 
-    AFX_ASSERT_RANGE(vs->srcRange, playBegin * vs->srcStride, playLen * vs->srcStride);
+    AFX_ASSERT_RANGE(vs->src.range, playBegin * vs->src.stride, playLen * vs->src.stride);
 
     vs->iterBegin = info->iterBegin;
     vs->iterEnd = (info->iterLen == 0 && info->iterCnt > 0)
         ? totalSamples
         : info->iterBegin + info->iterLen;
 
-    AFX_ASSERT_RANGE(vs->srcRange, vs->iterBegin * vs->srcStride, vs->iterEnd * vs->srcStride);
+    AFX_ASSERT_RANGE(vs->src.range, vs->iterBegin * vs->src.stride, vs->iterEnd * vs->src.stride);
 
     vs->iterCnt = info->iterCnt;
     vs->iterIdx = 0;
@@ -122,7 +134,7 @@ void loadVoicingInfo(amxVoice vs, const amxVoicingInfo* info)
     vs->playing2 = TRUE;
 
     //vs->srcCursor = playBegin * info->srcBuf->fmtStride; // <--- Initial read cursor
-    vs->srcCursor = playBegin * info->srcStride; // <--- Initial read cursor
+    vs->srcCursor = playBegin * info->src.stride; // <--- Initial read cursor
 #if !0
     vs->freqRatio = 48000.0 / (double)vs->sampRate;
     vs->rs.ratio = vs->freqRatio;
@@ -193,14 +205,14 @@ void fillResampleInput(amxVoice vs)
     vs->rs.in_len = 0;
     vs->rs.in_pos = 0;
 
-    amxFormat fmt = vs->srcBuf->fmt;
+    amxFormat fmt = vs->src.buf->fmt;
     int numChans = 2;
     afxSize sampleSize = minimumBytesPerFrame(fmt, 1);
     afxSize frameSize = sampleSize * numChans;
 
-    uint8_t* data = (uint8_t*)vs->srcBuf->storage[0].hostedAlloc.bytemap + vs->srcOffset;
-    afxSize loopBeginByte = vs->iterBegin * vs->srcStride;
-    afxSize loopEndByte = vs->iterEnd * vs->srcStride;
+    uint8_t* data = (uint8_t*)vs->src.buf->storage[0].host.bytemap + vs->src.offset;
+    afxSize loopBeginByte = vs->iterBegin * vs->src.stride;
+    afxSize loopEndByte = vs->iterEnd * vs->src.stride;
 
     afxUnit framesWritten = 0;
     afxUnit frameCap = sizeof(vs->rs.input_buf) / sizeof(vs->rs.input_buf[0]);
@@ -223,26 +235,26 @@ void fillResampleInput(amxVoice vs)
             }
         }
 
-        afxSize maxDataPos = vs->looping2 ? loopEndByte : vs->srcRange;
+        afxSize maxDataPos = vs->looping2 ? loopEndByte : vs->src.range;
         afxSize available = maxDataPos - vs->srcCursor;
 
         // Make sure loopEndByte is within the actual buffer size.
-        if (loopEndByte > vs->srcRange - vs->srcOffset)
+        if (loopEndByte > vs->src.range - vs->src.offset)
         {
             // Loop endpoint is outside of buffer
             AfxThrowError();
             break;
         }
 
-        if (available < vs->srcStride)
+        if (available < vs->src.stride)
         {
             // Not enough data to read a full frame
             break;
         }
 
         // Ensure that we don't go beyond the actual size of the buffer.
-        afxSize effectiveOffset = vs->srcOffset + vs->srcCursor;
-        if (effectiveOffset + vs->srcStride > vs->srcRange)
+        afxSize effectiveOffset = vs->src.offset + vs->srcCursor;
+        if (effectiveOffset + vs->src.stride > vs->src.offset + vs->src.range)
         {
             break; // Prevent buffer overrun
         }
@@ -252,7 +264,7 @@ void fillResampleInput(amxVoice vs)
         float sample = convertSampleToFloat(framePtr, fmt);
         vs->rs.input_buf[framesWritten] = sample;
 
-        vs->srcCursor += vs->srcStride;
+        vs->srcCursor += vs->src.stride;
         framesWritten++;
     }
 
@@ -271,7 +283,7 @@ afxSize amxProcessVoice(amxVoice vs, float* outBuf, afxSize outFrames, afxUnit s
     {
         if (vs->rs.needs_more_input)
         {
-            if (!vs->srcBuf || ((vs->srcCursor >= vs->srcRange) && !vs->looping2))
+            if (!vs->src.buf || ((vs->srcCursor >= vs->src.range) && !vs->looping2))
             {
                 // Load next voice segment (next amxVoicingInfo from the queue)
                 amxVoicingInfo info;
@@ -314,19 +326,15 @@ afxSize amxProcessVoice(amxVoice vs, float* outBuf, afxSize outFrames, afxUnit s
 
 // Adds a new audio buffer to the voice queue.
 
-_AMX afxError AmxFeedVoice(amxTracker trax, afxUnit id, amxVoicingInfo const* info)
+_AMX afxError AmxFeedVoice(amxVoice vox, amxVoicingInfo const* info)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     amxVoicingInfo vi = { 0 };
     vi = *info;
 
-    AFX_ASSERT(info->srcStride);
+    AFX_ASSERT(info->src.stride);
 
     if (!AfxPushInterlockedQueue(&vox->bufQue, &vi))
         AfxThrowError();
@@ -336,13 +344,9 @@ _AMX afxError AmxFeedVoice(amxTracker trax, afxUnit id, amxVoicingInfo const* in
 
 // Removes all pending audio buffers from the voice queue.
 
-_AMX afxError AmxPurgeVoice(amxTracker trax, afxUnit id, afxFlags flags)
+_AMX afxError AmxPurgeVoice(amxVoice vox, afxFlags flags)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     amxVoicingInfo vi = { 0 };
@@ -353,13 +357,9 @@ _AMX afxError AmxPurgeVoice(amxTracker trax, afxUnit id, afxFlags flags)
 
 // Stops looping the voice when it reaches the end of the current loop region.
 
-_AMX afxError AmxBreakVoiceLoop(amxTracker trax, afxUnit id, afxFlags flags)
+_AMX afxError AmxBreakVoiceLoop(amxVoice vox, afxFlags flags)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     vox->iterCnt = 0;
@@ -371,30 +371,22 @@ _AMX afxError AmxBreakVoiceLoop(amxTracker trax, afxUnit id, afxFlags flags)
 // Starts consumption and processing of audio by the voice. 
 // Delivers the result to any connected submix or mastering voices, or to the output device.
 
-_AMX afxError AmxSwitchVoice(amxTracker trax, afxUnit id, afxFlags flags)
+_AMX afxError AmxPauseVoice(amxVoice vox, afxBool suspend, afxFlags flags)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
-    vox->playing2 = !!flags;
-    vox->paused = FALSE;
+    vox->playing2 = !suspend;
+    vox->paused = !!suspend;
 
     return err;
 }
 
 // Reconfigures the voice to consume source data at a different sample rate than the rate specified when the voice was created.
 
-_AMX afxError AmxSetVoiceSampleRate(amxTracker trax, afxUnit id, afxUnit sampRate)
+_AMX afxError AmxSetVoiceSampleRate(amxVoice vox, afxUnit sampRate)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     vox->sampRate = sampRate;
@@ -406,13 +398,9 @@ _AMX afxError AmxSetVoiceSampleRate(amxTracker trax, afxUnit id, afxUnit sampRat
 
 // Sets the frequency adjustment ratio of the voice.
 
-_AMX afxError AmxSetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal ratio)
+_AMX afxError AmxSetVoiceFrequencyRatio(amxVoice vox, afxReal ratio)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     vox->freqRatio = ratio;
@@ -423,13 +411,9 @@ _AMX afxError AmxSetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal rat
 
 // Returns the frequency adjustment ratio of the voice.
 
-_AMX afxError AmxGetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal* ratio)
+_AMX afxError AmxGetVoiceFrequencyRatio(amxVoice vox, afxReal* ratio)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     *ratio = vox->freqRatio;
@@ -439,16 +423,12 @@ _AMX afxError AmxGetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal* ra
 
 // Returns the voice's current state and cursor position data.
 
-_AMX afxError AmxQueryVoiceState(amxTracker trax, afxUnit id, amxBuffer* buf, afxUnit* bufQueued, afxUnit64* samplesPlayed)
+_AMX afxError AmxQueryVoiceState(amxVoice vox, amxBuffer* buf, afxUnit* bufQueued, afxUnit64* samplesPlayed)
 {
     afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-
-    amxVoice vox;
-    AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), id, 1, (afxObject*)&vox);
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
-    *buf = vox->srcBuf;
+    *buf = vox->src.buf;
     *bufQueued = AfxLoadAtom32(&vox->bufQue.readPosn);
     *samplesPlayed = vox->samplesPlayed;
 
@@ -533,8 +513,8 @@ _AMX afxError _AmxVoxDtorCb(amxVoice vox)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
-    amxTracker trax = AfxGetHost(vox);
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
+    afxMixSystem msys = AfxGetHost(vox);
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
 
     AfxExhaustInterlockedQueue(&vox->bufQue);
 
@@ -546,8 +526,8 @@ _AMX afxError _AmxVoxCtorCb(amxVoice vox, void** args, afxUnit invokeNo)
     afxResult err = NIL;
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
-    amxTracker trax = args[0];
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
+    afxMixSystem msys = args[0];
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
     //amxVoiceInfo const* spec = AFX_CAST(amxVoiceInfo const*, args[1]) + invokeNo;
     //AFX_ASSERT(spec);
 #if 0
@@ -597,6 +577,7 @@ _AMX afxClassConfig const _AMX_VOX_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#if 0
 _AMX afxError AmxDeallocateVoices(amxTracker trax, afxUnit firstId, afxUnit cnt, afxUnit voiceIdMap[])
 {
     afxResult err = NIL;
@@ -619,84 +600,24 @@ _AMX afxError AmxDeallocateVoices(amxTracker trax, afxUnit firstId, afxUnit cnt,
 
     return err;
 }
+#endif
 
-_AMX afxError AmxAllocateVoices(amxTracker trax, amxVoiceCaps caps, afxUnit cnt, afxUnit voiceIds[])
+_AMX afxError AmxAcquireVoices(afxMixSystem msys, amxVoiceCaps caps, afxUnit cnt, amxVoice voices[])
 {
     afxResult err = NIL;
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-    AFX_ASSERT(voiceIds);
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    AFX_ASSERT(voices);
 
-    afxClass* cls = (afxClass*)_AmxTraxGetVoxClass(trax);
+    afxClass* cls = (afxClass*)_AmxMsysGetVoxClass(msys);
     AFX_ASSERT_CLASS(cls, afxFcc_VOX);
 
-    amxVoice voices[32];
-    static const afxUnit batchSiz = 32;
-    afxUnit remainCnt = cnt % batchSiz;
-    afxUnit batchCnt = cnt / batchSiz;
-    afxUnit baseArrIdx = 0;
-    for (afxUnit i = 0; i < batchCnt; i++)
-    {
-        if (AfxAcquireObjects(cls, batchSiz, (afxObject)voices, (void const*[]) { trax, NIL }))
-        {
-            AfxThrowError();
-            for (afxUnit j = i; j--> 0;)
-            {
-                for (afxUnit k = batchSiz; k--> 0;)
-                {
-                    amxVoice vox;
-                    if (AfxEnumerateObjects(cls, voiceIds[(batchSiz * j) + k], 1, (afxObject*)&vox))
-                    {
-                        AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
-                        AfxDisposeObjects(1, &vox);
-                    }
-                    else
-                    {
-                        AfxThrowError();
-                    }
-                }
-            }
-        }
-        else
-        {
-            AFX_ASSERT_OBJECTS(afxFcc_VOX, batchSiz, voices);
-            for (afxUnit j = 0; j < batchCnt; j++)
-            {
-                afxUnit uId = AfxGetObjectId(voices[j]);
-                voiceIds[baseArrIdx + j] = uId;
-            }
-            baseArrIdx += batchSiz;
-        }
-    }
-
-    if (AfxAcquireObjects(cls, remainCnt, (afxObject)voices, (void const*[]) { trax, NIL }))
+    if (AfxFailed(AfxAcquireObjects(cls, cnt, (afxObject)voices, (void const*[]) { msys, &caps })))
     {
         AfxThrowError();
-        for (afxUnit j = batchCnt; j-- > 0;)
-        {
-            for (afxUnit k = batchSiz; k-- > 0;)
-            {
-                amxVoice vox;
-                if (AfxEnumerateObjects(cls, voiceIds[(batchSiz * j) + k], 1, (afxObject*)&vox))
-                {
-                    AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
-                    AfxDisposeObjects(1, &vox);
-                }
-                else
-                {
-                    AfxThrowError();
-                }
-            }
-        }
     }
     else
     {
-        AFX_ASSERT_OBJECTS(afxFcc_VOX, remainCnt, voices);
-        for (afxUnit j = 0; j < remainCnt; j++)
-        {
-            afxUnit uId = AfxGetObjectId(voices[j]);
-            voiceIds[baseArrIdx + j] = uId;
-        }
-        baseArrIdx += batchSiz;
+        AFX_ASSERT_OBJECTS(afxFcc_VOX, cnt, voices);
     }
 
     return err;

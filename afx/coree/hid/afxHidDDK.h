@@ -38,8 +38,8 @@ AFX_DEFINE_STRUCT(afxHidInfo)
     afxHidLimits    limits;
 };
 
-AFX_DECLARE_STRUCT(_auxDdiHid);
-AFX_DECLARE_STRUCT(_auxIddHid);
+AFX_DECLARE_STRUCT(_auxHidDdi);
+AFX_DECLARE_STRUCT(_auxHidIdd);
 
 #ifdef _AUX_HID_C
 #ifndef _AFX_DEVICE_C
@@ -48,20 +48,20 @@ AFX_DECLARE_STRUCT(_auxIddHid);
 AFX_OBJECT(afxHid)
 {
     AFX_OBJ(afxDevice)  dev;
-    _auxIddHid*         idd;
-    _auxDdiHid const*   ddi;
-    // User-defined data.
-    void*               udd;
+    _auxHidDdi const*   ddi;
+    _auxHidIdd*         idd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxUnit             port;
     afxHidFlag          flags;
 };
 #endif//_AUX_HID_C
 
-AFX_DECLARE_STRUCT(_auxDdiKbd);
-AFX_DECLARE_STRUCT(_auxIddKbd);
+AFX_DECLARE_STRUCT(_auxKbdDdi);
+AFX_DECLARE_STRUCT(_auxKbdIdd);
 
 #ifdef _AUX_KEYBOARD_C
 #ifndef _AFX_CONTEXT_C
@@ -70,12 +70,12 @@ AFX_DECLARE_STRUCT(_auxIddKbd);
 AFX_OBJECT(afxKeyboard)
 {
     AFX_OBJ(afxDevLink) ctx;
-    _auxIddKbd*         idd;
-    _auxDdiKbd const*   ddi;
-    // User-defined data.
-    void*               udd;
+    _auxKbdDdi const*   ddi;
+    _auxKbdIdd*         idd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxUnit             port;
     afxHidFlag          flags;
@@ -98,8 +98,8 @@ AFX_OBJECT(afxKeyboard)
 };
 #endif//_AUX_KEYBOARD_C
 
-AFX_DECLARE_STRUCT(_auxIddPad);
-AFX_DECLARE_STRUCT(_auxDdiPad);
+AFX_DECLARE_STRUCT(_auxPadIdd);
+AFX_DECLARE_STRUCT(_auxPadDdi);
 
 #ifdef _AUX_GAMEPAD_C
 #ifndef _AFX_CONTEXT_C
@@ -108,12 +108,12 @@ AFX_DECLARE_STRUCT(_auxDdiPad);
 AFX_OBJECT(afxGamepad)
 {
     AFX_OBJ(afxDevLink) ctx;
-    _auxIddHid*         idd;
-    _auxDdiHid const*   ddi;
-    // User-defined data.
-    void*               udd;
+    _auxHidDdi const*   ddi;
+    _auxHidIdd*         idd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     afxBool             fn[4];
     afxBool             lhb[4];

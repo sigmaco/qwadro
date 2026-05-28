@@ -32,8 +32,8 @@
 AFX_DECLARE_UNION(_avxIoReqPacket);
 AFX_DECLARE_UNION(_avxIoReqLut);
 
-AFX_DECLARE_STRUCT(_avxIddDque);
-AFX_DEFINE_STRUCT(_avxDdiDque)
+AFX_DECLARE_STRUCT(_avxDqueIdd);
+AFX_DEFINE_STRUCT(_avxDqueDdi)
 {
     afxError(*waitCb)(afxDrawQueue, afxUnit64);
 };
@@ -45,8 +45,8 @@ AFX_OBJECT(_avxDrawQueue)
 AFX_OBJECT(afxDrawQueue)
 #endif
 {
-    _avxDdiDque const*  ddi;
-    _avxIddDque*        idd;
+    _avxDqueDdi const*  ddi;
+    _avxDqueIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -210,8 +210,8 @@ AFX_DEFINE_UNION(_avxIoReqPacket)
         afxUnit     unmapCnt;
         union
         {
-            _avxBufferRemapping mapOps[];
-            _avxBufferRemapping unmapOps[];
+            _avxBufRemapping mapOps[];
+            _avxBufRemapping unmapOps[];
         };
     } Remap;
     struct
@@ -295,7 +295,7 @@ AVX afxError _AvxDquePushIoReqPacket(afxDrawQueue dque, afxUnit id, afxUnit siz,
 // Common queued operations
 AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmission const subms[]);
 AVX afxError _AvxDqueTransferResources(afxDrawQueue dque, avxTransference const* ctrl, afxUnit opCnt, void const* ops);
-AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufferRemapping const maps[], afxUnit unmapCnt, _avxBufferRemapping const unmaps[]);
+AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufRemapping const maps[], afxUnit unmapCnt, _avxBufRemapping const unmaps[]);
 AVX afxError _AvxDqueCohereMappedBuffers(afxDrawQueue dque, afxUnit flushCnt, avxBufferedMap const flushes[], afxUnit fetchCnt, avxBufferedMap const fetches[]);
 AVX afxError _AvxDqueSubmitCallback(afxDrawQueue dque, afxError(*f)(void*, void*), void* udd);
 

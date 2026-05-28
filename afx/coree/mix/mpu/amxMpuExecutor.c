@@ -159,7 +159,7 @@ _AMX afxError _AmxMpuWork_TransferCb(amxMpu* mpu, _amxIoReqPacket* work)
             for (afxUnit i = 0; i < work->Transfer.opCnt; i++)
             {
                 amxAudioIo const* op = &work->Transfer.wavOps[i];
-                _AmxDumpAudio(aud, op, work->Transfer.dst.buf->storage[0].hostedAlloc.bytemap);
+                _AmxDumpAudio(aud, op, work->Transfer.dst.buf->storage[0].host.bytemap);
             }
 
             AfxDisposeObjects(1, &buf);
@@ -350,7 +350,7 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         {
             afxUnit i = 0;
             amxVoice vox;
-            while (AfxEnumerateObjects(_AmxTraxGetVoxClass(trax), i++, 1, (afxObject*)&vox))
+            while (AfxEnumerateObjects(_AmxMsysGetVoxClass(msys), i++, 1, (afxObject*)&vox))
             {
                 AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
@@ -364,29 +364,59 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         }
     };
 
-    afxUnit j = 0;
-    afxSink sink;
-    afxClass* sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
-    while (AfxEnumerateObjects(sinkCls, j++, 1, (afxObject*)&sink))
     {
-        AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+        afxUnit j = 0;
+        afxSink sink;
+        afxClass* sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
+        while (AfxEnumerateObjects(sinkCls, j++, 1, (afxObject*)&sink))
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
+
+            amxBufferedTrack room;
+            if (!AmxLockSinkBuffer(sink, 0, NIL, 512, &room))
+            {
+                amxVoice vox;
+                afxUnit i = 0;
+                while (AfxEnumerateObjects(_AmxMsysGetVoxClass(msys), i++, 1, (afxObject*)&vox))
+                {
+                    AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
+
+                    if (vox->playing2 && !vox->paused)
+                    {
+                        //amxProcessVoice(vox, &trax->tracks[0].aud.aud->buf->storage[0].hostedAlloc.bytemap[sink->rb.capacity % audio_ringbuffer_writable(&sink->rb)], frameCnt);
+                        amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 1);
+                    }
+                }
+                AmxUnlockSinkBuffer(sink, NIL);
+            }
+        }
+    }
+
+    {
+        afxUnit jjj = 0;
+        afxSink sink;
+        afxClass* sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
+        while (AfxEnumerateObjects(sinkCls, jjj++, 1, (afxObject*)&sink))
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
 #if 0
-        afxReal f[512*2] = { 1 };
-        _AmxGenerateSquareWave(f, 512, 48000, 10, 10.0, 1.0);
-        audio_ringbuffer_write(&sink->rb, f, 4, 512);
+            afxReal f[512 * 2] = { 1 };
+            _AmxGenerateSquareWave(f, 512, 48000, 10, 10.0, 1.0);
+            audio_ringbuffer_write(&sink->rb, f, 4, 512);
 #endif   
 #if 0
-        afxUnit cnt = 512;
-        while (cnt--)
-        {
-            sink->rb.write_pos++;
-            // Overwrite oldest data if buffer is full
-            if (sink->rb.write_pos - sink->rb.read_pos > sink->rb.capacity)
-                sink->rb.read_pos = sink->rb.write_pos - sink->rb.capacity;
-        }
+            afxUnit cnt = 512;
+            while (cnt--)
+            {
+                sink->rb.write_pos++;
+                // Overwrite oldest data if buffer is full
+                if (sink->rb.write_pos - sink->rb.read_pos > sink->rb.capacity)
+                    sink->rb.read_pos = sink->rb.write_pos - sink->rb.capacity;
+            }
 #endif
-        //sink->flushCb(sink);
-        _AmxMexu_PingCb(mexu, 0);
+            //sink->flushCb(sink);
+            _AmxMexu_PingCb(mexu, 0);
+        }
     }
 
 #if 0
@@ -409,13 +439,15 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
     }
 #endif
 #if !0
-    //afxSink sink;
-    afxUnit i = 0;
-    /*afxClass* */sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
-    while (AfxEnumerateObjects(sinkCls, i++, 1, (afxObject*)&sink))
     {
-        if (sink->flushCb)
-            sink->flushCb(sink);
+        afxSink sink;
+        afxUnit ii = 0;
+        afxClass* sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
+        while (AfxEnumerateObjects(sinkCls, ii++, 1, (afxObject*)&sink))
+        {
+            if (sink->ddi->flushCb)
+                sink->ddi->flushCb(sink);
+        }
     }
 #endif
     _amxIoReqLut const* iorpVmt = mexu->iorpVmt;
@@ -495,7 +527,7 @@ _AMX afxInt _AMX_MPU_THREAD_PROC(afxMixBridge mexu)
 
     do
     {
-#if !0
+#if 0
         AfxLockMutex(&mexu->schedCndMtx);
 
         while (!mexu->schedCnt)

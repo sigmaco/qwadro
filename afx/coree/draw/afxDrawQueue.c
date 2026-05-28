@@ -512,7 +512,7 @@ _AVX afxError _AvxDqueTransferResources(afxDrawQueue dque, avxTransference const
     return err;
 }
 
-_AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufferRemapping const maps[], afxUnit unmapCnt, _avxBufferRemapping const unmaps[])
+_AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufRemapping const maps[], afxUnit unmapCnt, _avxBufRemapping const unmaps[])
 {
     afxError err = { 0 };
     // dque must be a valid afxDrawQueue handle.
@@ -541,7 +541,7 @@ _AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBuffer
 
             for (afxUnit i = 0; i < mapCnt; i++)
             {
-                _avxBufferRemapping const* map = &maps[i];
+                _avxBufRemapping const* map = &maps[i];
 
                 iorp->Remap.mapOps[i].buf = map->buf;
                 iorp->Remap.mapOps[i].offset = map->offset;
@@ -575,7 +575,7 @@ _AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBuffer
 
             for (afxUnit i = 0; i < unmapCnt; i++)
             {
-                _avxBufferRemapping const* map = &unmaps[i];
+                _avxBufRemapping const* map = &unmaps[i];
 
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
@@ -747,7 +747,7 @@ _AVX afxError _AvxDqueQueryResults(afxDrawQueue dque, avxQueryPool qryp, avxQuer
     return err;
 }
 
-_AVX _avxDdiDque const _AVX_DDI_DQUE =
+_AVX _avxDqueDdi const _AVX_DDI_DQUE =
 {
 
 };

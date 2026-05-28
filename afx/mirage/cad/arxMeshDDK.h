@@ -23,12 +23,12 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DEFINE_STRUCT(_arxDdiMsh);
-AFX_DEFINE_STRUCT(_arxIddMsh);
+AFX_DEFINE_STRUCT(_arxMshDdi);
+AFX_DEFINE_STRUCT(_arxMshIdd);
 
 #ifdef _ARX_MESH_C
 
-AFX_DEFINE_STRUCT(arxMeshAttr)
+AFX_DEFINE_STRUCT(_arxMshAttr)
 {
     afxString8          usage; // 8
     arxVertexFlags      flags;
@@ -48,8 +48,8 @@ AFX_DEFINE_STRUCT(arxVertexBuffer)
 
 AFX_OBJECT(arxMesh)
 {
-    _arxIddMsh*         idd;
-    _arxDdiMsh const*   ddi;
+    _arxMshDdi const*   ddi;
+    _arxMshIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -88,7 +88,7 @@ AFX_OBJECT(arxMesh)
     afxUnit*            indices; // [idxCnt] --- indices into primitive vertices.
     afxUnit             attrCnt; // used by morphes.
     afxString*          attrIds;
-    arxMeshAttr*        attrInfo;
+    _arxMshAttr*        attrInfo;
     afxByte**           vtxAttrData; // [attrCnt]
 
     // SHAPE DATA

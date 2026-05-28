@@ -58,7 +58,7 @@ _ARX afxError _ArxMshlDtorCb(arxMeshLinkage mshl)
 
     afxBool transplanted = mshl->origSkl && (mshl->origSkl != mshl->mdl->skl);
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = mshl->mtlCnt,
@@ -120,7 +120,7 @@ _ARX afxError _ArxMshlCtorCb(arxMeshLinkage mshl, void** args, afxUnit invokeNo)
     afxUnit mtlCnt = mshi.mtlCnt;
     afxUnit biasCnt = mshi.biasCnt;
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = mtlCnt,
@@ -621,7 +621,7 @@ _ARX afxError _ArxMdlDtorCb(arxModel mdl)
 
     AFX_ASSERT(mdl->usedRigCnt == 0);
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = mdl->rigCnt,
@@ -683,7 +683,7 @@ _ARX afxError _ArxMdlCtorCb(arxModel mdl, void** args, afxUnit invokeNo)
 
     mdl->allowedLodErrFadingFactor = /*_ArxScioGetAllowedLodErrorFadingFactor(scio);*/ 0.80000001;
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = rigCnt,

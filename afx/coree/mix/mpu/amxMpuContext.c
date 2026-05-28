@@ -124,8 +124,8 @@ void doom_audio_update(ResampleState* state, int16_t const* doom_buf)
 _AMX afxError _AmxMpuLoadAudio(amxMpu* mpu, amxAudio src, amxAudio dst, afxUnit chIdx, afxUnit baseSamp, afxUnit sampCnt, amxMixFactor fac, afxReal constant)
 {
     afxError err = { 0 };
-    afxReal32* out = &dst->buf->storage[0].hostedAlloc.f32[chIdx * dst->sampCnt + baseSamp];
-    afxReal32 const* in = &src->buf->storage[0].hostedAlloc.f32[chIdx * src->sampCnt + baseSamp];
+    afxReal32* out = &dst->buf->storage[0].host.f32[chIdx * dst->sampCnt + baseSamp];
+    afxReal32 const* in = &src->buf->storage[0].host.f32[chIdx * src->sampCnt + baseSamp];
 
     switch (fac)
     {
@@ -235,8 +235,8 @@ _AMX afxError _AmxMpuLoadAudio(amxMpu* mpu, amxAudio src, amxAudio dst, afxUnit 
 _AMX afxError _AmxMpu_StoreAudio(amxMpu* mpu, amxAudio src, amxAudio dst, afxUnit chIdx, afxUnit baseSamp, afxUnit sampCnt, amxMixOp op)
 {
     afxError err = { 0 };
-    afxReal32* out = &dst->buf->storage[0].hostedAlloc.f32[chIdx * dst->sampCnt + baseSamp];
-    afxReal32 const* in = &src->buf->storage[0].hostedAlloc.f32[chIdx * src->sampCnt + baseSamp];
+    afxReal32* out = &dst->buf->storage[0].host.f32[chIdx * dst->sampCnt + baseSamp];
+    afxReal32 const* in = &src->buf->storage[0].host.f32[chIdx * src->sampCnt + baseSamp];
 
     switch (op)
     {

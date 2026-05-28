@@ -175,7 +175,7 @@ _ACX afxBool _AcxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
     return found;
 }
 
-_AFX afxError AfxGetAcx(afxUnit unit, afxModule* acxIcd)
+_AFX afxError AcxGetIcd(afxUnit unit, afxModule* acxIcd)
 {
     afxError err = { 0 };
 
@@ -229,7 +229,7 @@ _ACX afxError acxIcdHook(afxModule icd, afxUri const* manifest)
     // Targa has been named after a bad experience handling graphical operations with images originating from left/bottom side.
     // Kurwa has been named after a bad experience when implementing curve-based motion in simulation framework.
 
-    _acxSdevReg sdevInfos[] =
+    _acxSdevAcq sdevInfos[] =
     {
         {
             .dev.urn = AFX_STRING("spu-dma"),

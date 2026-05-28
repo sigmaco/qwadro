@@ -602,7 +602,7 @@ _ZGL afxUnit64 _ZglFencGetValueCb(avxFence fenc)
     return _AvxFencSW_GetValueCb(fenc);
 }
 
-_ZGL _avxDdiFenc _ZGL_DDI_FENC =
+_ZGL _avxFencDdi _ZGL_DDI_FENC =
 {
     .waitCb = _ZglFencWaitOnHostCb,
     .resetCb = _ZglFencResetOnHostCb,

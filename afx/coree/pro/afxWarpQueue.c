@@ -353,7 +353,7 @@ _ACX afxError _AcxSqueTransferResources(afxWarpQueue sque, acxTransference const
     return err;
 }
 
-_ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufferRemapping const maps[], afxUnit unmapCnt, _acxBufferRemapping const unmaps[])
+_ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufRemapping const maps[], afxUnit unmapCnt, _acxBufRemapping const unmaps[])
 {
     afxError err = { 0 };
     // sque must be a valid afxWarpQueue handle.
@@ -382,7 +382,7 @@ _ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBuffer
 
             for (afxUnit i = 0; i < mapCnt; i++)
             {
-                _acxBufferRemapping const* map = &maps[i];
+                _acxBufRemapping const* map = &maps[i];
 
                 iorp->Remap.mapOps[i].buf = map->buf;
                 iorp->Remap.mapOps[i].offset = map->offset;
@@ -416,7 +416,7 @@ _ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBuffer
 
             for (afxUnit i = 0; i < unmapCnt; i++)
             {
-                _acxBufferRemapping const* map = &unmaps[i];
+                _acxBufRemapping const* map = &unmaps[i];
 
                 iorp->Remap.unmapOps[i].buf = map->buf;
 

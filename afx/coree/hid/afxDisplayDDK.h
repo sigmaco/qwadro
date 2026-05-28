@@ -30,8 +30,8 @@
 #include "qwadro/ux/afxShell.h"
 //#include "qwadro/../../dep_/vgl1/vgl1.h"
 
-AFX_DECLARE_STRUCT(_auxIddDisp);
-AFX_DEFINE_STRUCT(_auxDdiDisp)
+AFX_DECLARE_STRUCT(_auxDispIdd);
+AFX_DEFINE_STRUCT(_auxDispDdi)
 {
     afxClass const*(*doutCls)(afxDisplay);
     afxUnit(*qryModeCb)(afxDisplay, afxUnit port, avxFormat, afxUnit cnt, afxDisplayMode[]);
@@ -91,8 +91,8 @@ AFX_OBJECT(afxDisplay)
 #endif
 {
     AFX_OBJ(afxDevice)  dev;
-    _auxIddDisp*        idd;
-    _auxDdiDisp const*  ddi;
+    _auxDispDdi const*  ddi;
+    _auxDispIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -112,9 +112,9 @@ AFX_OBJECT(afxDisplay)
 AUX afxClassConfig const _AUX_DPY_CLASS_CONFIG;
 AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG;
 
-AUX _auxDdiDisp _AUX_DDI_DPY;
+AUX _auxDispDdi _AUX_DDI_DPY;
 
-AUX _auxDdiDisp const* _AvxDpyGetDdi(afxDisplay dpy);
+AUX _auxDispDdi const* _AvxDpyGetDdi(afxDisplay dpy);
 
 AUX afxClass const* _AuxDpyGetVduClass(afxDisplay dpy);
 AUX afxError _AuxRegisterDisplayPorts(afxDisplay dpy, afxUnit cnt, afxDisplayPortConfig const cfg[], afxDisplayPort ports[]);

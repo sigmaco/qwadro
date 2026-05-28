@@ -155,13 +155,13 @@ AFX_DEFINE_STRUCT(arxRenderFrame)
     afxUnit boundDynUbosRangeToBeFlushed[4][32];
 };
 
-AFX_DECLARE_STRUCT(_arxDdiRctx);
-AFX_DECLARE_STRUCT(_arxIddRctx);
+AFX_DECLARE_STRUCT(_arxRctxDdi);
+AFX_DECLARE_STRUCT(_arxRctxIdd);
 
 AFX_OBJECT(arxRenderContext)
 {
-    _arxDdiRctx const*  ddi;
-    _arxIddRctx*        idd;
+    _arxRctxDdi const*  ddi;
+    _arxRctxIdd*        idd;
     afxString           tag;
     void*               udd;
 
@@ -197,7 +197,7 @@ AFX_OBJECT(arxRenderContext)
     avxColor wireCol;
     avxColor fillCol;
 
-    avxShader codb;
+    avxShader shd;
 
     struct
     {

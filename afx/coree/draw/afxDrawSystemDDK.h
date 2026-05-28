@@ -39,18 +39,18 @@
 #include "avxRasterDDK.h"
 #include "avxBufferDDK.h"
 
-AFX_DECLARE_STRUCT(_avxIddDsys);
+AFX_DECLARE_STRUCT(_avxDsysIdd);
 
 #ifndef _AVX_DRAW_C
-AFX_DECLARE_STRUCT(_avxDdiDsys);
+AFX_DECLARE_STRUCT(_avxDsysDdi);
 #else
-AFX_DEFINE_STRUCT(_avxDdiDsys)
+AFX_DEFINE_STRUCT(_avxDsysDdi)
 {
-    afxError(*waitCb)(afxDrawSystem, afxUnit64);
+    afxError(*waitCb)(afxDrawSystem, afxUnit64, afxMask);
     afxError(*waitFencCb)(afxDrawSystem, afxUnit64, afxBool, afxUnit, avxFence const[], afxUnit64 const values[]);
     afxError(*resetFencCb)(afxDrawSystem, afxUnit, avxFence const[]);
     afxError(*cohereCb)(afxDrawSystem, afxBool invalidate, afxUnit, avxBufferedMap const[]);
-    afxError(*remapCb)(afxDrawSystem, afxBool, afxUnit, _avxBufferRemapping const[]);
+    afxError(*remapCb)(afxDrawSystem, afxBool, afxUnit, _avxBufRemapping const[]);
     afxUnit(*getProcCb)(afxDrawSystem, afxUnit, afxString const[], void*[]);
     afxError(*transferCb)(afxDrawSystem dsys, avxTransference* ctrl, afxUnit opCnt, void const* ops);
     afxError(*allocRasCb)(afxDrawSystem,afxUnit,avxRasterInfo const[],avxRaster[]);
@@ -116,8 +116,8 @@ AFX_OBJECT(afxDrawSystem)
 {
     AFX_OBJ(afxDevLink) ctx;
 
-    _avxDdiDsys const*  ddi;
-    _avxIddDsys*        idd;
+    _avxDsysDdi const*  ddi;
+    _avxDsysIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -173,7 +173,7 @@ AFX_OBJECT(afxDrawSystem)
 #endif
 #endif//_AVX_DRAW_SYSTEM_C
 
-AVX _avxDdiDsys const* _AvxDsysGetDdi(afxDrawSystem dsys);
+AVX _avxDsysDdi const* _AvxDsysGetDdi(afxDrawSystem dsys);
 AVX afxMask _AvxDsysGetIoExuMask(afxDrawSystem dsys, afxMask* dedIoExuMask);
 
 AVX afxClass const* _AvxDsysSW_GetDexuClassCb(afxDrawSystem dsys);
@@ -196,7 +196,7 @@ AVX avxFeatures const* _AvxDsysGetReqFeatures(afxDrawSystem dsys);
 AVX avxLimits const* _AvxDsysGetLimits(afxDrawSystem dsys);
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_DSYS;
-AVX _avxDdiDsys const _AVX_DDI_DSYS;
+AVX _avxDsysDdi const _AVX_DDI_DSYS;
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_TXD;
 

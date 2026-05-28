@@ -157,7 +157,7 @@ _AMX afxError _AmxMctxRecycleCb(afxMixContext mctx, afxBool freeRes)
     return err;
 }
 
-_AMX _amxDdiMctx const _AMX_MCTX_DDI =
+_AMX _amxMctxDdi const _AMX_MCTX_DDI =
 {
     .prepare = _AmxMctxPrepareCb,
     .compile = _AmxMctxCompileCb,

@@ -66,12 +66,12 @@ AFX_DEFINE_STRUCT(arxInstancedAnimationId)
     arxModel ToBasis;
 };
 
-AFX_DEFINE_STRUCT(_arxDdiAnik)
+AFX_DEFINE_STRUCT(_arxAnikDdi)
 {
     int a;
 };
 
-AFX_DECLARE_STRUCT(_arxIddAnik);
+AFX_DECLARE_STRUCT(_arxAnikIdd);
 
 #ifdef _ARX_INSTANCED_ANIMATION_C
 #ifdef _ARX_INSTANCED_ANIMATION_IMPL
@@ -92,8 +92,8 @@ AFX_OBJECT(arxInstancedAnimation)
     arxInstancedAnimation NextUnused;
 
 
-    _arxIddAnik*         idd;
-    _arxDdiAnik const*   ddi;
+    _arxAnikDdi const*   ddi;
+    _arxAnikIdd*         idd;
     // User-defined data.
     void*               udd;
     // Debugging tag.

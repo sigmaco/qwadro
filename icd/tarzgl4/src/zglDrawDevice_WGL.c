@@ -768,12 +768,12 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         //.portCnt = 4,
 
-        .capabilities = avxService_GFX | 
+        .caps = avxService_GFX | 
                         avxService_DMA | 
                         avxService_PRESENT,
         .minQueCnt = 4,
         .maxQueCnt = 16,
-        .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
+        .accel = afxAcceleration_DPU | afxAcceleration_GPU
     };
     _avxDdevReg const pcxDdevInfo =
     {
@@ -786,11 +786,11 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         //.portCnt = 4,
 
-        .capabilities = avxService_PCX | 
+        .caps = avxService_PCX | 
                         avxService_DMA,
         .minQueCnt = 2,
         .maxQueCnt = 16,
-        .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
+        .accel = afxAcceleration_DPU | afxAcceleration_GPU
     };
     _avxDdevReg const dmaDdevInfo =
     {
@@ -803,10 +803,10 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         //.portCnt = 4,
 
-        .capabilities = avxService_DMA,
+        .caps = avxService_DMA,
         .minQueCnt = 2,
         .maxQueCnt = 16,
-        .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
+        .accel = afxAcceleration_DPU | afxAcceleration_GPU
     };
     _avxDdevReg const vcxDdevInfo =
     {
@@ -819,10 +819,10 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
         //.portCnt = 4,
 
-        .capabilities = avxService_PRESENT | avxService_DMA | avxService_VCX,
+        .caps = avxService_PRESENT | avxService_DMA | avxService_VCX,
         .minQueCnt = 2,
         .maxQueCnt = 16,
-        .acceleration = afxAcceleration_DPU
+        .accel = afxAcceleration_DPU
     };
 
     afxUnit ddevCnt = 0;

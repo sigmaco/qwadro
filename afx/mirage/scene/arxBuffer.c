@@ -235,7 +235,7 @@ _ARX afxError _ArxRbufCtorCb(arxBuffer rbuf, void** args, afxUnit invokeNo)
     rbuf->reqAlign = AFX_SIMD_ALIGNMENT;
     rbuf->memBase = 0;
 
-    _arxMemory* smem = &rbuf->mem;
+    _arxBufMem* smem = &rbuf->mem;
     smem->size = rbuf->reqSiz;
     smem->alignment = AFX_SIMD_ALIGNMENT;
 

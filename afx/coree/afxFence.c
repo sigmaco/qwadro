@@ -117,7 +117,7 @@ _AFX afxError AfxWaitForFence(afxFence fenc, afxUnit64 value, afxUnit64 timeout)
     return err;
 }
 
-_AFX _afxDdiFenc const _AFX_FENC_DDI =
+_AFX _afxFencDdi const _AFX_FENC_DDI =
 {
     .waitCb = _AfxFenc_WaitCbSW,
     .signalCb = _AfxFenc_SignalCbSW,

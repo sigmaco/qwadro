@@ -156,12 +156,12 @@ AFX_DEFINE_UNION(_afxCmdLut)
 
 #define _AFX_CMD_ID(cmdName_) (offsetof(_afxCmdLut, cmdName_) / sizeof(void*))
 
-AFX_DECLARE_STRUCT(_afxIddCtx);
+AFX_DECLARE_STRUCT(_afxCtxIdd);
 
 #ifndef _AFX_DRAW_C
-AFX_DECLARE_STRUCT(_afxDdiCtx);
+AFX_DECLARE_STRUCT(_afxCtxDdi);
 #else
-AFX_DEFINE_STRUCT(_afxDdiCtx)
+AFX_DEFINE_STRUCT(_afxCtxDdi)
 {
     afxError(*exhaust)(afxIoContext, afxBool freeMem);
     afxError(*prepare)(afxIoContext, afxBool purge, afxCmdFlags);
@@ -202,8 +202,8 @@ AFX_OBJECT(_afxIoContext)
 AFX_OBJECT(afxIoContext)
 #endif
 {
-    _afxDdiCtx const*   ddi;
-    _afxIddCtx*         idd;
+    _afxCtxDdi const*   ddi;
+    _afxCtxIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -250,7 +250,7 @@ AFX afxClass const* _AfxCtxGetCtxClass(afxIoContext dctx);
 AFX afxContextState _AfxCtxGetStatus(afxIoContext dctx);
 
 AFX afxClassConfig const _AFX_CLASS_CONFIG_CTX;
-AFX _afxDdiCtx const _AFX_DDI_CTX;
+AFX _afxCtxDdi const _AFX_DDI_CTX;
 
 
 #endif//AFX_IO_CONTEXT_DDK_H

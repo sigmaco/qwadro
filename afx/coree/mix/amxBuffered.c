@@ -39,11 +39,11 @@ _AMX afxError AmxMakeBufferedRing(amxBufferedRing* rng, amxBuffer mbuf, afxSize 
     if (mbuf)
     {
         AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &mbuf);
-        rng->basePtr = AmxGetBufferMap(mbuf, bufRange, bufRange);
+        rng->basePtr = AmxGetBufferMap(mbuf, bufBase, bufRange);
 
         if (!rng->basePtr)
         {
-            AfxReportError("avxBuffer %p [ %u, %u ] not mapped", mbuf, bufBase, bufRange);
+            AfxReportError("amxBuffer %p [ %u, %u ] not mapped", mbuf, bufBase, bufRange);
             AfxThrowError();
         }
     }
@@ -53,7 +53,7 @@ _AMX afxError AmxMakeBufferedRing(amxBufferedRing* rng, amxBuffer mbuf, afxSize 
 
         if (!rng->basePtr)
         {
-            AfxReportError("avxBuffer %p [ %u, %u ] not mapped", mbuf, bufBase, bufRange);
+            AfxReportError("amxBuffer %p [ %u, %u ] not mapped", mbuf, bufBase, bufRange);
             AfxThrowError();
         }
     }

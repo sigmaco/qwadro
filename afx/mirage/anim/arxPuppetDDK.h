@@ -92,7 +92,7 @@ AFX_DEFINE_STRUCT(_arxPupAcq)
     afxUnit const* rigIdxLut;
 };
 
-AFX_DEFINE_STRUCT(_arxDdiPup)
+AFX_DEFINE_STRUCT(_arxPupDdi)
 {
     void(*stepCb)(arxPuppet, afxReal time);
     void(*purgeTermMotvCb)(arxPuppet);
@@ -104,7 +104,7 @@ AFX_DEFINE_STRUCT(_arxDdiPup)
     afxUnit(*performManedPose)(arxPose pose, afxReal startTime, afxReal duration, afxUnit iterCnt, arxTrackMask* modelMask, afxUnit cnt, arxPuppet puppets[]);
 };
 
-AFX_DECLARE_STRUCT(_arxIddPup);
+AFX_DECLARE_STRUCT(_arxPupIdd);
 
 #ifdef _ARX_PUPPET_C
 #ifdef _ARX_PUPPET_IMPL
@@ -113,8 +113,8 @@ AFX_OBJECT(_arxPuppet)
 AFX_OBJECT(arxPuppet)
 #endif
 {
-    _arxDdiPup const*   ddi;
-    _arxIddPup*         idd;
+    _arxPupDdi const*   ddi;
+    _arxPupIdd*         idd;
     afxString           tag;
     void*               udd;
 

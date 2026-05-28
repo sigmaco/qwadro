@@ -28,8 +28,8 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddPip);
-AFX_DECLARE_STRUCT(_avxDdiPip);
+AFX_DECLARE_STRUCT(_avxPipIdd);
+AFX_DECLARE_STRUCT(_avxPipDdi);
 
 AFX_DEFINE_STRUCT(_avxProgram)
 {
@@ -49,8 +49,8 @@ AFX_OBJECT(_avxPipeline)
 AFX_OBJECT(avxPipeline)
 #endif
 {
-    _avxDdiPip const*   ddi;
-    _avxIddPip*         idd;
+    _avxPipDdi const*   ddi;
+    _avxPipIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -58,7 +58,7 @@ AFX_OBJECT(avxPipeline)
 
     afxFlags            flags;
     avxBus              bus;
-    avxShader         codb;
+    avxShader           shd;
     afxUnit             progCnt;
     _avxProgram*        progs;
     afxBool             isUserLiga;

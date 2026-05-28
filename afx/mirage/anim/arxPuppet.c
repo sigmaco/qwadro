@@ -267,7 +267,7 @@ _ARX afxError _ArxRigModelToPuppet(arxPuppet pup, arxModel mdl, afxUnit rigIdxCn
     return err;
 }
 
-_ARX _arxDdiPup const _ARX_PUP_DDI =
+_ARX _arxPupDdi const _ARX_PUP_DDI =
 {
     .stepCb = _ArxPupStepCb,
     .purgeTermMotvCb = _ArxPupPurgeCb,
@@ -306,7 +306,7 @@ _ARX afxError _ArxPupDtorCb(arxPuppet pup)
 
     if (pup->parts)
     {
-        afxObjectStash bodpStash =
+        afxAllocation bodpStash =
         {
             .cnt = pup->partCnt,
             .siz = sizeof(pup->parts[0]),
@@ -342,7 +342,7 @@ _ARX afxError _ArxPupCtorCb(arxPuppet pup, void** args, afxUnit invokeNo)
     arxModelInfo mdli;
     ArxDescribeModel(mdl, &mdli);
 
-    afxObjectStash puplStash =
+    afxAllocation puplStash =
     {
         .cnt = mdli.rigCnt,
         .siz = sizeof(pup->parts[0]),

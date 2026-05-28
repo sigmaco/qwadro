@@ -63,7 +63,7 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
 
     for (afxUnit fIdx = 0; fIdx < vtxd->binCnt; fIdx++)
     {
-        _avxVertexBin const* vtxf = &vtxd->bins[fIdx];
+        _avxVinStream const* vtxf = &vtxd->bins[fIdx];
         avxBufferedStream const* vtxs = &streams[vtxf->pin];
         AfxReadBuffer(vtxs->buf, vtxs->offset, vtxs->range, vtxs->stride, data);
 
@@ -76,7 +76,7 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
 
     for (afxUnit aIdx = 0; aIdx < vtxd->totalAttrCnt; aIdx++)
     {
-        _avxVertexAttr const* vtxa = &vtxd->attrs[aIdx];
+        _avxVinAttr const* vtxa = &vtxd->attrs[aIdx];
         AvxDescribeFormats(1, &vtxa->fmt, &attrFd[aIdx]);
     }
 
@@ -88,11 +88,11 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
 
             for (afxUnit fIdx = 0; fIdx < vtxd->binCnt; fIdx++)
             {
-                _avxVertexBin const* vs = &vtxd->bins[fIdx];
+                _avxVinStream const* vs = &vtxd->bins[fIdx];
 
                 for (afxUnit aIdx = 0; aIdx < vtxd->totalAttrCnt; aIdx++)
                 {
-                    _avxVertexAttr const* va = &vtxd->attrs[aIdx];
+                    _avxVinAttr const* va = &vtxd->attrs[aIdx];
                     AfxCopy(data, &srcPtr[fIdx][va->offset], attrFd[aIdx].stride);
                     data += attrFd[aIdx].stride;
                 }
@@ -108,7 +108,7 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
 
         for (afxUnit fIdx = 0; fIdx < vtxd->binCnt; fIdx++)
         {
-            _avxVertexBin const* vtxf = &vtxd->bins[fIdx];
+            _avxVinStream const* vtxf = &vtxd->bins[fIdx];
 
             if (vtxf->instRate)
                 srcPtr[vtxf->pin] += srcStride[vtxf->pin];
@@ -129,7 +129,7 @@ void fetch_vertex(MyVertexInput* out, int vertexIdx, const avxVertexInput layout
     for (int attrIdx = 0; attrIdx < layout->totalAttrCnt; ++attrIdx)
     {
         avxVertexAttr* attr = &layout->attrs[attrIdx];
-        _avxVertexBin* fetch = NULL;
+        _avxVinStream* fetch = NULL;
 
         // Find the fetch config for this attribute
         for (int srcIdx = 0; srcIdx < layout->binCnt; ++srcIdx)

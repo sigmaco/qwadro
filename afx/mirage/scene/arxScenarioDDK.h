@@ -41,7 +41,7 @@
 #include "../anim/arxPuppetDDK.h"
 
 
-AFX_DEFINE_STRUCT(_arxScioAcquisition)
+AFX_DEFINE_STRUCT(_arxScioAcq)
 {
     arxScenarioConfig     cfg;
     afxDrawSystem           dsys;

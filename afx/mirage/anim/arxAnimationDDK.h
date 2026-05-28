@@ -23,7 +23,7 @@
 
 #include "arxGestureDDK.h"
 
-AFX_DEFINE_STRUCT(_arxDdiAni)
+AFX_DEFINE_STRUCT(_arxAniDdi)
 {
     afxBool(*findGestureCb)(arxAnimation, afxString const* id, afxUnit* gesIdx);
     afxError(*relinkCb)(arxAnimation, afxUnit baseSlot, afxUnit slotCnt, arxGesture[]);
@@ -31,7 +31,7 @@ AFX_DEFINE_STRUCT(_arxDdiAni)
     //afxUnit(*performInstCb)(arxAnimation, afxReal startTime, afxUnit iterCnt, arxInstancedAnimation, afxUnit cnt, afxString const gestures[], arxPuppet[]);
 };
 
-AFX_DECLARE_STRUCT(_arxIddAni);
+AFX_DECLARE_STRUCT(_arxAniIdd);
 
 #ifdef _ARX_ANIMATION_C
 
@@ -78,12 +78,12 @@ AFX_OBJECT(arxAnimation)
 
     afxString           urn;
 
-    _arxIddAni*         idd;
-    _arxDdiAni const*   ddi;
-    // User-defined data.
-    void*               udd;
+    _arxAniDdi const*   ddi;
+    _arxAniIdd*         idd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 };
 #endif
 

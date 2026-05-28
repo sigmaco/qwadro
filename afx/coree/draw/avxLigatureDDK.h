@@ -28,8 +28,8 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddLiga);
-AFX_DECLARE_STRUCT(_avxDdiLiga);
+AFX_DECLARE_STRUCT(_avxLigaIdd);
+AFX_DECLARE_STRUCT(_avxLigaDdi);
 
 #ifdef _AVX_LIGATURE_C
 
@@ -82,8 +82,8 @@ AFX_OBJECT(_avxLigature)
 AFX_OBJECT(avxLigature)
 #endif
 {
-    _avxDdiLiga const*  ddi;
-    _avxIddLiga*        idd;
+    _avxLigaDdi const*  ddi;
+    _avxLigaIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

@@ -82,7 +82,7 @@ _ARX afxError _AsxMdevDtorCb(arxEngine seng)
     AfxDismantleMutex(&seng->relinkedCndMtx);
     AfxDismantleCondition(&seng->relinkedCnd);
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = seng->portCnt,
@@ -126,7 +126,7 @@ _ARX afxError _AsxMdevCtorCb(arxEngine seng, void** args, afxUnit invokeNo)
 
     seng->portCnt = info->portCnt;
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = seng->portCnt,

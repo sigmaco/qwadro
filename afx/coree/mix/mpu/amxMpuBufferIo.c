@@ -48,7 +48,7 @@ _AMX afxError _AmxFillBuffer(amxBuffer buf, afxSize offset, afxSize range, afxUn
     {
         for (afxUnit j = 0; j < num_samples; j++)
         {
-            afxReal32* out = (afxReal32*)&buf->storage[0].hostedAlloc.bytemap[offset + stride * j];
+            afxReal32* out = (afxReal32*)&buf->storage[0].host.bytemap[offset + stride * j];
 
             afxReal t = (afxReal)j / sampleRate; // Time in seconds
             out[0] = amplitude * (freq * t);
@@ -60,7 +60,7 @@ _AMX afxError _AmxFillBuffer(amxBuffer buf, afxSize offset, afxSize range, afxUn
     {
         for (afxUnit j = 0; j < num_samples; j++)
         {
-            afxInt16* out = (afxInt16*)&buf->storage[0].hostedAlloc.bytemap[offset + stride * j];
+            afxInt16* out = (afxInt16*)&buf->storage[0].host.bytemap[offset + stride * j];
 
             afxReal t = (afxReal)j / sampleRate; // Time in seconds
             out[0] = (afxInt16)((amplitude * (freq * t)) * 32767.0f);
@@ -79,7 +79,7 @@ _AMX afxError _AmxCopyBuffer(amxBuffer buf, amxBufferCopy const* op, amxBuffer d
     AFX_ASSERT(dst);
     AFX_ASSERT(op);
 
-    AfxCopy(&dst->storage[0].hostedAlloc.bytemap[op->dstOffset], &buf->storage[0].hostedAlloc.bytemap[op->srcOffset], op->range);
+    AfxCopy(&dst->storage[0].host.bytemap[op->dstOffset], &buf->storage[0].host.bytemap[op->srcOffset], op->range);
 
     return err;
 }
@@ -93,7 +93,7 @@ _AMX afxError _AmxDumpBuffer(amxBuffer buf, amxBufferIo const* op, void* dst)
 
     afxByte* dst2 = dst;
 
-    AfxStream2(op->rowCnt, &buf->storage[0].hostedAlloc.bytemap[op->srcOffset], op->srcStride, &dst2[op->dstOffset], op->dstStride);
+    AfxStream2(op->rowCnt, &buf->storage[0].host.bytemap[op->srcOffset], op->srcStride, &dst2[op->dstOffset], op->dstStride);
 
     return err;
 }
@@ -107,7 +107,7 @@ _AMX afxError _AmxUpdateBuffer(amxBuffer buf, amxBufferIo const* op, void const*
 
     afxByte const* src2 = src;
 
-    AfxStream2(op->rowCnt, &src2[op->srcOffset], op->srcStride, &buf->storage[0].hostedAlloc.bytemap[op->dstOffset], op->dstStride);
+    AfxStream2(op->rowCnt, &src2[op->srcOffset], op->srcStride, &buf->storage[0].host.bytemap[op->dstOffset], op->dstStride);
 
     return err;
 }
@@ -124,7 +124,7 @@ _AMX afxError _AmxDownloadBuffer(amxBuffer buf, amxBufferIo const* op, afxStream
         AfxThrowError();
     }
 
-    if (AfxWriteStream2(iob, op->rowCnt * op->dstStride, op->dstStride, &buf->storage[0].hostedAlloc.bytemap[op->srcOffset], op->srcStride))
+    if (AfxWriteStream2(iob, op->rowCnt * op->dstStride, op->dstStride, &buf->storage[0].host.bytemap[op->srcOffset], op->srcStride))
     {
         AfxThrowError();
     }
@@ -143,7 +143,7 @@ _AMX afxError _AmxUploadBuffer(amxBuffer buf, amxBufferIo const* op, afxStream i
         AfxThrowError();
     }
 
-    if (AfxReadStream2(iob, op->rowCnt * op->srcStride, op->srcStride, &buf->storage[0].hostedAlloc.bytemap[op->dstOffset], op->dstStride))
+    if (AfxReadStream2(iob, op->rowCnt * op->srcStride, op->srcStride, &buf->storage[0].host.bytemap[op->dstOffset], op->dstStride))
     {
         AfxThrowError();
     }

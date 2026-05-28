@@ -420,8 +420,8 @@ _AVX void AvxQueryDrawCapabilities(afxDrawDevice ddev, avxDeviceInfo* caps)
 
     if (caps)
     {
-        caps->acceleration = ddev->acceleration;
-        caps->capabilities = ddev->capabilities;
+        caps->accel = ddev->accel;
+        caps->caps = ddev->caps;
         caps->maxQueCnt = ddev->maxQueCnt;
         caps->minQueCnt = ddev->minQueCnt;
         caps->clipSpaceDepth = ddev->clipSpaceDepth;
@@ -431,7 +431,7 @@ _AVX void AvxQueryDrawCapabilities(afxDrawDevice ddev, avxDeviceInfo* caps)
     }
 }
 
-_AVX afxBool AvxIsDrawDeviceAcceptable(afxDrawDevice ddev, avxFeatures const* features, avxLimits const* limits)
+_AVX afxBool _AvxDdevSwIsAcceptableCb(afxDrawDevice ddev, avxFeatures const* features, avxLimits const* limits)
 {
     afxError err = { 0 };
     // @ddev must be a valid afxDrawDevice handle.
@@ -625,6 +625,38 @@ _AVX afxBool AvxIsDrawDeviceAcceptable(afxDrawDevice ddev, avxFeatures const* fe
     return rslt;
 }
 
+_AVX afxBool AvxIsDrawDeviceAcceptable(afxDrawDevice ddev, avxFeatures const* features, avxLimits const* limits)
+{
+    afxError err = { 0 };
+    // @ddev must be a valid afxDrawDevice handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
+    AFX_ASSERT(limits);
+    AFX_ASSERT(features);
+    afxBool rslt = TRUE;
+
+    AFX_ASSERT(ddev->ddi->isAcceptCb);
+    rslt = ddev->ddi->isAcceptCb(ddev, features, limits);
+
+    return rslt;
+}
+
+_AVX afxError _AvxDdevSwDescribeFormatsCb(afxDrawDevice ddev, afxUnit cnt, avxFormat const formats[], avxFormatDescription descs[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
+    AFX_ASSERT(formats);
+    AFX_ASSERT(descs);
+    AFX_ASSERT(cnt);
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        AFX_ASSERT_RANGE(avxFormat_TOTAL, 0, formats[i]);
+        avxFormatDescription const* pfd = &ddev->pfds[formats[i]];
+        descs[i] = *pfd;
+    }
+    return err;
+}
+
 _AVX afxError AvxDescribeDeviceFormats(afxDrawDevice ddev, afxUnit cnt, avxFormat const formats[], avxFormatDescription descs[])
 {
     afxError err = { 0 };
@@ -639,18 +671,18 @@ _AVX afxError AvxDescribeDeviceFormats(afxDrawDevice ddev, afxUnit cnt, avxForma
     AFX_ASSERT(cnt);
 #endif
 
-    for (afxUnit i = 0; i < cnt; i++)
+    AFX_ASSERT(ddev->ddi->descFmtCb);
+    if (AfxFailed(ddev->ddi->descFmtCb(ddev, cnt, formats, descs)))
     {
-        AFX_ASSERT_RANGE(avxFormat_TOTAL, 0, formats[i]);
-        avxFormatDescription const* pfd = &ddev->pfds[formats[i]];
-        descs[i] = *pfd;
+        AfxThrowError();
     }
     return err;
 }
 
-_AVX _avxDdiDdev const _AVX_DDI_DDEV =
+_AVX _avxDdevDdi const _AVX_DDI_DDEV =
 {
-    0
+    .descFmtCb = _AvxDdevSwDescribeFormatsCb,
+    .isAcceptCb = _AvxDdevSwIsAcceptableCb,
 };
 
 _AVX afxError _AvxDdevDtorCb(afxDrawDevice ddev)
@@ -701,8 +733,8 @@ _AVX afxError _AvxDdevCtorCb(afxDrawDevice ddev, void** args, afxUnit invokeNo)
 
     ddev->pfds = &_AvxStdPfds[0];
 
-    ddev->acceleration = info->acceleration;
-    ddev->capabilities = info->capabilities;
+    ddev->accel = info->accel;
+    ddev->caps = info->caps;
     
     ddev->maxQueCnt = info->maxQueCnt;
     ddev->minQueCnt = info->minQueCnt;
@@ -739,7 +771,13 @@ _AVX afxUnit AvxEnumerateDrawDevices(afxModule avxIcd, afxUnit first, afxUnit cn
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
-    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return 0;
+    }
 
     afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
@@ -758,7 +796,13 @@ _AVX afxUnit AvxInvokeDrawDevices(afxModule avxIcd, afxUnit first, void* udd, af
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
-    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return 0;
+    }
 
     afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
@@ -773,7 +817,13 @@ _AVX afxUnit AvxEvokeDrawDevices(afxModule avxIcd, afxUnit first, void* udd, afx
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
-    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return 0;
+    }
 
     afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
@@ -792,8 +842,14 @@ _AVX afxUnit AvxChooseDrawDevices(afxModule avxIcd, avxDeviceInfo const* caps, a
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
-    AFX_ASSERT(AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX) == (afxModuleFlag_ICD | afxModuleFlag_AVX));
-    
+
+    if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
+    {
+        AfxThrowError();
+        err = afxError_INCOMPATIBLE_DRIVER;
+        return 0;
+    }
+
     afxClass const* cls = _AvxIcdGetDdevClass(avxIcd);
     AFX_ASSERT_CLASS(cls, afxFcc_DDEV);
     
@@ -813,10 +869,10 @@ _AVX afxUnit AvxChooseDrawDevices(afxModule avxIcd, avxDeviceInfo const* caps, a
 
         if (caps)
         {
-            if ((ddev->capabilities & caps->capabilities) != caps->capabilities)
+            if ((ddev->caps & caps->caps) != caps->caps)
                 continue;
 
-            if ((ddev->acceleration & caps->acceleration) != caps->acceleration)
+            if ((ddev->accel & caps->accel) != caps->accel)
                 continue;
 
             if (ddev->minQueCnt < caps->minQueCnt)

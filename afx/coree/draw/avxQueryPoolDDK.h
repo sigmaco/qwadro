@@ -28,8 +28,8 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxDdiQryp);
-AFX_DECLARE_STRUCT(_avxIddQryp);
+AFX_DECLARE_STRUCT(_avxQrypDdi);
+AFX_DECLARE_STRUCT(_avxQrypIdd);
 
 #ifdef _AVX_QUERY_POOL_C
 #ifdef _AVX_QUERY_POOL_IMPL
@@ -38,8 +38,8 @@ AFX_OBJECT(_avxQueryPool)
 AFX_OBJECT(avxQueryPool)
 #endif
 {
-    _avxDdiQryp const*  ddi;
-    _avxIddQryp*        idd;
+    _avxQrypDdi const*  ddi;
+    _avxQrypIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

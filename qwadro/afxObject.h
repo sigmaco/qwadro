@@ -120,13 +120,19 @@ AFX_DEFINE_STRUCT(afxEventFilter)
     afxBool (*fn)(afxObject obj, afxObject watched, afxEvent*);
 };
 
-AFX_DEFINE_STRUCT(afxObjectStash)
+AFX_DEFINE_STRUCT(afxAllocation)
 {
     afxUnit cnt;
     afxUnit siz;
     afxUnit align;
     void**  var;
 };
+
+#define AFX_ALLOCATION(cnt_, siz_, align_, ppVar_) \
+    (afxAllocation) {   .cnt = (cnt_), \
+                        .siz = (siz_), \
+                        .align = (align_), \
+                        .var = (void**)(ppVar_) }
 
 /*
     In Qwadro, we do not "create" things. This may be confuse but remember that the Qwadro is literally an alchemist canvas.
@@ -313,14 +319,14 @@ AFXINL afxError AfxAllocateInstanceData
 (
     afxObject obj, 
     afxUnit cnt, 
-    afxObjectStash const stashes[]
+    afxAllocation const stashes[]
 );
 
 AFXINL afxError AfxDeallocateInstanceData
 (
     afxObject obj, 
     afxUnit cnt, 
-    afxObjectStash const stashes[]
+    afxAllocation const stashes[]
 );
 
 // %p?%.4s#%i

@@ -394,7 +394,7 @@ _AFX afxError _AfxUrdDtorCb(afxUrd urd)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_URD, 1, &urd);
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = urd->segCnt,
@@ -424,7 +424,7 @@ _AFX afxError _AfxUrdCtorCb(afxUrd urd, void** args, afxUnit invokeNo)
 
     urd->segCnt = segCnt;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = urd->segCnt,

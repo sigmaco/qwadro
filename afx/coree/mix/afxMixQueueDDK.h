@@ -201,8 +201,8 @@ AFX_DEFINE_UNION(_amxIoReqPacket)
         afxUnit     unmapCnt;
         union
         {
-            _amxBufferRemapping mapOps[];
-            _amxBufferRemapping unmapOps[];
+            _amxBufRemapping mapOps[];
+            _amxBufRemapping unmapOps[];
         };
     } Remap;
     struct
@@ -250,7 +250,7 @@ AMX afxClassConfig const _AMX_MQUE_CLASS_CONFIG;
 AMX afxError _AmxMqueSubmitCallback(afxMixQueue mque, afxError(*f)(void*, void*), void* udd);
 AMX afxError _AmxMqueSubmitMixCommands(afxMixQueue mque, afxUnit cnt, amxSubmission subms[]);
 AMX afxError _AmxMqueTransferResources(afxMixQueue mque, amxTransference const* ctrl, afxUnit opCnt, void const* ops);
-AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufferRemapping const maps[], afxUnit unmapCnt, _amxBufferRemapping const unmaps[]);
+AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRemapping const maps[], afxUnit unmapCnt, _amxBufRemapping const unmaps[]);
 AMX afxError _AmxMqueCohereMappedBuffers(afxMixQueue mque, afxUnit flushCnt, amxBufferedMap const flushes[], afxUnit fetchCnt, amxBufferedMap const fetches[]);
 
 AMX afxError _AmxMqueSinkBuffers(afxMixQueue mque, afxUnit cnt, amxFlush presentations[]);

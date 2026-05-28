@@ -88,10 +88,7 @@ AFX_OBJECT(amxVoice)
     afxUnit64   samplesPlayed;
     afxUnit     bufQueued;
     afxInterlockedQueue bufQue;
-    amxBuffer   srcBuf;
-    afxSize     srcOffset;
-    afxSize     srcRange;
-    afxUnit     srcStride;
+    amxBufferedStream src;
     afxSize     srcCursor;
     afxUnit     iterBegin;
     afxUnit     iterEnd;
@@ -226,7 +223,5 @@ AFX_OBJECT(amxTracker)
 #endif
 
 AMX afxClassConfig const _AMX_VOX_CLASS_CONFIG;
-
-AMX afxClass const* _AmxTraxGetVoxClass(amxTracker trax);
 
 #endif//AMX_TRACKER_DDK_H

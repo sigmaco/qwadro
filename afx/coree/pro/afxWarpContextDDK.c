@@ -153,7 +153,7 @@ _ACX afxError _AcxSctxRecycleCb(afxWarpContext sctx, afxBool freeRes)
     return err;
 }
 
-_ACX _acxDdiSctx const _ACX_SCTX_DDI =
+_ACX _acxSctxDdi const _ACX_SCTX_DDI =
 {
     .prepare = _AcxSctxPrepareCb,
     .compile = _AcxSctxCompileCb,

@@ -42,14 +42,7 @@ AFX_DEFINE_STRUCT(amxVoicingInfo)
 {
     // Flags that provide additional information about the audio buffer.
     afxFlags        flags;
-    // Handle.
-    amxBuffer       srcBuf;
-    // Offset into the audio data.
-    afxSize         srcOffset;
-    // Size of the audio data, in bytes.
-    afxSize         srcRange;
-    // Stride between consecultive fetches.
-    afxUnit         srcStride;
+    amxBufferedStream   src;
     // Sample rate of the fed data.
     afxUnit         sampleRate;
     // First sample in the buffer that should be played.
@@ -76,40 +69,45 @@ AFX_DEFINE_STRUCT(amxVoicingInfo)
 
 // Adds a new audio buffer to the voice queue.
 
-AMX afxError AmxFeedVoice(amxTracker trax, afxUnit id, amxVoicingInfo const* info);
+AMX afxError AmxFeedVoice(amxVoice vox, amxVoicingInfo const* info);
 
 // Removes all pending audio buffers from the voice queue.
 
-AMX afxError AmxPurgeVoice(amxTracker trax, afxUnit id, afxFlags flags);
+AMX afxError AmxPurgeVoice(amxVoice vox, afxFlags flags);
 
 // Stops looping the voice when it reaches the end of the current loop region.
 
-AMX afxError AmxBreakVoiceLoop(amxTracker trax, afxUnit id, afxFlags flags);
+AMX afxError AmxBreakVoiceLoop(amxVoice vox, afxFlags flags);
 
 // Starts consumption and processing of audio by the voice. 
 // Delivers the result to any connected submix or mastering voices, or to the output device.
 
-AMX afxError AmxSwitchVoice(amxTracker trax, afxUnit id, afxFlags flags);
+AMX afxError AmxPauseVoice(amxVoice vox, afxBool suspend, afxFlags flags);
 
 // Reconfigures the voice to consume source data at a different sample rate than the rate specified when the voice was created.
 
-AMX afxError AmxSetVoiceSampleRate(amxTracker trax, afxUnit id, afxUnit sampRate);
+AMX afxError AmxSetVoiceSampleRate(amxVoice vox, afxUnit sampRate);
 
 // Sets the frequency adjustment ratio of the voice.
 
-AMX afxError AmxSetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal ratio);
+AMX afxError AmxSetVoiceFrequencyRatio(amxVoice vox, afxReal ratio);
 
 // Returns the frequency adjustment ratio of the voice.
 
-AMX afxError AmxGetVoiceFrequencyRatio(amxTracker trax, afxUnit id, afxReal* ratio);
+AMX afxError AmxGetVoiceFrequencyRatio(amxVoice vox, afxReal* ratio);
 
 // Returns the voice's current state and cursor position data.
 
-AMX afxError AmxQueryVoiceState(amxTracker trax, afxUnit id, amxBuffer* buf, afxUnit* bufQueued, afxUnit64* sampPlayed);
+AMX afxError AmxQueryVoiceState(amxVoice vox, amxBuffer* buf, afxUnit* bufsQueued, afxUnit64* samplesPlayed);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AMX afxError AmxDeallocateVoices(amxTracker trax, afxUnit firstId, afxUnit cnt, afxUnit voiceIdMap[]);
-AMX afxError AmxAllocateVoices(amxTracker trax, amxVoiceCaps caps, afxUnit cnt, afxUnit voiceIds[]);
+AMX afxError AmxAcquireVoices
+(
+    afxMixSystem, 
+    amxVoiceCaps caps, 
+    afxUnit cnt, 
+    amxVoice voices[]
+);
 
 #endif//AMX_VOICE_H

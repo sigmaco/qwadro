@@ -512,7 +512,7 @@ _AVX afxError _AvxCanvDtorCb(avxCanvas canv)
 #endif
     }
 
-    afxObjectStash const stashs[] =
+    afxAllocation const stashs[] =
     {
         {
             .cnt = canv->binCnt,
@@ -525,7 +525,7 @@ _AVX afxError _AvxCanvDtorCb(avxCanvas canv)
     return err;
 }
 
-_avxDdiCanv const _AVX_CANV_DDI =
+_avxCanvDdi const _AVX_CANV_DDI =
 {
     .relink = _AvxCanvRelinkDrawBuffersCb_SW,
 };
@@ -647,7 +647,7 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
         else canv->dsBinIdx[0] = (binCnt - 1);
     }
 
-    afxObjectStash const stashs[] =
+    afxAllocation const stashs[] =
     {
         {
             .cnt = binCnt,

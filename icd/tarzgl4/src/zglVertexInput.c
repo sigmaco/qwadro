@@ -107,7 +107,7 @@ _ZGL void _ZglUnbindVinResources(zglDpu* dpu)
 
     for (afxUnit i = 0; i < activeVin->m.binCnt; i++)
     {
-        _avxVertexBin* vsi = &activeVin->m.bins[i];
+        _avxVinStream* vsi = &activeVin->m.bins[i];
         afxUnit pin = vsi->pin;
 
         if (state->sources[pin].buf)
@@ -198,11 +198,11 @@ _ZGL void _ZglFlushVertexInputState(zglDpu* dpu)
             gl->ObjectLabel(GL_VERTEX_ARRAY, glHandle, vin->m.tag.len, (GLchar const*)vin->m.tag.start); _ZglThrowErrorOccuried();
         }
 
-        _avxVertexBin const* bins = vin->m.bins;
+        _avxVinStream const* bins = vin->m.bins;
         afxUnit streamCnt = vin->m.binCnt;
         for (afxUnit i = 0; i < streamCnt; i++)
         {
-            _avxVertexBin const* stream = &bins[i];
+            _avxVinStream const* stream = &bins[i];
             afxUnit pin = stream->pin;
             AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIB_BINDINGS, pin, 1);
             //AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIB_STRIDE, 0, stream->stride);
@@ -213,11 +213,11 @@ _ZGL void _ZglFlushVertexInputState(zglDpu* dpu)
             afxUnit totalAttrCnt = vin->m.totalAttrCnt;
             afxUnit attrCnt = stream->attrCnt;
             afxUnit baseAttrIdx = stream->baseAttrIdx;
-            _avxVertexAttr const* attrs = vin->m.attrs;
+            _avxVinAttr const* attrs = vin->m.attrs;
             for (afxUnit j = 0; j < attrCnt; j++)
             {
                 afxUnit attrIdx = baseAttrIdx + j;
-                _avxVertexAttr const* attr = &attrs[attrIdx];
+                _avxVinAttr const* attr = &attrs[attrIdx];
                 AFX_ASSERT_RANGE(avxFormat_TOTAL, attr->fmt, 1);
                 AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIBS, attr->location, 1);
                 AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIB_BINDINGS, pin, 1);
@@ -349,7 +349,7 @@ _ZGL void _ZglFlushVertexInputState(zglDpu* dpu)
 
         for (afxUnit i = 0; i < vin->m.binCnt; i++)
         {
-            _avxVertexBin const* stream = &vin->m.bins[i];
+            _avxVinStream const* stream = &vin->m.bins[i];
             afxUnit pin = stream->pin;
             AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIB_BINDINGS, pin, 1);
 

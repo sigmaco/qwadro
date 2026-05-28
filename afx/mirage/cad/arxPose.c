@@ -23,7 +23,7 @@
 //#define _ARX_ANIMATION_C
 #include "../scene/arxIcd.h"
 
-_ARX _arxPoseArticulation* _ArxPoseGetPaArray(arxPose pose, afxUnit base)
+_ARX _arxPoseArticle* _ArxPoseGetPaArray(arxPose pose, afxUnit base)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_POSE, 1, &pose);
@@ -101,8 +101,8 @@ _ARX void ArxCopyPose(arxPose pose, afxUnit toBaseIdx, arxPose from, afxUnit fro
 
         for (afxUnit i = 0; i < cnt; i++)
         {
-            _arxPoseArticulation* dst = &pose->arts[toBaseIdx + i];
-            _arxPoseArticulation const* src = &from->arts[fromBaseIdx + i];
+            _arxPoseArticle* dst = &pose->arts[toBaseIdx + i];
+            _arxPoseArticle const* src = &from->arts[fromBaseIdx + i];
 
             dst->weight = src->weight;
             dst->cnt = src->cnt;
@@ -119,8 +119,8 @@ _ARX void ArxCopyPose(arxPose pose, afxUnit toBaseIdx, arxPose from, afxUnit fro
         afxUnit artIdx = remap[i];
         afxUnit toIdx = toBaseIdx + artIdx;
         afxUnit fromIdx = fromBaseIdx + artIdx;
-        _arxPoseArticulation* dst = &pose->arts[toIdx];
-        _arxPoseArticulation const* src = &from->arts[fromIdx];
+        _arxPoseArticle* dst = &pose->arts[toIdx];
+        _arxPoseArticle const* src = &from->arts[fromIdx];
 
         dst->weight = src->weight;
         dst->cnt = src->cnt;
@@ -199,7 +199,7 @@ _ARX void ArxRebuildRestPose(arxPose pose, arxSkeleton skl, afxUnit baseJntIdx, 
     {
         afxUnit jntIdx = baseJntIdx + i;
         AFX_ASSERT_RANGE(maxJntCnt, jntIdx, 1);
-        _arxPoseArticulation* pa = &pose->arts[jntIdx];
+        _arxPoseArticle* pa = &pose->arts[jntIdx];
         pa->cnt = 1;
         pa->weight = 1.0;
         AfxCopyTransform(&pa->xform, &lt[jntIdx]);
@@ -255,7 +255,7 @@ _ARX void ArxConcludePoseAccumulation(arxPose pose, afxUnit baseArtIdx, afxUnit 
     for (afxUnit artIdx = baseArtIdx; artIdx < artCnt; artIdx++)
     {
         afxUnit jointIdx = (jntMap) ? jntMap[artIdx] : artIdx;
-        _arxPoseArticulation* pa = &pose->arts[artIdx];
+        _arxPoseArticle* pa = &pose->arts[artIdx];
         afxTransform const* local = &mdli.skli.lt[jointIdx];
 
         if (pa->traversalId != pose->traversalId)
@@ -312,7 +312,7 @@ _ARX void ArxAccumulateLocalTransform(arxPose pose, afxUnit artIdx, afxUnit sklJ
 
     afxReal orientWeight;
 
-    _arxPoseArticulation* pa = &pose->arts[artIdx];
+    _arxPoseArticle* pa = &pose->arts[artIdx];
 
     afxTransform sklLt;
     ArxGetBoneTransforms(ArxGetSkeleton(skl), sklJntIdx, 1, &sklLt);
@@ -401,8 +401,8 @@ _ARX void ArxModulatePose(arxPose pose, afxUnit toBaseArtIdx, arxPose composite,
 
     for (afxUnit i = 0; i < artCnt; i++)
     {
-        _arxPoseArticulation const* ts = &composite->arts[fromBaseArtIdx + i];
-        _arxPoseArticulation* td = &pose->arts[toBaseArtIdx + i];
+        _arxPoseArticle const* ts = &composite->arts[fromBaseArtIdx + i];
+        _arxPoseArticle* td = &pose->arts[toBaseArtIdx + i];
 
         afxReal weight = weightAll;
 
@@ -442,7 +442,7 @@ _ARX afxError _ArxPoseDtorCb(arxPose pose)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_POSE, 1, &pose);
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
         .cnt = pose->artCnt,
@@ -475,7 +475,7 @@ _ARX afxError _ArxPoseCtorCb(arxPose pose, void** args, afxUnit invokeNo)
     pose->arts = NIL;
     pose->artCnt = AFX_MAX(1, cfg->artCnt);
 
-    afxObjectStash const stashes[]=
+    afxAllocation const stashes[]=
     {
         {
         .cnt = pose->artCnt,

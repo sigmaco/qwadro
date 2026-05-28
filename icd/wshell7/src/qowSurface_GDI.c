@@ -356,7 +356,7 @@ _QOW afxError _QowDoutIoctlCb_GDI(afxSurface dout, afxUnit code, va_list ap)
     return err;
 }
 
-_QOW _avxDdiDout const _QOW_DDI_DOUT =
+_QOW _avxDoutDdi const _QOW_DDI_DOUT =
 {
     .ioctlCb = _QowDoutIoctlCb_GDI,
     .adjustCb = _QowDoutAdjustCb_GDI,

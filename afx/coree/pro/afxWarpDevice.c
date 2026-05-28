@@ -97,7 +97,7 @@ _ACX afxBool AcxIsWarpDeviceAcceptable(afxWarpDevice sdev, acxFeatures const* fe
     return rslt;
 }
 
-_ACX _acxDdiSdev const _ACX_DDI_SDEV =
+_ACX _acxSdevDdi const _ACX_DDI_SDEV =
 {
     0
 };
@@ -124,7 +124,7 @@ _ACX afxError _AcxSdevCtorCb(afxWarpDevice sdev, void** args, afxUnit invokeNo)
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _acxSdevReg const* info = ((_acxSdevReg const *)args[1]) + invokeNo;
+    _acxSdevAcq const* info = ((_acxSdevAcq const *)args[1]) + invokeNo;
     AFX_ASSERT(info);
 
     if (_AFX_DEV_CLASS_CONFIG.ctor(&sdev->dev, (void*[]) { icd, (void*)&info->dev }, 0))
@@ -285,7 +285,7 @@ _ACX afxUnit AcxChooseWarpDevices(afxModule acxIcd, acxDeviceInfo const* caps, a
     return rslt;
 }
 
-_ACX afxError _AcxIcdRegisterDevices(afxModule icd, afxUnit cnt, _acxSdevReg const infos[], afxWarpDevice devices[])
+_ACX afxError _AcxIcdRegisterDevices(afxModule icd, afxUnit cnt, _acxSdevAcq const infos[], afxWarpDevice devices[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);

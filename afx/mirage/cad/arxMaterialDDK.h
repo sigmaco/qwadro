@@ -23,8 +23,8 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DEFINE_STRUCT(_arxDdiMtl);
-AFX_DEFINE_STRUCT(_arxIddMtl);
+AFX_DEFINE_STRUCT(_arxMtlDdi);
+AFX_DEFINE_STRUCT(_arxMtlIdd);
 
 #ifdef _ARX_MATERIAL_C
 
@@ -40,8 +40,8 @@ AFX_OBJECT(_arxMaterial)
 AFX_OBJECT(arxMaterial)
 #endif
 {
-    _arxIddMtl*         idd;
-    _arxDdiMtl const*   ddi;
+    _arxMtlDdi const*   ddi;
+    _arxMtlIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -119,8 +119,8 @@ AFX_OBJECT(_arxMtd)
 AFX_OBJECT(arxMtd)
 #endif
 {
-    _arxIddMtl*         idd;
-    _arxDdiMtl const*   ddi;
+    _arxMtlIdd*         idd;
+    _arxMtlDdi const*   ddi;
     // User-defined data.
     void*               udd;
     // Debugging tag.

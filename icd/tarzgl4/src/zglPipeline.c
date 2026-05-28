@@ -98,13 +98,13 @@ _ZGL afxError _DpuFlushPipelineState(zglDpu* dpu)
                 //GLuint tmpShdGlHandles[8];
                 //AfxMakeArray(&code, sizeof(afxChar), 2048, NIL, 0);
 
-                avxShader codb = pip->m.codb;
-                AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+                avxShader shd = pip->m.shd;
+                AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
                 //if (_DpuCreateShaders(dpu, codb, pip->m.stageCnt, pip->m.stages, &tmpShdGlHandleCnt, tmpShdGlHandles))
                     //AfxThrowError();
 
-                if (_DpuCreateShaders(dpu, codb, pip))
+                if (_DpuCreateShaders(dpu, shd, pip))
                     AfxThrowError();
 
                 if (!err)
@@ -451,7 +451,7 @@ _ZGL afxError _ZglPipDtor(avxPipeline pip)
         }
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = pip->m.progCnt,
@@ -484,7 +484,7 @@ _ZGL afxError _ZglPipCtor(avxPipeline pip, void** args, afxUnit invokeNo)
         return err;
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = pip->m.progCnt,

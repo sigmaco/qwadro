@@ -155,7 +155,7 @@ _AFX afxError _AfxExuTransferMemory(afxIoBridge exu, afxTransference* ctrl, afxU
     return err;
 }
 
-_AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufferRemapping const maps[])
+_AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @exu must be a valid afxIoBridge handle.
@@ -269,7 +269,7 @@ _AFX afxError _AfxExuCohereMappedBuffers(afxIoBridge exu, afxBool invalidate, af
     return err;
 }
 
-_AFX _afxDdiExu const _AFX_DDI_EXU =
+_AFX _afxExuDdi const _AFX_DDI_EXU =
 {
     .pingCb = _AfxExu_PingCb
 };

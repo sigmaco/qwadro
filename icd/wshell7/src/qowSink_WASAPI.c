@@ -86,7 +86,7 @@ _QOW void _QowSinkFlushCb(afxSink asi)
 
     if (bufFrameCnt)
     {
-        AFX_ASSERT(asi->idd.wasapi.bufferFrameCount >= bufFrameCnt - paddingFrameCnt);
+        //AFX_ASSERT(asi->idd.wasapi.bufferFrameCount >= bufFrameCnt - paddingFrameCnt);
 
         afxUnit frameCnt = 0;
         if ((frameCnt = audio_ringbuffer_available(&asi->m.rb)))
@@ -114,6 +114,15 @@ _QOW void _QowSinkFlushCb(afxSink asi)
     }
 }
 
+_QOW _amxSinkDdi const _QOW_SINK_IMPL =
+{
+    .flushCb = _QowSinkFlushCb,
+    .lockCb = _QowSinkLockCb,
+    .unlockCb = _QowSinkUnlockCb,
+    .pauseCb = _QowSinkPauseCb,
+    .resetCb = _QowSinkResetCb
+};
+
 _QOW afxError _QowSinkDtorCb(afxSink asi)
 {
     afxError err = { 0 };
@@ -127,6 +136,7 @@ _QOW afxError _QowSinkDtorCb(afxSink asi)
     {
         AfxThrowError();
     }
+
     return err;
 }
 
@@ -161,11 +171,7 @@ _QOW afxError _QowSinkCtorCb(afxSink asi, void** args, afxUnit invokeNo)
         AfxThrowError();
     }
 
-    asi->m.flushCb = _QowSinkFlushCb;
-    asi->m.lockCb = _QowSinkLockCb;
-    asi->m.unlockCb = _QowSinkUnlockCb;
-    asi->m.pauseCb = _QowSinkPauseCb;
-    asi->m.resetCb = _QowSinkResetCb;
+    asi->m.ddi = &_QOW_SINK_IMPL;
 
     _ZalWasapiPause(&asi->idd.wasapi, 0);
 

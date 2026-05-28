@@ -628,7 +628,6 @@
     <ClCompile Include="..\..\coree\hid\afxHid.c" />
     <ClCompile Include="..\..\coree\hid\afxKeyboard.c" />
     <ClCompile Include="..\..\coree\ux\afxEnvironment.c" />
-    <ClCompile Include="..\..\coree\ux\afxEnvironmentDDK.c" />
     <ClCompile Include="..\..\coree\ux\afxUxXss.c" />
     <ClCompile Include="..\..\coree\ux\afxFont.c" />
     <ClCompile Include="..\..\coree\ux\auxIcd.c" />
@@ -637,9 +636,7 @@
     <ClCompile Include="..\..\coree\ux\afxShell.c" />
     <ClCompile Include="..\..\coree\ux\afxTheme.c" />
     <ClCompile Include="..\..\coree\ux\afxWidget.c" />
-    <ClCompile Include="..\..\coree\ux\afxWidgetDDK.c" />
     <ClCompile Include="..\..\coree\ux\afxWindow.c" />
-    <ClCompile Include="..\..\coree\ux\afxWindowDDK.c" />
     <ClCompile Include="..\..\coree\pro\afxWarpBridge.c" />
     <ClCompile Include="..\..\coree\pro\acxBuffer.c" />
     <ClCompile Include="..\..\coree\pro\acxBufferIo.c" />

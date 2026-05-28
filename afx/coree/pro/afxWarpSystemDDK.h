@@ -25,15 +25,15 @@
 #include "spu/acxSpuExecutor.h"
 
 #ifndef _ACX_WARP_C
-AFX_DECLARE_STRUCT(_acxDdiSsys);
+AFX_DECLARE_STRUCT(_acxSsysDdi);
 #else
-AFX_DEFINE_STRUCT(_acxDdiSsys)
+AFX_DEFINE_STRUCT(_acxSsysDdi)
 {
     afxError(*waitCb)(afxWarpSystem, afxUnit64);
     //afxError(*waitFencCb)(afxWarpSystem, afxBool, afxUnit64, afxUnit, acxFence const[]);
     //afxError(*resetFencCb)(afxWarpSystem, afxUnit, acxFence const[]);
     afxError(*cohereCb)(afxWarpSystem, afxBool, afxUnit, acxBufferedMap const[]);
-    afxError(*remapCb)(afxWarpSystem, afxBool, afxUnit, _acxBufferRemapping const[]);
+    afxError(*remapCb)(afxWarpSystem, afxBool, afxUnit, _acxBufRemapping const[]);
     afxUnit(*getProcCb)(afxWarpSystem, afxUnit, afxString const[], void*[]);
     afxError(*transferCb)(afxWarpSystem, acxTransference* ctrl, afxUnit opCnt, void const* ops);
     afxError(*allocBufCb)(afxWarpSystem, afxUnit, acxBufferInfo const[], acxBuffer[]);
@@ -63,7 +63,7 @@ AFX_DEFINE_STRUCT(__acxSsysAcq)
     afxClassConfig const* sctxClsCfg;
 };
 
-AFX_DECLARE_STRUCT(_acxIddSsys);
+AFX_DECLARE_STRUCT(_acxSsysIdd);
 
 #ifdef _ACX_WARP_SYSTEM_C
 #ifdef _ACX_WARP_SYSTEM_IMPL
@@ -73,8 +73,8 @@ AFX_OBJECT(afxWarpSystem)
 #endif
 {
     AFX_OBJECT(afxDevLink) ctx;
-    _acxDdiSsys const*      ddi;
-    _acxIddSsys*            idd;
+    _acxSsysDdi const*      ddi;
+    _acxSsysIdd*            idd;
     // Debugging tag.
     afxString               tag;
     // User-defined data.
@@ -110,7 +110,7 @@ ACX afxClass const* _AcxSsysGetSexuClass(afxWarpSystem ssys);
 ACX afxClass const* _AcxSsysGetSctxClass(afxWarpSystem ssys);
 ACX afxClass const* _AcxSsysGetBufClass(afxWarpSystem ssys);
 
-ACX _acxDdiSsys const* _AcxSsysGetDdi(afxWarpSystem ssys);
+ACX _acxSsysDdi const* _AcxSsysGetDdi(afxWarpSystem ssys);
 ACX afxMask _AcxSsysGetIoExuMask(afxWarpSystem ssys, afxMask* dedIoExuMask);
 
 ACX afxClassConfig const _ACX_SBUF_CLASS_CONFIG;

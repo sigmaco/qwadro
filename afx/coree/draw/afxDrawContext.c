@@ -414,7 +414,7 @@ _AVX afxError _AvxDctxRecycleCb(afxDrawContext dctx, afxBool freeRes)
     return err;
 }
 
-_AVX _avxDdiDctx const _AVX_DDI_DCTX =
+_AVX _avxDctxDdi const _AVX_DDI_DCTX =
 {
     .prepare = _AvxDctxPrepareCb,
     .compile = _AvxDctxCompileCb,

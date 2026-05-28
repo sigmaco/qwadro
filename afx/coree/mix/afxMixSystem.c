@@ -31,6 +31,7 @@
 //#define _AMX_MIX_QUEUE_C
 //#define _AMX_MIX_INPUT_C
 //#define _AMX_SINK_C
+#define _AMX_BUFFER_C
 #include "amxIcd.h"
 #include "../ux/auxIcd.h"
 
@@ -42,7 +43,7 @@ _AMX afxDrawSystem _AmxMsysGetDsys(afxMixSystem msys)
     return msys->dsys;
 }
 
-_AMX _amxDdiMsys const* _AmxMsysGetDdi(afxMixSystem msys)
+_AMX _amxMsysDdi const* _AmxMsysGetDdi(afxMixSystem msys)
 {
     afxError err = { 0 };
     // @msys must be a valid afxMixSystem handle.
@@ -78,6 +79,16 @@ _AMX void AmxGetEnabledSystemFeatures(afxMixSystem msys, amxFeatures* features)
     *features = msys->requirements;
 
     return;
+}
+
+_AMX afxClass const* _AmxMsysGetVoxClass(afxMixSystem msys)
+{
+    afxError err = { 0 };
+    // msys must be a valid afxMixSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+    afxClass const* cls = &msys->voxCls;
+    AFX_ASSERT_CLASS(cls, afxFcc_VOX);
+    return cls;
 }
 
 _AMX afxClass const* _AmxMsysGetSinkClass(afxMixSystem msys)
@@ -266,7 +277,67 @@ _AMX afxError _AmxMsysTransferCb_SW(afxMixSystem msys, amxTransference* ctrl, af
     return err;
 }
 
-_AMX _amxDdiMsys const _AMX_MSYS_IMPL =
+_AMXINL afxError _AmxMsysSW_DeallocateBuffersCb(afxMixSystem msys, afxUnit cnt, amxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxBuffer buf = buffers[i];
+        _amxBufMem* bufs = &buf->storage[0];
+
+        if (buf->flags & amxBufferFlag_F)
+        {
+            bufs->host.bytemap = NIL;
+            bufs->size = 0;
+        }
+        else
+        {
+            if (bufs->host.bytemap)
+            {
+                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                {
+                    AfxThrowError();
+                }
+            }
+            bufs->size = 0;
+        }
+}
+    return err;
+}
+
+_AMXINL afxError _AmxMsysSW_AllocateBuffersCb(afxMixSystem msys, afxUnit cnt, amxBufferInfo const infos[], amxBuffer buffers[])
+{
+    afxError err = { 0 };
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxBufferInfo const* info = &infos[i];
+        amxBuffer buf = buffers[i];
+        _amxBufMem* bufs = &buf->storage[0];
+
+        if (buf->flags & amxBufferFlag_F)
+        {
+            //bufs->offset = info->from;
+            AFX_ASSERT((!info->dataSiz) || (info->dataSiz && buf->reqSiz));
+            bufs->host.bytemap = info->data;
+            bufs->host.external = TRUE;
+            bufs->size = info->dataSiz;
+        }
+        else
+        {
+            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            {
+                AfxThrowError();
+            }
+            bufs->host.external = FALSE;
+            bufs->size = buf->reqSiz;
+        }
+    }
+    return err;
+}
+
+_AMX _amxMsysDdi const _AMX_MSYS_IMPL =
 {
 #if 0
     .fencCls = _AmxMsysGetFencClassCb_SW,
@@ -277,10 +348,8 @@ _AMX _amxDdiMsys const _AMX_MSYS_IMPL =
     .transferCb = _AmxMsysTransferCb_SW,
     .cohereCb = _AmxMsysCohereMappedBuffersCb_SW,
     .remapCb = _AmxMsysRemapBuffersCb_SW,
-#if 0
-    .allocBufCb = _AmxMsysAllocateBuffersCb_SW,
-    .deallocBufCb = _AmxMsysDeallocateBuffersCb_SW,
-#endif
+    .allocBufCb = _AmxMsysSW_AllocateBuffersCb,
+    .deallocBufCb = _AmxMsysSW_DeallocateBuffersCb,
 };
 
 _AMX afxUnit AmxGetMixBridges(afxMixSystem msys, afxUnit baseIdx, afxUnit cnt, afxMixBridge bridges[])
@@ -457,7 +526,7 @@ _AMX afxError _AmxMsysDtorCb(afxMixSystem msys)
         AfxDisposeObjects(1, &msys->bridges[i]);
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,
@@ -560,6 +629,10 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         AFX_ASSERT(clsCfg.fcc == afxFcc_TRAX);
         AfxMountClass(&msys->traxCls, NIL, classes, &clsCfg);
 
+        afxClassConfig voxClsCfg = _AMX_VOX_CLASS_CONFIG;
+        AFX_ASSERT(voxClsCfg.fcc == afxFcc_VOX);
+        AfxMountClass(&msys->voxCls, NIL, classes, &voxClsCfg);
+
         afxClassConfig asioClsCfg;
         if (cfg->sinkClsCfg) asioClsCfg = *cfg->sinkClsCfg;
         else
@@ -587,7 +660,7 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
     msys->bridgeCnt = bridgeCnt;
     afxUnit baseQueIdx = 0;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,

@@ -406,7 +406,7 @@ _AFX afxError _AfxCtxRecycleCb(afxIoContext ctx, afxBool freeRes)
     return err;
 }
 
-_AFX _afxDdiCtx const _AFX_DDI_CTX =
+_AFX _afxCtxDdi const _AFX_DDI_CTX =
 {
     .prepare = _AfxCtxPrepareCb,
     .compile = _AfxCtxCompileCb,

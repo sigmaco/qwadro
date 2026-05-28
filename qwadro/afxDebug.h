@@ -24,7 +24,7 @@
 
 #if _DEBUG
 #define _AFX_DEBUG 1
-#define _AFX_EXPECT 1
+#define _AFX_ASSERT 1
 #define _AFX_TRACE 1
 #define _AFX_ASSERTION_ENABLED TRUE
 //#define _AFX_MEMORY_LEAK_DETECTION_ENABLED TRUE

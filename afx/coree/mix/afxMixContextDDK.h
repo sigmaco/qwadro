@@ -34,12 +34,12 @@ typedef enum amxContextState
 
 AFX_DECLARE_UNION(_amxCmd);
 
-AFX_DECLARE_STRUCT(_amxIddMctx);
+AFX_DECLARE_STRUCT(_amxMctxIdd);
 
 #ifndef _AMX_MIX_C
-AFX_DECLARE_STRUCT(_amxDdiMctx);
+AFX_DECLARE_STRUCT(_amxMctxDdi);
 #else
-AFX_DEFINE_STRUCT(_amxDdiMctx)
+AFX_DEFINE_STRUCT(_amxMctxDdi)
 {
     afxError(*prepare)(afxMixContext, afxBool purge, amxCmdFlags);
     afxError(*compile)(afxMixContext);
@@ -68,8 +68,8 @@ AFX_OBJECT(_amxMixContext)
 AFX_OBJECT(afxMixContext)
 #endif
 {
-    _amxDdiMctx const*  ddi;
-    _amxIddMctx*        idd;
+    _amxMctxDdi const*  ddi;
+    _amxMctxIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -340,7 +340,7 @@ AMX afxError _AmxMixEndCb(afxMixContext mix);
 
 AMX afxClassConfig const _AMX_MCTX_CLASS_CONFIG;
 
-AMX _amxDdiMctx const _AMX_MCTX_DDI;
+AMX _amxMctxDdi const _AMX_MCTX_DDI;
 
 AMX amxContextState _AmxMctxGetStatus(afxMixContext mix);
 

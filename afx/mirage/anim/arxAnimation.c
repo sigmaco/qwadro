@@ -153,7 +153,7 @@ _ARX afxUnit ArxPerformAnimation(arxAnimation ani, afxReal startTime, afxUnit it
     return rslt;
 }
 
-_ARX _arxDdiAni const _ARX_DDI_ANI =
+_ARX _arxAniDdi const _ARX_DDI_ANI =
 {
     .findGestureCb = _ArxAniFindGestureCb,
     .relinkCb = _ArxAniRelinkGesturesCb,
@@ -174,7 +174,7 @@ _ARX afxError _ArxAniDtorCb(arxAnimation ani)
             AfxDisposeObjects(1, &alm->ges);
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = ani->gesSlotCnt,
@@ -214,7 +214,7 @@ _ARX afxError _ArxAniCtorCb(arxAnimation ani, void** args, afxUnit invokeNo)
     ani->gesSlotCnt = gesCnt;
     ani->gesSlots = NIL;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = ani->gesSlotCnt,

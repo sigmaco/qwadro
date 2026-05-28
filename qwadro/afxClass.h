@@ -292,7 +292,7 @@ AFX afxResult       AfxDeregisterChainedClasses(afxChain* ch);
 AFX afxResult       AfxExhaustChainedClasses(afxChain* ch);
 AFX afxChain*       _AfxGetOrphanClasses(void);
 
-#if ((defined(_AFX_DEBUG) || defined(_AFX_EXPECT)))
+#if ((defined(_AFX_DEBUG) || defined(_AFX_ASSERT)))
 #   define AFX_ASSERT_CLASS(cls_, objFcc_)    ((!!((cls_) && ((cls_)->fcc == afxFcc_CLS) && ((cls_)->objFcc == (objFcc_)))) || (AfxThrowError(), AfxReportError("%s\n    %s", AFX_STRINGIFY((var_)), errorMsg[afxError_INVALID]), 0))
 #else
 #   define AFX_ASSERT_CLASS(cls_, fcc_) ((void)(err))

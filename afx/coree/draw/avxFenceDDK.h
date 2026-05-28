@@ -28,11 +28,11 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddFenc);
+AFX_DECLARE_STRUCT(_avxFencIdd);
 
 #ifdef _AVX_FENCE_C
 
-AFX_DEFINE_STRUCT(_avxDdiFenc)
+AFX_DEFINE_STRUCT(_avxFencDdi)
 {
     afxError(*waitCb)(avxFence, afxUnit64 value, afxUnit64 timeout);
     afxError(*resetCb)(avxFence);
@@ -46,8 +46,8 @@ AFX_OBJECT(_avxFence)
 AFX_OBJECT(avxFence)
 #endif
 {
-    _avxDdiFenc const*  ddi;
-    _avxIddFenc*        idd;
+    _avxFencDdi const*  ddi;
+    _avxFencIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

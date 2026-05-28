@@ -158,7 +158,7 @@ _ARX afxBool _ArxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
     return found;
 }
 
-_AFX afxError AfxGetArx(afxUnit unit, afxModule* arxIcd)
+_AFX afxError ArxGetIcd(afxUnit unit, afxModule* arxIcd)
 {
     afxError err = { 0 };
 

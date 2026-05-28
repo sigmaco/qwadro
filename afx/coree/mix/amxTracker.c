@@ -31,15 +31,6 @@
 #include "amxIcd.h"
 #include "qwadro/mix/amxTracker.h"
 
-_AMX afxClass const* _AmxTraxGetVoxClass(amxTracker trax)
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_TRAX, 1, &trax);
-    afxClass const* cls = &trax->voxCls;
-    AFX_ASSERT_CLASS(cls, afxFcc_VOX);
-    return cls;
-}
-
 _AMX afxCmdId AmxBindIoStream(amxTracker trax, afxUnit pin, afxStream iob, afxSize offset, afxSize range, afxUnit stride)
 {
     afxError err = { 0 };
@@ -202,8 +193,8 @@ _AMX afxError _AmxTraxCtorCb(amxTracker trax, void** args, afxUnit invokeNo)
     AfxMakeChain(&trax->classes, trax);
     AfxMountClass(&trax->voxCls, NIL, &trax->classes, &_AMX_VOX_CLASS_CONFIG);
 
-    afxUnit voices[32];
-    if (AmxAllocateVoices(trax, NIL, AFX_MAX(1, AFX_MIN(32, cfg->voiceCnt)), voices))
+    amxVoice voices[32];
+    if (AmxAcquireVoices(msys, NIL, AFX_MAX(1, AFX_MIN(32, cfg->voiceCnt)), voices))
         AfxThrowError();
 
     if (err)

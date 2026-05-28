@@ -78,9 +78,9 @@ AFX_DEFINE_STRUCT(avxBridgeConfig)
 {
     afxUnit         ddevId;
 
-    afxAcceleration acceleration;
+    afxAcceleration accel;
 
-    avxService     capabilities; // specifies capabilities of queues in a port.
+    avxService      caps; // specifies capabilities of queues in a port.
 
     afxUnit         minQueCnt;
 

@@ -581,7 +581,7 @@ _AFXINL afxError _AfxIomSW_DeallocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuf
     for (afxUnit i = 0; i < cnt; i++)
     {
         afxBuffer buf = buffers[i];
-        _afxBufStorage* bufs = &buf->storage[0];
+        _afxBufMem* bufs = &buf->storage[0];
 
         if (buf->flags & afxBufferFlag_F)
         {
@@ -611,7 +611,7 @@ _AFXINL afxError _AfxIomSW_AllocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuffe
     {
         afxBufferInfo const* info = &infos[i];
         afxBuffer buf = buffers[i];
-        _afxBufStorage* bufs = &buf->storage[0];
+        _afxBufMem* bufs = &buf->storage[0];
 
         if (buf->flags & afxBufferFlag_F)
         {

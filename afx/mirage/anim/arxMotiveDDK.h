@@ -42,8 +42,8 @@ typedef struct controlled_animation
     const arxTrackMask *ModelMask; // 12
 } controlled_animation;
 
-AFX_DECLARE_STRUCT(_arxIddMotv);
-AFX_DEFINE_STRUCT(_arxDdiMotv)
+AFX_DECLARE_STRUCT(_arxMotvIdd);
+AFX_DEFINE_STRUCT(_arxMotvDdi)
 {
     void(*PoseAccumulateBindingState)(arxPose, arxMotive, afxUnit, afxUnit, afxReal, afxUnit const*);
     void(*AnimationAccumulateBindingState)(arxPose, arxMotive, afxUnit, afxUnit, afxReal, const afxUnit *);
@@ -69,8 +69,8 @@ AFX_OBJECT(arxMotive)
     };
     afxBool isAnim;//void*               reservedPtr;
 
-    _arxIddMotv*         idd;
-    _arxDdiMotv const*   ddi;
+    _arxMotvIdd*         idd;
+    _arxMotvDdi const*   ddi;
     // User-defined data.
     void*               udd;
     // Debugging tag.

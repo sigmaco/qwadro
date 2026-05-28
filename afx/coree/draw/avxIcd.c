@@ -195,7 +195,7 @@ _AVX afxBool _AvxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
     return found;
 }
 
-_AFX afxError AfxGetAvx(afxUnit unit, afxModule* avxIcd)
+_AFX afxError AvxGetIcd(afxUnit unit, afxModule* avxIcd)
 {
     afxError err = { 0 };
 

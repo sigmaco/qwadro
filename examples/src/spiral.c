@@ -60,7 +60,7 @@ int main(int argc, char const* argv[])
     */
 
     afxModule avxIcd;
-    AfxGetAvx(0, &avxIcd);
+    AvxGetIcd(0, &avxIcd);
 
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };

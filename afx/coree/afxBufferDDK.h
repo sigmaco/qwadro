@@ -30,8 +30,8 @@
 #include "qwadro/afxBuffered.h"
 #include "qwadro/math/afxVector.h"
 
-AFX_DECLARE_STRUCT(_afxDdiBuf);
-AFX_DECLARE_STRUCT(_afxIddBuf);
+AFX_DECLARE_STRUCT(_afxBufDdi);
+AFX_DECLARE_STRUCT(_afxBufIdd);
 
 typedef enum _afxMemFlag
 {
@@ -41,7 +41,7 @@ typedef enum _afxMemFlag
     _afxMemFlag_EMBEDDED = AFX_BITMASK(3) // on-chip memory
 } _afxMemFlags;
 
-AFX_DEFINE_STRUCT(_afxBufStorage)
+AFX_DEFINE_STRUCT(_afxBufMem)
 {
     afxLink iommu;
     // binding
@@ -100,8 +100,8 @@ AFX_OBJECT(_afxBuffer)
 AFX_OBJECT(afxBuffer)
 #endif
 {
-    _afxDdiBuf const*   ddi;
-    _afxIddBuf*         idd;
+    _afxBufDdi const*   ddi;
+    _afxBufIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -122,12 +122,12 @@ AFX_OBJECT(afxBuffer)
     afxUnit             reqAlign;
     // required memory conditions for this storage block.
     afxFlags            reqMemType;
-    _afxBufStorage      storage[1]; // non-sparse
+    _afxBufMem      storage[1]; // non-sparse
     afxSize             storageOffset;
 };
 #endif//_AFX_BUFFER_C
 
-AFX_DEFINE_STRUCT(_afxBufferRemapping)
+AFX_DEFINE_STRUCT(_afxBufRemapping)
 {
     afxBuffer       buf;
     afxSize         offset;

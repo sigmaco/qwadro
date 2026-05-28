@@ -30,12 +30,12 @@
 #include "qwadro/ux/afxShell.h"
 //#include "qwadro/../../dep_/vgl1/vgl1.h"
 
-AFX_DECLARE_STRUCT(_auxIddWnd);
+AFX_DECLARE_STRUCT(_auxWndIdd);
 
 #ifndef _AUX_UX_C
-AFX_DECLARE_STRUCT(_auxDdiWnd);
+AFX_DECLARE_STRUCT(_auxWndDdi);
 #else
-AFX_DEFINE_STRUCT(_auxDdiWnd)
+AFX_DEFINE_STRUCT(_auxWndDdi)
 {
     afxError(*evhCb)(afxWindow, auxEvent*);
     afxError(*damageCb)(afxWindow, afxRect const*);
@@ -56,8 +56,8 @@ AFX_OBJECT(_auxWindow)
 AFX_OBJECT(afxWindow)
 #endif
 {
-    _auxIddWnd*         idd;
-    _auxDdiWnd const*   ddi;
+    _auxWndDdi const*   ddi;
+    _auxWndIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -124,7 +124,7 @@ AFX_OBJECT(afxWindow)
 #endif//_AUX_WINDOW_C
 
 AUX afxClassConfig const _AUX_WND_CLASS_CONFIG;
-AUX _auxDdiWnd const _AUX_DDI_WND;
+AUX _auxWndDdi const _AUX_DDI_WND;
 
 AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd);
 
@@ -133,7 +133,7 @@ AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev);
 
 AUX afxUnit _AfxWndFormatTitleCb(afxWindow wnd);
 AUX afxError _AfxWndAdjustCb(afxWindow wnd, afxAnchor, afxRect* c);
-AUX _auxDdiWnd const _AUX_DDI_WND;
+AUX _auxWndDdi const _AUX_DDI_WND;
 
 AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY);
 AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn);

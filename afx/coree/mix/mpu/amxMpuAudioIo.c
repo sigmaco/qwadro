@@ -37,7 +37,7 @@ void* get_segment_ptr(amxAudio a, afxUnit segIndex, afxUnit chanIndex)
 
     afxUnit segmentSize = a->sampCnt * a->fmtBps; // size of one segment for one channel
     afxUnit offset = (segIndex * a->chanCnt + chanIndex) * segmentSize;
-    return (uint8_t*)a->buf->storage[0].hostedAlloc.bytemap + offset;
+    return (uint8_t*)a->buf->storage[0].host.bytemap + offset;
 }
 
 void interleaved_to_deinterleaved(amxAudio in, amxAudio out)
@@ -53,8 +53,8 @@ void interleaved_to_deinterleaved(amxAudio in, amxAudio out)
     {
         for (afxUnit c = 0; c < in->chanCnt; ++c)
         {
-            void* src = (uint8_t*)in->buf->storage[0].hostedAlloc.bytemap + s * frameSize + c * sampleSize;
-            void* dst = (uint8_t*)out->buf->storage[0].hostedAlloc.bytemap +
+            void* src = (uint8_t*)in->buf->storage[0].host.bytemap + s * frameSize + c * sampleSize;
+            void* dst = (uint8_t*)out->buf->storage[0].host.bytemap +
                 (c * totalFrames + s) * sampleSize;
 
             AfxCopy(dst, src, sampleSize);
@@ -84,10 +84,10 @@ void deinterleaved_to_interleaved(amxAudio in, amxAudio out)
     {
         for (afxUnit c = 0; c < in->chanCnt; ++c)
         {
-            void* src = (uint8_t*)in->buf->storage[0].hostedAlloc.bytemap +
+            void* src = (uint8_t*)in->buf->storage[0].host.bytemap +
                 (c * totalFrames + s) * sampleSize;
 
-            void* dst = (uint8_t*)out->buf->storage[0].hostedAlloc.bytemap +
+            void* dst = (uint8_t*)out->buf->storage[0].host.bytemap +
                 (s * frameSize + c * sampleSize);
 
             AfxCopy(dst, src, sampleSize);
@@ -119,7 +119,7 @@ _AMXINL void* get_sample_ptr(amxAudio a, afxUnit seg, afxUnit chan, afxUnit samp
     afxUnit chanOffset = chan * samplesPerChan * sampleSize;
     afxUnit sampOffset = samp * sampleSize;
 
-    return (uint8_t*)a->buf->storage[0].hostedAlloc.bytemap + segOffset + chanOffset + sampOffset;
+    return (uint8_t*)a->buf->storage[0].host.bytemap + segOffset + chanOffset + sampOffset;
 }
 
 _AMXINL void* get_period_sample_ptr(amxAudio a, amxAudioPeriod* p, afxUnit relSeg, afxUnit relChan, afxUnit relSamp)
@@ -140,7 +140,7 @@ _AMXINL void* get_period_sample_ptr(amxAudio a, amxAudioPeriod* p, afxUnit relSe
         absChan * chanStride +
         absSamp * sampleSize;
 
-    return (uint8_t*)a->buf->storage[0].hostedAlloc.bytemap + offset;
+    return (uint8_t*)a->buf->storage[0].host.bytemap + offset;
 }
 
 _AMXINL void process_audio_period(amxAudio a, amxAudioPeriod* p, void(*callback)(void* sample, afxUnit seg, afxUnit chan, afxUnit samp))
@@ -1077,7 +1077,7 @@ _AMXINL void* get_sample_ptr_bufaud(amxBufferedAudio const* a, afxUnit z, afxUni
     afxUnit chanOffset = h * samplesPerChan * sampleSize;
     afxUnit sampOffset = w * sampleSize;
 
-    return (uint8_t*)(a->buf ? a->buf->storage[0].hostedAlloc.bytemap : 0) + a->offset + segOffset + chanOffset + sampOffset;
+    return (uint8_t*)(a->buf ? a->buf->storage[0].host.bytemap : 0) + a->offset + segOffset + chanOffset + sampOffset;
 }
 
 afxBool audio_apply_layout_(amxBufferedAudio const* a, amxAudioLayout desiredLayout, afxUnit z, afxUnit d)
@@ -1780,7 +1780,7 @@ _AMX afxError _AmxFillAudio(amxAudio aud, amxAudioPeriod const* op, afxReal ampl
     case amxFormat_M32f:
     case amxFormat_S32f:
     {
-        afxReal32* out = &aud->buf->storage[0].hostedAlloc.f32[op->baseSeg * aud->chanCnt + op->baseChan * aud->sampCnt + op->baseSamp];
+        afxReal32* out = &aud->buf->storage[0].host.f32[op->baseSeg * aud->chanCnt + op->baseChan * aud->sampCnt + op->baseSamp];
 
         for (afxUnit k = 0; k < segCnt; k++)
         {
@@ -1799,7 +1799,7 @@ _AMX afxError _AmxFillAudio(amxAudio aud, amxAudioPeriod const* op, afxReal ampl
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxInt16* out = &aud->buf->storage[0].hostedAlloc.f32[op->baseSeg * aud->chanCnt + op->baseChan * aud->sampCnt + op->baseSamp];
+        afxInt16* out = &aud->buf->storage[0].host.f32[op->baseSeg * aud->chanCnt + op->baseChan * aud->sampCnt + op->baseSamp];
 
         for (afxUnit k = 0; k < segCnt; k++)
         {
@@ -1835,13 +1835,13 @@ _AMX afxError _AmxCopyAudio(amxAudio src, amxAudio dst, amxAudioCopy const* op)
     case amxFormat_M32f:
     case amxFormat_S32f:
     {
-        afxReal32* out = &dst->buf->storage[0].hostedAlloc.f32[
+        afxReal32* out = &dst->buf->storage[0].host.f32[
             op->dstBaseSeg * dst->chanCnt * dst->sampCnt +
                 op2.dstBaseChan * dst->sampCnt +
                 op2.dstBaseSamp
         ];
 
-        afxReal32 const* in = &src->buf->storage[0].hostedAlloc.f32[
+        afxReal32 const* in = &src->buf->storage[0].host.f32[
             op2.src.baseSeg * src->chanCnt * src->sampCnt +
                 op2.src.baseChan * src->sampCnt +
                 op2.src.baseSamp
@@ -1858,13 +1858,13 @@ _AMX afxError _AmxCopyAudio(amxAudio src, amxAudio dst, amxAudioCopy const* op)
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxReal16* out = &dst->buf->storage[0].hostedAlloc.f32[
+        afxReal16* out = &dst->buf->storage[0].host.f32[
             op->dstBaseSeg * dst->chanCnt * dst->sampCnt +
                 op2.dstBaseChan * dst->sampCnt +
                 op2.dstBaseSamp
         ];
 
-        afxReal16 const* in = &src->buf->storage[0].hostedAlloc.f32[
+        afxReal16 const* in = &src->buf->storage[0].host.f32[
             op2.src.baseSeg * src->chanCnt * src->sampCnt +
                 op2.src.baseChan * src->sampCnt +
                 op2.src.baseSamp
@@ -1906,13 +1906,13 @@ _AMX afxError _AmxTransposeAudio(amxAudio src, amxAudio dst, amxAudioCopy const*
     case amxFormat_M32f:
     case amxFormat_S32f:
     {
-        afxReal32* out = &dst->buf->storage[0].hostedAlloc.f32[
+        afxReal32* out = &dst->buf->storage[0].host.f32[
             op->dstBaseSeg * dst->chanCnt * dst->sampCnt +
                 op2.dstBaseChan * dst->sampCnt +
                 op2.dstBaseSamp
         ];
 
-        afxReal32 const* in = &src->buf->storage[0].hostedAlloc.f32[
+        afxReal32 const* in = &src->buf->storage[0].host.f32[
             op2.src.baseSeg * src->chanCnt * src->sampCnt +
                 op2.src.baseChan * src->sampCnt +
                 op2.src.baseSamp
@@ -1929,13 +1929,13 @@ _AMX afxError _AmxTransposeAudio(amxAudio src, amxAudio dst, amxAudioCopy const*
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxReal16* out = &dst->buf->storage[0].hostedAlloc.f32[
+        afxReal16* out = &dst->buf->storage[0].host.f32[
             op->dstBaseSeg * dst->chanCnt * dst->sampCnt +
                 op2.dstBaseChan * dst->sampCnt +
                 op2.dstBaseSamp
         ];
 
-        afxReal16 const* in = &src->buf->storage[0].hostedAlloc.f32[
+        afxReal16 const* in = &src->buf->storage[0].host.f32[
             op2.src.baseSeg * src->chanCnt * src->sampCnt +
                 op2.src.baseChan * src->sampCnt +
                 op2.src.baseSamp
@@ -1977,7 +1977,7 @@ _AMX afxError _AmxDumpAudio(amxAudio aud, amxAudioIo const* op, void* dst)
     case amxFormat_S32f:
     {
         afxReal32* out = ((afxByte*)(dst)+op2.offset);
-        afxReal32 const* in = &aud->buf->storage[0].hostedAlloc.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxReal32 const* in = &aud->buf->storage[0].host.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
 
         for (int k = 0; k < segCnt; k++)
             for (int i = 0; i < chanCnt; i++)
@@ -1990,7 +1990,7 @@ _AMX afxError _AmxDumpAudio(amxAudio aud, amxAudioIo const* op, void* dst)
     case amxFormat_M16i:
     {
         afxInt16* out = (void*)dst;
-        afxInt16 const* in = (void*)aud->buf->storage[0].hostedAlloc.i16;
+        afxInt16 const* in = (void*)aud->buf->storage[0].host.i16;
 
         for (int k = 0; k < segCnt; k++)
             for (int i = 0; i < chanCnt; i++)
@@ -2025,7 +2025,7 @@ _AMX afxError _AmxUpdateAudio(amxAudio aud, amxAudioIo const* op, void const* sr
     case amxFormat_M32f:
     case amxFormat_S32f:
     {
-        afxReal32* out = &aud->buf->storage[0].hostedAlloc.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxReal32* out = &aud->buf->storage[0].host.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
         afxReal32 const* in = ((afxByte*)(src)+op2.offset);
 
         for (int k = 0; k < segCnt; k++)
@@ -2038,7 +2038,7 @@ _AMX afxError _AmxUpdateAudio(amxAudio aud, amxAudioIo const* op, void const* sr
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxInt16* out = &aud->buf->storage[0].hostedAlloc.i16[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxInt16* out = &aud->buf->storage[0].host.i16[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
         afxInt16 const* in = ((afxByte*)(src)+op2.offset);
 
         for (int k = 0; k < segCnt; k++)
@@ -2076,7 +2076,7 @@ _AMX afxError _AmxDownloadAudio(amxAudio aud, amxAudioIo const* op, afxStream io
     case amxFormat_M32f:
     case amxFormat_S32f:
     {
-        afxReal32 const* in = &aud->buf->storage[0].hostedAlloc.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxReal32 const* in = &aud->buf->storage[0].host.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
 
         for (int k = 0; k < segCnt; k++)
             for (int i = 0; i < chanCnt; i++)
@@ -2088,7 +2088,7 @@ _AMX afxError _AmxDownloadAudio(amxAudio aud, amxAudioIo const* op, afxStream io
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxInt16 const* in = (void*)aud->buf->storage[0].hostedAlloc.i16;
+        afxInt16 const* in = (void*)aud->buf->storage[0].host.i16;
 
         for (int k = 0; k < segCnt; k++)
             for (int i = 0; i < chanCnt; i++)
@@ -2125,7 +2125,7 @@ _AMX afxError _AmxUploadAudio(amxAudio aud, amxAudioIo const* op, afxStream iob)
     case amxFormat_S32f:
     case amxFormat_M32f:
     {
-        afxReal32* out = &aud->buf->storage[0].hostedAlloc.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxReal32* out = &aud->buf->storage[0].host.f32[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
 
         for (int k = 0; k < segCnt; k++)
         {
@@ -2143,7 +2143,7 @@ _AMX afxError _AmxUploadAudio(amxAudio aud, amxAudioIo const* op, afxStream iob)
     case amxFormat_S16i:
     case amxFormat_M16i:
     {
-        afxInt16* out = &aud->buf->storage[0].hostedAlloc.i16[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
+        afxInt16* out = &aud->buf->storage[0].host.i16[aud->sampCnt * op2.period.baseChan + op2.period.baseSamp];
 
         for (int i = 0; i < chanCnt; i++)
             for (int j = 0; j < sampCnt; j++)

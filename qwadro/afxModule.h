@@ -80,9 +80,9 @@ AFX afxUnit     AfxInvokeModules(afxUnit first, afxUnit cnt, afxBool(*f)(afxModu
 
 
 AFX afxError    AfxGetShell(afxUnit unit, afxModule* auxIcd);
-AFX afxError    AfxGetAvx(afxUnit unit, afxModule* avxIcd);
-AFX afxError    AfxGetAmx(afxUnit unit, afxModule* amxIcd);
-AFX afxError    AfxGetAcx(afxUnit unit, afxModule* acxIcd);
-AFX afxError    AfxGetArx(afxUnit unit, afxModule* arxIcd);
+AFX afxError    AvxGetIcd(afxUnit unit, afxModule* avxIcd);
+AFX afxError    AmxGetIcd(afxUnit unit, afxModule* amxIcd);
+AFX afxError    AcxGetIcd(afxUnit unit, afxModule* acxIcd);
+AFX afxError    ArxGetIcd(afxUnit unit, afxModule* arxIcd);
 
 #endif//AFX_MODULE_H

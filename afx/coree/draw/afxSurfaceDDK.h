@@ -35,12 +35,12 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddDout);
+AFX_DECLARE_STRUCT(_avxDoutIdd);
 
 #ifndef _AVX_DRAW_C
-AFX_DECLARE_STRUCT(_avxDdiDout);
+AFX_DECLARE_STRUCT(_avxDoutDdi);
 #else
-AFX_DEFINE_STRUCT(_avxDdiDout)
+AFX_DEFINE_STRUCT(_avxDoutDdi)
 {
     afxString const* tag;
     afxError(*ioctlCb)(afxSurface dout, afxUnit code, va_list ap);
@@ -100,8 +100,8 @@ AFX_OBJECT(_avxSurface)
 AFX_OBJECT(afxSurface)
 #endif
 {
-    _avxDdiDout const*  ddi;
-    _avxIddDout*        idd; // alloc'ed by the driver
+    _avxDoutDdi const*  ddi;
+    _avxDoutIdd*        idd; // alloc'ed by the driver
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -171,7 +171,7 @@ AFX_OBJECT(afxSurface)
 #endif//_AVX_SURFACE_C
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT;
-AVX _avxDdiDout const _AVX_DDI_DOUT;
+AVX _avxDoutDdi const _AVX_DDI_DOUT;
 
 AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[]);
 AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[]);

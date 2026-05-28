@@ -232,7 +232,7 @@ _AVX afxError AvxMapBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferedMap maps
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= AVX_MAX_VERTEX_SOURCES);
     // Temporary array for mapping operations
-    _avxBufferRemapping remaps2[AVX_MAX_VERTEX_SOURCES];
+    _avxBufRemapping remaps2[AVX_MAX_VERTEX_SOURCES];
     // Count of operations to be processed
     afxUnit opCnt = 0;
 
@@ -409,7 +409,7 @@ _AVX afxError AvxUnmapBuffers(afxDrawSystem dsys, afxUnit cnt, avxBufferedMap ma
 
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= AVX_MAX_VERTEX_SOURCES);
-    _avxBufferRemapping unmaps2[AVX_MAX_VERTEX_SOURCES];
+    _avxBufRemapping unmaps2[AVX_MAX_VERTEX_SOURCES];
     // Count of buffers to unmap.
     afxUnit opCnt = 0;
 

@@ -23,8 +23,8 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DECLARE_STRUCT(_arxIddCur);
-AFX_DEFINE_STRUCT(_arxDdiCur)
+AFX_DECLARE_STRUCT(_arxCurIdd);
+AFX_DEFINE_STRUCT(_arxCurDdi)
 {
     void(*evalAtKnotCb)(arxCurve c, afxUnit dimens, afxBool normalize, afxBool bwdsLoop, afxBool fwdsLoop, afxReal curveDur, afxUnit knotIdx, afxReal t, afxReal* rslt, afxReal const* identityVec);
     void(*updateCb)(arxCurve c, afxUnit knotCnt, afxUnit dimens, afxReal const* knotSrc, afxReal const* ctrlSrc);
@@ -40,8 +40,8 @@ AFX_OBJECT(_arxCurve)
 AFX_OBJECT(arxCurve)
 #endif
 {
-    _arxDdiCur const*   ddi;
-    _arxIddCur*         idd;
+    _arxCurDdi const*   ddi;
+    _arxCurIdd*         idd;
     afxString           tag;
     void*               udd;
 

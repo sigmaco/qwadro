@@ -246,7 +246,7 @@ _AMX afxError AmxLoadBuffers(afxMixSystem msys, afxUnit cnt, afxUri const uris[]
             break;
         }
 
-        AfxReadStream(file, len, 0, &buffers[idx]->storage[0].hostedAlloc.bytemap);
+        AfxReadStream(file, len, 0, &buffers[idx]->storage[0].host.bytemap);
         // clear/fill stream with zero in padding?
 
         AfxDisposeObjects(1, &file);
@@ -263,7 +263,7 @@ _AMX afxError AmxMapBuffers(afxMixSystem msys, afxUnit cnt, amxBufferedMap maps[
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= 32);
     // Temporary array for mapping operations
-    _amxBufferRemapping remaps2[32];
+    _amxBufRemapping remaps2[32];
     // Count of operations to be processed
     afxUnit opCnt = 0;
 
@@ -349,13 +349,13 @@ _AMX afxError AmxMapBuffers(afxMixSystem msys, afxUnit cnt, amxBufferedMap maps[
             AfxDecAtom32(&buf->storage[0].pendingRemap);
         }
         // If buffer is host-side allocated, map directly (just do it here)
-        else if (buf->storage[0].hostedAlloc.addr)
+        else if (buf->storage[0].host.addr)
         {
 #ifndef _AMX_BUFFER_HOSTSIDE_ALWAYS_FULLY_MAPPED
             buf->storage[0].mapOffset = offset;
             buf->storage[0].mapRange = range;
             buf->storage[0].mapFlags = map->flags;
-            buf->storage[0].mapPtr = &buf->storage[0].hostedAlloc.bytemap[offset];
+            buf->storage[0].mapPtr = &buf->storage[0].host.bytemap[offset];
 
             AFX_ASSERT(placeholders);
             *placeholders[i] = buf->storage[0].mapPtr;
@@ -433,7 +433,7 @@ _AMX afxError AmxUnmapBuffers(afxMixSystem msys, afxUnit cnt, amxBufferedMap map
 
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= 32);
-    _amxBufferRemapping unmaps2[32];
+    _amxBufRemapping unmaps2[32];
     // Count of buffers to unmap.
     afxUnit opCnt = 0;
 
@@ -482,7 +482,7 @@ _AMX afxError AmxUnmapBuffers(afxMixSystem msys, afxUnit cnt, amxBufferedMap map
                 AFX_ASSERT(0 == buf->storage[0].mapRefCnt);
 
                 // If the buffer is host-side allocated (i.e., directly accessible in CPU memory)
-                if (buf->storage[0].hostedAlloc.addr)
+                if (buf->storage[0].host.addr)
                 {
                     // Clear the mapped state for host-side buffers
                     buf->storage[0].mapOffset = 0;

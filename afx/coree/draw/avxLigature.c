@@ -116,7 +116,7 @@ _AVX afxError _AvxLigaDtorCb(avxLigature liga)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_LIGA, 1, &liga);
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = liga->totalEntryCnt,
@@ -298,7 +298,7 @@ _AVX afxError _AvxLigaCtorCb(avxLigature liga, void** args, afxUnit invokeNo)
     liga->totalEntries = NIL;
     liga->sets = NIL;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = totalPointCnt,

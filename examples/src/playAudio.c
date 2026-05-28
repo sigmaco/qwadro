@@ -30,7 +30,7 @@ int main(int argc, char const* argv[])
     // Set up the draw system
 
     afxModule dIcd;
-    AfxGetAvx(0, &dIcd);
+    AvxGetIcd(0, &dIcd);
 
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };
@@ -45,7 +45,7 @@ int main(int argc, char const* argv[])
     // Set up the mix system
 
     afxModule mIcd;
-    AfxGetAmx(0, &mIcd);
+    AmxGetIcd(0, &mIcd);
 
     afxMixSystem msys;
     amxSystemConfig msyc = { 0 };

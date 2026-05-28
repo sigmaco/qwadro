@@ -23,8 +23,8 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DEFINE_STRUCT(_arxDdiSkl);
-AFX_DEFINE_STRUCT(_arxIddSkl);
+AFX_DEFINE_STRUCT(_arxSklDdi);
+AFX_DEFINE_STRUCT(_arxSklIdd);
 
 #ifdef _ARX_SKELETON_C
 
@@ -34,8 +34,8 @@ AFX_OBJECT(_arxSkeleton)
 AFX_OBJECT(arxSkeleton)
 #endif
 {
-    _arxIddSkl*         idd;
-    _arxDdiSkl const*   ddi;
+    _arxSklDdi const*   ddi;
+    _arxSklIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
