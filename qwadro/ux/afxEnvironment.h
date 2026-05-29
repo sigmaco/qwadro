@@ -199,7 +199,7 @@ AUX afxError AfxConfigureEnvironment
 (
     afxModule auxIcd, 
 
-    afxEnvironmentConfig const* cfg
+    afxEnvironmentConfig* cfg
 );
 
 AUX afxError AfxEstablishEnvironment

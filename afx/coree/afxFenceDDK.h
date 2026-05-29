@@ -28,11 +28,11 @@
 #include "afxSystemDDK.h"
 #include "qwadro/afxIommu.h"
 
-AFX_DECLARE_STRUCT(_afxIddFenc);
+AFX_DECLARE_STRUCT(_afxFencIdd);
 
 #ifdef _AFX_FENCE_C
 
-AFX_DEFINE_STRUCT(_afxDdiFenc)
+AFX_DEFINE_STRUCT(_afxFencDdi)
 {
     afxError(*waitCb)(afxFence, afxUnit64 value, afxUnit64 timeout);
     afxError(*resetCb)(afxFence);
@@ -46,8 +46,8 @@ AFX_OBJECT(_afxFence)
 AFX_OBJECT(afxFence)
 #endif
 {
-    _afxDdiFenc const*  ddi;
-    _afxIddFenc*        idd;
+    _afxFencDdi const*  ddi;
+    _afxFencIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

@@ -68,7 +68,7 @@ ACX afxClass const* _AcxSexuGetSqueClass(afxWarpBridge sexu);
 
 ACX afxError _AcxSsysBridgeDevices(afxWarpSystem ssys, afxUnit cnt, _acxSexuAcq const configs[], afxWarpBridge bridges[]);
 
-ACX afxError _AcxSexuRemapBuffers(afxWarpBridge sexu, afxBool unmap, afxUnit cnt, _acxBufferRemapping const maps[]);
+ACX afxError _AcxSexuRemapBuffers(afxWarpBridge sexu, afxBool unmap, afxUnit cnt, _acxBufRemapping const maps[]);
 ACX afxError _AcxSexuCohereMappedBuffers(afxWarpBridge sexu, afxBool discard, afxUnit cnt, acxBufferedMap const maps[]);
 ACX afxError _AcxSexuTransferWarpMemory(afxWarpBridge sexu, acxTransference* ctrl, afxUnit opCnt, void const* ops);
 

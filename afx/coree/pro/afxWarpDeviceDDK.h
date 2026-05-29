@@ -24,7 +24,7 @@
 #include "qwadro/pro/afxWarpSystem.h"
 #include "afxWarpSystemDDK.h"
 
-AFX_DEFINE_STRUCT(_acxSdevReg)
+AFX_DEFINE_STRUCT(_acxSdevAcq)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
@@ -39,8 +39,8 @@ AFX_DEFINE_STRUCT(_acxSdevReg)
     afxString           tag;
 };
 
-AFX_DECLARE_STRUCT(_acxIddSdev);
-AFX_DEFINE_STRUCT(_acxDdiSdev)
+AFX_DECLARE_STRUCT(_acxSdevIdd);
+AFX_DEFINE_STRUCT(_acxSdevDdi)
 {
     int a;
 };
@@ -56,8 +56,8 @@ AFX_OBJECT(afxWarpDevice)
 #endif
 {
     AFX_OBJ(afxDevice)  dev;
-    _acxDdiSdev const*  ddi;
-    _acxIddSdev*        idd;
+    _acxSdevDdi const*  ddi;
+    _acxSdevIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -80,6 +80,6 @@ ACX void*           _AcxSdevGetIdd(afxWarpDevice sdev);
 
 ACX acxLimits const* _AcxSdevGetLimits(afxWarpDevice sdev);
 
-ACX afxError _AcxIcdRegisterDevices(afxModule icd, afxUnit cnt, _acxSdevReg const infos[], afxWarpDevice devices[]);
+ACX afxError _AcxIcdRegisterDevices(afxModule icd, afxUnit cnt, _acxSdevAcq const infos[], afxWarpDevice devices[]);
 
 #endif//ACX_DEVICE_DDK_H

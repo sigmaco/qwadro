@@ -467,7 +467,7 @@ _AFX afxError _AfxXqueTransferResources(afxIoQueue xque, afxTransference const* 
     return err;
 }
 
-_AFX afxError _AfxXqueRemapBuffers(afxIoQueue xque, afxUnit mapCnt, _afxBufferRemapping const maps[], afxUnit unmapCnt, _afxBufferRemapping const unmaps[])
+_AFX afxError _AfxXqueRemapBuffers(afxIoQueue xque, afxUnit mapCnt, _afxBufRemapping const maps[], afxUnit unmapCnt, _afxBufRemapping const unmaps[])
 {
     afxError err = { 0 };
     // xque must be a valid afxIoQueue handle.
@@ -496,7 +496,7 @@ _AFX afxError _AfxXqueRemapBuffers(afxIoQueue xque, afxUnit mapCnt, _afxBufferRe
 
             for (afxUnit i = 0; i < mapCnt; i++)
             {
-                _afxBufferRemapping const* map = &maps[i];
+                _afxBufRemapping const* map = &maps[i];
 
                 iorp->Remap.mapOps[i].buf = map->buf;
                 iorp->Remap.mapOps[i].offset = map->offset;
@@ -530,7 +530,7 @@ _AFX afxError _AfxXqueRemapBuffers(afxIoQueue xque, afxUnit mapCnt, _afxBufferRe
 
             for (afxUnit i = 0; i < unmapCnt; i++)
             {
-                _afxBufferRemapping const* map = &unmaps[i];
+                _afxBufRemapping const* map = &unmaps[i];
 
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
@@ -629,7 +629,7 @@ _AFX afxError _AfxXqueCohereMappedBuffers(afxIoQueue xque, afxUnit flushCnt, afx
     return err;
 }
 
-_AFX _afxDdiXque const _AFX_DDI_XQUE =
+_AFX _afxXqueDdi const _AFX_DDI_XQUE =
 {
 
 };

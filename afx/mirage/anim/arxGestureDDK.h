@@ -39,7 +39,7 @@ typedef enum arxTrackSampler
     arxTrackSampler_SSS // static position, orientation and scale/shear.
 } arxTrackSampler;
 
-AFX_DEFINE_STRUCT(_arxDdiGes)
+AFX_DEFINE_STRUCT(_arxGesDdi)
 {
     afxBool(*findMatCb)(arxGesture, afxString const* seqId, afxUnit *seqIdx);
     afxBool(*findVecCb)(arxGesture, afxString const* seqId, afxUnit *seqIdx);
@@ -47,7 +47,7 @@ AFX_DEFINE_STRUCT(_arxDdiGes)
     void(*updVecCb)(arxGesture, afxUnit baseSeqIdx, afxUnit seqCnt, arxVectorialGesture const[], afxUnit fetchRate);
 };
 
-AFX_DECLARE_STRUCT(_arxIddGes);
+AFX_DECLARE_STRUCT(_arxGesIdd);
 
 #ifdef _ARX_GESTURE_C
 
@@ -67,8 +67,8 @@ AFX_OBJECT(_arxGesture)
 AFX_OBJECT(arxGesture)
 #endif
 {
-    _arxIddGes*         idd;
-    _arxDdiGes const*   ddi;
+    _arxGesDdi const*   ddi;
+    _arxGesIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

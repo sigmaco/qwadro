@@ -51,7 +51,7 @@ _AVX afxUnit AvxDescribeVertexLayout(avxVertexInput vin, avxVertexDescription* l
 
     for (afxUnit i = 0; i < vin->totalAttrCnt; i++)
     {
-        _avxVertexAttr const* va = &vin->attrs[i];
+        _avxVinAttr const* va = &vin->attrs[i];
         layout->attrs[i].fmt = va->fmt;
         layout->attrs[i].location = va->location;
         layout->attrs[i].offset = va->offset;
@@ -59,7 +59,7 @@ _AVX afxUnit AvxDescribeVertexLayout(avxVertexInput vin, avxVertexDescription* l
 
     for (afxUnit i = 0; i < vin->binCnt; i++)
     {
-        _avxVertexBin const* vs = &vin->bins[i];
+        _avxVinStream const* vs = &vin->bins[i];
         layout->bins[i].pin = vs->pin;
         layout->bins[i].minStride = vs->minStride;
         layout->bins[i].instRate = vs->instRate;
@@ -87,13 +87,13 @@ _AVX afxUnit AvxQueryVertexStride(avxVertexInput vin, afxUnit baseSrcIdx, afxUni
     for (afxUnit i = 0; i < cnt; i++)
     {
         afxUnit pin = baseSrcIdx + i;
-        _avxVertexBin const* vf = &vin->bins[pin];
+        _avxVinStream const* vf = &vin->bins[pin];
         afxUnit siz = 0;
 
         for (afxUnit j = 0; j < vf->attrCnt; j++)
         {
             afxUnit attrIdx = vf->baseAttrIdx + j;
-            _avxVertexAttr const* via = &vin->attrs[attrIdx];
+            _avxVinAttr const* via = &vin->attrs[attrIdx];
 
             avxFormatDescription pfd;
             AvxDescribeFormats(1, &via->fmt, &pfd);
@@ -121,8 +121,8 @@ void AvxFetchVertices
     afxError err = { 0 };
     afxUnit dstIdx = 0;
     afxUnit binCnt = vin->binCnt;
-    _avxVertexBin const* bins = vin->bins;
-    _avxVertexAttr const* attrs = vin->attrs;
+    _avxVinStream const* bins = vin->bins;
+    _avxVinAttr const* attrs = vin->attrs;
 
     afxByte const* bufPtr[AVX_MAX_VERTEX_SOURCES] = { 0 };
     afxUnit srcStride[AVX_MAX_VERTEX_SOURCES] = { 0 };
@@ -132,7 +132,7 @@ void AvxFetchVertices
 
     for (afxUnit i = 0; i < binCnt; ++i)
     {
-        _avxVertexBin const* fetch = &bins[i];
+        _avxVinStream const* fetch = &bins[i];
         avxBufferedStream const* stream = &streams[fetch->pin];
         avxBuffer buf = stream->buf;
         if (!buf) continue;
@@ -161,7 +161,7 @@ void AvxFetchVertices
             for (afxUnit j = 0; j < srcAttrCnt[i]; ++j)
             {
                 afxUnit attrIdx = srcBaseAttr[i] + j;
-                _avxVertexAttr const* attr = &attrs[attrIdx];
+                _avxVinAttr const* attr = &attrs[attrIdx];
                 void const* attrPtr = basePtr + attr->offset;
 
                 // Copy the same data into all vertices of this instance.
@@ -191,7 +191,7 @@ void AvxFetchVertices
                 for (afxUnit j = 0; j < srcAttrCnt[i]; ++j)
                 {
                     afxUnit attrIdx = srcBaseAttr[i] + j;
-                    _avxVertexAttr const* attr = &attrs[attrIdx];
+                    _avxVinAttr const* attr = &attrs[attrIdx];
                     void const* attrPtr = basePtr + attr->offset;
                     AvxTranscodeFormat(attr->fmt, attr->fmt, 1, attrPtr, dst, 0, 0);
                     //_AvxDecodeAttribute(attrPtr, attr->fmt, dst, attr->location);
@@ -217,8 +217,8 @@ void AvxFetchIndexedVertices
     afxError err = { 0 };
     afxUnit dstIdx = 0;
     afxUnit binCnt = vin->binCnt;
-    _avxVertexBin const* bins = vin->bins;
-    _avxVertexAttr const* attrs = vin->attrs;
+    _avxVinStream const* bins = vin->bins;
+    _avxVinAttr const* attrs = vin->attrs;
 
     afxByte const* bufPtr[AVX_MAX_VERTEX_SOURCES] = { 0 };
     afxUnit srcStride[AVX_MAX_VERTEX_SOURCES] = { 0 };
@@ -228,7 +228,7 @@ void AvxFetchIndexedVertices
 
     for (afxUnit i = 0; i < binCnt; ++i)
     {
-        _avxVertexBin const* fetch = &bins[i];
+        _avxVinStream const* fetch = &bins[i];
         avxBufferedStream const* stream = &streams[fetch->pin];
         avxBuffer buf = stream->buf;
         if (!buf) continue;
@@ -264,7 +264,7 @@ void AvxFetchIndexedVertices
             for (afxUnit j = 0; j < srcAttrCnt[s]; ++j)
             {
                 afxUnit attrIdx = srcBaseAttr[s] + j;
-                _avxVertexAttr const* attr = &attrs[attrIdx];
+                _avxVinAttr const* attr = &attrs[attrIdx];
                 void const* attrPtr = basePtr + attr->offset;
 
                 // Apply to all indexed vertices in this instance.
@@ -298,7 +298,7 @@ void AvxFetchIndexedVertices
                     for (afxUnit j = 0; j < srcAttrCnt[s]; ++j)
                     {
                         afxUnit attrIdx = srcBaseAttr[s] + j;
-                        _avxVertexAttr const* attr = &attrs[attrIdx];
+                        _avxVinAttr const* attr = &attrs[attrIdx];
                         void const* attrPtr = basePtr + attr->offset;
 
                         AvxTranscodeFormat(attr->fmt, attr->fmt, 1, attrPtr, dst, 0, 0);
@@ -328,7 +328,7 @@ void AvxFetchIndexedVertices
                     for (afxUnit j = 0; j < srcAttrCnt[s]; ++j)
                     {
                         afxUnit attrIdx = srcBaseAttr[s] + j;
-                        _avxVertexAttr const* attr = &attrs[attrIdx];
+                        _avxVinAttr const* attr = &attrs[attrIdx];
                         void const* attrPtr = basePtr + attr->offset;
 
                         AvxTranscodeFormat(attr->fmt, attr->fmt, 1, attrPtr, dst, 0, 0);
@@ -346,7 +346,7 @@ _AVX afxError _AvxVtxdDtorCb(avxVertexInput vin)
     AFX_ASSERT_OBJECTS(afxFcc_VIN, 1, &vin);
     //afxDrawSystem dsys = AfxGetHost(vin);
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = vin->totalAttrCnt,
@@ -380,9 +380,9 @@ afxError generateVertexBinAndAttr
     // Number of attributes
     afxSize attrCount,
     // Output bins
-    _avxVertexBin* bins,
+    _avxVinStream* bins,
     // Output attributes
-    _avxVertexAttr* outputAttrs
+    _avxVinAttr* outputAttrs
 )
 {
     afxError err = { 0 };
@@ -413,7 +413,7 @@ afxError generateVertexBinAndAttr
         ++usedPinCnt;
 
         // Setup the bin
-        _avxVertexBin* bin = &bins[binIdx];
+        _avxVinStream* bin = &bins[binIdx];
         bin->pin = stream->pin;
         bin->minStride = stream->minStride;
         bin->instRate = stream->instRate;
@@ -455,7 +455,7 @@ afxError generateVertexBinAndAttr
         usedLocations[usedLocationsCnt] = attr->location;
         ++usedLocationsCnt;
 
-        _avxVertexAttr* outputAttr = &outputAttrs[outputAttrIdx];
+        _avxVinAttr* outputAttr = &outputAttrs[outputAttrIdx];
         outputAttr->location = attr->location;
         outputAttr->fmt = attr->fmt;
         outputAttr->pin = attr->pin;
@@ -594,7 +594,7 @@ _AVX afxError _AvxVtxdCtorCb(avxVertexInput vin, void** args, afxUnit invokeNo)
     if (err)
         return err;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = totalAttrCnt,
@@ -617,7 +617,7 @@ _AVX afxError _AvxVtxdCtorCb(avxVertexInput vin, void** args, afxUnit invokeNo)
 #if 0
     for (afxUnit i = 0; i < totalAttrCnt; i++)
     {
-        _avxVertexAttr* va = &vin->attrs[i];
+        _avxVinAttr* va = &vin->attrs[i];
         va->location = layout->attrs[i].location;
         va->fmt = layout->attrs[i].fmt;
         va->pin = layout->attrs[i].pin;
@@ -627,7 +627,7 @@ _AVX afxError _AvxVtxdCtorCb(avxVertexInput vin, void** args, afxUnit invokeNo)
 
     for (afxUnit i = 0; i < layout->binCnt; i++)
     {
-        _avxVertexBin* vs = &vin->bins[i];
+        _avxVinStream* vs = &vin->bins[i];
         vs->pin = layout->bins[i].pin;
         vs->minStride = layout->bins[i].minStride;
         vs->instRate = layout->bins[i].instRate;

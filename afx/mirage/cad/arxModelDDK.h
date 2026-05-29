@@ -25,8 +25,8 @@
 #include "arxSkeletonDDK.h"
 #include "arxMaterialDDK.h"
 
-AFX_DEFINE_STRUCT(_arxDdiMshl);
-AFX_DEFINE_STRUCT(_arxIddMshl);
+AFX_DEFINE_STRUCT(_arxMshlDdi);
+AFX_DEFINE_STRUCT(_arxMshlIdd);
 
 #ifdef _ARX_MESH_LINKAGE_C
 #ifdef _ARX_MESH_LINKAGE_IMPL
@@ -38,8 +38,8 @@ AFX_OBJECT(arxMeshLinkage)
 // Access to this info is important to let mesh instantiaion be bundled and to solve vertices' bias index indirection.
 // Mesh juncture.
 {
-    _arxIddMshl*         idd;
-    _arxDdiMshl const*   ddi;
+    _arxMshlDdi const*   ddi;
+    _arxMshlIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -60,8 +60,8 @@ AFX_OBJECT(arxMeshLinkage)
 };
 #endif//_ARX_MESH_LINKAGE_C
 
-AFX_DEFINE_STRUCT(_arxDdiMdl);
-AFX_DEFINE_STRUCT(_arxIddMdl);
+AFX_DEFINE_STRUCT(_arxMdlDdi);
+AFX_DEFINE_STRUCT(_arxMdlIdd);
 
 #ifdef _ARX_MODEL_C
 
@@ -71,12 +71,12 @@ AFX_OBJECT(_arxModel)
 AFX_OBJECT(arxModel)
 #endif
 {
-    _arxIddMdl*         idd;
-    _arxDdiMdl const*   ddi;
-    // User-defined data.
-    void*               udd;
+    _arxMdlDdi const*   ddi;
+    _arxMdlIdd*         idd;
     // Debugging tag.
     afxString           tag;
+    // User-defined data.
+    void*               udd;
 
     // In the past, skeleton (as arxSkeleton) was separated from model.
     // Mainly to simplify serialization, they were merged.

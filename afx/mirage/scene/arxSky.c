@@ -274,25 +274,27 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
         AvxMakeColor(sky->apexCol, 0.f, 0.15f, 0.66f, 1.f);
         AvxMakeColor(sky->centreCol, 0.81f, 0.38f, 0.66f, 1.f);
 
-        avxShader codb;
-        AvxAcquireShaders(dsys, 1, NIL, &codb);
-        AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+        avxShader shd;
+        AvxAcquireShaders(dsys, 1, NIL, &shd);
+        AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
         avxShaderSpecialization specs[2] = { 0 };
         specs[0].stage = avxShaderType_VERTEX;
         specs[0].prog = AFX_STRING("skydomeVs");
         specs[1].stage = avxShaderType_FRAGMENT;
         specs[1].prog = AFX_STRING("skydomeFs");
-        AvxCompileShaderFromDisk(codb, &specs[0].prog, AfxUri("../src/skydome/skydomeVs.glsl"));
-        AvxCompileShaderFromDisk(codb, &specs[1].prog, AfxUri("../src/skydome/skydomeFs.glsl"));
+        AvxCompileShaderFromDisk(shd, &specs[0].prog, AfxUri("../src/skydome/skydomeVs.glsl"));
+        AvxCompileShaderFromDisk(shd, &specs[1].prog, AfxUri("../src/skydome/skydomeFs.glsl"));
         
         avxPipeline pip;
         avxPipelineConfig pipb = { 0 };
-        pipb.codb = codb;
+        pipb.shd = shd;
         pipb.progCnt = 2;
         pipb.progSpecs = specs;
         AvxAssembleGfxPipelines(dsys, 1, &pipb, &pip);
         AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
+
+        AfxDisposeObjects(1, &shd);
 
         struct
         {

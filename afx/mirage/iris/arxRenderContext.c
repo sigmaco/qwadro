@@ -1037,9 +1037,9 @@ _ARX afxError _ArxRctxDtorCb(arxRenderContext rctx)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
 
-    if (rctx->codb)
+    if (rctx->shd)
     {
-        AfxDisposeObjects(1, &rctx->codb);
+        AfxDisposeObjects(1, &rctx->shd);
     }
 
     AvxDismantleBufferedPump(&rctx->dynVtxAlloc);
@@ -1141,9 +1141,9 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
     AvxDeployBufferedPump(&rctx->dynIdxAlloc, avxBufferUsage_INDEX, rcfg->iboFlags, rcfg->minIdxPagSiz, rcfg->idxBlockAlign, rctx->frameCnt, dsys);
     AvxDeployBufferedPump(&rctx->dynUnfmAlloc, avxBufferUsage_UNIFORM, rcfg->uboFlags, rcfg->minUniPagSiz, rcfg->uniBlockAlign, rctx->frameCnt, dsys);
     
-    avxShader codb;
-    AvxAcquireShaders(dsys, 1, NIL, &codb);
-    rctx->codb = codb;
+    avxShader shd;
+    AvxAcquireShaders(dsys, 1, NIL, &shd);
+    rctx->shd = shd;
 
     return err;
 }

@@ -570,7 +570,7 @@ _QOW afxError immergeWindow(afxEnvironment env, afxWindow wnd, afxBool fullscree
     return err;
 }
 
-_QOW _auxDdiEnv const _QOW_DDI_ENV =
+_QOW _auxEnvDdi const _QOW_DDI_ENV =
 {
     .pumpCb = (void*)_QowEnvPump,
     .getClipboardCb = (void*)CopyOutClipboard,

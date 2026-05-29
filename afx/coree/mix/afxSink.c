@@ -52,7 +52,7 @@ _AMX afxError AmxGetSinkIdd(afxSink sink, afxUnit code, void* dst)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
-    sink->getIddCb(sink, code, dst);
+    sink->ddi->getIddCb(sink, code, dst);
     return err;
 }
 
@@ -84,9 +84,9 @@ _AMX afxError AmxLockSinkBuffer(afxSink sink, afxUnit64 timeout, afxMask exuMask
     afxUnit bufIdx2 = AFX_INVALID_INDEX;
 
 #if !0
-    if (sink->lockCb)
+    if (sink->ddi->lockCb)
     {
-        if (!(err = sink->lockCb(sink, timeout, exuMask, minFrameCnt, room)))
+        if (!(err = sink->ddi->lockCb(sink, timeout, exuMask, minFrameCnt, room)))
         {
             //AFX_ASSERT(AFX_INVALID_INDEX != bufIdx2);
             //AFX_ASSERT_RANGE(sink->latency, bufIdx2, 1);
@@ -153,9 +153,9 @@ _AMX afxError AmxUnlockSinkBuffer(afxSink sink, afxFlags flags)
     else
         AfxThrowError();
 #else
-    if (sink->unlockCb)
+    if (sink->ddi->unlockCb)
     {
-        if (!(err = sink->unlockCb(sink, flags)))
+        if (!(err = sink->ddi->unlockCb(sink, flags)))
         {
 
         }
@@ -163,6 +163,11 @@ _AMX afxError AmxUnlockSinkBuffer(afxSink sink, afxFlags flags)
 #endif
     return err;
 }
+
+_AMX _amxSinkDdi const _AMX_SINK_IMPL =
+{
+    0
+};
 
 _AMX afxError _AmxAsioDtorCb(afxSink sink)
 {
@@ -177,7 +182,7 @@ _AMX afxError _AmxAsioDtorCb(afxSink sink)
     // Dispose all acquired buffer objects.
     AfxDisposeObjects(sink->latency, sink->buffers);
 
-    afxObjectStash const stashs[] =
+    afxAllocation const stashs[] =
     {
         {
             .cnt = sink->latency,
@@ -187,8 +192,8 @@ _AMX afxError _AmxAsioDtorCb(afxSink sink)
     };
     AfxDeallocateInstanceData(sink, ARRAY_SIZE(stashs), stashs);
 
-    if (sink->iddDtorCb)
-        sink->iddDtorCb(sink);
+    if (sink->ddi->iddDtorCb)
+        sink->ddi->iddDtorCb(sink);
 
     AFX_ASSERT(!sink->idd);
 
@@ -206,7 +211,9 @@ _AMX afxError _AmxAsioCtorCb(afxSink sink, void** args, afxUnit invokeNo)
     afxSinkConfig const* cfg = ((afxSinkConfig const *)args[1]) + invokeNo;
     AFX_ASSERT(cfg);
     
+    sink->ddi = &_AMX_SINK_IMPL;
     sink->udd = cfg->udd;
+    //sink->tag = cfg->tag;
 
     afxSinkConfig def;
     AfxConfigureAudioSink(msys, &def);
@@ -217,7 +224,7 @@ _AMX afxError _AmxAsioCtorCb(afxSink sink, void** args, afxUnit invokeNo)
     sink->samplesPerFrame = cfg->samplesPerFrame ? cfg->samplesPerFrame : def.samplesPerFrame;
     sink->latency = cfg->latency ? cfg->latency : def.latency;
 
-    afxObjectStash const stashs[] =
+    afxAllocation const stashs[] =
     {
         {
             .cnt = sink->latency,
@@ -254,7 +261,7 @@ _AMX afxError _AmxAsioCtorCb(afxSink sink, void** args, afxUnit invokeNo)
 
     // Enqueue our buffer into the queue of disponible buffers.
     AfxPushInterlockedQueue(&sink->freeBuffers, (afxUnit[]) { 0 });
-        
+
     audio_ringbuffer_init(&sink->rb, (void*)AmxGetBufferAddress(AmxGetAudioBuffer(sink->buffers[0]), 0), 4, sink->freq, 2);
 
     if (err)

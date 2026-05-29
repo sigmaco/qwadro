@@ -39,8 +39,8 @@ AFX_DEFINE_STRUCT(_afxExuAcq)
 
 AFX_DECLARE_STRUCT(afxXpu);
 
-AFX_DECLARE_STRUCT(_afxIddExu);
-AFX_DEFINE_STRUCT(_afxDdiExu)
+AFX_DECLARE_STRUCT(_afxExuIdd);
+AFX_DEFINE_STRUCT(_afxExuDdi)
 {
     afxError(*pingCb)(afxIoBridge, afxUnit);
     afxError(*waitCb)(afxIoBridge, afxUnit64);
@@ -54,8 +54,8 @@ AFX_OBJECT(_afxIoBridge)
 AFX_OBJECT(afxIoBridge)
 #endif
 {
-    _afxDdiExu const*  ddi;
-    _afxIddExu*        idd;
+    _afxExuDdi const*  ddi;
+    _afxExuIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -87,7 +87,7 @@ AFX afxClassConfig const _AFX_CLASS_CONFIG_EXU;
 //AFX afxUnit _AfxCountIoQueues(afxIoBridge exu, afxUnit baseQueIdx);
 AFX afxClass const* _AfxExuGetXqueClass(afxIoBridge exu);
 
-AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufferRemapping const maps[]);
+AFX afxError _AfxExuRemapBuffers(afxIoBridge exu, afxBool unmap, afxUnit cnt, _afxBufRemapping const maps[]);
 AFX afxError _AfxExuCohereMappedBuffers(afxIoBridge exu, afxBool invalidate, afxUnit cnt, afxBufferedMap const maps[]);
 AFX afxError _AfxExuTransferMemory(afxIoBridge exu, afxTransference* ctrl, afxUnit opCnt, void const* ops);
 

@@ -187,7 +187,7 @@ _ZAL afxError _ZalMdevCtorCb(afxMixDevice mdev, void** args, afxUnit invokeNo)
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _amxMdevReg const* info = (_amxMdevReg const *)(args[1]) + invokeNo;
+    _amxMdevAcq const* info = (_amxMdevAcq const *)(args[1]) + invokeNo;
     AFX_ASSERT(info);
 
     static amxDeviceInfo const portCaps[] =
@@ -265,7 +265,7 @@ _ZAL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
     static amxFeatures features = { 0 };
 
-    _amxMdevReg mdevInfos[] =
+    _amxMdevAcq mdevInfos[] =
     {
         {
             .dev.urn = AFX_STRING("amiga-sfx"),

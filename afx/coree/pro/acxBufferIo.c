@@ -263,7 +263,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= 32);
     // Temporary array for mapping operations
-    _acxBufferRemapping remaps2[32];
+    _acxBufRemapping remaps2[32];
     // Count of operations to be processed
     afxUnit opCnt = 0;
 
@@ -433,7 +433,7 @@ _ACX afxError AcxUnmapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap ma
 
     // Ensure that the operation count doesn't exceed 32
     AFX_ASSERT(cnt <= 32);
-    _acxBufferRemapping unmaps2[32];
+    _acxBufRemapping unmaps2[32];
     // Count of buffers to unmap.
     afxUnit opCnt = 0;
 

@@ -24,7 +24,7 @@
 
 #ifdef _AFX_STORAGE_C
 
-AFX_DEFINE_STRUCT(afxStorageUnit)
+AFX_DEFINE_STRUCT(_afxFsysUnit)
 {
     afxLink          fsys;
     afxFileFlags        flags;

@@ -27,7 +27,7 @@
 
 #include "avxBufferDDK.h"
 
-AFX_DEFINE_STRUCT(_avxRasStorage)
+AFX_DEFINE_STRUCT(_avxRasMem)
 {
     afxLink iommu;
     // binding
@@ -78,8 +78,8 @@ AFX_DEFINE_STRUCT(_avxRasStorage)
     };
 };
 
-AFX_DECLARE_STRUCT(_avxDdiRas);
-AFX_DECLARE_STRUCT(_avxIddRas);
+AFX_DECLARE_STRUCT(_avxRasDdi);
+AFX_DECLARE_STRUCT(_avxRasIdd);
 
 #ifdef _AVX_RASTER_C
 #ifdef _AVX_RASTER_IMPL
@@ -88,8 +88,8 @@ AFX_OBJECT(_avxRaster)
 AFX_OBJECT(avxRaster)
 #endif
 {
-    _avxDdiRas const*   ddi;
-    _avxIddRas*         idd;
+    _avxRasDdi const*   ddi;
+    _avxRasIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -116,7 +116,7 @@ AFX_OBJECT(avxRaster)
     afxUnit             reqAlign;
     // required memory conditions for this storage block.
     afxFlags            reqMemType;
-    _avxRasStorage      storage[1]; // non-sparse
+    _avxRasMem      storage[1]; // non-sparse
     afxSize             storageOffset;
 
     // GAMBIARRA

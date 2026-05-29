@@ -26,7 +26,7 @@
 #define _ASX_SIMULATION_C
 #include "../scene/arxIcd.h"
 
-_ARX _arxDdiMotv const _ARX_DDI_MOTV =
+_ARX _arxMotvDdi const _ARX_DDI_MOTV =
 {
 
 };

@@ -160,8 +160,8 @@ AFX_DEFINE_UNION(_acxIoReqPacket)
         afxUnit     unmapCnt;
         union
         {
-            _acxBufferRemapping mapOps[];
-            _acxBufferRemapping unmapOps[];
+            _acxBufRemapping mapOps[];
+            _acxBufRemapping unmapOps[];
         };
     } Remap;
     struct
@@ -209,7 +209,7 @@ ACX afxClassConfig const _ACX_SQUE_CLASS_CONFIG;
 ACX afxError _AcxSqueSubmitCallback(afxWarpQueue sque, afxError(*f)(void*, void*), void* udd);
 ACX afxError _AcxSqueSubmitWarpCommands(afxWarpQueue sque, afxUnit cnt, acxSubmission subms[]);
 ACX afxError _AcxSqueTransferResources(afxWarpQueue sque, acxTransference const* ctrl, afxUnit opCnt, void const* ops);
-ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufferRemapping const maps[], afxUnit unmapCnt, _acxBufferRemapping const unmaps[]);
+ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufRemapping const maps[], afxUnit unmapCnt, _acxBufRemapping const unmaps[]);
 ACX afxError _AcxSqueCohereMappedBuffers(afxWarpQueue sque, afxUnit flushCnt, acxBufferedMap const flushes[], afxUnit fetchCnt, acxBufferedMap const fetches[]);
 
 #endif//ACX_QUEUE_DDK_H

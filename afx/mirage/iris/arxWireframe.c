@@ -43,8 +43,8 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
         
         if (mode == arxSceneMode_WIRE_FACES)
         {
-            avxShader codb = rctx->codb;
-            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+            avxShader shd = rctx->shd;
+            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
             afxUnit stageCnt = 2;
             avxShaderSpecialization specs[2] = { 0 };
@@ -54,12 +54,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireBaryFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, &wireBaryVshCode))
+            if (AvxCompileShader(shd, &specs[0].prog, &wireBaryVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, &wireBaryFshCode))
+            if (AvxCompileShader(shd, &specs[1].prog, &wireBaryFshCode))
             {
                 AfxThrowError();
             }
@@ -80,7 +80,7 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             avxPipelineConfig pipc = { 0 };
             pipc = wireBaryPipc;
             pipc.vin = vin;
-            pipc.codb = codb;
+            pipc.shd = shd;
             pipc.progCnt = stageCnt;
             pipc.progSpecs = specs;
             if (AvxAssembleGfxPipelines(dsys, 1, &pipc, &pip))
@@ -96,8 +96,8 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
         }
         else
         {
-            avxShader codb = rctx->codb;
-            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+            avxShader shd = rctx->shd;
+            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
             afxUnit stageCnt = 2;
             avxShaderSpecialization specs[2] = { 0 };
@@ -107,12 +107,12 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             specs[1].prog = AFX_STRING("wireFshCode");
 
             afxString s;
-            if (AvxCompileShader(codb, &specs[0].prog, &wireVshCode))
+            if (AvxCompileShader(shd, &specs[0].prog, &wireVshCode))
             {
                 AfxThrowError();
             }
 
-            if (AvxCompileShader(codb, &specs[1].prog, &wireFshCode))
+            if (AvxCompileShader(shd, &specs[1].prog, &wireFshCode))
             {
                 AfxThrowError();
             }
@@ -132,7 +132,7 @@ _ARX afxError ArxLoadWireframePipeline(arxRenderContext rctx, arxSceneMode mode,
             avxPipelineConfig pipc = { 0 };
             pipc = wirePipc;
             pipc.vin = vin;
-            pipc.codb = codb;
+            pipc.shd = shd;
             pipc.progCnt = stageCnt;
             pipc.progSpecs = specs;
             if (AvxAssembleGfxPipelines(dsys, 1, &pipc, &pip))

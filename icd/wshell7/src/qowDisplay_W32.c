@@ -698,7 +698,7 @@ _QOW afxError _QowDpyCaptureCb(afxDisplay dpy, afxUnit port, afxSurface dout)
     return err;
 }
 
-_QOW _auxDdiDisp _QOW_DDI_DPY =
+_QOW _auxDispDdi _QOW_DDI_DPY =
 {
     .doutCls = _AvxDpyGetDoutClassCb_SW,
     .qryModeCb = _QowDpyQueryModesCb,

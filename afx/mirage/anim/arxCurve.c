@@ -462,7 +462,7 @@ _ARX void ArxBeginCurveCopy(arxCurveBlueprint* cb, arxCurve src)
     cb->srcCurve = src;
 }
 
-_ARX _arxDdiCur const _ARX_CURVE_DDI =
+_ARX _arxCurDdi const _ARX_CURVE_DDI =
 {
     NIL
 };

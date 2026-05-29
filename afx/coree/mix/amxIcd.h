@@ -69,7 +69,7 @@ AMX afxClass const* _AmxIcdGetMdevClass(afxModule icd);
 AMX afxClass const* _AmxIcdGetMcdcClass(afxModule icd);
 AMX afxClass const* _AmxIcdGetMsysClass(afxModule icd);
 
-AFX afxError AfxGetAmx(afxUnit unit, afxModule* amxIcd);
+AFX afxError AmxGetIcd(afxUnit unit, afxModule* amxIcd);
 
 AMX afxError _AmxIcdConfigureMsysSW(afxModule amxIcd, amxSystemConfig* cfg);
 
@@ -80,6 +80,6 @@ AMX _amxDdiIcd const* _AmxGetDdi(afxModule amxIcd);
 AMX afxError _AmxIcdImplement(afxSystem sys, _amxImplementation const* cfg);
 AMX afxError _AmxIcdRegisterCodecs(afxModule icd, afxUnit cnt, _amxCodecReg const infos[], amxCodec codecs[]);
 
-AMX afxError _AmxIcdRegisterAsis(afxModule icd, afxUnit cnt, _amxMdevReg const infos[], afxDevice devices[]);
+AMX afxError _AmxIcdRegisterAsis(afxModule icd, afxUnit cnt, _amxMdevAcq const infos[], afxDevice devices[]);
 
 #endif//AMX_ICD_H

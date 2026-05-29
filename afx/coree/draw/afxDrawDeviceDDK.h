@@ -30,8 +30,8 @@
 AFX_DEFINE_STRUCT(_avxDdevReg)
 {
     afxDeviceInfo       dev;
-    afxAcceleration     acceleration;
-    avxService         capabilities;
+    avxService          caps;
+    afxAcceleration     accel;
     avxFeatures         features;
     avxLimits           limits;
     afxUnit             minQueCnt; // usually 3
@@ -44,10 +44,11 @@ AFX_DEFINE_STRUCT(_avxDdevReg)
     afxString           tag;
 };
 
-AFX_DECLARE_STRUCT(_avxIddDdev);
-AFX_DEFINE_STRUCT(_avxDdiDdev)
+AFX_DECLARE_STRUCT(_avxDdevIdd);
+AFX_DEFINE_STRUCT(_avxDdevDdi)
 {
-
+    afxError(*descFmtCb)(afxDrawDevice, afxUnit cnt, avxFormat const[], avxFormatDescription[]);
+    afxBool(*isAcceptCb)(afxDrawDevice, avxFeatures const*, avxLimits const*);
 };
 
 #ifdef _AVX_DRAW_DEVICE_C
@@ -61,15 +62,15 @@ AFX_OBJECT(afxDrawDevice)
 #endif
 {
     AFX_OBJ(afxDevice)  dev;
-    _avxDdiDdev const*  ddi;
-    _avxIddDdev*        idd;
+    _avxDdevDdi const*  ddi;
+    _avxDdevIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
     void*               udd;
 
-    afxAcceleration     acceleration;
-    avxService         capabilities;
+    avxService          caps;
+    afxAcceleration     accel;
     avxFeatures         features;
     avxLimits           limits;
     afxUnit             minQueCnt; // usually 3

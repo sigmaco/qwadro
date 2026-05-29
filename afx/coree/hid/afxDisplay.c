@@ -124,7 +124,7 @@ _AUX afxClassConfig const _AUX_VDU_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX _auxDdiDisp const* _AvxDpyGetDdi(afxDisplay dpy)
+_AUX _auxDispDdi const* _AvxDpyGetDdi(afxDisplay dpy)
 {
     afxError err = { 0 };
     // @dpy must be a valid afxDisplay handle.
@@ -258,7 +258,7 @@ _AUX afxError AfxScanBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface 
     return err;
 }
 
-_AUX _auxDdiDisp _AUX_DDI_DPY =
+_AUX _auxDispDdi _AUX_DDI_DPY =
 {
     .doutCls = _AvxDpyGetDoutClassCb_SW,
     .qryModeCb = NIL,

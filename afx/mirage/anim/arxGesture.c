@@ -148,7 +148,7 @@ _ARX afxBool ArxGetGestureId(arxGesture ges, afxString* id)
     return ges->id.len;
 }
 
-_ARX _arxDdiGes const _ARX_DDI_GES =
+_ARX _arxGesDdi const _ARX_DDI_GES =
 {
     .findMatCb = _ArxGesFindTransformCb,
     .findVecCb = _ArxGesFindVectorCb,

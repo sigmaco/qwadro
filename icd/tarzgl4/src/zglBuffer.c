@@ -1213,7 +1213,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
         afxUnit unmapCnt = subm->Remap.unmapCnt;
         for (afxUnit i = 0; i < unmapCnt; i++)
         {
-            _avxBufferRemapping const* unmap = &subm->Remap.unmapOps[subm->Remap.firstUnmapIdx + i];
+            _avxBufRemapping const* unmap = &subm->Remap.unmapOps[subm->Remap.firstUnmapIdx + i];
             avxBuffer buf = unmap->buf;
             AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
 #ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
@@ -1255,7 +1255,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
         afxUnit mapCnt = subm->Remap.mapCnt;
         for (afxUnit i = 0; i < mapCnt; i++)
         {
-            _avxBufferRemapping const* map = &subm->Remap.mapOps[subm->Remap.firstMapIdx + i];
+            _avxBufRemapping const* map = &subm->Remap.mapOps[subm->Remap.firstMapIdx + i];
 
             avxBuffer buf = map->buf;
 #ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING

@@ -22,18 +22,18 @@
 // This code is part of SIGMA GL/2.
 // This software is part of Advanced Video Graphics Extensions.
 
-#ifndef AVX_CODEBASE_DDK_H
-#define AVX_CODEBASE_DDK_H
+#ifndef AVX_SHADER_DDK_H
+#define AVX_SHADER_DDK_H
 
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddCodb);
-AFX_DECLARE_STRUCT(_avxDdiCodb);
+AFX_DECLARE_STRUCT(_avxShadIdd);
+AFX_DECLARE_STRUCT(_avxShadDdi);
 
 #ifdef _AVX_SHADER_C
 
-AFX_DEFINE_STRUCT(_avxCodeBlock)
+AFX_DEFINE_STRUCT(_avxShadBlock)
 {
     afxString           tag;
     void*               udd;
@@ -64,8 +64,8 @@ AFX_OBJECT(_avxShader)
 AFX_OBJECT(avxShader)
 #endif
 {
-    _avxDdiCodb const*  ddi;
-    _avxIddCodb*        idd;
+    _avxShadDdi const*  ddi;
+    _avxShadIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -95,4 +95,4 @@ AFX_DEFINE_STRUCT(_avxGlslConversor)
 
 AVX afxError _AvxConvertToGlsl(_avxGlslConversor const* cfg, afxString const* src, afxArray* fCode);
 
-#endif//AVX_CODEBASE_DDK_H
+#endif//AVX_SHADER_DDK_H

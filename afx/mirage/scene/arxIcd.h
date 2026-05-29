@@ -48,7 +48,7 @@ ARX afxError _ArxAmendEcosystem(afxSystem sys);
 
 ARX afxBool _ArxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
-AFX afxError AfxGetArx(afxUnit unit, afxModule* arxIcd);
+AFX afxError ArxGetIcd(afxUnit unit, afxModule* arxIcd);
 
 ARX afxError _ArxIcdConfigureScioSW(afxModule arxIcd, arxScenarioConfig* cfg);
 

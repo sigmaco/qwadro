@@ -28,10 +28,10 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddVin);
-AFX_DECLARE_STRUCT(_avxDdiVin);
+AFX_DECLARE_STRUCT(_avxVinIdd);
+AFX_DECLARE_STRUCT(_avxVinDdi);
 
-AFX_DEFINE_STRUCT(_avxVertexBin)
+AFX_DEFINE_STRUCT(_avxVinStream)
 {
     // Binding index (matches the vertex buffer bound) which this stream takes its data from.
     afxUnit         pin;
@@ -47,7 +47,7 @@ AFX_DEFINE_STRUCT(_avxVertexBin)
     afxFlags        flags;
 };
 
-AFX_DEFINE_STRUCT(_avxVertexAttr)
+AFX_DEFINE_STRUCT(_avxVinAttr)
 // Describes a single vertex attribute (like position, normal, texcoord, etc.).
 {
     // Location in shader (e.g., layout(location = x) in GLSL).
@@ -69,8 +69,8 @@ AFX_OBJECT(_avxVertexInput)
 AFX_OBJECT(avxVertexInput)
 #endif
 {
-    _avxDdiVin const*   ddi;
-    _avxIddVin*         idd;
+    _avxVinDdi const*   ddi;
+    _avxVinIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -78,9 +78,9 @@ AFX_OBJECT(avxVertexInput)
 
     afxFlags            flags;
     afxUnit             totalAttrCnt;
-    _avxVertexAttr*     attrs;
+    _avxVinAttr*        attrs;
     afxUnit             binCnt;
-    _avxVertexBin*      bins;
+    _avxVinStream*      bins;
 };
 #endif
 

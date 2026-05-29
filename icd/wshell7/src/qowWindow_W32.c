@@ -2058,7 +2058,7 @@ _QOW afxBool _QowWndEventHandlerCb(afxWindow wnd, auxEvent *ev)
     return _AuxWndEventHandlerSW(wnd, ev);
 }
 
-_QOW _auxDdiWnd const _QOW_DDI_WND =
+_QOW _auxWndDdi const _QOW_DDI_WND =
 {
     .evhCb = _QowWndEventHandlerCb,
     .damageCb = _QowWndDamageCb,

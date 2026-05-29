@@ -23,8 +23,8 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DECLARE_STRUCT(_arxDdiCap);
-AFX_DECLARE_STRUCT(_arxIddCap);
+AFX_DECLARE_STRUCT(_arxPullDdi);
+AFX_DECLARE_STRUCT(_arxPullIdd);
 
 #ifdef _ARX_PULLEY_C
 typedef enum arxPulleyFlag
@@ -43,8 +43,8 @@ AFX_OBJECT(_arxPulley)
 AFX_OBJECT(arxPulley)
 #endif
 {
-    _arxIddCap*         idd;
-    _arxDdiCap const*   ddi;
+    _arxPullDdi const*   ddi;
+    _arxPullIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

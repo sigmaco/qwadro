@@ -22,7 +22,7 @@
 
 #include "qwadro/pro/afxWarpSystem.h"
 
-AFX_DEFINE_STRUCT(_acxBufStorage)
+AFX_DEFINE_STRUCT(_acxBufMem)
 {
     afxLink iommu;
     // binding
@@ -54,7 +54,7 @@ AFX_DEFINE_STRUCT(_acxBufStorage)
     } hostedAlloc;
 };
 
-AFX_DEFINE_STRUCT(_acxBufferRemapping)
+AFX_DEFINE_STRUCT(_acxBufRemapping)
 {
     acxBuffer       buf;
     afxSize         offset;
@@ -91,14 +91,14 @@ AFX_OBJECT(acxBuffer)
     afxUnit         reqAlign;
     // required memory conditions for this storage block.
     afxFlags        reqMemType;
-    _acxBufStorage  storage[1]; // non-sparse
+    _acxBufMem  storage[1]; // non-sparse
 };
 #endif
 
 ACX afxClassConfig const _ACX_SBUF_CLASS_CONFIG;
 
 ACX afxError _AcxSsysTransferCb_SW(afxWarpSystem ssys, acxTransference* ctrl, afxUnit opCnt, void const* ops);
-ACX afxError _AcxSsysRemapBuffersCb_SW(afxWarpSystem ssys, afxBool unmap, afxUnit cnt, _acxBufferRemapping const maps[]);
+ACX afxError _AcxSsysRemapBuffersCb_SW(afxWarpSystem ssys, afxBool unmap, afxUnit cnt, _acxBufRemapping const maps[]);
 ACX afxError _AcxSsysCohereMappedBuffersCb_SW(afxWarpSystem ssys, afxBool discard, afxUnit cnt, acxBufferedMap const maps[]);
 
 #endif//ACX_BUFFER_DDK_H

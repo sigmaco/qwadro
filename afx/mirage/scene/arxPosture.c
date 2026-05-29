@@ -154,7 +154,7 @@ _ARX void ArxProducePosture(arxPosture plce, arxPose pose, arxSkeleton skl, afxU
 
     afxUnit poseCap = ArxGetPoseCapacity(pose, 0);
     AFX_ASSERT_RANGE(poseCap, baseJntIdx, jntCnt);
-    _arxPoseArticulation const* pa = _ArxPoseGetPaArray(pose, 0);
+    _arxPoseArticle const* pa = _ArxPoseGetPaArray(pose, 0);
 
     if (!delta || skipDeltas)
     {

@@ -363,7 +363,7 @@ _AMX afxError _AmxMqueTransferResources(afxMixQueue mque, amxTransference const*
     return err;
 }
 
-_AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufferRemapping const maps[], afxUnit unmapCnt, _amxBufferRemapping const unmaps[])
+_AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRemapping const maps[], afxUnit unmapCnt, _amxBufRemapping const unmaps[])
 {
     afxError err = { 0 };
     // mque must be a valid afxMixQueue handle.
@@ -392,7 +392,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufferR
 
             for (afxUnit i = 0; i < mapCnt; i++)
             {
-                _amxBufferRemapping const* map = &maps[i];
+                _amxBufRemapping const* map = &maps[i];
 
                 iorp->Remap.mapOps[i].buf = map->buf;
                 iorp->Remap.mapOps[i].offset = map->offset;
@@ -426,7 +426,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufferR
 
             for (afxUnit i = 0; i < unmapCnt; i++)
             {
-                _amxBufferRemapping const* map = &unmaps[i];
+                _amxBufRemapping const* map = &unmaps[i];
 
                 iorp->Remap.unmapOps[i].buf = map->buf;
 

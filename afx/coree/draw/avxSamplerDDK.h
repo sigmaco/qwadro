@@ -28,8 +28,8 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddSamp);
-AFX_DECLARE_STRUCT(_avxDdiSamp);
+AFX_DECLARE_STRUCT(_avxSampIdd);
+AFX_DECLARE_STRUCT(_avxSampDdi);
 
 #ifdef _AVX_SAMPLER_C
 #ifdef _AVX_SAMPLER_IMPL
@@ -38,8 +38,8 @@ AFX_OBJECT(_avxSampler)
 AFX_OBJECT(avxSampler)
 #endif
 {
-    _avxDdiSamp const*  ddi;
-    _avxIddSamp*        idd;
+    _avxSampDdi const*  ddi;
+    _avxSampIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

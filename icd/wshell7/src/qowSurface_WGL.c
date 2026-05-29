@@ -1622,7 +1622,7 @@ _QOW afxError _ZglDoutIoctl_WGL(afxSurface dout, afxUnit code, va_list ap)
     return err;
 }
 
-_QOW _avxDdiDout const _ZGL_DDI_DOUT =
+_QOW _avxDoutDdi const _ZGL_DDI_DOUT =
 {
     .ioctlCb = _ZglDoutIoctl_WGL,
     .adjustCb = _ZglDoutAdjust_WGL,

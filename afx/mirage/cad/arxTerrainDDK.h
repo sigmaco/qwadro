@@ -23,8 +23,8 @@
 
 #include "qwadro/scene/arxScenario.h"
 
-AFX_DEFINE_STRUCT(_arxDdiTer);
-AFX_DEFINE_STRUCT(_arxIddTer);
+AFX_DEFINE_STRUCT(_arxTerDdi);
+AFX_DEFINE_STRUCT(_arxTerIdd);
 
 #ifdef _ARX_TERRAIN_C
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, _arxTerrSec)
@@ -73,8 +73,8 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, _arxTerrSec)
 
 AFX_OBJECT(arxTerrain)
 {
-    _arxIddTer*         idd;
-    _arxDdiTer const*   ddi;
+    _arxTerDdi const*   ddi;
+    _arxTerIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

@@ -39,8 +39,8 @@ AFX_DEFINE_STRUCT(_avxDexuAcq)
 
 AFX_DECLARE_STRUCT(avxDpu);
 
-AFX_DECLARE_STRUCT(_avxIddDexu);
-AFX_DEFINE_STRUCT(_avxDdiDexu)
+AFX_DECLARE_STRUCT(_avxDexuIdd);
+AFX_DEFINE_STRUCT(_avxDexuDdi)
 {
     afxError(*pingCb)(afxDrawBridge, afxUnit);
     afxError(*waitCb)(afxDrawBridge, afxUnit64);
@@ -54,8 +54,8 @@ AFX_OBJECT(_avxDrawBridge)
 AFX_OBJECT(afxDrawBridge)
 #endif
 {
-    _avxDdiDexu const*  ddi;
-    _avxIddDexu*        idd;
+    _avxDexuDdi const*  ddi;
+    _avxDexuIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -87,7 +87,7 @@ AVX afxClassConfig const _AVX_CLASS_CONFIG_DEXU;
 //AVX afxUnit _AvxCountDrawQueues(afxDrawBridge dexu, afxUnit baseQueIdx);
 AVX afxClass const* _AvxDexuGetDqueClass(afxDrawBridge dexu);
 
-AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[]);
+AVX afxError _AvxDexuRemapBuffers(afxDrawBridge dexu, afxBool unmap, afxUnit cnt, _avxBufRemapping const maps[]);
 AVX afxError _AvxDexuCohereMappedBuffers(afxDrawBridge dexu, afxBool invalidate, afxUnit cnt, avxBufferedMap const maps[]);
 AVX afxError _AvxDexuTransferVideoMemory(afxDrawBridge dexu, avxTransference* ctrl, afxUnit opCnt, void const* ops);
 AVX afxError _AvxDexuPresentSurfaces(afxDrawBridge dexu, afxUnit cnt, avxPresentation const presentations[], afxUnit queueingMap[]);

@@ -34,12 +34,12 @@ typedef enum acxContextState
 
 AFX_DECLARE_UNION(_acxCmd);
 
-AFX_DECLARE_STRUCT(_acxIddSctx);
+AFX_DECLARE_STRUCT(_acxSctxIdd);
 
 #ifndef _ACX_WARP_C
-AFX_DECLARE_STRUCT(_acxDdiSctx);
+AFX_DECLARE_STRUCT(_acxSctxDdi);
 #else
-AFX_DEFINE_STRUCT(_acxDdiSctx)
+AFX_DEFINE_STRUCT(_acxSctxDdi)
 {
     afxError(*prepare)(afxWarpContext, afxBool purge, acxCmdFlags);
     afxError(*compile)(afxWarpContext);
@@ -68,8 +68,8 @@ AFX_OBJECT(_acxStepContext)
 AFX_OBJECT(afxWarpContext)
 #endif
 {
-    _acxDdiSctx const*  ddi;
-    _acxIddSctx*        idd;
+    _acxSctxDdi const*  ddi;
+    _acxSctxIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -127,7 +127,7 @@ ACX afxError _AcxStepEndCb(afxWarpContext sctx);
 
 ACX afxClassConfig const _ACX_SCTX_CLASS_CONFIG;
 
-ACX _acxDdiSctx const _ACX_SCTX_DDI;
+ACX _acxSctxDdi const _ACX_SCTX_DDI;
 
 ACX acxContextState _AcxSctxGetStatus(afxWarpContext sctx);
 

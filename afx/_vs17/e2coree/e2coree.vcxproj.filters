@@ -1755,9 +1755,6 @@
     <ClCompile Include="..\..\coree\ux\afxEnvironment.c">
       <Filter>coree\ux</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\ux\afxEnvironmentDDK.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\ux\auxIcd.c">
       <Filter>coree\ux</Filter>
     </ClCompile>
@@ -1779,13 +1776,7 @@
     <ClCompile Include="..\..\coree\ux\afxWidget.c">
       <Filter>coree\ux</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\ux\afxWidgetDDK.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\ux\afxWindow.c">
-      <Filter>coree\ux</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\coree\ux\afxWindowDDK.c">
       <Filter>coree\ux</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\hid\afxDisplay.c">

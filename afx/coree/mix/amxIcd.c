@@ -110,7 +110,7 @@ _AMX afxClass const* _AmxIcdGetMsysClass(afxModule icd)
     return cls;
 }
 
-_AMX afxError _AmxIcdRegisterAsis(afxModule icd, afxUnit cnt, _amxMdevReg const infos[], afxDevice devices[])
+_AMX afxError _AmxIcdRegisterAsis(afxModule icd, afxUnit cnt, _amxMdevAcq const infos[], afxDevice devices[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
@@ -328,7 +328,7 @@ _AMX afxBool _AmxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver)
     return found;
 }
 
-_AFX afxError AfxGetAmx(afxUnit unit, afxModule* amxIcd)
+_AFX afxError AmxGetIcd(afxUnit unit, afxModule* amxIcd)
 {
     afxError err = { 0 };
 
@@ -389,7 +389,7 @@ _AMX afxError amxIcdHook(afxModule icd, afxUri const* manifest)
     // Targa has been named after a bad experience handling graphical operations with images originating from left/bottom side.
     // Kurwa has been named after a bad experience when implementing curve-based motion in simulation framework.
 
-    _amxMdevReg mdevInfos[] =
+    _amxMdevAcq mdevInfos[] =
     {
         {
             .dev.urn = AFX_STRING("vaio"),

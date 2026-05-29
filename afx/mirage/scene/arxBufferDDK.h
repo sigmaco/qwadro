@@ -29,7 +29,7 @@ AFX_DEFINE_STRUCT(arxMemoryReq)
     afxFlags    propFlags; // device, visible, coherent, etc.
 };
 
-AFX_DEFINE_STRUCT(_arxMemory)
+AFX_DEFINE_STRUCT(_arxBufMem)
 {
     // EXU controlling this unit
     afxLink iommu;
@@ -94,7 +94,7 @@ AFX_OBJECT(arxBuffer)
     afxFlags        reqMemType;
     //_acxMemory  storage[1]; // non-sparse
     // the storage unit linked to this buffer.
-    _arxMemory      mem;
+    _arxBufMem      mem;
     // the offset into the storage unit linked to this buffer.
     afxSize         memBase;
 };

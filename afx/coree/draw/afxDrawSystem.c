@@ -36,7 +36,7 @@
 #define _AUX_UX_C
 #include "../ux/auxIcd.h"
 
-_AVX _avxDdiDsys const* _AvxDsysGetDdi(afxDrawSystem dsys)
+_AVX _avxDsysDdi const* _AvxDsysGetDdi(afxDrawSystem dsys)
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -288,7 +288,7 @@ _AVX afxError _AvxDsysSW_TransferCb(afxDrawSystem dsys, avxTransference* ctrl, a
     return err;
 }
 
-_AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufferRemapping const maps[])
+_AVX afxError _AvxDsysSW_RemapBuffersCb(afxDrawSystem dsys, afxBool unmap, afxUnit cnt, _avxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
@@ -594,7 +594,7 @@ _AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt,
     for (afxUnit i = 0; i < cnt; i++)
     {
         avxRaster ras = rasters[i];
-        _avxRasStorage* bufs = &ras->storage[0];
+        _avxRasMem* bufs = &ras->storage[0];
 
         if (ras->flags & avxRasterFlag_FOREIGN)
         {
@@ -624,7 +624,7 @@ _AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, a
     {
         avxRasterInfo const* info = &infos[i];
         avxRaster ras = rasters[i];
-        _avxRasStorage* bufs = &ras->storage[0];
+        _avxRasMem* bufs = &ras->storage[0];
 
         if (ras->flags & avxRasterFlag_FOREIGN)
         {
@@ -655,7 +655,7 @@ _AVXINL afxError _AvxDsysSW_DeallocateBuffersCb(afxDrawSystem dsys, afxUnit cnt,
     for (afxUnit i = 0; i < cnt; i++)
     {
         avxBuffer buf = buffers[i];
-        _avxBufStorage* bufs = &buf->storage[0];
+        _avxBufMem* bufs = &buf->storage[0];
 
         if (buf->flags & avxBufferFlag_F)
         {
@@ -685,7 +685,7 @@ _AVXINL afxError _AvxDsysSW_AllocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, a
     {
         avxBufferInfo const* info = &infos[i];
         avxBuffer buf = buffers[i];
-        _avxBufStorage* bufs = &buf->storage[0];
+        _avxBufMem* bufs = &buf->storage[0];
 
         if (buf->flags & avxBufferFlag_F)
         {
@@ -750,37 +750,6 @@ AFX_DEFINE_STRUCT(avxRasterPaging)
                                       boolean commit);
 */
 
-_AVX _avxDdiDsys const _AVX_DDI_DSYS =
-{
-    .fencCls = _AvxDsysSW_GetFencClassCb,
-    .dexuCls = _AvxDsysSW_GetDexuClassCb,
-    .qrypCls = _AvxDsysSW_GetQrypClassCb,
-    .vtxdCls = _AvxDsysSW_GetVinClassCb,
-    .rasCls = _AvxDsysSW_GetRasClassCb,
-    .bufCls = _AvxDsysSW_GetBufClassCb,
-    .sampCls = _AvxDsysSW_GetSampClassCb,
-    .pipCls = _AvxDsysSW_GetPipClassCb,
-    .canvCls = _AvxDsysSW_GetCanvClassCb,
-    .shadCls = _AvxDsysSW_GetShdClassCb,
-    .ligaCls = _AvxDsysSW_GetLigaClassCb,
-
-    .txdCls = _AvxDsysSW_GetTxdClassCb,
-
-    .getQrypRslt = _AvxDsysSW_GetQrypRsltCb,
-    .resetQryp = _AvxDsysSW_ResetQrypCb,
-
-    .transferCb = _AvxDsysSW_TransferCb,
-    .cohereCb = _AvxDsysSW_CohereMappedBuffersCb,
-    .remapCb = _AvxDsysSW_RemapBuffersCb,
-
-    .allocRasCb = _AvxDsysSW_AllocateRastersCb,
-    .deallocRasCb = _AvxDsysSW_DeallocateRastersCb,
-    .allocBufCb = _AvxDsysSW_AllocateBuffersCb,
-    .deallocBufCb = _AvxDsysSW_DeallocateBuffersCb,
-
-    .waitFencCb = _AvxDsysSW_WaitForFencesCb,
-};
-
 _AVX afxModule AvxGetSystemIcd(afxDrawSystem dsys)
 {
     afxError err = { 0 };
@@ -809,7 +778,10 @@ _AVX avxClipSpaceDepth AvxGetSystemClipSpaceDepth(afxDrawSystem dsys, afxReal* r
     afxError err = { 0 };
     // @dsys must be a valid afxDrawSystem handle.
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-    if (rangeEpsilon) *rangeEpsilon = dsys->clipSpaceDepthRangeEpsilon;
+    
+    if (rangeEpsilon)
+        *rangeEpsilon = dsys->clipSpaceDepthRangeEpsilon;
+
     return dsys->clipSpaceDepth;
 }
 
@@ -916,7 +888,8 @@ _AVX afxUnit AvxChooseDrawBridges(afxDrawSystem dsys, afxUnit ddevId, avxService
         afxDrawDevice ddev = AvxGetBridgedDrawDevice(dexu, NIL);
         AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
 
-        if ((ddevId != AFX_INVALID_INDEX) && (ddevId != AfxGetObjectId(ddev)))
+        if ((ddevId != AFX_INVALID_INDEX) && 
+            (ddevId != AfxGetObjectId(ddev)))
             continue;
 
         if (caps)
@@ -924,7 +897,7 @@ _AVX afxUnit AvxChooseDrawBridges(afxDrawSystem dsys, afxUnit ddevId, avxService
             avxDeviceInfo capsi;
             AvxQueryDrawCapabilities(ddev, &capsi);
             
-            if ((capsi.capabilities & caps) != caps)
+            if ((capsi.caps & caps) != caps)
                 continue;
         }
 
@@ -983,35 +956,14 @@ _AVX afxError AvxWaitForDrawBridges(afxDrawSystem dsys, afxUnit64 timeout, afxMa
     // @dsys must be a valid afxDrawSystem handle.
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    afxUnit exuCnt = dsys->bridgeCnt;
-    for (afxUnit exuIdx = 0; exuIdx < exuCnt; exuIdx++)
-    {
-        if (exuMask && !(AFX_TEST_BIT_SET(exuMask, exuIdx)))
-            continue;
-
-        afxDrawBridge dexu;
-        if (!AvxGetDrawBridges(dsys, exuIdx, 1, &dexu))
-        {
-            AfxThrowError();
-            return err;
-        }
-        AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
-        AvxWaitForIdleDrawBridge(dexu, timeout);
-    }
-    return err;
-}
-
-_AVX afxError AvxWaitForDrawSystem(afxDrawSystem dsys, afxUnit64 timeout)
-{
-    afxError err = { 0 };
-    // @dsys must be a valid afxDrawSystem handle.
-    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
-
     if (!dsys->ddi->waitCb)
     {
         afxUnit exuCnt = dsys->bridgeCnt;
         for (afxUnit exuIdx = 0; exuIdx < exuCnt; exuIdx++)
         {
+            if (exuMask && !(AFX_TEST_BIT_SET(exuMask, exuIdx)))
+                continue;
+
             afxDrawBridge dexu;
             if (!AvxGetDrawBridges(dsys, exuIdx, 1, &dexu))
             {
@@ -1022,11 +974,53 @@ _AVX afxError AvxWaitForDrawSystem(afxDrawSystem dsys, afxUnit64 timeout)
             AvxWaitForIdleDrawBridge(dexu, timeout);
         }
     }
-    else if (dsys->ddi->waitCb(dsys, timeout))
+    else if (dsys->ddi->waitCb(dsys, timeout, exuMask))
         AfxThrowError();
 
     return err;
 }
+
+_AVX afxError AvxWaitForDrawSystem(afxDrawSystem dsys, afxUnit64 timeout)
+{
+    afxError err = { 0 };
+    // @dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    err = AvxWaitForDrawBridges(dsys, timeout, AFX_MASK_ALL);
+
+    return err;
+}
+
+_AVX _avxDsysDdi const _AVX_DDI_DSYS =
+{
+    .fencCls = _AvxDsysSW_GetFencClassCb,
+    .dexuCls = _AvxDsysSW_GetDexuClassCb,
+    .qrypCls = _AvxDsysSW_GetQrypClassCb,
+    .vtxdCls = _AvxDsysSW_GetVinClassCb,
+    .rasCls = _AvxDsysSW_GetRasClassCb,
+    .bufCls = _AvxDsysSW_GetBufClassCb,
+    .sampCls = _AvxDsysSW_GetSampClassCb,
+    .pipCls = _AvxDsysSW_GetPipClassCb,
+    .canvCls = _AvxDsysSW_GetCanvClassCb,
+    .shadCls = _AvxDsysSW_GetShdClassCb,
+    .ligaCls = _AvxDsysSW_GetLigaClassCb,
+
+    .txdCls = _AvxDsysSW_GetTxdClassCb,
+
+    .getQrypRslt = _AvxDsysSW_GetQrypRsltCb,
+    .resetQryp = _AvxDsysSW_ResetQrypCb,
+
+    .transferCb = _AvxDsysSW_TransferCb,
+    .cohereCb = _AvxDsysSW_CohereMappedBuffersCb,
+    .remapCb = _AvxDsysSW_RemapBuffersCb,
+
+    .allocRasCb = _AvxDsysSW_AllocateRastersCb,
+    .deallocRasCb = _AvxDsysSW_DeallocateRastersCb,
+    .allocBufCb = _AvxDsysSW_AllocateBuffersCb,
+    .deallocBufCb = _AvxDsysSW_DeallocateBuffersCb,
+
+    .waitFencCb = _AvxDsysSW_WaitForFencesCb,
+};
 
 _AVX afxError _AvxDsysDtorCb(afxDrawSystem dsys)
 {
@@ -1059,7 +1053,7 @@ _AVX afxError _AvxDsysDtorCb(afxDrawSystem dsys)
 #endif
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,
@@ -1196,7 +1190,7 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
     dsys->bridgeCnt = bridgeCnt;
     afxUnit baseQueIdx = 0;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,
@@ -1247,20 +1241,20 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         avxDeviceInfo capsi;
         AvxQueryDrawCapabilities(ddev, &capsi);
 
-        if ((capsi.capabilities & avxService_DMA) == avxService_DMA)
+        if ((capsi.caps & avxService_DMA) == avxService_DMA)
             dsys->ioExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (avxService_DMA | avxService_PCX | avxService_GFX)) == avxService_DMA)
+        if ((capsi.caps & (avxService_DMA | avxService_PCX | avxService_GFX)) == avxService_DMA)
             dsys->dedIoExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxService_PCX) == avxService_PCX)
+        if ((capsi.caps & avxService_PCX) == avxService_PCX)
             dsys->cfxExuMask |= AFX_BITMASK(i);
-        if ((capsi.capabilities & (avxService_PCX | avxService_GFX)) == avxService_PCX)
+        if ((capsi.caps & (avxService_PCX | avxService_GFX)) == avxService_PCX)
             dsys->dedCfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxService_GFX) == avxService_GFX)
+        if ((capsi.caps & avxService_GFX) == avxService_GFX)
             dsys->gfxExuMask |= AFX_BITMASK(i);
 
-        if ((capsi.capabilities & avxService_PRESENT) == avxService_PRESENT)
+        if ((capsi.caps & avxService_PRESENT) == avxService_PRESENT)
             dsys->videoExuMask |= AFX_BITMASK(i);
     }
 
@@ -1333,14 +1327,14 @@ _AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg)
                 avxDeviceInfo capsi;
                 AvxQueryDrawCapabilities(ddev, &capsi);
 
-                if (caps && !(caps & capsi.capabilities))
+                if (caps && !(caps & capsi.caps))
                     continue;
 
-                if (accel && !(accel & capsi.acceleration))
+                if (accel && !(accel & capsi.accel))
                     continue;
 
-                cfg->exus[cfg->exuCnt].capabilities = capsi.capabilities;
-                cfg->exus[cfg->exuCnt].acceleration = capsi.acceleration;
+                cfg->exus[cfg->exuCnt].caps = capsi.caps;
+                cfg->exus[cfg->exuCnt].accel = capsi.accel;
                 cfg->exus[cfg->exuCnt].ddevId = ddevId;
                 cfg->exus[cfg->exuCnt].minQueCnt = capsi.minQueCnt;
                 cfg->exus[cfg->exuCnt].queuePriority = NIL;
@@ -1356,8 +1350,8 @@ _AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg)
         for (afxUnit i = 0; i < exuCnt; i++)
         {
             avxDeviceInfo capsi = { 0 };
-            capsi.acceleration = cfg->exus[i].acceleration ? cfg->exus[i].acceleration : accel;
-            capsi.capabilities = cfg->exus[i].capabilities ? cfg->exus[i].capabilities : caps;
+            capsi.accel = cfg->exus[i].accel ? cfg->exus[i].accel : accel;
+            capsi.caps = cfg->exus[i].caps ? cfg->exus[i].caps : caps;
             capsi.minQueCnt = cfg->exus[i].minQueCnt;
             capsi.clipSpaceDepth = cfg->clipSpcDepth;
             capsi.nonRhcs = FALSE;
@@ -1371,8 +1365,8 @@ _AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg)
 
                 AvxQueryDrawCapabilities(ddev, &capsi);
 
-                cfg->exus[cfg->exuCnt].capabilities = capsi.capabilities;
-                cfg->exus[cfg->exuCnt].acceleration = capsi.acceleration;
+                cfg->exus[cfg->exuCnt].caps = capsi.caps;
+                cfg->exus[cfg->exuCnt].accel = capsi.accel;
                 cfg->exus[cfg->exuCnt].ddevId = ddevId;
                 cfg->exus[cfg->exuCnt].minQueCnt = capsi.minQueCnt;
                 cfg->exus[cfg->exuCnt].queuePriority = NIL;
@@ -1479,8 +1473,8 @@ _AVX afxError _AvxIcdEstablishDsysSW(afxModule avxIcd, avxSystemConfig const* cf
 
         afxUnit minQueCnt = AFX_CLAMP(exuCfg->minQueCnt, 1, AVX_MAX_QUEUES_PER_BRIDGE);
         avxDeviceInfo capsi2 = { 0 };
-        capsi2.capabilities = exuCfg->capabilities;
-        capsi2.acceleration = exuCfg->acceleration;
+        capsi2.caps = exuCfg->caps;
+        capsi2.accel = exuCfg->accel;
         capsi2.minQueCnt = minQueCnt;
 
         bridgeCfg[bridgeCnt].exuIdx = bridgeCnt;

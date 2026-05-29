@@ -28,7 +28,7 @@
 #include "amxSoundscapeDDK.h"
 #include "afxMixSystemDDK.h"
 
-AFX_DEFINE_STRUCT(_amxMdevReg)
+AFX_DEFINE_STRUCT(_amxMdevAcq)
 {
     afxDeviceInfo       dev;
     afxAcceleration     acceleration;
@@ -43,8 +43,8 @@ AFX_DEFINE_STRUCT(_amxMdevReg)
     afxString           tag;
 };
 
-AFX_DECLARE_STRUCT(_amxIddMdev);
-AFX_DEFINE_STRUCT(_amxDdiMdev)
+AFX_DECLARE_STRUCT(_amxMdevIdd);
+AFX_DEFINE_STRUCT(_amxMdevDdi)
 {
 
 };
@@ -60,8 +60,8 @@ AFX_OBJECT(afxMixDevice)
 #endif
 {
     AFX_OBJ(afxDevice)  dev;
-    _amxDdiMdev const*  ddi;
-    _amxIddMdev*        idd;
+    _amxMdevDdi const*  ddi;
+    _amxMdevIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -84,6 +84,6 @@ AMX void*           _AmxMdevGetIdd(afxMixDevice mdev);
 
 AMX amxLimits const* _AmxMdevGetLimits(afxMixDevice mdev);
 
-AMX afxError _AmxIcdRegisterDevices(afxModule icd, afxUnit cnt, _amxMdevReg const infos[], afxMixDevice devices[]);
+AMX afxError _AmxIcdRegisterDevices(afxModule icd, afxUnit cnt, _amxMdevAcq const infos[], afxMixDevice devices[]);
 
 #endif//AMX_DEVICE_DDK_H

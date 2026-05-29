@@ -675,11 +675,11 @@ _AVX afxBool AvxGetPipelineCodebase(avxPipeline pip, avxShader* codebase)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
-    avxShader codb = pip->codb;
-    AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+    avxShader shd = pip->shd;
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
     AFX_ASSERT(codebase);
-    *codebase = codb;
-    return !!codb;
+    *codebase = shd;
+    return !!shd;
 }
 
 _AVX afxBool AvxGetPipelineShader(avxPipeline pip, avxShaderType stage, afxUnit* progId, afxString* func)
@@ -821,47 +821,47 @@ _AVX afxError _AvxPipRelinkLigature(avxPipeline pip, avxLigature liga, afxBool g
     return err;
 }
 
-_AVX afxError _AvxPipRelinkShader(avxPipeline pip, avxShader codb, afxBool gen)
+_AVX afxError _AvxPipRelinkShader(avxPipeline pip, avxShader shd, afxBool gen)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
 
-    avxShader curr = pip->codb;
+    avxShader curr = pip->shd;
 
-    while ((curr != codb) || gen)
+    while ((curr != shd) || gen)
     {
         if (curr)
         {
             AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &curr);
-            AfxDisposeObjects(1, &pip->codb);
+            AfxDisposeObjects(1, &pip->shd);
             // The disposition function does already nullify the placeholder field.
         }
 
-        if (!codb)
+        if (!shd)
         {
             if (gen)
             {
                 afxDrawSystem dsys = AvxGetPipelineHost(pip);
                 AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-                if (AvxAcquireShaders(dsys, 1, NIL, &codb))
+                if (AvxAcquireShaders(dsys, 1, NIL, &shd))
                 {
                     AfxThrowError();
                     break; // while
                 }
                 else
                 {
-                    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+                    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
                 }
             }
         }
         else
         {
-            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
-            AfxReacquireObjects(1, &codb);
+            AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
+            AfxReacquireObjects(1, &shd);
         }
 
-        pip->codb = codb;
+        pip->shd = shd;
 
         break; // while
     }
@@ -874,8 +874,8 @@ _AVX afxError _AvxReprogramPipeline(avxPipeline pip, afxUnit cnt, avxShaderSpeci
     AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
     AFX_ASSERT(specs);
 
-    avxShader codb = pip->codb;
-    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+    avxShader shd = pip->shd;
+    AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
     for (afxUnit opIt = 0; opIt < cnt; opIt++)
     {
@@ -919,7 +919,7 @@ _AVX afxError _AvxReprogramPipeline(avxPipeline pip, afxUnit cnt, avxShaderSpeci
         }
 
         afxUnit progId;
-        if (!AvxFindShaderCrate(codb, 1, &spec->prog, &progId))
+        if (!AvxFindShaderCrate(shd, 1, &spec->prog, &progId))
         {
             AfxThrowError();
             continue;
@@ -948,7 +948,7 @@ _AVX afxError _AvxReprogramPipeline(avxPipeline pip, afxUnit cnt, avxShaderSpeci
 
             avxLigature liga;
             avxLigatureConfig ligc = { 0 };
-            AvxConfigureLigature(dsys, &ligc, codb, listedProgCnt, listedProgs);
+            AvxConfigureLigature(dsys, &ligc, shd, listedProgCnt, listedProgs);
             if (AvxAcquireLigatures(dsys, 1, &ligc, &liga)) AfxThrowError();
             else
             {
@@ -974,7 +974,7 @@ _AVX afxError _AvxPipDtorCb(avxPipeline pip)
         //AfxDisposeObjects(1, &slot->shd);
     }
 
-    AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &pip->codb);
+    AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &pip->shd);
     if (_AvxPipRelinkShader(pip, NIL, FALSE))
         AfxThrowError();
 
@@ -986,7 +986,7 @@ _AVX afxError _AvxPipDtorCb(avxPipeline pip)
     if (_AvxPipRelinkVertex(pip, NIL, FALSE))
         AfxThrowError();
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = pip->progCnt,
@@ -1034,7 +1034,7 @@ _AVX afxError _AvxPipCtorCb(avxPipeline pip, void** args, afxUnit invokeNo)
 
     pip->liga = NIL;
     pip->vin = NIL;
-    pip->codb = NIL;
+    pip->shd = NIL;
 
     pip->specializedWorkGrpSiz[0] = pipb->specializedWorkGrpSiz[0];
     pip->specializedWorkGrpSiz[1] = pipb->specializedWorkGrpSiz[1];
@@ -1107,7 +1107,7 @@ _AVX afxError _AvxPipCtorCb(avxPipeline pip, void** args, afxUnit invokeNo)
     }
     else progCnt = 1; // compute shader
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = progCnt,
@@ -1191,11 +1191,11 @@ _AVX afxError _AvxPipCtorCb(avxPipeline pip, void** args, afxUnit invokeNo)
             AfxThrowError();
         }
 
-        pip->codb = NIL;
+        pip->shd = NIL;
 
-        avxShader codb = pipb->codb;
-        AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
-        if (_AvxPipRelinkShader(pip, codb, TRUE))
+        avxShader shd = pipb->shd;
+        AFX_TRY_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
+        if (_AvxPipRelinkShader(pip, shd, TRUE))
         {
             AfxThrowError();
         }
@@ -1430,9 +1430,9 @@ _AVX afxError AvxLoadPipeline(afxDrawSystem dsys, avxVertexInput vin, afxUri con
             if (_AvxParseXmlPipelineBlueprint(pipNode, 0, &info, shdStages, shdUris, shdFns)) AfxThrowError();
             else
             {
-                avxShader codb;
-                AvxAcquireShaders(dsys, 1, NIL, &codb);
-                AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
+                avxShader shd;
+                AvxAcquireShaders(dsys, 1, NIL, &shd);
+                AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
                 avxShaderSpecialization specs[8] = { 0 };
 
@@ -1441,7 +1441,7 @@ _AVX afxError AvxLoadPipeline(afxDrawSystem dsys, avxVertexInput vin, afxUri con
                     afxUri file;
                     AfxExcerptUriPathSegments(&shdUris[i], NIL, NIL, &file, NIL);
 
-                    if (AvxCompileShaderFromDisk(codb, &file.s, &shdUris[i]))
+                    if (AvxCompileShaderFromDisk(shd, &file.s, &shdUris[i]))
                         AfxThrowError();
 
                     specs[i].stage = shdStages[i];
@@ -1449,7 +1449,7 @@ _AVX afxError AvxLoadPipeline(afxDrawSystem dsys, avxVertexInput vin, afxUri con
                     specs[i].fn = shdFns[i];
                 }
 
-                info.codb = codb;
+                info.shd = shd;
                 info.progSpecs = specs;
                 info.vin = vin;
 
@@ -1462,7 +1462,7 @@ _AVX afxError AvxLoadPipeline(afxDrawSystem dsys, avxVertexInput vin, afxUri con
                     *pipeline = pip;
                 }
 
-                AfxDisposeObjects(1, &codb);
+                AfxDisposeObjects(1, &shd);
             }
         }
         AfxCleanUpXml(&xml);

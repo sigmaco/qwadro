@@ -27,7 +27,7 @@
 #define _AFX_BUFFER_C
 #include "afxIommuDDK.h"
 
-_AFX _afxDdiIom const* _AfxIomGetDdi(afxIommu iom)
+_AFX _afxIomDdi const* _AfxIomGetDdi(afxIommu iom)
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
@@ -164,7 +164,7 @@ _AFX afxError _AfxIomSW_TransferCb(afxIommu iom, afxTransference* ctrl, afxUnit 
     return err;
 }
 
-_AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt, _afxBufferRemapping const maps[])
+_AFX afxError _AfxIomSW_RemapBuffersCb(afxIommu iom, afxBool unmap, afxUnit cnt, _afxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @iom must be a valid afxIommu handle.
@@ -298,7 +298,7 @@ _AFX afxError _AfxIomSW_CohereMappedBuffersCb(afxIommu iom, afxBool invalidate, 
     return err;
 }
 
-_AFX _afxDdiIom const _AFX_DDI_IOM =
+_AFX _afxIomDdi const _AFX_DDI_IOM =
 {
     .fencCls = _AfxIomSW_GetFencClassCb,
     .exuCls = _AfxIomSW_GetExuClassCb,
@@ -515,7 +515,7 @@ _AFX afxError _AfxIomDtorCb(afxIommu iom)
 #endif
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,
@@ -595,7 +595,7 @@ _AFX afxError _AfxIomCtorCb(afxIommu iom, void** args, afxUnit invokeNo)
     iom->bridgeCnt = bridgeCnt;
     afxUnit baseQueIdx = 0;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,

@@ -25,15 +25,15 @@
 #include "amxSoundscapeDDK.h"
 
 #ifndef _AMX_MIX_C
-AFX_DECLARE_STRUCT(_amxDdiMsys);
+AFX_DECLARE_STRUCT(_amxMsysDdi);
 #else
-AFX_DEFINE_STRUCT(_amxDdiMsys)
+AFX_DEFINE_STRUCT(_amxMsysDdi)
 {
     afxError(*waitCb)(afxMixSystem, afxUnit64);
     //afxError(*waitFencCb)(afxMixSystem, afxBool, afxUnit64, afxUnit, amxFence const[]);
     //afxError(*resetFencCb)(afxMixSystem, afxUnit, amxFence const[]);
     afxError(*cohereCb)(afxMixSystem, afxBool, afxUnit, amxBufferedMap const[]);
-    afxError(*remapCb)(afxMixSystem, afxBool, afxUnit, _amxBufferRemapping const[]);
+    afxError(*remapCb)(afxMixSystem, afxBool, afxUnit, _amxBufRemapping const[]);
     afxUnit(*getProcCb)(afxMixSystem, afxUnit, afxString const[], void*[]);
     afxError(*transferCb)(afxMixSystem dsys, amxTransference* ctrl, afxUnit opCnt, void const* ops);
     afxError(*allocBufCb)(afxMixSystem, afxUnit, amxBufferInfo const[], amxBuffer[]);
@@ -70,7 +70,7 @@ AFX_DEFINE_STRUCT(__amxMsysAcq)
     afxClassConfig const* mixClsCfg;
 };
 
-AFX_DECLARE_STRUCT(_amxIddMsys);
+AFX_DECLARE_STRUCT(_amxMsysIdd);
 
 #ifdef _AMX_MIX_SYSTEM_C
 #ifdef _AMX_MIX_SYSTEM_IMPL
@@ -80,8 +80,8 @@ AFX_OBJECT(afxMixSystem)
 #endif
 {
     AFX_OBJECT(afxDevLink) ctx;
-    _amxDdiMsys const*      ddi;
-    _amxIddMsys*            idd;
+    _amxMsysDdi const*      ddi;
+    _amxMsysIdd*            idd;
     // Debugging tag.
     afxString               tag;
     // User-defined data.
@@ -119,6 +119,8 @@ AFX_OBJECT(afxMixSystem)
     afxClass            msrcCls;
     afxClass            msnkCls;
 
+    afxClass            voxCls;
+
     afxChain            activeTrackers;
 };
 #ifdef _AMX_MIX_SYSTEM_IMPL
@@ -145,8 +147,10 @@ AMX afxClass const* _AmxMsysGetMencClass(afxMixSystem msys);
 AMX afxClass const* _AmxMsysGetMdecClass(afxMixSystem msys);
 AMX afxClass const* _AmxMsysGetMsrcClass(afxMixSystem msys);
 
+AMX afxClass const* _AmxMsysGetVoxClass(afxMixSystem msys);
+
 AMX afxDrawSystem _AmxMsysGetDsys(afxMixSystem msys);
-AMX _amxDdiMsys const* _AmxMsysGetDdi(afxMixSystem msys);
+AMX _amxMsysDdi const* _AmxMsysGetDdi(afxMixSystem msys);
 AMX afxMask _AmxMsysGetIoExuMask(afxMixSystem msys, afxMask* dedIoExuMask);
 
 AMX afxClassConfig const _AMX_MCDC_CLASS_CONFIG;

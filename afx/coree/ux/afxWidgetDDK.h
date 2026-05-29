@@ -182,8 +182,8 @@ AFX_DEFINE_UNION(_auxGuiElemLut)
 AUX _auxCmdBatch* _AuxGetCmdBatch(afxWidget wid, afxUnit idx);
 AUX _auxGuiElem* _AuxWidPushGuiElem(afxWidget wid, afxUnit id, afxUnit siz, afxCmdId* cmdId);
 
-AFX_DECLARE_STRUCT(_auxIddWid);
-AFX_DECLARE_STRUCT(_auxDdiWid);
+AFX_DECLARE_STRUCT(_auxWidIdd);
+AFX_DECLARE_STRUCT(_auxWidDdi);
 
 #ifdef _AUX_WIDGET_C
 #ifdef _AUX_WIDGET_IMPL
@@ -192,8 +192,8 @@ AFX_OBJECT(_auxWidget)
 AFX_OBJECT(afxWidget)
 #endif
 {
-    _auxIddWid*         idd;
-    _auxDdiWid const*   ddi;
+    _auxWidDdi const*   ddi;
+    _auxWidIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

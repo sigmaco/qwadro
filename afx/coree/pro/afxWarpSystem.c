@@ -27,7 +27,7 @@
 #define _ACX_WARP_SYSTEM_C
 #include "acxIcd.h"
 
-_ACX _acxDdiSsys const* _AcxSsysGetDdi(afxWarpSystem ssys)
+_ACX _acxSsysDdi const* _AcxSsysGetDdi(afxWarpSystem ssys)
 {
     afxError err = { 0 };
     // @ssys must be a valid afxWarpSystem handle.
@@ -177,7 +177,7 @@ _ACX afxError _AcxSsysTransferCb_SW(afxWarpSystem ssys, acxTransference* ctrl, a
     return err;
 }
 
-_ACX _acxDdiSsys const _ACX_SSYS_IMPL =
+_ACX _acxSsysDdi const _ACX_SSYS_IMPL =
 {
 #if 0
     .fencCls = _AcxSsysGetFencClassCb_SW,
@@ -368,7 +368,7 @@ _ACX afxError _AcxSsysDtorCb(afxWarpSystem ssys)
         AfxDisposeObjects(1, &ssys->bridges[i]);
     }
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,
@@ -456,7 +456,7 @@ _ACX afxError _AcxSsysCtorCb(afxWarpSystem ssys, void** args, afxUnit invokeNo)
     ssys->bridgeCnt = bridgeCnt;
     afxUnit baseQueIdx = 0;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,

@@ -50,12 +50,12 @@ AFX_DEFINE_STRUCT(_auxEnvAcq)
     afxClassConfig const* themClsCfg;
 };
 
-AFX_DECLARE_STRUCT(_auxIddEnv);
+AFX_DECLARE_STRUCT(_auxEnvIdd);
 
 #ifndef _AUX_UX_C
-AFX_DECLARE_STRUCT(_auxDdiEnv);
+AFX_DECLARE_STRUCT(_auxEnvDdi);
 #else
-AFX_DEFINE_STRUCT(_auxDdiEnv)
+AFX_DEFINE_STRUCT(_auxEnvDdi)
 {
     afxUnit64(*pumpCb)(afxEnvironment,afxFlags, afxUnit64);
     afxBool(*hasClipboardCb)(afxEnvironment, afxUnit seat, afxUnit slot, afxClipboardFlags);
@@ -81,7 +81,7 @@ AFX_DEFINE_STRUCT(_auxDdiEnv)
 #define _AUX_SEAT_GB_ANCHORS 2
 #define _AUX_SEAT_GB_STICKS 2
 
-AFX_DEFINE_STRUCT(_auxSeatData)
+AFX_DEFINE_STRUCT(_auxEnvSeat)
 {
     afxString4096   clipb;
 
@@ -123,8 +123,8 @@ AFX_OBJECT(_auxEnvironment)
 AFX_OBJECT(afxEnvironment)
 #endif
 {
-    _auxIddEnv*         idd;
-    _auxDdiEnv const*   ddi;
+    _auxEnvIdd*         idd;
+    _auxEnvDdi const*   ddi;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -147,7 +147,7 @@ AFX_OBJECT(afxEnvironment)
     afxReal             lastCursUpdTime;
 
     afxUnit             seatCnt;
-    _auxSeatData        seats[AFX_MAX_USERS_PER_ENVIRONMENT];
+    _auxEnvSeat        seats[AFX_MAX_USERS_PER_ENVIRONMENT];
 
     afxConsole          con;
 
@@ -166,7 +166,7 @@ AFX_OBJECT(afxEnvironment)
 
 AUX afxClassConfig const _AUX_ENV_CLASS_CONFIG;
 
-AUX _auxDdiEnv const _AUX_DDI_ENV;
+AUX _auxEnvDdi const _AUX_DDI_ENV;
 
 AUX afxClass const* _AuxEnvGetWndClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetFntClass(afxEnvironment env);

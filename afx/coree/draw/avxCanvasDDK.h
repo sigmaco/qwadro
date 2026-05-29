@@ -28,9 +28,9 @@
 #include "../afxSystemDDK.h"
 #include "qwadro/draw/afxDrawSystem.h"
 
-AFX_DECLARE_STRUCT(_avxIddCanv);
+AFX_DECLARE_STRUCT(_avxCanvIdd);
 
-AFX_DEFINE_STRUCT(_avxDdiCanv)
+AFX_DEFINE_STRUCT(_avxCanvDdi)
 {
     afxError(*relink)(avxCanvas, afxBool, afxUnit, afxUnit, avxRaster[]);
     afxError(*readjust)(avxCanvas, afxWarp const);
@@ -53,8 +53,8 @@ AFX_OBJECT(_avxCanvas)
 AFX_OBJECT(avxCanvas)
 #endif
 {
-    _avxDdiCanv const*  ddi;
-    _avxIddCanv*        idd;
+    _avxCanvDdi const*  ddi;
+    _avxCanvIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

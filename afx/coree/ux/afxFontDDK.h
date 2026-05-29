@@ -45,8 +45,8 @@ AFX_DEFINE_STRUCT(_auxFontImage)
     avxRaster   ras;
 };
 
-AFX_DECLARE_STRUCT(_auxIddFnt);
-AFX_DECLARE_STRUCT(_auxDdiFnt);
+AFX_DECLARE_STRUCT(_auxFntIdd);
+AFX_DECLARE_STRUCT(_auxFntDdi);
 
 #ifdef _AUX_FONT_IMPL
 AFX_OBJECT(_auxFont)
@@ -54,8 +54,8 @@ AFX_OBJECT(_auxFont)
 AFX_OBJECT(afxFont)
 #endif
 {
-    _auxIddFnt*         idd;
-    _auxDdiFnt const*   ddi;
+    _auxFntDdi const*   ddi;
+    _auxFntIdd*         idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.

@@ -30,7 +30,7 @@
 #define _ARX_BUFFER_C
 #include "arxIcd.h"
 
-_ARX afxError _ArxSmemDtorCb(_arxMemory* smem)
+_ARX afxError _ArxSmemDtorCb(_arxBufMem* smem)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SBUF, 1, &smem);
@@ -58,7 +58,7 @@ _ARX afxError _ArxSmemDtorCb(_arxMemory* smem)
     return err;
 }
 
-_ARX afxError _ArxSmemCtorCb(_arxMemory* smem, void** args, afxUnit invokeNo)
+_ARX afxError _ArxSmemCtorCb(_arxBufMem* smem, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SBUF, 1, &smem);
@@ -93,7 +93,7 @@ _ARX afxClassConfig const _ARX_SMEM_CLASS_CONFIG =
     .fcc = afxFcc_SMEM,
     .name = "SynergicMemory",
     .desc = "Synergic Memory",
-    .fixedSiz = sizeof(_arxMemory),
+    .fixedSiz = sizeof(_arxBufMem),
     .ctor = (void*)_ArxSmemCtorCb,
     .dtor = (void*)_ArxSmemDtorCb
 };

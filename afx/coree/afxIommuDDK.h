@@ -29,18 +29,18 @@
 #include "afxFenceDDK.h"
 #include "afxBufferDDK.h"
 
-AFX_DECLARE_STRUCT(_afxIddIom);
+AFX_DECLARE_STRUCT(_afxIomIdd);
 
 #ifndef _AFX_CORE_C
-AFX_DECLARE_STRUCT(_afxDdiIom);
+AFX_DECLARE_STRUCT(_afxIomDdi);
 #else
-AFX_DEFINE_STRUCT(_afxDdiIom)
+AFX_DEFINE_STRUCT(_afxIomDdi)
 {
     afxError(*waitCb)(afxIommu, afxUnit64);
     afxError(*waitFencCb)(afxIommu, afxUnit64, afxBool, afxUnit, afxFence const[], afxUnit64 const values[]);
     afxError(*resetFencCb)(afxIommu, afxUnit, afxFence const[]);
     afxError(*cohereCb)(afxIommu, afxBool invalidate, afxUnit, afxBufferedMap const[]);
-    afxError(*remapCb)(afxIommu, afxBool, afxUnit, _afxBufferRemapping const[]);
+    afxError(*remapCb)(afxIommu, afxBool, afxUnit, _afxBufRemapping const[]);
     afxUnit(*getProcCb)(afxIommu, afxUnit, afxString const[], void*[]);
     afxError(*transferCb)(afxIommu dsys, afxTransference* ctrl, afxUnit opCnt, void const* ops);
     afxError(*allocBufCb)(afxIommu, afxUnit, afxBufferInfo const[], afxBuffer[]);
@@ -70,8 +70,8 @@ AFX_OBJECT(_afxIommu)
 AFX_OBJECT(afxIommu)
 #endif
 {
-    _afxDdiIom const*  ddi;
-    _afxIddIom*        idd;
+    _afxIomDdi const*  ddi;
+    _afxIomIdd*        idd;
     // Debugging tag.
     afxString           tag;
     // User-defined data.
@@ -105,9 +105,9 @@ AFX_OBJECT(afxIommu)
 #endif//_AFX_IOMMU_C
 
 AFX afxClassConfig const _AFX_CLASS_CONFIG_IOM;
-AFX _afxDdiIom const _AFX_DDI_IOM;
+AFX _afxIomDdi const _AFX_DDI_IOM;
 
-AFX _afxDdiIom const* _AfxIomGetDdi(afxIommu iom);
+AFX _afxIomDdi const* _AfxIomGetDdi(afxIommu iom);
 AFX afxMask _AfxIomGetIoExuMask(afxIommu iom, afxMask* dedIoExuMask);
 
 AFX afxClass const* _AfxIomSW_GetExuClassCb(afxIommu iom);

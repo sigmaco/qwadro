@@ -25,7 +25,7 @@ _AVX afxBool AvxGetShaderCrate(avxShader shd, afxUnit unit, void** slot)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
-    _avxCodeBlock* slot2;
+    _avxShadBlock* slot2;
     afxBool rslt = AfxGetPoolUnit(&shd->codes, unit, (void**)&slot2);
     AFX_ASSERT(slot);
     *slot = slot2;
@@ -43,14 +43,14 @@ _AVX afxBool AvxFindShaderCrate(avxShader shd, afxUnit cnt, afxString const name
     {
         afxString const* name = &names[iter];
 
-        _avxCodeBlock* unit;
+        _avxShadBlock* unit;
         for (afxUnit pageIdx = 0; pageIdx < (&shd->codes)->pageCnt; ++pageIdx)
         {
             afxPoolPage* _page = (&shd->codes)->pages[pageIdx];
             for (afxMask _u = _page->usage, slotIdx = 0; slotIdx < (&shd->codes)->unitsPerPage; ++slotIdx)
             {
                 if (!(_u & (1u << slotIdx))) continue;
-                unit = (_avxCodeBlock*)(_page->base + (slotIdx * (&shd->codes)->unitSiz));
+                unit = (_avxShadBlock*)(_page->base + (slotIdx * (&shd->codes)->unitSiz));
 
                 afxUnit matchId;
                 if (AfxCompareStrings(name, 0, FALSE, 1, &unit->name.s, &matchId))
@@ -81,7 +81,7 @@ _AVX afxBool AvxDoesShaderHavePushConstants(avxShader shd, afxUnit crate)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return 0;
 
@@ -94,7 +94,7 @@ _AVX afxError AvxSerializeShader(avxShader shd, afxUnit crate, afxStream ios)
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
     AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &ios);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -108,7 +108,7 @@ _AVX afxError AvxDumpShaderCode(avxShader shd, afxUnit crate, afxArray* arr)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -127,7 +127,7 @@ _AVX afxError AvxPrintShader(avxShader shd, afxUnit crate, afxUri const *uri)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -158,7 +158,7 @@ _AVX afxUnit AvxQueryShaderIns(avxShader shd, afxUnit crate, afxUnit first, afxU
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -190,7 +190,7 @@ _AVX afxUnit AvxQueryShaderOuts(avxShader shd, afxUnit crate, afxUnit first, afx
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -222,7 +222,7 @@ _AVX afxUnit AvxQueryShaderInterfaces(avxShader shd, afxUnit crate, afxUnit firs
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -251,7 +251,7 @@ _AVX avxShaderType AvxGetShaderStage(avxShader shd, afxUnit crate)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return NIL;
 
@@ -263,7 +263,7 @@ _AVX afxString const* AfxGetShaderName(avxShader shd, afxUnit crate)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return NIL;// afxError_NOT_FOUND;
 
@@ -275,7 +275,7 @@ _AVX afxError AvxRecompileShader(avxShader shd, afxUnit crate, afxString const* 
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -283,7 +283,7 @@ _AVX afxError AvxRecompileShader(avxShader shd, afxUnit crate, afxString const* 
 
     if (slot->codeLen)
     {
-        afxObjectStash stashs[] =
+        afxAllocation stashs[] =
         {
             {
                 .cnt = slot->resDeclCnt,
@@ -350,7 +350,7 @@ _AVX afxError AvxRecompileShader(avxShader shd, afxUnit crate, afxString const* 
     slot->outCnt = fOuts.pop;
     slot->outs = NIL;
 
-    afxObjectStash stashs[] =
+    afxAllocation stashs[] =
     {
         {
             .cnt = slot->resDeclCnt,
@@ -428,7 +428,7 @@ _AVX afxError AvxRecompileShaderFromDisk(avxShader shd, afxUnit crate, afxUri co
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxGetShaderCrate(shd, crate, (void**)&slot))
         return afxError_NOT_FOUND;
 
@@ -468,7 +468,7 @@ _AVX afxError AvxCompileShader(avxShader shd, afxString const* crate, afxString 
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
     afxUnit slotId;
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxFindShaderCrate(shd, 1, crate, &slotId))
     {
         // If there is not a code unit, allocate a new one.
@@ -509,7 +509,7 @@ _AVX afxError AvxCompileShaderFromDisk(avxShader shd, afxString const* crate, af
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
     afxUnit slotId;
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     if (!AvxFindShaderCrate(shd, 1, crate, &slotId))
     {
         // If there is not a code unit, allocate a new one.
@@ -553,18 +553,18 @@ _AVX afxError _AvxShdDtorCb(avxShader shd)
 
     // Detach and free every code unit.
 
-    _avxCodeBlock* slot;
+    _avxShadBlock* slot;
     for (afxUnit pageIdx = 0; pageIdx < (&shd->codes)->pageCnt; ++pageIdx)
     {
         afxPoolPage* _page = (&shd->codes)->pages[pageIdx];
         for (afxMask _u = _page->usage, slotIdx = 0; slotIdx < (&shd->codes)->unitsPerPage; ++slotIdx)
         {
             if (!(_u & (1u << slotIdx))) continue;
-            slot = (_avxCodeBlock*)(_page->base + (slotIdx * (&shd->codes)->unitSiz));
+            slot = (_avxShadBlock*)(_page->base + (slotIdx * (&shd->codes)->unitSiz));
 
             if (slot->codeLen)
             {
-                afxObjectStash stashs[] =
+                afxAllocation stashs[] =
                 {
                     {
                         .cnt = slot->resDeclCnt,
@@ -616,7 +616,7 @@ _AVX afxError _AvxShdCtorCb(avxShader shd, void** args, afxUnit invokeNo)
     afxUri const* url = args[1] ? AFX_CAST(afxUri const*, args[1]) + invokeNo : NIL;
     
     AfxMakeUri128(&shd->url, url);
-    AfxSetUpPool(&shd->codes, sizeof(_avxCodeBlock), 1, 0);
+    AfxSetUpPool(&shd->codes, sizeof(_avxShadBlock), 1, 0);
 
     return err;
 }

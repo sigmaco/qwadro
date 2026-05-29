@@ -39,6 +39,23 @@ typedef struct
     size_t read_pos;      // Absolute frame index (can overflow safely)
 } AudioRingBuffer;
 
+AFX_DECLARE_STRUCT(_amxSinkIdd);
+AFX_DEFINE_STRUCT(_amxSinkDdi)
+{
+    afxError(*iddDtorCb)(afxSink);
+    afxBool(*getIddCb)(afxSink, afxUnit, void*);
+
+    afxError(*lockCb)(afxSink asi, afxUnit64 timeout, afxMask exuMask, afxUnit minFrameCnt, amxBufferedTrack* room);
+    afxError(*unlockCb)(afxSink asi, afxFlags flags);
+    void(*flushCb)(afxSink asi);
+    afxError(*pushCb)(afxSink asio, amxAudio buf, amxAudioPeriod const* seg);
+    afxError(*pullCb)(afxSink asio, afxUnit, void*, afxUnit*);
+    afxUnit(*getAvailFramesCb)(afxSink asi);
+
+    afxError(*pauseCb)(afxSink asi, afxBool pause);
+    afxError(*resetCb)(afxSink asi);
+};
+
 #ifdef _AMX_SINK_C
 #ifdef _AMX_SINK_IMPL
 AFX_OBJECT(_amxSink)
@@ -46,7 +63,10 @@ AFX_OBJECT(_amxSink)
 AFX_OBJECT(afxSink)
 #endif
 {
-    afxUnit             muteReqCnt;
+    _amxSinkDdi const*  ddi;
+    _amxSinkIdd*        idd;
+    afxString const     tag;
+    void*               udd; // user-defined data
 
     amxFormat           fmt;
     afxUnit             freq; // Hz
@@ -58,29 +78,15 @@ AFX_OBJECT(afxSink)
     afxInterlockedQueue readyBuffers;
     afxAtom32           sinkingBufIdx;
 
+    afxUnit             muteReqCnt;
+
     afxRing             ioRing;
-
-    void*       udd; // user-defined data
-    afxBool     (*getIddCb)(afxSink, afxUnit, void*);
-
-    afxError    (*lockCb)(afxSink asi, afxUnit64 timeout, afxMask exuMask, afxUnit minFrameCnt, amxBufferedTrack* room);
-    afxError    (*unlockCb)(afxSink asi, afxFlags flags);
-    void        (*flushCb)(afxSink asi);
-    afxError    (*pushCb)(afxSink asio, amxAudio buf, amxAudioPeriod const* seg);
-    afxError    (*pullCb)(afxSink asio, afxUnit, void*, afxUnit*);
-    afxUnit     (*getAvailFramesCb)(afxSink asi);
-
-    afxError    (*pauseCb)(afxSink asi, afxBool pause);
-    afxError    (*resetCb)(afxSink asi);
 
     AudioRingBuffer rb;
 
     afxClock    startClock;
     afxClock    lastClock;
     afxClock    outCntResetClock;
-
-    afxError(*iddDtorCb)(afxSink);
-    struct _afxSoutIdd* idd;
 };
 #endif//_AMX_SINK_C
 

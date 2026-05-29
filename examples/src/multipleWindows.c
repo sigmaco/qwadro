@@ -48,7 +48,7 @@ int main(int argc, char const* argv[])
     // Set up the draw system
 
     afxModule avxIcd;
-    AfxGetAvx(0, &avxIcd);
+    AvxGetIcd(0, &avxIcd);
 
     afxDrawSystem dsys;
     avxSystemConfig dsyc = { 0 };

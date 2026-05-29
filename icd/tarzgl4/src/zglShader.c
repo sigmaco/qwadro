@@ -207,7 +207,7 @@ _ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxShader codb, avxPipeline pip)
         afxUnit progId = pip->m.progs[stageIdx].progId;
         avxShaderType stage = pip->m.progs[stageIdx].stage;
 
-        _avxCodeBlock* prog;
+        _avxShadBlock* prog;
         if (!AvxGetShaderCrate(codb, progId, (void**)&prog))
         {
             AfxThrowError();
@@ -298,7 +298,7 @@ _ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxShader codb, avxPipeline pip)
         afxUnit nullTermArrel;
         //AvxDumpShaderCode(codb, progId, &code);
         {
-            _avxCodeBlock* slot;
+            _avxShadBlock* slot;
             if (!AvxGetShaderCrate(codb, progId, (void**)&slot))
                 return afxError_NOT_FOUND;
 

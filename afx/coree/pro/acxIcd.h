@@ -53,7 +53,7 @@ ACX afxError _AcxIcdImplement(afxModule icd, _acxImplementation const* cfg);
 
 ACX afxBool _AcxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
-AFX afxError AfxGetAcx(afxUnit unit, afxModule* acxIcd);
+AFX afxError AcxGetIcd(afxUnit unit, afxModule* acxIcd);
 
 ACX afxError _AcxIcdConfigureSsysSW(afxModule acxIcd, acxSystemConfig* cfg);
 

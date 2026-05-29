@@ -23,7 +23,7 @@
 #include "qwadro/afxSystem.h"
 #include "afxThreadingDDK.h"
 
-AFX_DEFINE_STRUCT(_afxIcdModuleData)
+AFX_DEFINE_STRUCT(_afxMdleIcdData)
 {
     afxError(*scmHookFn)(afxModule, afxUri const*); // initializes system-wide data structures and resources.
     afxError(*icdHookFn)(afxModule, afxUri const*); // initializes driver-wide data structures and resources.
@@ -104,7 +104,7 @@ AFX_OBJECT(afxModule)
     afxManifest         etc;
     afxChain            devices; // if it is a ICD, this chain interlinks each device provided by this driver.
     afxBool             attached;
-    _afxIcdModuleData   icd;
+    _afxMdleIcdData   icd;
 
     afxString           description;
     afxUnit             verMajor, verMinor, verPatch, verBuild;

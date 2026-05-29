@@ -459,7 +459,7 @@ _ARX afxError _ArxSklDtorCb(arxSkeleton skl)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SKL, 1, &skl);
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = skl->boneCnt,
@@ -527,7 +527,7 @@ _ARX afxError _ArxSklCtorCb(arxSkeleton skl, void** args, afxUnit invokeNo)
     afxUnit boneCnt = AFX_MAX(1, skli->boneCnt);
     skl->boneCnt = boneCnt;
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = skl->boneCnt,

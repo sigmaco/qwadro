@@ -361,7 +361,7 @@ _ASX afxError _AsxSimCtorCb(arxSimulation sim, void** args, afxUnit invokeNo)
     sim->bridgeCnt = bridgeCnt;
     afxUnit baseQueIdx = 0;
 
-    afxObjectStash const stashes[] =
+    afxAllocation const stashes[] =
     {
         {
             .cnt = bridgeCnt,

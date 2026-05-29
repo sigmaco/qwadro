@@ -402,7 +402,7 @@ _ARXINL afxError ArxFormatVertexAttribute(arxMesh msh, afxUnit attrIdx, avxForma
     attrIdx = AFX_MIN(attrIdx, msh->attrCnt - 1);
 #endif//_ARX_DBG_MESH_SANITIZE_ARGS
 
-    arxMeshAttr* attr = &msh->attrInfo[attrIdx];
+    _arxMshAttr* attr = &msh->attrInfo[attrIdx];
     attr->fmt = fmt;
     attr->flags = flags;
     //AfxCopyString(&attr->usage.s, 0, usage, 0);
@@ -773,7 +773,7 @@ _ARX afxError _ArxMshDtorCb(arxMesh msh)
     if (msh->indices)
         AfxDeallocate((void**)&msh->indices, AfxHere());
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         {
             .cnt = msh->sideToAdjacentMap ? edgeCnt : 0,
@@ -921,7 +921,7 @@ _ARX afxError _ArxMshCtorCb(arxMesh msh, void** args, afxUnit invokeNo)
     msh->secAabb = NIL;
     msh->topology = avxTopology_TRI_LIST;
 
-    afxObjectStash stashes[] =
+    afxAllocation stashes[] =
     {
         // TOPOLOGY DATA
         {
@@ -1112,7 +1112,7 @@ _ARX afxError _ArxMshCtorCb(arxMesh msh, void** args, afxUnit invokeNo)
 
     for (afxUnit i = 0; i < attrCnt; i++)
     {
-        arxMeshAttr* attr = &msh->attrInfo[i];
+        _arxMshAttr* attr = &msh->attrInfo[i];
 
         allAttrEnabledMask |= AFX_BITMASK(i);
 
@@ -1253,7 +1253,7 @@ _ARXINL afxError ArxTransformMeshes(afxM3d const ltm, afxM3d const iltm, afxReal
                 if (!(msh->morphs[morphIdx].affectedAttrs & attrBit))
                     continue;
 
-                arxMeshAttr* va = &msh->attrInfo[attrIdx];
+                _arxMshAttr* va = &msh->attrInfo[attrIdx];
                     
                 void* data = ArxAccessVertexData(msh, attrIdx, morphIdx, 0);
                 afxBool linearFlag = va->flags & arxVertexFlag_LTM;

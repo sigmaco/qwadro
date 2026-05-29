@@ -43,7 +43,7 @@ _AMX afxSize AmxGetBufferAddress(amxBuffer buf, afxSize from)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &buf);
-    return buf->storage[0].hostedAlloc.addr + buf->storage[0].offset;
+    return buf->storage[0].host.addr + buf->storageOffset;
 }
 
 _AMX afxSize AmxGetBufferCapacity(amxBuffer buf, afxSize from)
@@ -169,13 +169,22 @@ _AMX afxError _AmxMbufDtorCb(amxBuffer mbuf)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &mbuf);
 
+    afxMixSystem msys = AmxGetBufferHost(mbuf);
+    AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
+
+    if (_AmxMsysGetDdi(msys)->deallocBufCb(msys, 1, &mbuf))
+    {
+
+    }
+#if 0
     if (!(mbuf->flags & amxBufferFlag_F))
     {
-        if (mbuf->storage[0].hostedAlloc.bytemap && (!mbuf->base || (mbuf->base != mbuf)))
+        if (mbuf->storage[0].host.bytemap && (!mbuf->base || (mbuf->base != mbuf)))
         {
-            AfxDeallocate((void**)&mbuf->storage[0].hostedAlloc.bytemap, AfxHere());
+            AfxDeallocate((void**)&mbuf->storage[0].host.bytemap, AfxHere());
         }
     }
+#endif
     return err;
 }
 
@@ -360,8 +369,8 @@ _AMX afxError _AmxMbufCtorCb(amxBuffer buf, void** args, afxUnit invokeNo)
 
     // binding
     buf->storage[0].mmu = 0;
-    buf->storage[0].offset = 0;
-    buf->storage[0].hostedAlloc.addr = NIL;
+    buf->storage[0].size = 0;
+    buf->storage[0].host.addr = NIL;
 
     buf->storage[0].mapPtr = NIL;
     buf->storage[0].mapOffset = 0;
@@ -370,26 +379,26 @@ _AMX afxError _AmxMbufCtorCb(amxBuffer buf, void** args, afxUnit invokeNo)
 
     buf->storage[0].pendingRemap = 0;
     buf->storage[0].permanentlyMapped = !!bufi->mapped;
-
+#if 0
     if (buf->flags & amxBufferFlag_F)
     {
         if (!bufi->data) AfxThrowError();
         else
         {
-            buf->storage[0].hostedAlloc.bytemap = bufi->data;
-            buf->storage[0].mapPtr = buf->storage[0].hostedAlloc.bytemap;
+            buf->storage[0].host.bytemap = bufi->data;
+            buf->storage[0].mapPtr = buf->storage[0].host.bytemap;
             buf->storage[0].mapRange = buf->reqSiz;
         }
     }
     else
     {
-        if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&buf->storage[0].hostedAlloc.bytemap))
+        if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&buf->storage[0].host.bytemap))
         {
             AfxThrowError();
         }
         else
         {
-            buf->storage[0].mapPtr = buf->storage[0].hostedAlloc.bytemap;
+            buf->storage[0].mapPtr = buf->storage[0].host.bytemap;
             buf->storage[0].mapRange = buf->reqSiz;
 
             if (!bufi->data)
@@ -398,6 +407,7 @@ _AMX afxError _AmxMbufCtorCb(amxBuffer buf, void** args, afxUnit invokeNo)
                 AfxCopy(buf->storage[0].mapPtr, bufi->data, bufi->dataSiz);
         }
     }
+#endif
     return err;
 }
 
@@ -417,20 +427,130 @@ _AMX afxError AmxAcquireBuffers(afxMixSystem msys, afxUnit cnt, amxBufferInfo co
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MSYS, 1, &msys);
-    AFX_ASSERT(buffers);
-    AFX_ASSERT(infos);
+
     AFX_ASSERT(cnt);
+    AFX_ASSERT(infos);
+    AFX_ASSERT(buffers);
+    if (!cnt || !infos || !buffers)
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxBufferInfo const* info = &infos[i];
+
+        if (!info->usage)
+        {
+            AFX_ASSERT(info->usage);
+            AfxThrowError();
+        }
+
+        if (!info->size)
+        {
+            AFX_ASSERT(!info->size);
+            AfxThrowError();
+        }
+    }
+
+    if (err) return err;
 
     afxClass* cls = (afxClass*)_AmxMsysGetBufClass(msys);
     AFX_ASSERT_CLASS(cls, afxFcc_MBUF);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)buffers, (void const*[]) { msys, (void*)infos, NIL }))
+    {
         AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_MBUF, cnt, buffers);
+
+    if (_AmxMsysGetDdi(msys)->allocBufCb(msys, cnt, infos, buffers))
+    {
+        AfxDisposeObjects(cnt, buffers);
+        AfxThrowError();
+        return err;
+    }
+
+    if (err) return err;
+
+#ifdef AMX_VALIDATION_ENABLED
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxBuffer buf = buffers[i];
+        amxBufferInfo const* bufi = &infos[i];
+
+        AFX_ASSERT(buf->reqSiz >= bufi->size);
+        AFX_ASSERT((buf->flags & bufi->flags) == bufi->flags);
+        AFX_ASSERT(buf->exuMask == bufi->exuMask);
+        AFX_ASSERT(buf->udd == bufi->udd);
+        AFX_ASSERT((buf->usage & bufi->usage) == bufi->usage);
+        AFX_ASSERT(buf->tag.start == bufi->tag.start);
+    }
+#endif
+
+    // Proceed to permanently map and/or upload initial data.
+    // We can't do it in constructor callback because ICD callbacks are called after the AMX one,
+    // so it would be never ready to be mapped at device side.
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        amxBuffer buf = buffers[i];
+        amxBufferInfo const* bufi = &infos[i];
+
+        if (bufi->mapped)
+        {
+            buf->storage[0].permanentlyMapped = TRUE;
+
+            void* ptr;
+            if (AmxMapBuffer(buf, 0, buf->reqSiz, NIL, &ptr))
+            {
+                AfxThrowError();
+                break;
+            }
+            AFX_ASSERT(ptr == buf->storage[0].mapPtr);
+
+            if (bufi->dataSiz)
+            {
+                AFX_ASSERT(bufi->data);
+                AFX_ASSERT(ptr == buf->storage[0].mapPtr);
+                AfxCopy(ptr, bufi->data, bufi->dataSiz);
+
+                // Unmapping should do nothing in a persistently mapped buffer.
+                // But we will keep it here for good didactic reasons.
+                AmxUnmapBuffer(buf, 0);
+            }
+        }
+        else
+        {
+            if (bufi->dataSiz)
+            {
+                AFX_ASSERT(bufi->data);
+                amxBufferIo iop = { 0 };
+                iop.srcStride = 1;
+                iop.dstStride = 1;
+                iop.rowCnt = bufi->dataSiz;
+                if (AmxUpdateBuffer(buf, 1, &iop, bufi->data, 0))
+                {
+                    AfxThrowError();
+                    break;
+                }
+            }
+        }
+    }
+
+    if (err)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MBUF, cnt, buffers);
+        AfxDisposeObjects(cnt, buffers);
+    }
 
     return err;
 }
 
-_AMX afxError _AmxMsysRemapBuffersCb_SW(afxMixSystem msys, afxBool unmap, afxUnit cnt, _amxBufferRemapping const maps[])
+_AMX afxError _AmxMsysRemapBuffersCb_SW(afxMixSystem msys, afxBool unmap, afxUnit cnt, _amxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @msys must be a valid afxMixSystem handle.

@@ -430,7 +430,7 @@ _ACX afxError AcxAcquireBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferInfo c
     return err;
 }
 
-_ACX afxError _AcxSsysRemapBuffersCb_SW(afxWarpSystem ssys, afxBool unmap, afxUnit cnt, _acxBufferRemapping const maps[])
+_ACX afxError _AcxSsysRemapBuffersCb_SW(afxWarpSystem ssys, afxBool unmap, afxUnit cnt, _acxBufRemapping const maps[])
 {
     afxError err = { 0 };
     // @ssys must be a valid afxWarpSystem handle.

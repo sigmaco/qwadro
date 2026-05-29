@@ -26,7 +26,7 @@
 #define _ASX_SIMULATION_C
 #include "../scene/arxIcd.h"
 
-_ARX _arxDdiAnik const _ARX_DDI_ANIK =
+_ARX _arxAnikDdi const _ARX_DDI_ANIK =
 {
     0
 };
