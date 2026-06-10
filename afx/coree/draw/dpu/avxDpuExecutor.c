@@ -321,7 +321,7 @@ _AVX afxInt _AVX_DPU_THREAD_PROC(afxDrawBridge dexu)
     afxUnit portId = dexu->exuIdx;
 
     avxDpu* dpu;
-    if (AfxAllocate(sizeof(*dpu), 0, AfxHere(), (void**)&dpu))
+    if (AfxAllocate(AfxHere(), sizeof(*dpu), 0, (void**)&dpu))
         AfxThrowError();
 
     AfxZero(dpu, sizeof(*dpu));
@@ -355,7 +355,7 @@ _AVX afxInt _AVX_DPU_THREAD_PROC(afxDrawBridge dexu)
     }
 
     AFX_ASSERT(dpu == dexu->dpu);
-    AfxDeallocate((void**)&dpu, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&dpu);
 
     return 0;
 }

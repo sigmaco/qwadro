@@ -34,6 +34,8 @@ AFX_DECLARE_STRUCT(_auxDispIdd);
 AFX_DEFINE_STRUCT(_auxDispDdi)
 {
     afxClass const*(*doutCls)(afxDisplay);
+    afxError(*cfgDoutCb)(afxDisplay, afxSurfaceConfig*);
+    afxError(*openDoutCb)(afxDisplay, afxSurfaceConfig const*, afxSurface*);
     afxUnit(*qryModeCb)(afxDisplay, afxUnit port, avxFormat, afxUnit cnt, afxDisplayMode[]);
     afxError(*askGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCapabilites*);
     afxError(*getGammaCtrlCb)(afxDisplay, afxUnit port, afxGammaCurve*);

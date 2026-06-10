@@ -621,7 +621,7 @@ _AFX afxError _DismountStorageUnit(afxStorage fsys, _afxFsysUnit* fsto)
         AfxDisposeObjects(1, (void*[]) { fsto->arc });
 
     AfxDeallocateUri(&fsto->rootPath);
-    AfxDeallocate((void**)&fsto, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&fsto);
     return err;
 }
 
@@ -731,7 +731,7 @@ _AFX afxError _MountStorageUnit(afxStorage fsys, afxUri const* endpoint, afxFile
         AfxReportMessage("Mounting... <%.*s>('%.*s'),%x", AfxPushString(AfxGetUriString(&fsys->baseUrl.uri)), AfxPushString(AfxGetUriString(&endpoint2.uri)), fileFlags);
 
         _afxFsysUnit* fsto;
-        AfxAllocate(sizeof(*fsto), 0, AfxHere(), (void**)&fsto);
+        AfxAllocate(AfxHere(), sizeof(*fsto), 0, (void**)&fsto);
 
         if (!fsto) AfxThrowError();
         else

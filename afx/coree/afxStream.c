@@ -408,7 +408,7 @@ _AFX afxError AfxBufferizeStream(afxStream iob, afxUnit bufCap, void* buf)
             alignedSiz = AFX_ALIGN_SIZE(bufCap, AfxGetIoBufferSize());
             //void *start;
 
-            if (AfxAllocate(alignedSiz, 0, AfxHere(), (void**)&start)) AfxThrowError();
+            if (AfxAllocate(AfxHere(), alignedSiz, 0, (void**)&start)) AfxThrowError();
             else
             {
                 if (oldData)
@@ -419,7 +419,7 @@ _AFX afxError AfxBufferizeStream(afxStream iob, afxUnit bufCap, void* buf)
         if (!err)
         {
             if (oldData)
-                AfxDeallocate((void**)&oldData, AfxHere());
+                AfxDeallocate(AfxHere(), (void**)&oldData);
 
             iob->bufCap = alignedSiz;
             iob->bufCap = iob->bufCap;
@@ -1243,7 +1243,7 @@ _AFX afxError AfxMergeStream(afxStream out, afxStream in, afxSize base, afxUnit 
     AFX_ASSERT(AfxIsStreamReadable(in));
 
     void *space;
-    AfxAllocate(range, 0, AfxHere(), (void**)&space);
+    AfxAllocate(AfxHere(), range, 0, (void**)&space);
     afxUnit clampedOffRange = range;
 
     if (!space) AfxThrowError();
@@ -1306,7 +1306,7 @@ _AFX afxError AfxMergeStream(afxStream out, afxStream in, afxSize base, afxUnit 
                 clampedOffRange -= nextSizW;
             }
         }
-        AfxDeallocate((void**)&space, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&space);
     }
     return clampedOffRange;
 }

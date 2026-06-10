@@ -53,7 +53,7 @@ _ARX afxError _ArxSmemDtorCb(_arxBufMem* smem)
 #endif
     void* p = smem->hostedAlloc.bytemap;
 
-    AfxDeallocate(&p, AfxHere());
+    AfxDeallocate(AfxHere(), &p);
 
     return err;
 }
@@ -83,7 +83,7 @@ _ARX afxError _ArxSmemCtorCb(_arxBufMem* smem, void** args, afxUnit invokeNo)
 
     smem->hostedAlloc.bytemap = NIL;
 
-    AfxAllocate(smem->size, smem->alignment, AfxHere(), (void**)&smem->hostedAlloc.bytemap);
+    AfxAllocate(AfxHere(), smem->size, smem->alignment, (void**)&smem->hostedAlloc.bytemap);
 
     return err;
 }

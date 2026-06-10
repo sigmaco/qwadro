@@ -134,10 +134,10 @@ _AFX afxError _AfxThrpDtorCb(afxThreadPool thrp)
     } while (0);
 
     if (thrp->threads)
-        AfxDeallocate((void**)&thrp->threads, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->threads);
 
     if (thrp->workQue)
-        AfxDeallocate((void**)&thrp->workQue, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->workQue);
 
     AfxLockMutex(&thrp->lock);
     AfxDismantleMutex(&thrp->lock);
@@ -174,16 +174,16 @@ _AFX afxError _AfxThrpCtorCb(afxThreadPool thrp, void** args, afxUnit invokeNo)
 
     /* Allocate thread and task queue */
 
-    if (AfxAllocate(thrp->thrCnt * sizeof(afxThread), 0, AfxHere(), (void**)&thrp->threads))
+    if (AfxAllocate(AfxHere(), thrp->thrCnt * sizeof(afxThread), 0, (void**)&thrp->threads))
     {
         AfxThrowError();
         return err;
     }
 
-    if (AfxAllocate(thrp->workQueCap * sizeof(afxThread), 0, AfxHere(), (void**)&thrp->workQue))
+    if (AfxAllocate(AfxHere(), thrp->workQueCap * sizeof(afxThread), 0, (void**)&thrp->workQue))
     {
         AfxThrowError();
-        AfxDeallocate((void**)&thrp->threads, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->threads);
         return err;
     }
 
@@ -192,16 +192,16 @@ _AFX afxError _AfxThrpCtorCb(afxThreadPool thrp, void** args, afxUnit invokeNo)
     if (AfxDeployMutex(&thrp->lock, 0))
     {
         AfxThrowError();
-        AfxDeallocate((void**)&thrp->threads, AfxHere());
-        AfxDeallocate((void**)&thrp->workQue, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->threads);
+        AfxDeallocate(AfxHere(), (void**)&thrp->workQue);
         return err;
     }
 
     if (AfxDeployCondition(&thrp->notify))
     {
         AfxThrowError();
-        AfxDeallocate((void**)&thrp->threads, AfxHere());
-        AfxDeallocate((void**)&thrp->workQue, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->threads);
+        AfxDeallocate(AfxHere(), (void**)&thrp->workQue);
         AfxDismantleMutex(&thrp->lock);
         return err;
     }
@@ -213,8 +213,8 @@ _AFX afxError _AfxThrpCtorCb(afxThreadPool thrp, void** args, afxUnit invokeNo)
     if (AfxAcquireThreads(AfxHere(), &tc, thrp->thrCnt, thrp->threads))
     {
         AfxThrowError();
-        AfxDeallocate((void**)&thrp->threads, AfxHere());
-        AfxDeallocate((void**)&thrp->workQue, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&thrp->threads);
+        AfxDeallocate(AfxHere(), (void**)&thrp->workQue);
         AfxDismantleMutex(&thrp->lock);
         AfxDismantleCondition(&thrp->notify);
         return err;
@@ -239,8 +239,8 @@ _AFX afxError _AfxThrpCtorCb(afxThreadPool thrp, void** args, afxUnit invokeNo)
                 AfxWaitForThreadExit(thrp->threads[j], &exitCode);
             }
             AfxThrowError();
-            AfxDeallocate((void**)&thrp->threads, AfxHere());
-            AfxDeallocate((void**)&thrp->workQue, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&thrp->threads);
+            AfxDeallocate(AfxHere(), (void**)&thrp->workQue);
             AfxDismantleMutex(&thrp->lock);
             AfxDismantleCondition(&thrp->notify);
         }

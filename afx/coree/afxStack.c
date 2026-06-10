@@ -37,11 +37,11 @@ _AFX afxBool _AfxStackEnsureRoom(afxStack* stak, afxUnit requiredUnits)
                 return FALSE; // Hit limit
 
             afxStackPage* newBlk;
-            if (!AfxAllocate(sizeof(*newBlk), 0, AfxHere(), (void**)&newBlk))
+            if (!AfxAllocate(AfxHere(), sizeof(*newBlk), 0, (void**)&newBlk))
                 return FALSE;
 
             afxUnit blockSize = stak->unitSiz * stak->unitsPerBlock;
-            if (!AfxAllocate(blockSize, 0, AfxHere(), (void**)&newBlk->units))
+            if (!AfxAllocate(AfxHere(), blockSize, 0, (void**)&newBlk->units))
                 return FALSE;
 
             newBlk->usedUnitCnt = 0;
@@ -54,7 +54,7 @@ _AFX afxBool _AfxStackEnsureRoom(afxStack* stak, afxUnit requiredUnits)
             if (!stak->blockDir && stak->maxActiveBlocks != (afxUnit)-1)
             {
                 afxStackPage** dir;
-                AfxAllocate(stak->maxActiveBlocks * sizeof(afxStackPage*), 0, AfxHere(), (void**)&dir);
+                AfxAllocate(AfxHere(), stak->maxActiveBlocks * sizeof(afxStackPage*), 0, (void**)&dir);
                 stak->blockDir = dir;
                 AfxZero(dir, stak->maxActiveBlocks * sizeof(afxStackPage*));
             }
@@ -143,7 +143,7 @@ _AFX void AfxPopStack(afxStack* stak, afxUnit cnt)
             if (stak->blockDir)
                 stak->blockDir[--stak->activeBlocks] = NIL;
 
-            AfxDeallocate((void**)&blk, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&blk);
         }
     }
 }
@@ -350,7 +350,7 @@ _AFX void AfxExhaustStack(afxStack* stak, afxBool fully)
     {
         if (fully)
         {
-            AfxDeallocate((void**)&stak->blockDir, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&stak->blockDir);
             stak->blockDir = NIL;
             stak->maxActiveBlocks = (afxUnit)-1;
         }

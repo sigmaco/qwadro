@@ -158,8 +158,8 @@ _AVX afxError _AvxIcdImplement(afxSystem sys, _avxImplementation const* cfg)
 
 static _avxDdiIcd ddi =
 {
-    .cfgDsysCb = _AvxIcdConfigureDsysSW,
-    .acqDsysCb = _AvxIcdEstablishDsysSW,
+    .cfgDsysCb = _AvxIcdSwConfigureDsysCb,
+    .acqDsysCb = _AvxIcdSwEstablishDsysCb,
     .getDsysClsCb = _AvxIcdGetDsysClass,
 };
 

@@ -200,11 +200,11 @@ _AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg)
         dpyMounted = TRUE;
     }
 
-    afxClassConfig envClsCfg = cfg->envCls.fcc ? cfg->envCls : _AUX_ENV_CLASS_CONFIG;
+    afxClassConfig envClsCfg = cfg->envCls.fcc ? cfg->envCls : _AUX_ENV_CLS_CFG;
     AFX_ASSERT(envClsCfg.fcc == afxFcc_ENV);
-    AFX_ASSERT(envClsCfg.fixedSiz >= _AUX_ENV_CLASS_CONFIG.fixedSiz);
+    AFX_ASSERT(envClsCfg.fixedSiz >= _AUX_ENV_CLS_CFG.fixedSiz);
     if ((envClsCfg.fcc != afxFcc_ENV) ||
-        (_AUX_ENV_CLASS_CONFIG.fixedSiz > envClsCfg.fixedSiz))
+        (_AUX_ENV_CLS_CFG.fixedSiz > envClsCfg.fixedSiz))
     {
         AfxThrowError();
         AfxDismountClass(&icd->icd.dpyCls);
@@ -241,8 +241,8 @@ _AUX afxError _AuxIcdImplement(afxSystem sys, _auxImplementation const* cfg)
 
 static _auxDdiIcd ddi =
 {
-    .cfgEnvCb = _AuxIcdConfigureEnvSW,
-    .acqEnvCb = _AuxIcdEstablishEnvSW,
+    .cfgEnvCb = _AuxIcdSwConfigureEnvCb,
+    .acqEnvCb = _AuxIcdSwEstablishEnvCb,
     .getEnvClsCb = _AuxIcdGetEnvClass,
 };
 

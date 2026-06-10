@@ -123,19 +123,22 @@ AFX_OBJECT(afxWindow)
 };
 #endif//_AUX_WINDOW_C
 
-AUX afxClassConfig const _AUX_WND_CLASS_CONFIG;
-AUX _auxWndDdi const _AUX_DDI_WND;
+AUX afxClassConfig const _AUX_WND_CLS_CFG;
+AUX _auxWndDdi const _AUX_WND_DDI_SW;
 
 AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd);
 
 AUX afxBool _AuxWidEmitEventCb(afxWidget wid, auxEvent *ev);
-AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev);
+AUX afxBool _AuxWndSwEventHandlerCb(afxWindow wnd, auxEvent *ev);
 
-AUX afxUnit _AfxWndFormatTitleCb(afxWindow wnd);
-AUX afxError _AfxWndAdjustCb(afxWindow wnd, afxAnchor, afxRect* c);
-AUX _auxWndDdi const _AUX_DDI_WND;
+AUX afxUnit _AfxWndSwFormatTitleCb(afxWindow wnd);
+AUX afxError _AfxWndSwAdjustCb(afxWindow wnd, afxAnchor, afxRect* c);
+AUX _auxWndDdi const _AUX_WND_DDI_SW;
 
-AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY);
-AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn);
+AUX afxError _AfxWndSwChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY);
+AUX afxError _AfxWndSwChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn);
+
+AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, afxV2d const origin, afxV2d const extent);
+AUX afxError _AuxEnvSwAcquireWndCb(afxEnvironment env, afxWindowConfig const* cfg, afxWindow* window);
 
 #endif//AUX_WINDOW_DDK_H

@@ -402,7 +402,7 @@ void PixelQuadCtxSetVaryingsSize(_avxPixelQuadCtx* ctx, afxSize size)
     {
         ctx->varyingsAlignedCnt_ = size;
         ctx->varyingsPool_ = NIL;
-        AfxAllocate(sizeof(float) * (4 * ctx->varyingsAlignedCnt_), NIL, AfxHere(), &ctx->varyingsPool_);
+        AfxAllocate(AfxHere(), sizeof(float) * (4 * ctx->varyingsAlignedCnt_), NIL, &ctx->varyingsPool_);
 
         for (int i = 0; i < 4; i++)
         {

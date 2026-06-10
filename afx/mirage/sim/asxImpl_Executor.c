@@ -105,7 +105,7 @@ _ASX afxInt _ASX_SPU_THREAD_PROC(arxSimBridge sexu)
     afxUnit portId = sexu->portId;
 
     asxSpu* spu;
-    if (AfxAllocate(sizeof(*spu), 0, AfxHere(), (void**)&spu))
+    if (AfxAllocate(AfxHere(), sizeof(*spu), 0, (void**)&spu))
         AfxThrowError();
 
     AfxZero(spu, sizeof(*spu));
@@ -145,7 +145,7 @@ _ASX afxInt _ASX_SPU_THREAD_PROC(arxSimBridge sexu)
     } while (1);
 
     AFX_ASSERT(spu == sexu->spu);
-    AfxDeallocate((void**)&spu, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&spu);
 
     return 0;
 }

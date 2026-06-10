@@ -107,7 +107,7 @@ _AFX afxError _AfxSvcDtor(afxService svc)
             AfxDisposeObjects(1, (void*)&svc->workers[i].thr);
         }
 
-        AfxDeallocate((void**)&svc->workers, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&svc->workers);
         svc->workers = NIL;
     }
     AfxExhaustInterlockedQueue(&svc->jobTypeQue);
@@ -134,7 +134,7 @@ _AFX afxError _AfxSvcCtor(afxService svc, void** args, afxUnit invokeNo)
     if (AfxMakeInterlockedQueue(&svc->jobTypeQue, sizeof(afxJobType), uNumEntries)) AfxThrowError();
     else
     {
-        if (AfxAllocate(workerThrCnt * sizeof(svc->workers[0]), 0, AfxHere(), (void**)&svc->workers)) AfxThrowError();
+        if (AfxAllocate(AfxHere(), workerThrCnt * sizeof(svc->workers[0]), 0, (void**)&svc->workers)) AfxThrowError();
         else
         {
             AfxZero(svc->workers, sizeof(svc->workers[0]) * workerThrCnt);

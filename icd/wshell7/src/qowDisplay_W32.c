@@ -701,6 +701,8 @@ _QOW afxError _QowDpyCaptureCb(afxDisplay dpy, afxUnit port, afxSurface dout)
 _QOW _auxDispDdi _QOW_DDI_DPY =
 {
     .doutCls = _AvxDpyGetDoutClassCb_SW,
+    .cfgDoutCb = _AvxDpySwConfigureDoutCb,
+    .openDoutCb = _AvxDpySwOpenDoutCb,
     .qryModeCb = _QowDpyQueryModesCb,
     .askGammaCtrlCb = _QowDpyAskGammaControlCb,
     .getGammaCtrlCb = _QowDpyGetGammaControlCb,
@@ -758,7 +760,7 @@ _QOW afxError _QowDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
     portClsCfg.ctor = (void*)_QowVduCtorCb;
     portClsCfg.dtor = (void*)_QowVduDtorCb;
 
-    afxClassConfig doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+    afxClassConfig doutClsCfg = _AVX_DOUT_CLS_CFG;
     doutClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSurface));
     doutClsCfg.ctor = (void*)_ZglDoutCtorCb;
     doutClsCfg.dtor = (void*)_ZglDoutDtorCb;

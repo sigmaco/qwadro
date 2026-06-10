@@ -298,7 +298,7 @@ _ZGL afxError _ZglQrypDtor(avxQueryPool qryp)
                     _ZglDsysEnqueueDeletion(dsys, j, GL_QUERY_BUFFER, (afxSize)qryp->perDpu[j].glHandle[/*j * qryp->m.slotCnt + */i]);
                 }
             }
-            AfxDeallocate((void**)&qryp->perDpu[j].glHandle, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&qryp->perDpu[j].glHandle);
             qryp->perDpu[j].glHandle = 0;
         }
     }
@@ -315,7 +315,7 @@ _ZGL afxError _ZglQrypCtor(avxQueryPool qryp, void** args, afxUnit invokeNo)
 
     for (afxUnit i = 0; i < ZGL_MAX_DPUS; i++)
     {
-        AfxCoallocate(qryp->m.slotCnt, sizeof(qryp->perDpu[i].glHandle), 0, AfxHere(), (void**)&qryp->perDpu[i].glHandle);
+        AfxCoallocate(AfxHere(), qryp->m.slotCnt, sizeof(qryp->perDpu[i].glHandle), 0, (void**)&qryp->perDpu[i].glHandle);
     }
     qryp->updFlags = ZGL_UPD_FLAG_DEVICE_INST;
     qryp->m.type = cfg->type;

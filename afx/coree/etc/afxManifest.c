@@ -39,7 +39,7 @@ _AFXINL _afxIniRecord* _AfxIniCreateRecord(afxManifest* ini, _afxIniPage* page, 
 {
     afxError err;
 
-    if ((!(page->keyCnt % 8)) && AfxReallocate(sizeof(page->keys[0]) * (8 + page->keyCnt), NIL, AfxHere(), (void**)&page->keys)) AfxThrowError();
+    if ((!(page->keyCnt % 8)) && AfxReallocate(AfxHere(), sizeof(page->keys[0]) * (8 + page->keyCnt), NIL, (void**)&page->keys)) AfxThrowError();
     else
     {
         _afxIniRecord* entry = &page->keys[page->keyCnt++];
@@ -57,7 +57,7 @@ _AFXINL _afxIniPage* _AfxIniCreatePage(afxManifest* ini, afxString const* block)
 {
     afxError err;
 
-    if ((!(ini->pageCnt % 8)) && AfxReallocate(sizeof(ini->pages[0]) * (8 + ini->pageCnt), NIL, AfxHere(), (void**)&ini->pages)) AfxThrowError();
+    if ((!(ini->pageCnt % 8)) && AfxReallocate(AfxHere(), sizeof(ini->pages[0]) * (8 + ini->pageCnt), NIL, (void**)&ini->pages)) AfxThrowError();
     else
     {
         _afxIniPage* page = &ini->pages[ini->pageCnt++];
@@ -67,7 +67,7 @@ _AFXINL _afxIniPage* _AfxIniCreatePage(afxManifest* ini, afxString const* block)
         if (AfxCloneString(&page->name, block)) AfxThrowError();
         else
         {
-            if (AfxAllocate(8 * sizeof(page->keys[0]), 0, AfxHere(), (void**)&page->keys))
+            if (AfxAllocate(AfxHere(), 8 * sizeof(page->keys[0]), 0, (void**)&page->keys))
                 AfxThrowError();
         }
         return page;
@@ -215,7 +215,7 @@ _AFX afxError AfxDeployManifest(afxManifest* ini)
     afxError err = { 0 };
     ini->pageCnt = 0;
     
-    if (AfxAllocate(8 * sizeof(ini->pages[0]), 0, AfxHere(), (void**)&ini->pages))
+    if (AfxAllocate(AfxHere(), 8 * sizeof(ini->pages[0]), 0, (void**)&ini->pages))
         AfxThrowError();
 
     return err;
@@ -235,12 +235,12 @@ _AFX void AfxDismantleManifest(afxManifest* ini)
         }
 
         AfxDeallocateString(&page->name);
-        AfxDeallocate((void**)&page->keys, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&page->keys);
     }
 
     if (ini->pages)
     {
-        AfxDeallocate((void**)&ini->pages, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ini->pages);
         ini->pages = NIL;
     }
 }

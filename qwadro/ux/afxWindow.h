@@ -145,7 +145,7 @@ AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev);
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
-    The AfxGetWindowRect() function retrieves the dimensions of the bounding rectangle of the specified afxWindow. 
+    The AfxGetWindowArea() function retrieves the dimensions of the bounding rectangle of the specified afxWindow. 
     The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
 
     The AfxGetSurfaceRect() function retrieves the coordinates of a window's surface (aka client area). 
@@ -153,7 +153,7 @@ AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev);
     Because surface coordinates are relative to the upper-left corner of a window's surface, the coordinates of the upper-left corner are (0,0).
 */
 
-AUX afxBool AfxGetWindowRect
+AUX afxBool AfxGetWindowArea
 (
     // The handle of the afxWindow.
     afxWindow wnd, 
@@ -208,29 +208,31 @@ AUX afxError AfxGetWindowSurface
 );
 
 /*
-    The AfxGetOnSurfaceScreenPosition() function converts the screen coordinates of a specified point on the screen to surface coordinates.
+    The AfxGetOnWindowScreenArea() function converts the screen coordinates of a specified point on the screen to surface coordinates.
 */
 
-AUX afxBool AfxGetOnSurfaceScreenPosition
+AUX afxBool AfxGetOnWindowScreenArea
 (
     // The handle of the afxWindow owning the surface.
     afxWindow wnd,
-    afxUnit const screenPos[2],
-    afxUnit surfPos[2]
+    afxBool incFrame,
+    afxRect const* screenRc,
+    afxRect* surfRc
 );
 
 /*
-    The AfxGetOnScreenSurfacePosition() function converts the surface coordinates of a specified point to screen coordinates.
+    The AfxGetOnScreenWindowArea() function converts the surface coordinates of a specified point to screen coordinates.
 */
 
-AUX afxBool AfxGetOnScreenSurfacePosition
+AUX afxBool AfxGetOnScreenWindowArea
 (
     // The handle of the afxWindow owning the surface.
     afxWindow wnd, 
+    afxBool incFrame,
     // The coordinates in window's surface area.
-    afxUnit const surfPos[2], 
+    afxRect const* surfRc,
     // A variable which will hold the resolved coordinates in screen space.
-    afxUnit screenPos[2]
+    afxRect* screenRc
 );
 
 /*

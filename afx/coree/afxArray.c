@@ -49,7 +49,7 @@ _AFXINL afxError AfxEmptyArray(afxArray* arr, afxBool dontFree, afxBool zeroOut)
         arr->cap = 0;
         if (arr->bytemap && arr->alloced)
         {
-            AfxDeallocate((void**)&arr->bytemap, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&arr->bytemap);
             arr->alloced = FALSE;
         }
     }
@@ -115,7 +115,7 @@ _AFXINL afxError AfxReserveArraySpace(afxArray* arr, afxUnit cap)
 
     AFX_ASSERT(arr->alloced);
 
-    if (AfxReallocate(arr->unitSiz * cap, arr->align, AfxHere(), (void**)&arr->bytemap))
+    if (AfxReallocate(AfxHere(), arr->unitSiz * cap, arr->align, (void**)&arr->bytemap))
     {
         AfxThrowError();
     }
@@ -144,7 +144,7 @@ _AFXINL void AfxUpdateArray(afxArray* arr, afxUnit firstUnit, afxUnit unitCnt, a
     AFX_ASSERT(arr->bytemap);
     AFX_ASSERT(src);
     //AfxCopy2(&(arr->bytemap[firstUnit * arr->unitSiz]), src, arr->unitSiz, unitCnt);
-    AfxStream2(unitCnt, src, stride, &arr->bytemap[firstUnit * arr->unitSiz + offset], arr->unitSiz);
+    AfxStream2(unitCnt, src, stride, &arr->bytemap[(firstUnit * arr->unitSiz) + offset], arr->unitSiz);
 }
 
 _AFXINL void AfxDumpArray(afxArray const* arr, afxUnit firstUnit, afxUnit unitCnt, afxUnit offset, void *dst, afxUnit stride)
@@ -155,7 +155,7 @@ _AFXINL void AfxDumpArray(afxArray const* arr, afxUnit firstUnit, afxUnit unitCn
     AFX_ASSERT(arr->bytemap);
     AFX_ASSERT(dst);
     //AfxCopy2(dst, &arr->bytemap[firstUnit * arr->unitSiz], arr->unitSiz, unitCnt);
-    AfxStream2(unitCnt, &arr->bytemap[firstUnit * arr->unitSiz + offset], arr->unitSiz, dst, stride);
+    AfxStream2(unitCnt, &arr->bytemap[(firstUnit * arr->unitSiz) + offset], arr->unitSiz, dst, stride);
 }
 
 _AFXINL void* AfxPushArrayUnits(afxArray* arr, afxUnit cnt, afxUnit* baseUnitIdx, void const* src, afxUnit srcStride)

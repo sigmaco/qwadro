@@ -36,11 +36,11 @@ _AFXINL afxUnit AfxMergeRects(afxRect* rc, afxRect const* a, afxRect const* b)
     // Essentially the inverse of AfxIntersectRects().
     afxInt x = AFX_MIN(a->x, b->x);
     afxInt y = AFX_MIN(a->y, b->y);
-    rc->x = x;
-    rc->y = y;
-    rc->w = AFX_MAX(a->x + a->w, b->x + b->w) - x;
-    rc->h = AFX_MAX(a->y + a->h, b->y + b->h) - y;
-    return (rc->w * rc->h);
+    afxUnit w, h;
+    *rc = AFX_RECT( x, y,   (w = (AFX_MAX(a->x + a->w, b->x + b->w) - x)),
+                            (h = (AFX_MAX(a->y + a->h, b->y + b->h) - y)));
+
+    return (w * h);
 }
 
 _AFXINL afxUnit AfxIntersectRects(afxRect* rc, afxRect const* a, afxRect const* b)
@@ -53,11 +53,11 @@ _AFXINL afxUnit AfxIntersectRects(afxRect* rc, afxRect const* a, afxRect const* 
     // Essentially the inverse of AfxMergeRects().
     afxInt x = AFX_MAX(a->x, b->x);
     afxInt y = AFX_MAX(a->y, b->y);
-    rc->x = x;
-    rc->y = y;
-    rc->w = AFX_MIN(a->x + a->w, b->x + b->w) - x;
-    rc->h = AFX_MIN(a->y + a->h, b->y + b->h) - y;
-    return (rc->w * rc->h);
+    afxUnit w, h;
+    *rc = AFX_RECT( x, y,   (w = (AFX_MIN(a->x + a->w, b->x + b->w) - x)),
+                            (h = (AFX_MIN(a->y + a->h, b->y + b->h) - y)));
+
+    return (w * h);
 }
 
 _AFXINL afxBool AfxAreRectsEqual(afxRect const* a, afxRect const* b)
@@ -235,3 +235,64 @@ _AFXINL void AfxAccumulateRects(afxRect* rc, afxUnit cnt, afxRect* in)
 
     *rc = AFX_RECT(minX, minY, maxX - minX, maxY - minY);
 }
+
+
+afxRect ResolveSurfaceRect(
+    afxRect const* screen,
+    afxRect const* desired,
+    afxAnchor anchor,
+    afxRect const* current)
+{
+    afxRect out = *desired;
+
+    // If no anchor is specified, just preserve position
+    if (anchor == 0)
+    {
+        out.x = current->x;
+        out.y = current->y;
+        return out;
+    }
+
+    // Compute the anchor points in both rects
+    afxInt screenAx = screen->x;
+    afxInt screenAy = screen->y;
+    afxInt winAx = 0;
+    afxInt winAy = 0;
+
+    // Screen anchor point
+    if (anchor & afxAnchor_LEFT)
+        screenAx = screen->x;
+    else if (anchor & afxAnchor_CENTER)
+        screenAx = screen->x + screen->w / 2;
+    else if (anchor & afxAnchor_RIGHT)
+        screenAx = screen->x + screen->w;
+
+    if (anchor & afxAnchor_TOP)
+        screenAy = screen->y;
+    else if (anchor & afxAnchor_MIDDLE)
+        screenAy = screen->y + screen->h / 2;
+    else if (anchor & afxAnchor_BOTTOM)
+        screenAy = screen->y + screen->h;
+
+    // Window anchor point (relative to window's own rect)
+    if (anchor & afxAnchor_LEFT)
+        winAx = 0;
+    else if (anchor & afxAnchor_CENTER)
+        winAx = desired->w / 2;
+    else if (anchor & afxAnchor_RIGHT)
+        winAx = desired->w;
+
+    if (anchor & afxAnchor_TOP)
+        winAy = 0;
+    else if (anchor & afxAnchor_MIDDLE)
+        winAy = desired->h / 2;
+    else if (anchor & afxAnchor_BOTTOM)
+        winAy = desired->h;
+
+    // Position the window so its anchor point coincides with the screen's anchor point
+    out.x = screenAx - winAx + desired->x;
+    out.y = screenAy - winAy + desired->y;
+
+    return out;
+}
+

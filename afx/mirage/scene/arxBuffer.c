@@ -105,7 +105,7 @@ _ARX afxError _ArxRbufDtorCb(arxBuffer rbuf)
 
     if (rbuf->mem.hostedAlloc.bytemap)
     {
-        AfxDeallocate((void**)&rbuf->mem.hostedAlloc.bytemap, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&rbuf->mem.hostedAlloc.bytemap);
     }
 
     if (rbuf->base)
@@ -252,7 +252,7 @@ _ARX afxError _ArxRbufCtorCb(arxBuffer rbuf, void** args, afxUnit invokeNo)
     smem->pendingRemap = 0;
     smem->permanentlyMapped = !!bufi->mapped;
 
-    AfxAllocate(smem->size, smem->alignment, AfxHere(), (void**)&smem->hostedAlloc.bytemap);
+    AfxAllocate(AfxHere(), smem->size, smem->alignment, (void**)&smem->hostedAlloc.bytemap);
 
     smem->mapPtr = smem->hostedAlloc.bytemap;
     smem->mapRange = smem->size;

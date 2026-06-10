@@ -223,7 +223,7 @@ _ARX afxError _AsxShapCtorCb(asxShape shap, void** args, afxUnit invokeNo)
         
         shap->triCnt = mshi.triCnt;
 
-        AfxAllocate(mshi.triCnt * sizeof(shap->tris[0]), 0, AfxHere(), (void**)&shap->tris);
+        AfxAllocate(AfxHere(), mshi.triCnt * sizeof(shap->tris[0]), 0, (void**)&shap->tris);
         precompute_triangle_edges(mshi.triCnt, indices, pos, shap->tris);
     }
     return err;

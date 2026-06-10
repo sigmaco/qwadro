@@ -92,7 +92,7 @@ _ARXINL afxUnit* ArxGetMeshIndices(arxMesh msh, afxUnit baseTriIdx)
         }
 #endif
 
-        if (AfxAllocate(msh->idxCnt * sizeof(msh->indices[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&msh->indices))
+        if (AfxAllocate(AfxHere(), msh->idxCnt * sizeof(msh->indices[0]), AFX_SIMD_ALIGNMENT, (void**)&msh->indices))
         {
             AfxThrowError();
             return NIL;
@@ -414,7 +414,7 @@ _ARXINL afxError ArxFormatVertexAttribute(arxMesh msh, afxUnit attrIdx, avxForma
     //AfxCopyString(&msh->attrIds[attrIdx], 0, usage, 0);
 
     if (msh->vtxAttrData[attrIdx])
-        AfxDeallocate((void**)&msh->vtxAttrData[attrIdx], AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&msh->vtxAttrData[attrIdx]);
 
     return err;
 }
@@ -452,7 +452,7 @@ _ARXINL void* ArxAccessVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
             if (msh->morphs[i].affectedAttrs & attrBit)
                 dataSiz += msh->vtxCnt * unitSiz;
 
-        if (AfxAllocate(dataSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&msh->vtxAttrData[attrIdx]))
+        if (AfxAllocate(AfxHere(), dataSiz, AFX_SIMD_ALIGNMENT, (void**)&msh->vtxAttrData[attrIdx]))
         {
             AfxThrowError();
             return NIL;
@@ -766,12 +766,12 @@ _ARX afxError _ArxMshDtorCb(arxMesh msh)
     {
         if (msh->vtxAttrData[i])
         {
-            AfxDeallocate((void**)&msh->vtxAttrData[i], AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&msh->vtxAttrData[i]);
         }
     }
 
     if (msh->indices)
-        AfxDeallocate((void**)&msh->indices, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&msh->indices);
 
     afxAllocation stashes[] =
     {

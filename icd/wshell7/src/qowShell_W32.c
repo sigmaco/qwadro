@@ -40,7 +40,7 @@ afxError getInteropDoutCls(afxDrawSystem dsys, afxString const* tool, afxClassCo
 
     if (0 == AfxCompareString(tool, 0, "wgl", 0, FALSE))
     {
-        afxClassConfig doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+        afxClassConfig doutClsCfg = _AVX_DOUT_CLS_CFG;
         doutClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSurface));
         doutClsCfg.ctor = (void*)_ZglDoutCtorCb;
         doutClsCfg.dtor = (void*)_ZglDoutDtorCb;
@@ -52,7 +52,7 @@ afxError getInteropDoutCls(afxDrawSystem dsys, afxString const* tool, afxClassCo
                 (0 == AfxCompareString(tool, 0, "sw", 0, FALSE)) ||
                 (0 == AfxCompareString(tool, 0, "", 0, FALSE)))
     {
-        afxClassConfig doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+        afxClassConfig doutClsCfg = _AVX_DOUT_CLS_CFG;
         doutClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSurface));
         doutClsCfg.ctor = (void*)_QowDoutCtorCb_GDI;
         doutClsCfg.dtor = (void*)_QowDoutDtorCb_GDI;
@@ -96,7 +96,7 @@ _QOW afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
-    afxClassConfig envClsCfg = _AUX_ENV_CLASS_CONFIG;
+    afxClassConfig envClsCfg = _AUX_ENV_CLS_CFG;
     envClsCfg.fixedSiz = sizeof(AFX_OBJ(afxEnvironment));
     envClsCfg.ctor = (void*)_QowEnvCtorCb;
     envClsCfg.dtor = (void*)_QowEnvDtorCb;

@@ -147,10 +147,10 @@ AFX afxError                AfxUnmapMemory(afxMemory mem, afxSize offset, afxUni
 AFX afxError                AfxMemoryEnableDebugging(afxMmu mmu, afxUnit level);
 AFX afxSize                 AfxMemoryGetDefaultAlignment(afxMmu mmu);
 
-AFX afxError                AfxAllocate(afxSize siz, afxUnit align, afxHere const hint, void** pp);
-AFX afxError                AfxCoallocate(afxSize siz, afxSize cnt, afxUnit align, afxHere const hint, void** pp);
-AFX afxError                AfxReallocate(afxSize siz, afxUnit align, afxHere const hint, void** pp);
-AFX afxError                AfxDeallocate(void** pp, afxHere const hint);
+AFX afxError                AfxAllocate(afxHere const hint, afxSize siz, afxUnit align, void** pp);
+AFX afxError                AfxCoallocate(afxHere const hint, afxSize cnt, afxSize siz, afxUnit align, void** pp);
+AFX afxError                AfxReallocate(afxHere const hint, afxSize siz, afxUnit align, void** pp);
+AFX afxError                AfxDeallocate(afxHere const hint, void** pp);
 
 #define                     AfxStream(cnt_,srcStride_,dstStride_,src_,dst_) AfxStream2(cnt_,src_,srcStride_,dst_,dstStride_)
 AFX void                    AfxStream2(afxUnit cnt, void const* src, afxSize srcStride, void* dst, afxUnit dstStride);

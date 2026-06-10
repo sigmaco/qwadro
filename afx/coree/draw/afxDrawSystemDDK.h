@@ -74,6 +74,12 @@ AFX_DEFINE_STRUCT(_avxDsysDdi)
     afxClass const*(*ligaCls)(afxDrawSystem);
 
     afxClass const*(*txdCls)(afxDrawSystem);
+
+    afxError(*cfgSampCb)(afxDrawSystem, avxSamplerConfig*);
+    afxError(*acqSampCb)(afxDrawSystem, afxUnit cnt, avxSamplerConfig const[], avxSampler[]);
+
+    afxError(*cfgCanvCb)(afxDrawSystem, avxCanvasConfig*);
+    afxError(*acqCanvCb)(afxDrawSystem, avxCanvasConfig const*, afxUnit cnt, avxCanvas[]);
 };
 #endif
 

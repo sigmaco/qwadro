@@ -491,14 +491,14 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
         op.rowsPerImg = tgai.height;
 
         void* data;
-        AfxAllocate(tgai.decSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&data);
+        AfxAllocate(AfxHere(), tgai.decSiz, AFX_SIMD_ALIGNMENT, (void**)&data);
 
         AvxDecodeRasterFile(&tgai, file, data);
         AvxUpdateRaster(ras, 1, &op, data, NIL, exuMask);
 
         AvxWaitForDrawBridges(AvxGetRasterHost(ras), AFX_TIMEOUT_INFINITE, exuMask);
 
-        AfxDeallocate((void**)&data, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&data);
     }
     else
     {
@@ -526,14 +526,14 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
             iopClamped.rgn.lodIdx = lodIdxClamped;
 
             void* data;
-            AfxAllocate(tgai.decSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&data);
+            AfxAllocate(AfxHere(), tgai.decSiz, AFX_SIMD_ALIGNMENT, (void**)&data);
 
             AvxDecodeRasterFile(&tgai, file, data);
             AvxUpdateRaster(ras, 1, &iopClamped, data, NIL, exuMask);
 
             AvxWaitForDrawBridges(AvxGetRasterHost(ras), AFX_TIMEOUT_INFINITE, exuMask);
 
-            AfxDeallocate((void**)&data, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&data);
         }
     }
     //AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, portId); // we need to wait for completation before releasing the stream.

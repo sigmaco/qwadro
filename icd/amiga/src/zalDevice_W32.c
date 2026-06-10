@@ -34,7 +34,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
 #if 0
         if (!sdev->idd)
         {
-            if (AfxAllocate(sizeof(sdev->idd[0]), 0, AfxHere(), (void**)&sdev->idd)) AfxThrowError();
+            if (AfxAllocate(AfxHere(), sizeof(sdev->idd[0]), 0, (void**)&sdev->idd)) AfxThrowError();
             else
             {
                 afxUri uri;
@@ -60,7 +60,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
                 }
 
                 if (err)
-                    AfxDeallocate((void**)&sdev->idd, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&sdev->idd);
             }
         }
 #endif
@@ -76,7 +76,7 @@ _ZAL afxResult _ZalSdevIoctrlCb(afxMixDevice sdev, afxUnit reqCode, va_list va)
             if (sdev->idd->oalDll)
                 AfxDisposeObjects(1, &sdev->idd->oalDll);
 
-            AfxDeallocate((void**)&sdev->idd, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&sdev->idd);
             sdev->idd = NIL;
         }
 #endif

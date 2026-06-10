@@ -514,13 +514,10 @@ _AVX afxError _AvxCanvDtorCb(avxCanvas canv)
 
     afxAllocation const stashs[] =
     {
-        {
-            .cnt = canv->binCnt,
-            .siz = sizeof(canv->bins[0]),
-            .var = (void**)&canv->bins
-        }
+        AFX_ALLOCATION(canv->binCnt, sizeof(canv->bins[0]), 0, &canv->bins)
     };
-    AfxDeallocateInstanceData(canv, ARRAY_SIZE(stashs), stashs);
+    if (AfxFailed(AfxDeallocateInstanceData(canv, ARRAY_SIZE(stashs), stashs)))
+        AfxThrowError();
 
     return err;
 }
@@ -649,14 +646,9 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
 
     afxAllocation const stashs[] =
     {
-        {
-            .cnt = binCnt,
-            .siz = sizeof(canv->bins[0]),
-            .var = (void**)&canv->bins
-        }
+        AFX_ALLOCATION(binCnt, sizeof(canv->bins[0]), 0, &canv->bins)
     };
-
-    if (AfxAllocateInstanceData(canv, ARRAY_SIZE(stashs), stashs))
+    if (AfxFailed(AfxAllocateInstanceData(canv, ARRAY_SIZE(stashs), stashs)))
     {
         AfxThrowError();
         return err;
@@ -743,7 +735,8 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
 
     if (err)
     {
-        AfxDeallocateInstanceData(canv, ARRAY_SIZE(stashs), stashs);
+        if (AfxFailed(AfxDeallocateInstanceData(canv, ARRAY_SIZE(stashs), stashs)))
+            AfxThrowError();
     }
     return err;
 }
@@ -761,9 +754,10 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_CANV =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError AvxConfigureCanvas(afxDrawSystem dsys, avxCanvasConfig* cfg)
+_AVX afxError _AvxDsysSwConfigureCanvCb(afxDrawSystem dsys, avxCanvasConfig* cfg)
 {
     afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
     AFX_ASSERT(cfg);
 
@@ -942,9 +936,24 @@ _AVX afxError AvxConfigureCanvas(afxDrawSystem dsys, avxCanvasConfig* cfg)
     return err;
 }
 
-_AVX afxError AvxAcquireCanvas(afxDrawSystem dsys, avxCanvasConfig const* cfg, afxUnit cnt, avxCanvas canvases[])
+_AVX afxError AvxConfigureCanvas(afxDrawSystem dsys, avxCanvasConfig* cfg)
 {
     afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->cfgCanvCb(dsys, cfg)))
+    {
+        AfxThrowError();
+        return err;
+    }
+}
+
+_AVX afxError _AvxDsysSwAcquireCanvCb(afxDrawSystem dsys, avxCanvasConfig const* cfg, afxUnit cnt, avxCanvas canvases[])
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
     AFX_ASSERT(canvases);
     AFX_ASSERT(cfg);
@@ -953,6 +962,25 @@ _AVX afxError AvxAcquireCanvas(afxDrawSystem dsys, avxCanvasConfig const* cfg, a
     AFX_ASSERT_CLASS(cls, afxFcc_CANV);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)canvases, (void const*[]) { dsys, cfg }))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_CANV, cnt, canvases);
+
+    return err;
+}
+
+_AVX afxError AvxAcquireCanvas(afxDrawSystem dsys, avxCanvasConfig const* cfg, afxUnit cnt, avxCanvas canvases[])
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(canvases);
+    AFX_ASSERT(cfg);
+
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->acqCanvCb(dsys, cfg, cnt, canvases)))
     {
         AfxThrowError();
         return err;

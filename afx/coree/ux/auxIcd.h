@@ -75,9 +75,9 @@ AUX afxBool _AuxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* auxIcd);
 
 AFX afxError AfxGetShell(afxUnit unit, afxModule* auxIcd);
 
-AUX afxError _AuxIcdConfigureEnvSW(afxModule auxIcd, afxEnvironmentConfig* cfg);
+AUX afxError _AuxIcdSwConfigureEnvCb(afxModule auxIcd, afxEnvironmentConfig* cfg);
 
-AUX afxError _AuxIcdEstablishEnvSW(afxModule auxIcd, afxEnvironmentConfig const* cfg, afxEnvironment* environment);
+AUX afxError _AuxIcdSwEstablishEnvCb(afxModule auxIcd, afxEnvironmentConfig const* cfg, afxEnvironment* environment);
 
 AUX _auxDdiIcd const* _AuxGetDdi(afxModule auxIcd);
 

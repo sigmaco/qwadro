@@ -125,7 +125,7 @@ _ARX afxError AfxSerializeCurves(afxStream out, afxUnit cnt, arxCurve curves[])
     afxUnit curIdx = 0;
 
     FMA_CUR_HDR* curHdrs;
-    if (AfxAllocate(cnt * sizeof(curHdrs[0]), 0, AfxHere(), (void**)&curHdrs))
+    if (AfxAllocate(AfxHere(), cnt * sizeof(curHdrs[0]), 0, (void**)&curHdrs))
         AfxThrowError();;
 
     afxSize curHdrOffBkp = AfxAskStreamPosn(out);
@@ -174,7 +174,7 @@ _ARX afxError AfxSerializeCurves(afxStream out, afxUnit cnt, arxCurve curves[])
     if (AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    AfxDeallocate((void**)&curHdrs, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&curHdrs);
 
     return err;
 }
@@ -187,7 +187,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
     afxUnit gesIdx = 0;
 
     FMA_MOT_HDR* motHdrs;
-    if (AfxAllocate(cnt * sizeof(motHdrs[0]), 0, AfxHere(), (void**)&motHdrs))
+    if (AfxAllocate(AfxHere(), cnt * sizeof(motHdrs[0]), 0, (void**)&motHdrs))
         AfxThrowError();
 
     afxSize motHdrOffBkp = AfxAskStreamPosn(out);
@@ -246,13 +246,13 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
 
         if (totalCurCnt)
         {
-            if (AfxAllocate(totalCurCnt * sizeof(curves[0]), 0, AfxHere(), (void**)&curves))
+            if (AfxAllocate(AfxHere(), totalCurCnt * sizeof(curves[0]), 0, (void**)&curves))
                 AfxThrowError();
         }
 
         if (ges->pivotCnt)
         {
-            if (AfxAllocate(ges->pivotCnt * sizeof(pvtHdrs[0]), 0, AfxHere(), (void**)&pvtHdrs))
+            if (AfxAllocate(AfxHere(), ges->pivotCnt * sizeof(pvtHdrs[0]), 0, (void**)&pvtHdrs))
                 AfxThrowError();
 
             // prepare pivots
@@ -272,7 +272,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
 
         if (ges->vecCnt)
         {
-            if (AfxAllocate(ges->vecCnt * sizeof(vecHdrs[0]), 0, AfxHere(), (void**)&vecHdrs))
+            if (AfxAllocate(AfxHere(), ges->vecCnt * sizeof(vecHdrs[0]), 0, (void**)&vecHdrs))
                 AfxThrowError();
 
             // prepare vectors
@@ -305,7 +305,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
         if (AfxSerializeCurves(out, motHdr.totalCurCnt, curves))
             AfxThrowError();
 
-        AfxDeallocate((void**)&curves, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&curves);
 
         // write pivots' headers
 
@@ -332,7 +332,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             AfxWriteStream(out, sizeof(pvtHdrs[0]) * ges->pivotCnt, 0, pvtHdrs);
             //AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN);
 
-            AfxDeallocate((void**)&pvtHdrs, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&pvtHdrs);
         }
 
         // write vectors' headers
@@ -354,7 +354,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             if (AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN))
                 AfxThrowError();
 
-            AfxDeallocate((void**)&vecHdrs, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&vecHdrs);
         }
 
         motHdrs[gesIdx] = motHdr;
@@ -374,7 +374,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
     if (AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    AfxDeallocate((void**)&motHdrs, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&motHdrs);
 
     return err;
 }

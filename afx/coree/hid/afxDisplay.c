@@ -261,6 +261,8 @@ _AUX afxError AfxScanBackDisplayBuffer(afxDisplay dpy, afxUnit port, afxSurface 
 _AUX _auxDispDdi _AUX_DDI_DPY =
 {
     .doutCls = _AvxDpyGetDoutClassCb_SW,
+    .cfgDoutCb = _AvxDpySwConfigureDoutCb,
+    .openDoutCb = _AvxDpySwOpenDoutCb,
     .qryModeCb = NIL,
     .askGammaCtrlCb = NIL,
     .getGammaCtrlCb = NIL,
@@ -312,7 +314,7 @@ _AUX afxError _AuxDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
     if (pDoutClsCfg) doutClsCfg = *pDoutClsCfg;
     else
     {
-        doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+        doutClsCfg = _AVX_DOUT_CLS_CFG;
     }
     AFX_ASSERT(doutClsCfg.fcc == afxFcc_DOUT);
     AfxMountClass(&dpy->doutCls, NIL, &dpy->dev.classes, &doutClsCfg); // req RAS, CANV

@@ -592,7 +592,7 @@ _AFXINL afxError _AfxIomSW_DeallocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuf
         {
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -623,7 +623,7 @@ _AFXINL afxError _AfxIomSW_AllocateBuffersCb(afxIommu iom, afxUnit cnt, afxBuffe
         }
         else
         {
-            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), buf->reqSiz, buf->reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }

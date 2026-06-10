@@ -348,19 +348,10 @@ _AVX afxError _AvxVtxdDtorCb(avxVertexInput vin)
 
     afxAllocation const stashes[] =
     {
-        {
-            .cnt = vin->totalAttrCnt,
-            .siz = sizeof(vin->attrs[0]),
-            .var = (void**)&vin->attrs
-        },
-        {
-            .cnt = vin->binCnt,
-            .siz = sizeof(vin->bins[0]),
-            .var = (void**)&vin->bins
-        }
+        AFX_ALLOCATION(vin->totalAttrCnt, sizeof(vin->attrs[0]), 0, &vin->attrs),
+        AFX_ALLOCATION(vin->binCnt, sizeof(vin->bins[0]), 0, &vin->bins)
     };
-
-    if (AfxDeallocateInstanceData(vin, ARRAY_SIZE(stashes), stashes))
+    if (AfxFailed(AfxDeallocateInstanceData(vin, ARRAY_SIZE(stashes), stashes)))
     {
         AfxThrowError();
         return err;
@@ -596,19 +587,10 @@ _AVX afxError _AvxVtxdCtorCb(avxVertexInput vin, void** args, afxUnit invokeNo)
 
     afxAllocation const stashes[] =
     {
-        {
-            .cnt = totalAttrCnt,
-            .siz = sizeof(vin->attrs[0]),
-            .var = (void**)&vin->attrs
-        },
-        {
-            .cnt = layout->binCnt,
-            .siz = sizeof(vin->bins[0]),
-            .var = (void**)&vin->bins
-        }
+        AFX_ALLOCATION(totalAttrCnt, sizeof(vin->attrs[0]), 0, &vin->attrs),
+        AFX_ALLOCATION(layout->binCnt, sizeof(vin->bins[0]), 0, &vin->bins)
     };
-
-    if (AfxAllocateInstanceData(vin, ARRAY_SIZE(stashes), stashes))
+    if (AfxFailed(AfxAllocateInstanceData(vin, ARRAY_SIZE(stashes), stashes)))
     {
         AfxThrowError();
         return err;
@@ -641,7 +623,7 @@ _AVX afxError _AvxVtxdCtorCb(avxVertexInput vin, void** args, afxUnit invokeNo)
     vin->totalAttrCnt = totalAttrCnt;
     vin->binCnt = layout->binCnt;
 
-    if (err && AfxAllocateInstanceData(vin, ARRAY_SIZE(stashes), stashes))
+    if (err && AfxDeallocateInstanceData(vin, ARRAY_SIZE(stashes), stashes))
         AfxThrowError();
 
     return err;

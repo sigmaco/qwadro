@@ -170,20 +170,22 @@ AFX_OBJECT(afxSurface)
 };
 #endif//_AVX_SURFACE_C
 
-AVX afxClassConfig const _AVX_CLASS_CONFIG_DOUT;
+AVX afxClassConfig const _AVX_DOUT_CLS_CFG;
 AVX _avxDoutDdi const _AVX_DDI_DOUT;
 
 AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresentation const presentations[]);
 AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption const captions[]);
 
-AVX afxError _AvxDoutIoctlCb(afxSurface dout, afxUnit code, va_list ap);
-AVX afxError _AvxDoutAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);
-AVX afxError _AvxDoutRegenBuffers(afxSurface dout, afxBool build);
-AVX afxError _AvxDoutLockBufferCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx);
-AVX afxError _AvxDoutUnlockBufferCb(afxSurface dout, afxUnit bufIdx);
+AVX afxError _AvxDoutSwIoctlCb(afxSurface dout, afxUnit code, va_list ap);
+AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool fse);
+AVX afxError _AvxDoutSwRegenCb(afxSurface dout, afxBool build);
+AVX afxError _AvxDoutSwLockBufCb(afxSurface dout, afxMask exuMask, avxFence signal, afxUnit64 timeout, afxUnit* bufIdx);
+AVX afxError _AvxDoutSwUnlockBufCb(afxSurface dout, afxUnit bufIdx);
 
-AVX afxError _AvxDoutAdjustNormalized(afxSurface dout, afxV3d const whd);
-AVX void _AvxDoutGetExtentNormalized(afxSurface dout, afxV3d whd); // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
+AVX afxError _AvxAdjustSurfaceNormalized(afxSurface dout, afxV3d const whd);
+AVX void _AvxGetSurfaceExtentNormalized(afxSurface dout, afxV3d whd); // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
 
+AVX afxError _AvxDpySwConfigureDoutCb(afxDisplay dpy, afxSurfaceConfig* cfg);
+AVX afxError _AvxDpySwOpenDoutCb(afxDisplay dpy, afxSurfaceConfig const* cfg, afxSurface* output);
 
 #endif//AFX_SURFACE_DDK_H

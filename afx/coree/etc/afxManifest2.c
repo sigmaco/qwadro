@@ -57,7 +57,7 @@ _AFXINL _afxIniPage* _AfxIniCreatePage(afxManifest* ini, afxString const* block)
 {
     afxError err;
 
-    if ((!(ini->pageCnt % 8)) && !(ini->pages = AfxReallocate(ini->pages, sizeof(ini->pages[0]), (8 + ini->pageCnt), NIL, AfxHere()))) AfxThrowError();
+    if ((!(ini->pageCnt % 8)) && !(ini->pages = AfxReallocate(AfxHere(), sizeof(ini->pages[0]), (8 + ini->pageCnt), NIL, ini->pages))) AfxThrowError();
     else
     {
         _afxIniPage* page = &ini->pages[ini->pageCnt++];
@@ -215,7 +215,7 @@ _AFX afxError AfxDeployManifest(afxManifest* ini)
     afxError err = { 0 };
     ini->pageCnt = 0;
     
-    if (AfxAllocate(8 * sizeof(ini->pages[0]), 0, AfxHere(), (void**)&ini->pages))
+    if (AfxAllocate(AfxHere(), 8 * sizeof(ini->pages[0]), 0, (void**)&ini->pages))
         AfxThrowError();
 
     return err;
@@ -235,12 +235,12 @@ _AFX void AfxDismantleManifest(afxManifest* ini)
         }
 
         AfxDeallocateString(&page->name);
-        AfxDeallocate((void**)&page->keys, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&page->keys);
     }
 
     if (ini->pages)
     {
-        AfxDeallocate((void**)&ini->pages, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ini->pages);
         ini->pages = NIL;
     }
 }

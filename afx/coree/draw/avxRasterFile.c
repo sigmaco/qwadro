@@ -665,13 +665,13 @@ _AVX afxError AvxDecodeRasterFile(avxRasterFile const* meta, afxStream in, void*
         afxUnit palPixStride = (AFX_ALIGN_SIZE(meta->palBpp, AFX_BYTE_SIZE) / AFX_BYTE_SIZE);
         afxUnit wXh = meta->width * meta->height;
 
-        if (AfxAllocate(meta->palSiz * palPixStride, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&palette)) AfxThrowError();
+        if (AfxAllocate(AfxHere(), meta->palSiz * palPixStride, AFX_SIMD_ALIGNMENT, (void**)&palette)) AfxThrowError();
         else
         {
             if (AfxReadStreamAt(in, meta->dataOff, meta->palSiz * palPixStride, 0, palette)) AfxThrowError();
             else
             {
-                if (AfxAllocate(wXh, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&indices)) AfxThrowError();
+                if (AfxAllocate(AfxHere(), wXh, AFX_SIMD_ALIGNMENT, (void**)&indices)) AfxThrowError();
                 else
                 {
                     if (meta->imgType == 9) // TGA Type 9 refers to a compressed black and white image.
@@ -717,10 +717,10 @@ _AVX afxError AvxDecodeRasterFile(avxRasterFile const* meta, afxStream in, void*
                     default: AfxThrowError(); break;
                     }
 
-                    AfxDeallocate((void**)&indices, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&indices);
                 }
             }
-            AfxDeallocate((void**)&palette, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&palette);
         }
         break;
     }

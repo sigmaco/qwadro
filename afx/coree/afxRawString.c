@@ -15,10 +15,9 @@
  *                                        ENGITECH
  */
 
-#include <xmmintrin.h>
-
 #define _CRT_SECURE_NO_WARNINGS 1
 #define STB_SPRINTF_IMPLEMENTATION 1
+#include <xmmintrin.h>
 #include "../dep/stb_sprintf.h"
 
 #include <stdio.h>

@@ -518,7 +518,7 @@ _AVX afxError _AvxCommitBuffers(afxDrawSystem dsys, afxUnit exuIdx, afxUnit cnt,
 
         if (!buf->storage[0].host.addr)
         {
-            AfxAllocate(buf->reqSiz, AVX_BUFFER_ALIGNMENT, AfxHere(), (void**)&buf->storage[0].host.addr);
+            AfxAllocate(AfxHere(), buf->reqSiz, AVX_BUFFER_ALIGNMENT, (void**)&buf->storage[0].host.addr);
         }
     }
 }
@@ -531,7 +531,7 @@ _AVX afxError _AvxCommitRasters(afxDrawSystem dsys, afxUnit exuIdx, afxUnit cnt,
 
         if (!ras->storage[0].host.addr)
         {
-            AfxAllocate(ras->reqSiz, ras->reqAlign, AfxHere(), (void**)&ras->storage[0].host.addr);
+            AfxAllocate(AfxHere(), ras->reqSiz, ras->reqAlign, (void**)&ras->storage[0].host.addr);
         }
     }
 }
@@ -605,7 +605,7 @@ _AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt,
         {
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -637,7 +637,7 @@ _AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, a
         }
         else
         {
-            if (AfxAllocate(ras->reqSiz, ras->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), ras->reqSiz, ras->reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }
@@ -666,7 +666,7 @@ _AVXINL afxError _AvxDsysSW_DeallocateBuffersCb(afxDrawSystem dsys, afxUnit cnt,
         {
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -697,7 +697,7 @@ _AVXINL afxError _AvxDsysSW_AllocateBuffersCb(afxDrawSystem dsys, afxUnit cnt, a
         }
         else
         {
-            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), buf->reqSiz, buf->reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }
@@ -1020,6 +1020,11 @@ _AVX _avxDsysDdi const _AVX_DDI_DSYS =
     .deallocBufCb = _AvxDsysSW_DeallocateBuffersCb,
 
     .waitFencCb = _AvxDsysSW_WaitForFencesCb,
+
+    .cfgSampCb = _AvxDsysSwConfigureSampCb,
+    .acqSampCb = _AvxDsysSwAcquireSampCb,
+    .cfgCanvCb = _AvxDsysSwConfigureCanvCb,
+    .acqCanvCb = _AvxDsysSwAcquireCanvCb
 };
 
 _AVX afxError _AvxDsysDtorCb(afxDrawSystem dsys)
@@ -1167,10 +1172,10 @@ _AVX afxError _AvxDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
         if (cfg->doutClsCfg) doutClsCfg = *cfg->doutClsCfg;
         else
         {
-            doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+            doutClsCfg = _AVX_DOUT_CLS_CFG;
             if (_AuxIcdGetInteropDoutClass(dsys, &AFX_STRING(""), &doutClsCfg))
             {
-                doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+                doutClsCfg = _AVX_DOUT_CLS_CFG;
             }
         }
         AFX_ASSERT(doutClsCfg.fcc == afxFcc_DOUT);
@@ -1301,7 +1306,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_DSYS =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg)
+_AVX afxError _AvxIcdSwConfigureDsysCb(afxModule avxIcd, avxSystemConfig* cfg)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
@@ -1409,7 +1414,7 @@ _AVX afxError AvxConfigureDrawSystem(afxModule avxIcd, avxSystemConfig* cfg)
     return err;
 }
 
-_AVX afxError _AvxIcdEstablishDsysSW(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system)
+_AVX afxError _AvxIcdSwEstablishDsysCb(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
@@ -1523,7 +1528,6 @@ _AVX afxError AvxEstablishDrawSystem(afxModule avxIcd, avxSystemConfig const* cf
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &avxIcd);
     AFX_ASSERT(system);
-    AFX_ASSERT(cfg);
 
     if (!AfxTestModule(avxIcd, afxModuleFlag_ICD | afxModuleFlag_AVX))
     {
@@ -1532,6 +1536,7 @@ _AVX afxError AvxEstablishDrawSystem(afxModule avxIcd, avxSystemConfig const* cf
         return err;
     }
 
+    AFX_ASSERT(cfg);
     afxDrawSystem dsys = NIL;
     if (AfxFailed(_AvxGetDdi(avxIcd)->acqDsysCb(avxIcd, cfg, &dsys)))
     {

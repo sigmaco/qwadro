@@ -322,7 +322,7 @@ _ARX afxError ArxLoadHeighmap(arxTerrain ter, afxUnit secIdx, afxUri const* uri)
     AvxReadRasterFile(&tga, iob);
 
     afxByte* data;
-    AfxAllocate(tga.decSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&data);
+    AfxAllocate(AfxHere(), tga.decSiz, AFX_SIMD_ALIGNMENT, (void**)&data);
     AvxDecodeRasterFile(&tga, iob, data);
     AfxDisposeObjects(1, &iob);
 
@@ -356,7 +356,7 @@ _ARX afxError ArxLoadHeighmap(arxTerrain ter, afxUnit secIdx, afxUri const* uri)
         }
     }
 
-    AfxDeallocate((void**)&data, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&data);
 
     return err;
 }
@@ -532,7 +532,7 @@ _ARX afxError _ArxBuildTerrainCollideShape(arxTerrain ter, afxUnit baseSecIdx, a
             sec->collTriCnt = sec->visuVtxIdxCnt / 3;
             sec->collVtxCnt = sec->collTriCnt * 3;
 
-            if (AfxAllocate(sec->collVtxCnt * sizeof(sec->collVtx[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&sec->collVtx))
+            if (AfxAllocate(AfxHere(), sec->collVtxCnt * sizeof(sec->collVtx[0]), AFX_SIMD_ALIGNMENT, (void**)&sec->collVtx))
             {
                 AfxThrowError();
                 continue;
@@ -584,10 +584,10 @@ _ARX afxError _ArxBuildTerrainVisualShape(arxTerrain ter, afxUnit baseSecIdx, af
 
         AFX_ASSERT(sec->vtxCnt == ((ter->secWidth + 1) * (ter->secDepth + 1)));
         sec->visuVtxCnt = ((ter->secWidth + 1) * (ter->secDepth + 1));
-        AfxAllocate(sec->visuVtxCnt * sizeof(vertices[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&vertices);
+        AfxAllocate(AfxHere(), sec->visuVtxCnt * sizeof(vertices[0]), AFX_SIMD_ALIGNMENT, (void**)&vertices);
         AFX_ASSERT(sec->vtxIdxCnt == ((ter->secWidth * ter->secDepth) * 6));
         sec->visuVtxIdxCnt = ((ter->secWidth * ter->secDepth) * 6);
-        AfxAllocate(sec->visuVtxIdxCnt * sizeof(indices[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&indices);
+        AfxAllocate(AfxHere(), sec->visuVtxIdxCnt * sizeof(indices[0]), AFX_SIMD_ALIGNMENT, (void**)&indices);
 
         // Generate vertices
         for (afxUnit z = 0; z <= ter->secDepth; z++)
@@ -651,7 +651,7 @@ _ARX afxError ArxAddTerrainSector(arxTerrain ter)
     AFX_ASSERT_OBJECTS(afxFcc_TER, 1, &ter);
 
     _arxTerrSec* sec;
-    if (AfxAllocate(sizeof(*sec), 0, AfxHere(), (void**)&sec))
+    if (AfxAllocate(AfxHere(), sizeof(*sec), 0, (void**)&sec))
     {
         AfxThrowError();
         return err;
@@ -959,7 +959,7 @@ _ARX afxError ArxGenerateHeightmappedTerrain(arxScenario scio, afxUri const* uri
     AvxReadRasterFile(&tga, iob);
 
     afxByte* data;
-    AfxAllocate(tga.decSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&data);
+    AfxAllocate(AfxHere(), tga.decSiz, AFX_SIMD_ALIGNMENT, (void**)&data);
     AvxDecodeRasterFile(&tga, iob, data);
 
     avxFormat fmt = tga.fmt;

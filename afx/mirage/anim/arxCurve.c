@@ -480,24 +480,24 @@ _ARX afxError _ArxCurDtorCb(arxCurve c)
     case arxCurveFormat_DaK32fC32f:
     {
         if (c->knots)
-            AfxDeallocate((void**)&c->knots, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&c->knots);
 
         if (c->ctrls)
-            AfxDeallocate((void**)&c->ctrls, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&c->ctrls);
 
         break;
     }
     case arxCurveFormat_DaConstant32f:
     {
         if (c->ctrls)
-            AfxDeallocate((void**)&c->ctrls, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&c->ctrls);
 
         break;
     }
     case arxCurveFormat_DaKeyframes32f:
     {
         if (c->ctrls)
-            AfxDeallocate((void**)&c->ctrls, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&c->ctrls);
 
         break;
     }
@@ -540,10 +540,10 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
         c->ctrls_ = NIL;
 
 #if 0
-        if (c->knotCnt && AfxAllocate(c->knotCnt * sizeof(c->knots[0]), 0, AfxHere(), (void**)&c->knots))
+        if (c->knotCnt && AfxAllocate(AfxHere(), c->knotCnt * sizeof(c->knots[0]), 0, (void**)&c->knots))
             AfxThrowError();
 
-        if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
+        if (c->ctrlCnt && AfxAllocate(AfxHere(), c->ctrlCnt * sizeof(c->ctrls[0]), 0, (void**)&c->ctrls))
             AfxThrowError();
 #endif
 
@@ -580,7 +580,7 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
         c->ctrls_ = NIL;
 
 #if 0
-        if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
+        if (c->ctrlCnt && AfxAllocate(AfxHere(), c->ctrlCnt * sizeof(c->ctrls[0]), 0, (void**)&c->ctrls))
             AfxThrowError();
 #endif
 
@@ -610,7 +610,7 @@ _ARX afxError _ArxCurCtorCb(arxCurve c, void** args, afxUnit invokeNo)
         AFX_ASSERT(c->knotCnt == c->ctrlCnt / c->dimens);
 
 #if 0
-        if (c->ctrlCnt && AfxAllocate(c->ctrlCnt * sizeof(c->ctrls[0]), 0, AfxHere(), (void**)&c->ctrls))
+        if (c->ctrlCnt && AfxAllocate(AfxHere(), c->ctrlCnt * sizeof(c->ctrls[0]), 0, (void**)&c->ctrls))
             AfxThrowError();
 #endif
 

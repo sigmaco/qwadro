@@ -231,7 +231,7 @@ AUX afxBool AfxGetConsole
     afxConsole* console
 );
 
-AUX afxBool AfxGetEnvironmentAvx
+AUX afxBool AfxGetUxVideo
 (
     afxEnvironment env,
 
@@ -240,7 +240,7 @@ AUX afxBool AfxGetEnvironmentAvx
     afxSurface* surface
 );
 
-AUX afxBool AfxGetEnvironmentAmx
+AUX afxBool AfxGetUxAudio
 (
     afxEnvironment env,
 

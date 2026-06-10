@@ -404,10 +404,10 @@ _ARX afxError _ArxPosbDtorCb(arxPosture plce)
     AFX_ASSERT_OBJECTS(afxFcc_PLCE, 1, &plce);
 
     if (plce->delta)
-        AfxDeallocate((void**)&plce->delta, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&plce->delta);
 
     if (plce->mm)
-        AfxDeallocate((void**)&plce->mm, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&plce->mm);
 
     return err;
 }
@@ -423,11 +423,11 @@ _ARX afxError _ArxPosbCtorCb(arxPosture plce, void** args, afxUnit invokeNo)
     afxBool excludeComposite = args[2] ? *(((afxBool const*)(args[2])) + invokeNo) : TRUE;
     
     plce->matCnt = artCnt;
-    AfxAllocate(plce->matCnt * sizeof(plce->mm[0]), 0, AfxHere(), (void**)&plce->mm);
+    AfxAllocate(AfxHere(), plce->matCnt * sizeof(plce->mm[0]), 0, (void**)&plce->mm);
     plce->delta = NIL;
     
     if ((!excludeComposite) && plce->matCnt)
-        AfxAllocate(plce->matCnt * sizeof(plce->delta[0]), 0, AfxHere(), (void**)&plce->delta);
+        AfxAllocate(AfxHere(), plce->matCnt * sizeof(plce->delta[0]), 0, (void**)&plce->delta);
 
     return err;
 }

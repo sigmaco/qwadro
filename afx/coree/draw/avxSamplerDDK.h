@@ -53,4 +53,8 @@ AFX_OBJECT(avxSampler)
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_SAMP;
 
+AVX afxError _AvxDsysSwConfigureSampCb(afxDrawSystem dsys, avxSamplerConfig* cfg);
+
+AVX afxError _AvxDsysSwAcquireSampCb(afxDrawSystem dsys, afxUnit cnt, avxSamplerConfig const cfg[], avxSampler samplers[]);
+
 #endif//AVX_SAMPLER_DDK_H

@@ -163,7 +163,7 @@ _AVX afxError AvxDeployBufferedPump(avxBufferedPump* pump, avxBufferUsage usage,
     pump->last = NULL;
     pump->chunks = NIL;
 
-    if (AfxAllocate(sizeof(avxBufferedPumpStash) * pump->capacity_chunks, NIL, AfxHere(), (void**)&pump->chunks))
+    if (AfxAllocate(AfxHere(), sizeof(avxBufferedPumpStash) * pump->capacity_chunks, NIL, (void**)&pump->chunks))
     {
         AfxThrowError();
     }
@@ -220,7 +220,7 @@ static avxBufferedPumpStash* find_available_chunk(avxBufferedPump* pump, afxSize
     {
         afxSize new_capacity = pump->capacity_chunks * 2;
 
-        if (AfxReallocate(sizeof(avxBufferedPumpStash) * new_capacity, 0, AfxHere(), (void**)&pump->chunks))
+        if (AfxReallocate(AfxHere(), sizeof(avxBufferedPumpStash) * new_capacity, 0, (void**)&pump->chunks))
         {
             AfxThrowError(); // or handle OOM gracefully
         }
@@ -271,7 +271,7 @@ _AVX afxError AvxDismantleBufferedPump(avxBufferedPump* pump)
 
     if (pump->chunks)
     {
-        if (AfxDeallocate((void**)&pump->chunks, AfxHere()))
+        if (AfxDeallocate(AfxHere(), (void**)&pump->chunks))
             AfxThrowError();
 
         pump->chunks = NULL;
