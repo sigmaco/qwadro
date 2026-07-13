@@ -843,7 +843,7 @@ _AUX afxBool _AuxWndSwEventHandlerCb(afxWindow wnd, auxEvent *ev)
         {
             AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
             afxRect whd = wnd->surfaceRc;
-            if (AvxAdjustSurface(dout, &whd, wnd->fullscreen))
+            if (AvxAdjustSurface(dout, &whd))
                 AfxThrowError();
         }
         break;

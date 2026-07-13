@@ -463,7 +463,7 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
     {
         if (!wglMakeCurrentWIN(dout->hDC, dout->wgl.hSwapRC))
         {
-            AfxReportError("Could make hSwapRC current on hDC.");
+            AfxReportError("Could NOT make hSwapRC current on hDC.");
             AfxThrowError();
             return err;
         }
@@ -966,9 +966,7 @@ _QOW afxError _DpuPresentDout_BlitSwapFbo(zglDpu* dpu, avxPresentation const* ct
         }
     }
 
-    //dout->m.presentingBufIdx = (afxAtom32)AFX_INVALID_INDEX;
-    --dout->m.swaps[ctrl->bufIdx].locked;
-    AfxPushInterlockedQueue(&dout->m.freeBuffers, (afxUnit[]) { ctrl->bufIdx });
+    _AvxDoutSwUnlockBufCb(dout, ctrl->bufIdx);
 
     //AfxYield();
     AfxSleep(1);
@@ -1167,10 +1165,8 @@ _QOW afxError _DpuPresentDout(zglDpu* dpu, afxSurface dout, afxUnit outBufIdx)
         }
     }
 
-    dout->m.presentingBufIdx = (afxAtom32)AFX_INVALID_INDEX;
-    AfxPushInterlockedQueue(&dout->m.freeBuffers, (afxUnit[]){ outBufIdx });
-    AfxDecAtom32(&dout->m.submCnt);
-    
+    _AvxDoutSwUnlockBufCb(dout, ctrl->bufIdx);
+
     return err;
 }
 #endif

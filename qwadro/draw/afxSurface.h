@@ -528,10 +528,7 @@ AVX afxError AvxAdjustSurface
     afxSurface dout, 
 
     // The new placement which the drawing output context should be adjusted.
-    afxRect const* area,
-
-    // A boolean flag indicating whether to switch from/to fullscreen exclusive mode.
-    afxBool fse
+    afxRect const* area
 );
 
 /*

@@ -331,13 +331,15 @@ _AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool f
     return err;
 }
 
-_AVX afxError AvxAdjustSurface(afxSurface dout, afxRect const* area, afxBool fse)
+_AVX afxError AvxAdjustSurface(afxSurface dout, afxRect const* area)
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
     ++dout->resizing; // temporarily lock it to avoid reentrance of platform hooks.
+
+    AvxWaitForSurface(dout, AFX_TIMEOUT_INFINITE);
 
     afxRect rc;
     //AFX_ASSERT4(whd, whd.w, whd.h, whd.d);
@@ -348,7 +350,7 @@ _AVX afxError AvxAdjustSurface(afxSurface dout, afxRect const* area, afxBool fse
     AFX_ASSERT_EXTENT(dout->resolution.w, area->w);
     AFX_ASSERT_EXTENT(dout->resolution.h, area->h);
 
-    if (dout->ddi->adjustCb(dout, &rc, fse))
+    if (dout->ddi->adjustCb(dout, &rc, FALSE))
         AfxThrowError();
 
     if (dout->ddi->regenCb(dout, TRUE))
@@ -384,7 +386,7 @@ _AVX afxError _AvxAdjustSurfaceNormalized(afxSurface dout, afxV3d const whd)
         .w = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[0]), dout->resolution.w),
         .h = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[1]), dout->resolution.h)
     };
-    return AvxAdjustSurface(dout, &whd2, dout->fse);
+    return AvxAdjustSurface(dout, &whd2);
 }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -413,6 +415,8 @@ _AVX afxError _AvxDoutSwRegenCb(afxSurface dout, afxBool build)
             // If any yeild have occuried, we must reiterate every buffer again
             // because it can be again resized in this interval.
 
+            // Will block infinitely here whether surface resizing happens when swaplock is active (LockSurface).
+
             if (swap->locked != 1)
             {
                 again = 1;
@@ -436,68 +440,68 @@ _AVX afxError _AvxDoutSwRegenCb(afxSurface dout, afxBool build)
             }
 #endif
 
-            if (!build)
-                continue;
-#if 0
-            if (!swap->fenc)
+            if (build)
             {
-                avxFenceInfo fenci = { 0 };
-                fenci.initialVal = 0;
-                fenci.tag = AFX_STRING("dout-swap");
-                fenci.udd = dout;
-                if (AvxAcquireFences(dsys, 1, &fenci, &swap->fenc))
+#if 0
+                if (!swap->fenc)
+                {
+                    avxFenceInfo fenci = { 0 };
+                    fenci.initialVal = 0;
+                    fenci.tag = AFX_STRING("dout-swap");
+                    fenci.udd = dout;
+                    if (AvxAcquireFences(dsys, 1, &fenci, &swap->fenc))
+                    {
+                        AfxThrowError();
+                    }
+                    else
+                    {
+                        AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &swap->fenc);
+                    }
+                }
+#endif
+                if (AvxAcquireCanvas(dsys, &dout->ccfg, 1, &swap->canv))
                 {
                     AfxThrowError();
+
+                    // delete buffers?
                 }
                 else
                 {
-                    AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &swap->fenc);
+                    avxCanvas canv = swap->canv;
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+#if 0
+                    afxUnit objId = AfxGetObjectId(canv);
+                    afxClass const* cls = _AvxDsysSW_GetCanvClassCb(dsys);
+
+                    avxCanvas canv2 = NIL;
+                    AfxEnumerateObjects(cls, objId, 1, (afxObject*)&canv2);
+                    afxUnit objId2 = AfxGetObjectId(canv2);
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv2);
+                    AFX_ASSERT(canv == canv2);
+#endif
+
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+                    avxRaster ras;
+                    AvxGetDrawBuffers(canv, 0, 1, &ras);
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+
+#if 0
+                    avxCanvas canv3 = NIL;
+                    AfxEnumerateObjects(cls, objId, 1, (afxObject*)&canv3);
+                    afxUnit objId3 = AfxGetObjectId(canv3);
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv3);
+                    AFX_ASSERT(canv == canv3);
+                    AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
+#endif
+
+                    AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
+                    swap->ras = ras;
+
+                    afxLayeredRect rc;
+                    AvxGetCanvasExtent(canv, NIL, &rc);
+                    swap->bounds = rc;
                 }
             }
-#endif
-            if (AvxAcquireCanvas(dsys, &dout->ccfg, 1, &swap->canv))
-            {
-                AfxThrowError();
-
-                // delete buffers?
-            }
-            else
-            {
-                avxCanvas canv = swap->canv;
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-#if 0
-                afxUnit objId = AfxGetObjectId(canv);
-                afxClass const* cls = _AvxDsysSW_GetCanvClassCb(dsys);
-
-                avxCanvas canv2 = NIL;
-                AfxEnumerateObjects(cls, objId, 1, (afxObject*)&canv2);
-                afxUnit objId2 = AfxGetObjectId(canv2);
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv2);
-                AFX_ASSERT(canv == canv2);
-#endif
-
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-                avxRaster ras;
-                AvxGetDrawBuffers(canv, 0, 1, &ras);
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-
-#if 0
-                avxCanvas canv3 = NIL;
-                AfxEnumerateObjects(cls, objId, 1, (afxObject*)&canv3);
-                afxUnit objId3 = AfxGetObjectId(canv3);
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv3);
-                AFX_ASSERT(canv == canv3);
-                AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-#endif
-
-                AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
-                swap->ras = ras;
-
-                afxLayeredRect rc;
-                AvxGetCanvasExtent(canv, NIL, &rc);
-                swap->bounds = rc;
-            }
-
             --swap->locked;
         }
     }
@@ -1079,7 +1083,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AFX_ASSERT(dout->wwOverHw);
         
     // provoke buffer geneartion
-    AvxAdjustSurface(dout, &dout->area, cfg->exclusive);
+    AvxAdjustSurface(dout, &dout->area);
 
     if (err)
     {
