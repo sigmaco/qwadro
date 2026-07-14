@@ -295,7 +295,7 @@ _AMXINL afxError _AmxMsysSW_DeallocateBuffersCb(afxMixSystem msys, afxUnit cnt, 
         {
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -326,7 +326,7 @@ _AMXINL afxError _AmxMsysSW_AllocateBuffersCb(afxMixSystem msys, afxUnit cnt, am
         }
         else
         {
-            if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), buf->reqSiz, buf->reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }

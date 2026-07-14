@@ -197,7 +197,7 @@ _QOW afxError _QowDoutAdjustCb_GDI(afxSurface dout, afxRect const* area, afxBool
 {
     afxError err = { 0 };
 
-    _AvxDoutAdjustCb(dout, area, fse);
+    _AvxDoutSwAdjustCb(dout, area, fse);
 
     return err;
 }
@@ -360,8 +360,8 @@ _QOW _avxDoutDdi const _QOW_DDI_DOUT =
 {
     .ioctlCb = _QowDoutIoctlCb_GDI,
     .adjustCb = _QowDoutAdjustCb_GDI,
-    .lockCb = _AvxDoutLockBufferCb,
-    .unlockCb = _AvxDoutUnlockBufferCb,
+    .lockCb = _AvxDoutSwLockBufCb,
+    .unlockCb = _AvxDoutSwUnlockBufCb,
     .presentCb = _QowDoutPresentCb_GDI,
     .regenCb = _QowDoutRegenerateCb_GDI
 };
@@ -375,12 +375,12 @@ _QOW afxError _QowDoutDtorCb_GDI(afxSurface dout)
 
     if (dout->m.idd)
     {
-        AfxDeallocate((void**)&dout->m.idd, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&dout->m.idd);
         dout->m.idd = NIL;
     }
 
     _QowDoutRegenerateCb_GDI(dout, FALSE);
-    if (AfxDeallocate((void**)&dout->gdi.swaps, AfxHere()))
+    if (AfxDeallocate(AfxHere(), (void**)&dout->gdi.swaps))
         AfxThrowError();
 
     AFX_ASSERT(!dout->hDC); // disconnect should have released it.
@@ -388,7 +388,7 @@ _QOW afxError _QowDoutDtorCb_GDI(afxSurface dout)
     if (dout->hDC)
         ReleaseDC(dout->hWnd, dout->hDC);
 
-    if (_AVX_CLASS_CONFIG_DOUT.dtor(dout))
+    if (_AVX_DOUT_CLS_CFG.dtor(dout))
         AfxThrowError();
 
     return err;
@@ -407,7 +407,7 @@ _QOW afxError _QowDoutCtorCb_GDI(afxSurface dout, void** args, afxUnit invokeNo)
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
+    if (_AVX_DOUT_CLS_CFG.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
     {
         AfxThrowError();
         return err;
@@ -421,7 +421,7 @@ _QOW afxError _QowDoutCtorCb_GDI(afxSurface dout, void** args, afxUnit invokeNo)
     dout->dcPixFmt = 0;
     dout->isWpp = FALSE;
 
-    if (AfxAllocate(dout->m.swapCnt * sizeof(dout->gdi.swaps[0]), 0, AfxHere(), (void**)&dout->gdi.swaps))
+    if (AfxAllocate(AfxHere(), dout->m.swapCnt * sizeof(dout->gdi.swaps[0]), 0, (void**)&dout->gdi.swaps))
         AfxThrowError();
 
     for (afxUnit i = 0; i < dout->m.swapCnt; i++)
@@ -437,7 +437,7 @@ _QOW afxError _QowDoutCtorCb_GDI(afxSurface dout, void** args, afxUnit invokeNo)
 
     HWND hWnd = cfg->iop.w32.hWnd;
 
-    if (err && _AVX_CLASS_CONFIG_DOUT.dtor(dout))
+    if (err && _AVX_DOUT_CLS_CFG.dtor(dout))
         AfxThrowError();
 
     return err;

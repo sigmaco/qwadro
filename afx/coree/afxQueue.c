@@ -45,7 +45,7 @@ _AFXINL afxError AfxDismantleQueue(afxQueue* que)
     
     if (que->bytemap && que->alloced)
     {
-        AfxDeallocate((void**)&que->bytemap, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&que->bytemap);
         que->bytemap = NIL;
         que->alloced = FALSE;
     }
@@ -58,7 +58,7 @@ _AFXINL afxError AfxPushQueue(afxQueue* que, void const* data)
     AFX_ASSERT(que);
     AFX_ASSERT(data);
 
-    if (!que->bytemap && AfxAllocate(que->cap * que->unitSiz, 0, AfxHere(), (void**)&que->bytemap)) AfxThrowError();
+    if (!que->bytemap && AfxAllocate(AfxHere(), que->cap * que->unitSiz, 0, (void**)&que->bytemap)) AfxThrowError();
     else
     {
         AfxCopy(&que->bytemap[que->unitSiz * que->tail], data, que->unitSiz);

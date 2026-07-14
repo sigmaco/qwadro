@@ -988,22 +988,22 @@ _ARXINL void ArxEndMeshBuilding(arxTriangulation* mshb)
     AfxEmptyArray(&mshb->biases, FALSE, FALSE);
 
     if (mshb->faces)
-        AfxDeallocate((void**)&mshb->faces, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->faces);
 
     if (mshb->vtx)
-        AfxDeallocate((void**)&mshb->vtx, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->vtx);
 
     if (mshb->posn)
-        AfxDeallocate((void**)&mshb->posn, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->posn);
 
     if (mshb->nrm)
-        AfxDeallocate((void**)&mshb->nrm, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->nrm);
 
     if (mshb->uv)
-        AfxDeallocate((void**)&mshb->uv, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->uv);
 
     if (mshb->pivots)
-        AfxDeallocate((void**)&mshb->pivots, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&mshb->pivots);
 
     //AfxAssignFcc(mshb, NIL);
 }
@@ -1022,7 +1022,7 @@ _ARXINL afxError ArxBeginMeshBuilding(arxTriangulation* mshb, afxString const* i
     mshb->secCnt = secCnt;
     mshb->faces = NIL;
 
-    if (secCnt && AfxAllocate(triCnt * sizeof(mshb->faces[0]), 0, AfxHere(), (void**)&mshb->faces)) AfxThrowError();
+    if (secCnt && AfxAllocate(AfxHere(), triCnt * sizeof(mshb->faces[0]), 0, (void**)&mshb->faces)) AfxThrowError();
     else
     {
         AfxZero(mshb->faces, sizeof(mshb->faces[0]) * triCnt);
@@ -1032,12 +1032,12 @@ _ARXINL afxError ArxBeginMeshBuilding(arxTriangulation* mshb, afxString const* i
 
     AfxMakeArray(&mshb->biases, sizeof(arxVertexBias), artCnt, (arxVertexBias[]) { 0 }, 0);
 
-    AfxAllocate(vtxCnt * sizeof(mshb->vtx[0]), NIL, AfxHere(), (void**)&mshb->vtx);
+    AfxAllocate(AfxHere(), vtxCnt * sizeof(mshb->vtx[0]), NIL, (void**)&mshb->vtx);
     AfxZero(mshb->vtx, sizeof(mshb->vtx[0]) * vtxCnt);
 
-    AfxAllocate(artCnt * sizeof(mshb->pivots[0]), NIL, AfxHere(), (void**)&mshb->pivots);
+    AfxAllocate(AfxHere(), artCnt * sizeof(mshb->pivots[0]), NIL, (void**)&mshb->pivots);
 
-    AfxAllocate(vtxCnt * sizeof(mshb->posn[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&mshb->posn);
+    AfxAllocate(AfxHere(), vtxCnt * sizeof(mshb->posn[0]), AFX_SIMD_ALIGNMENT, (void**)&mshb->posn);
     mshb->nrm = NIL;
     mshb->uv = NIL;
 
@@ -1112,7 +1112,7 @@ _ARXINL afxError ArxUpdateVertexNormals(arxTriangulation* mshb, afxUnit baseVtxI
     AFX_ASSERT_RANGE(mshb->vtxCnt, baseVtxIdx, vtxCnt);
     AFX_ASSERT(nrm);
 
-    if (!mshb->nrm && AfxAllocate(mshb->vtxCnt * sizeof(mshb->nrm[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&mshb->nrm))
+    if (!mshb->nrm && AfxAllocate(AfxHere(), mshb->vtxCnt * sizeof(mshb->nrm[0]), AFX_SIMD_ALIGNMENT, (void**)&mshb->nrm))
         AfxThrowError();
 
     if (!err)
@@ -1139,7 +1139,7 @@ _ARXINL afxError ArxUpdateVertexWraps(arxTriangulation* mshb, afxUnit baseVtxIdx
     AFX_ASSERT_RANGE(mshb->vtxCnt, baseVtxIdx, vtxCnt);
     AFX_ASSERT(uv);
 
-    if (!mshb->uv && AfxAllocate(mshb->vtxCnt * sizeof(mshb->uv[0]), AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&mshb->uv))
+    if (!mshb->uv && AfxAllocate(AfxHere(), mshb->vtxCnt * sizeof(mshb->uv[0]), AFX_SIMD_ALIGNMENT, (void**)&mshb->uv))
         AfxThrowError();
 
     if (!err)

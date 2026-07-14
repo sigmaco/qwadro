@@ -324,7 +324,7 @@ AFX_DEFINE_STRUCT(avxPipelineConfig)
 
 AVX avxPipelineConfig const AVX_PIPELINE_BLUEPRINT_DEFAULT;
 
-AVX afxError            AvxAssemblePcxPipelines
+AVX afxError AvxAssemblePcxPipelines
 (
     afxDrawSystem dsys, 
     afxUnit cnt, 
@@ -332,7 +332,7 @@ AVX afxError            AvxAssemblePcxPipelines
     avxPipeline pipelines[]
 );
 
-AVX afxError            AvxAssembleGfxPipelines
+AVX afxError AvxAssembleGfxPipelines
 (
     afxDrawSystem dsys, 
     afxUnit cnt, 
@@ -340,7 +340,7 @@ AVX afxError            AvxAssembleGfxPipelines
     avxPipeline razr[]
 );
 
-AVX afxError            AvxLoadPipeline
+AVX afxError AvxLoadPipeline
 (
     afxDrawSystem dsys, 
     avxVertexInput vin, 
@@ -350,29 +350,29 @@ AVX afxError            AvxLoadPipeline
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AVX afxDrawSystem   AvxGetPipelineHost
+AVX afxDrawSystem AvxGetPipelineHost
 (
     avxPipeline pip
 );
 
-AVX avxBus          AvxGetPipelineBus
+AVX avxBus AvxGetPipelineBus
 (
     avxPipeline pip
 );
 
-AVX afxFlags            AvxGetPipelineFlags
+AVX afxFlags AvxGetPipelineFlags
 (
     avxPipeline pip, 
     afxFlags mask
 );
 
-AVX void                AvxDescribePipeline
+AVX void AvxDescribePipeline
 (
     avxPipeline pip, 
     avxPipelineInfo* info
 );
 
-AVX afxUnit             AvxGetColorOutputs
+AVX afxUnit AvxGetColorOutputs
 (
     avxPipeline pip, 
     afxUnit first, 
@@ -380,7 +380,7 @@ AVX afxUnit             AvxGetColorOutputs
     avxColorOutput ch[]
 );
 
-AVX afxUnit             AvxGetMultisamplingMasks
+AVX afxUnit AvxGetMultisamplingMasks
 (
     avxPipeline pip, 
     afxUnit first, 
@@ -388,13 +388,13 @@ AVX afxUnit             AvxGetMultisamplingMasks
     afxMask sampleMask[]
 );
 
-AVX afxBool             AvxGetPipelineCodebase
+AVX afxBool AvxGetPipelineCodebase
 (
     avxPipeline pip,
     avxShader* codebase
 );
 
-AVX afxBool             AvxGetPipelineShader
+AVX afxBool AvxGetPipelineShader
 (
     avxPipeline pip, 
     avxShaderType stage, 
@@ -402,7 +402,7 @@ AVX afxBool             AvxGetPipelineShader
     afxString* func
 );
 
-AVX afxUnit             AvxGetPipelinePrograms
+AVX afxUnit AvxGetPipelinePrograms
 (
     avxPipeline pip, 
     afxIndex first, 
@@ -411,19 +411,19 @@ AVX afxUnit             AvxGetPipelinePrograms
     afxString funcs[]
 );
 
-AVX afxBool             AvxGetPipelineLigature
+AVX afxBool AvxGetPipelineLigature
 (
     avxPipeline pip, 
     avxLigature* ligature
 );
 
-AVX afxBool             AvxGetPipelineVertexInput
+AVX afxBool AvxGetPipelineVertexInput
 (
     avxPipeline pip, 
     avxVertexInput* input
 );
 
-AVX afxError            AvxReprogramPipeline
+AVX afxError AvxReprogramPipeline
 (
     avxPipeline pip, 
     afxUnit cnt, 

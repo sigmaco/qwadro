@@ -67,6 +67,9 @@ AFX_DEFINE_STRUCT(_auxEnvDdi)
     afxError(*drawBgCb)(afxEnvironment, afxDrawContext, afxFlags);
     afxError(*promote)(afxEnvironment, afxWindow);
     afxError(*grabCursorCb)(afxEnvironment, afxWindow, afxBool);
+
+    afxError(*cfgWndCb)(afxEnvironment, afxWindowConfig*, afxV2d const origin, afxV2d const extent);
+    afxError(*acqWndCb)(afxEnvironment, afxWindowConfig const*, afxWindow*);
 };
 #endif
 
@@ -164,19 +167,21 @@ AFX_OBJECT(afxEnvironment)
 };
 #endif//_AUX_ENVIRONMENT_C
 
-AUX afxClassConfig const _AUX_ENV_CLASS_CONFIG;
+AUX afxClassConfig const _AUX_ENV_CLS_CFG;
 
-AUX _auxEnvDdi const _AUX_DDI_ENV;
+AUX _auxEnvDdi const _AUX_ENV_DDI_SW;
+
+AUX _auxEnvDdi const* _AuxEnvGetDdi(afxEnvironment env);
 
 AUX afxClass const* _AuxEnvGetWndClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetFntClass(afxEnvironment env);
 AUX afxClass const* _AuxEnvGetThemClass(afxEnvironment env);
 
-AUX afxError _AfxEnvFocusWindowCb(afxEnvironment env, afxUnit seat, afxWindow wnd, afxFocusFlags flags);
-AUX afxError _AfxEnvSetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString const* buf);
-AUX afxUnit _AfxEnvGetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString* buf);
-AUX afxBool _AfxEnvHasClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags);
-AUX afxUnit64 _AfxEnvPollInputCb(afxEnvironment env, afxFlags flags, afxUnit64 timeout);
+AUX afxError _AfxEnvSwFocusWindowCb(afxEnvironment env, afxUnit seat, afxWindow wnd, afxFocusFlags flags);
+AUX afxError _AfxEnvSwSetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString const* buf);
+AUX afxUnit _AfxEnvSwGetClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags, afxString* buf);
+AUX afxBool _AfxEnvSwHasClipboardContentCb(afxEnvironment env, afxUnit seat, afxUnit slot, afxClipboardFlags flags);
+AUX afxUnit64 _AfxEnvSwPollInputCb(afxEnvironment env, afxFlags flags, afxUnit64 timeout);
 
 AUX afxEnvironment gActiveEnv;
 

@@ -807,6 +807,11 @@ _AVX afxError _AvxDqueCtorCb(afxDrawQueue dque, void** args, afxUnit invokeNo)
     dque->immediate = 0;// !!spec->immedate;
 
     AfxSetUpFutex(&dque->iorpArenaSlock);
+
+    afxArenaInfo asi = { 0 };
+    asi.recycle = TRUE;
+    //asi.chunkSiz = 128 * 128;
+    //asi.largeItemSiz = 128 * 128;
     AfxMakeArena(&dque->iorpArena, NIL, AfxHere());
 
     AfxDeployMutex(&dque->iorpChnMtx, AFX_MTX_PLAIN);

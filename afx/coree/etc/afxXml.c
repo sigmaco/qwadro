@@ -236,9 +236,9 @@ static afxError _AfxXmlParseAttribs(afxXml* xml, afxXmlNode* elem, struct xml_pa
             }
 
             str_name;
-            AfxAllocate(strlen(token) + 1, 0, AfxHere(), (void**)&str_name);
+            AfxAllocate(AfxHere(), strlen(token) + 1, 0, (void**)&str_name);
             str_content;
-            AfxAllocate(strlen(token) + 1, 0, AfxHere(), (void**)&str_content);
+            AfxAllocate(AfxHere(), strlen(token) + 1, 0, (void**)&str_content);
 #if 0
             // %s=\"%s\" wasn't working for some reason, ugly hack to make it work
             if (sscanf(token, "%[^=]=\"%[^\"]", str_name, str_content) != 2)
@@ -247,8 +247,8 @@ static afxError _AfxXmlParseAttribs(afxXml* xml, afxXmlNode* elem, struct xml_pa
                 {
                     if (sscanf(token, "%[^=]", str_name, str_content) != 1)
                     {
-                        AfxDeallocate((void**)&str_name, AfxHere());
-                        AfxDeallocate((void**)&str_content, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&str_name);
+                        AfxDeallocate(AfxHere(), (void**)&str_content);
                         continue;
                     }
                     else *str_content = '\0';
@@ -312,8 +312,8 @@ static afxError _AfxXmlParseAttribs(afxXml* xml, afxXmlNode* elem, struct xml_pa
             AfxMakeString(&a->content, 0, start_content, str_content_len);
             AfxPushLink(&a->elem, &elem->attributes);
             
-            AfxDeallocate((void**)&str_name, AfxHere());
-            AfxDeallocate((void**)&str_content, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&str_name);
+            AfxDeallocate(AfxHere(), (void**)&str_content);
         }
         
         tag_open->len = trimRange;
@@ -717,7 +717,7 @@ _AFX afxError AfxParseXml(afxXml* xml, void* buffer, afxUnit length)
             AfxReserveArraySpace(&sorted, elemCnt);
 
             afxUnit* indicesMap;
-            AfxAllocate(elemCnt * sizeof(indicesMap[0]), 0, AfxHere(), (void**)&indicesMap);
+            AfxAllocate(AfxHere(), elemCnt * sizeof(indicesMap[0]), 0, (void**)&indicesMap);
 
             afxUnit activeParentIdx = AFX_INVALID_INDEX;
             afxUnit remaningCnt = elemCnt;

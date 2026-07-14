@@ -40,7 +40,7 @@ _AFXINL afxError AfxMakeInterlockedQueue(afxInterlockedQueue* ique, afxUnit unit
     ique->readPosn = 0;
     ique->unitSiz = unitSiz;
 
-    if (AfxAllocate(cap * sizeof(ique->entrySeqIdx[0]), 0, AfxHere(), (void**)&ique->entrySeqIdx))
+    if (AfxAllocate(AfxHere(), cap * sizeof(ique->entrySeqIdx[0]), 0, (void**)&ique->entrySeqIdx))
     {
         AfxThrowError();
         return err;
@@ -52,14 +52,14 @@ _AFXINL afxError AfxMakeInterlockedQueue(afxInterlockedQueue* ique, afxUnit unit
         AfxStoreAtom32(&ique->entrySeqIdx[i], i);
     }
 
-    if (AfxAllocate(cap * unitSiz, 0, AfxHere(), (void**)&ique->entryValue)) AfxThrowError();
+    if (AfxAllocate(AfxHere(), cap * unitSiz, 0, (void**)&ique->entryValue)) AfxThrowError();
     else
     {
         AfxZero(ique->entryValue, cap * ique->unitSiz);
     }
 
     if (err && ique->entrySeqIdx)
-        AfxDeallocate((void**)&ique->entrySeqIdx, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ique->entrySeqIdx);
 
     return err;
 }
@@ -75,14 +75,14 @@ _AFXINL afxError AfxExhaustInterlockedQueue(afxInterlockedQueue* ique)
     if (ique->entrySeqIdx)
     {
         AFX_ASSERT(ique->readPosn == ique->writePosn);
-        AfxDeallocate((void**)&ique->entrySeqIdx, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ique->entrySeqIdx);
         ique->entrySeqIdx = NIL;
     }
 
     if (ique->entryValue)
     {
         AFX_ASSERT(ique->readPosn == ique->writePosn);
-        AfxDeallocate((void**)&ique->entryValue, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ique->entryValue);
         ique->entryValue = NIL;
     }
 

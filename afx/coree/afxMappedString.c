@@ -34,7 +34,7 @@ _AFX afxUnit AfxDecatalogStrings(afxStringBase strc, afxUnit cnt, afxString cons
                     if (0 == (--ref->refCnt))
                     {
                         AfxPopLink(&ref->strb);
-                        AfxDeallocate((void**)&ref, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&ref);
                     }
                     ++rslt;
                     break;
@@ -72,7 +72,7 @@ _AFX afxUnit AfxCatalogStrings(afxStringBase strc, afxUnit cnt, afxString const 
 
             if (!found)
             {
-                AfxAllocate(sizeof(*ref) + (sizeof(ref->data[0]) * in[i].len), 0, AfxHere(), (void**)&ref);
+                AfxAllocate(AfxHere(), sizeof(*ref) + (sizeof(ref->data[0]) * in[i].len), 0, (void**)&ref);
 
                 if (!ref)
                 {
@@ -123,7 +123,7 @@ _AFX afxError _AfxStrcDtor(afxStringBase strc)
     AFX_ITERATE_CHAIN(ref, strb, &strc->strings)
     {
         AfxPopLink(&ref->strb);
-        AfxDeallocate((void**)&ref, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ref);
         ++rslt;
     }
 

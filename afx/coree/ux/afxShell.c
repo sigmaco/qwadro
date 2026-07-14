@@ -96,10 +96,10 @@ _AUX afxError _AuxSshCtorCb(afxShell ssh, void** args, afxUnit invokeNo)
         clsCfg = info->padClsCfg ? *info->padClsCfg : _AuxCtrlStdImplementation;
         AfxMountClass(&ssh->padCls, NIL, &ssh->dev.classes, &clsCfg);
 
-        clsCfg = info->envClsCfg ? *info->envClsCfg : _AUX_ENV_CLASS_CONFIG;
+        clsCfg = info->envClsCfg ? *info->envClsCfg : _AUX_ENV_CLS_CFG;
         AfxMountClass(&ssh->envCls, NIL, &ssh->dev.classes, &clsCfg);
 
-        clsCfg = info->wndClsCfg ? *info->wndClsCfg : _AUX_WND_CLASS_CONFIG;
+        clsCfg = info->wndClsCfg ? *info->wndClsCfg : _AUX_WND_CLS_CFG;
         ssh->wndClsCfg = clsCfg;
 
         clsCfg = info->xssClsCfg ? *info->xssClsCfg : /*_AuxXssStdImplementation*/(afxClassConfig) { 0 };

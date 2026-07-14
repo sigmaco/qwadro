@@ -259,7 +259,7 @@ _AFX afxBool AfxOpenFileSegments(afxStream file, afxUnit baseSegIdx, afxUnit seg
         {
             afxUnit decSizAligned = (seg->decodedSiz + 3) & 0xFFFFFFFC;
 
-            if (AfxAllocate(decSizAligned, seg->decodedAlign, AfxHere(), (void**)&file->idd.f.segBufs[segIdx])) AfxThrowError();
+            if (AfxAllocate(AfxHere(), decSizAligned, seg->decodedAlign, (void**)&file->idd.f.segBufs[segIdx])) AfxThrowError();
             else
             {
                 if (!seg->codec)
@@ -270,7 +270,7 @@ _AFX afxBool AfxOpenFileSegments(afxStream file, afxUnit baseSegIdx, afxUnit seg
                 {
                     void* buf;
 
-                    if (AfxAllocate(seg->encodedSiz, seg->encodedAlign, AfxHere(), (void**)&buf)) AfxThrowError();
+                    if (AfxAllocate(AfxHere(), seg->encodedSiz, seg->encodedAlign, (void**)&buf)) AfxThrowError();
                     else
                     {
                         if (AfxReadStreamAt(in, seg->start, seg->encodedSiz, 0, buf)) AfxThrowError();
@@ -285,7 +285,7 @@ _AFX afxBool AfxOpenFileSegments(afxStream file, afxUnit baseSegIdx, afxUnit seg
 
                 if (err && file->idd.f.segBufs[segIdx].data)
                 {
-                    AfxDeallocate((void**)&file->idd.f.segBufs[segIdx].data, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&file->idd.f.segBufs[segIdx].data);
                     file->idd.f.segBufs[segIdx].data = NIL;
                     file->idd.f.segBufs[segIdx].refCnt = 0;
                 }
@@ -309,7 +309,7 @@ _AFX void AfxCloseFileSegments(afxStream file, afxUnit baseSegIdx, afxUnit segCn
         {
             if (--file->idd.f.segBufs[segIdx].refCnt == 0)
             {
-                AfxDeallocate((void**)&file->idd.f.segBufs[segIdx].data, AfxHere());
+                AfxDeallocate(AfxHere(), (void**)&file->idd.f.segBufs[segIdx].data);
                 file->idd.f.segBufs[segIdx].data = NIL;
                 file->idd.f.segBufs[segIdx].refCnt = 0;
             }
@@ -328,14 +328,14 @@ _AFX afxError AfxRealizeFileSegments(afxStream file, afxUnit32 baseSegOffset, af
         {
             AfxCloseFileSegments(file, 0, file->idd.f.segCnt);
 
-            AfxDeallocate((void**)&file->idd.f.segHdrs, AfxHere());
-            AfxDeallocate((void**)&file->idd.f.segBufs, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&file->idd.f.segHdrs);
+            AfxDeallocate(AfxHere(), (void**)&file->idd.f.segBufs);
         }
         return err;
     }
 
-    if (AfxAllocate(segCnt * sizeof(file->idd.f.segHdrs[0]), 0, AfxHere(), (void**)&file->idd.f.segHdrs)) AfxThrowError();
-    else if (AfxAllocate(segCnt * sizeof(file->idd.f.segBufs[0]), 0, AfxHere(), (void**)&file->idd.f.segBufs))
+    if (AfxAllocate(AfxHere(), segCnt * sizeof(file->idd.f.segHdrs[0]), 0, (void**)&file->idd.f.segHdrs)) AfxThrowError();
+    else if (AfxAllocate(AfxHere(), segCnt * sizeof(file->idd.f.segBufs[0]), 0, (void**)&file->idd.f.segBufs))
         AfxThrowError();
 
     if (!err && AfxReadStreamAt(file, baseSegOffset, segCnt * sizeof(file->idd.f.segHdrs[0]), 0, file->idd.f.segHdrs))
@@ -345,8 +345,8 @@ _AFX afxError AfxRealizeFileSegments(afxStream file, afxUnit32 baseSegOffset, af
 
     if (err)
     {
-        AfxDeallocate((void**)&file->idd.f.segHdrs, AfxHere());
-        AfxDeallocate((void**)&file->idd.f.segBufs, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&file->idd.f.segHdrs);
+        AfxDeallocate(AfxHere(), (void**)&file->idd.f.segBufs);
     }
     else
     {

@@ -408,7 +408,7 @@ _AFX afxError _AfxUrdDtorCb(afxUrd urd)
     AfxDeallocateInstanceData(urd, ARRAY_SIZE(stashes), stashes);
 
     if (urd->convBuf)
-        AfxDeallocate((void**)&urd->convBuf, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&urd->convBuf);
 
     return err;
 }

@@ -1235,7 +1235,7 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
         }
 #endif
 
-        _AfxEnvFocusWindowCb(env, 0, NIL, NIL);
+        _AfxEnvSwFocusWindowCb(env, 0, NIL, NIL);
 
         //ShakeWindow(wnd);
 
@@ -1287,7 +1287,7 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
             }
         }
 
-        _AfxEnvFocusWindowCb(env, 0, wnd, NIL);
+        _AfxEnvSwFocusWindowCb(env, 0, wnd, NIL);
 
         break;
     }
@@ -1679,7 +1679,7 @@ _QOW afxRect _QowWndGetRectW32(afxWindow wnd, afxAnchor anchor)
         Usage example:
 
         afxRect rect;
-        AfxGetWindowRect(win, afxAnchor_CENTER | afxAnchor_MIDDLE, &rect);
+        AfxGetWindowArea(win, afxAnchor_CENTER | afxAnchor_MIDDLE, &rect);
         rect.w += 200;
         rect.h += 100;
         AfxAdjustWindow(win, afxAnchor_CENTER | afxAnchor_MIDDLE, &rect);
@@ -1840,12 +1840,12 @@ _QOW afxError _QowWndAdjustCb(afxWindow wnd, afxAnchor anchor, afxRect* area)
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
     afxRect areaT, areaL, areaTL, areaCM, areaB, areaBR;
-    AfxGetWindowRect(wnd, afxAnchor_TOP, &areaT);
-    AfxGetWindowRect(wnd, afxAnchor_LEFT, &areaL);
-    AfxGetWindowRect(wnd, afxAnchor_TOP | afxAnchor_LEFT, &areaTL);
-    AfxGetWindowRect(wnd, afxAnchor_BOTTOM, &areaB);
-    AfxGetWindowRect(wnd, afxAnchor_BOTTOM | afxAnchor_RIGHT, &areaBR);
-    AfxGetWindowRect(wnd, afxAnchor_CENTER | afxAnchor_MIDDLE, &areaCM);
+    AfxGetWindowArea(wnd, afxAnchor_TOP, &areaT);
+    AfxGetWindowArea(wnd, afxAnchor_LEFT, &areaL);
+    AfxGetWindowArea(wnd, afxAnchor_TOP | afxAnchor_LEFT, &areaTL);
+    AfxGetWindowArea(wnd, afxAnchor_BOTTOM, &areaB);
+    AfxGetWindowArea(wnd, afxAnchor_BOTTOM | afxAnchor_RIGHT, &areaBR);
+    AfxGetWindowArea(wnd, afxAnchor_CENTER | afxAnchor_MIDDLE, &areaCM);
 
     if (!anchor)
     {
@@ -1929,12 +1929,12 @@ _QOW afxError _QowWndAdjustCb(afxWindow wnd, afxAnchor anchor, afxRect* area)
     wnd->m.surfaceRc.x = 0;
     wnd->m.surfaceRc.y = 0;
 
-    AfxGetWindowRect(wnd, afxAnchor_TOP, &areaT);
-    AfxGetWindowRect(wnd, afxAnchor_LEFT, &areaL);
-    AfxGetWindowRect(wnd, afxAnchor_TOP | afxAnchor_LEFT, &areaTL);
-    AfxGetWindowRect(wnd, afxAnchor_BOTTOM, &areaB);
-    AfxGetWindowRect(wnd, afxAnchor_BOTTOM | afxAnchor_RIGHT, &areaBR);
-    AfxGetWindowRect(wnd, afxAnchor_CENTER | afxAnchor_MIDDLE, &areaCM);
+    AfxGetWindowArea(wnd, afxAnchor_TOP, &areaT);
+    AfxGetWindowArea(wnd, afxAnchor_LEFT, &areaL);
+    AfxGetWindowArea(wnd, afxAnchor_TOP | afxAnchor_LEFT, &areaTL);
+    AfxGetWindowArea(wnd, afxAnchor_BOTTOM, &areaB);
+    AfxGetWindowArea(wnd, afxAnchor_BOTTOM | afxAnchor_RIGHT, &areaBR);
+    AfxGetWindowArea(wnd, afxAnchor_CENTER | afxAnchor_MIDDLE, &areaCM);
 
     //_QowWndAdjustW32(wnd, anchor, area);
     return err;
@@ -2055,7 +2055,7 @@ _QOW afxBool _QowWndEventHandlerCb(afxWindow wnd, auxEvent *ev)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    return _AuxWndEventHandlerSW(wnd, ev);
+    return _AuxWndSwEventHandlerCb(wnd, ev);
 }
 
 _QOW _auxWndDdi const _QOW_DDI_WND =
@@ -2065,7 +2065,7 @@ _QOW _auxWndDdi const _QOW_DDI_WND =
     .redrawCb = _QowWndRedrawCb,
     .adjustCb = _QowWndAdjustCb,
     .chIconCb = _QowWndChIconCb,
-    .chCursCb = _AfxWndChangeCursorCb,
+    .chCursCb = _AfxWndSwChangeCursorCb,
     .titleCb = _QowWndFormatTitleCb,
 };
 
@@ -2078,7 +2078,7 @@ _QOW afxError _QowWndDtorCb(afxWindow wnd)
 
     AfxDeregisterChainedClasses(&wnd->m.classes);
 
-    _AUX_WND_CLASS_CONFIG.dtor(wnd);
+    _AUX_WND_CLS_CFG.dtor(wnd);
 
     //AfxDisposeObjects(1, &wnd->m.dout);
 
@@ -2116,7 +2116,7 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
     widClsCfg.ctor = (void*)_QowWidCtorCb;
     widClsCfg.dtor = (void*)_QowWidDtorCb;
 
-    if (_AUX_WND_CLASS_CONFIG.ctor(wnd, (void*[]) { env, (void*)wcfg, (void*)&widClsCfg }, 0))
+    if (_AUX_WND_CLS_CFG.ctor(wnd, (void*[]) { env, (void*)wcfg, (void*)&widClsCfg }, 0))
     {
         AfxThrowError();
         return err;
@@ -2262,7 +2262,7 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
     }
 
     if (err)
-        _AUX_WND_CLASS_CONFIG.dtor(wnd);
+        _AUX_WND_CLS_CFG.dtor(wnd);
 
     return err;
 }

@@ -22,7 +22,8 @@
 #define _AFX_POOL_ZERO_ON_RECLAMATION (FALSE)
 #define _AFX_POOL_ZERO_ON_PAGINATION (FALSE)
 
-#define KEEP_ATLEAST_ONE_POOL_PAGE
+#define _AFX_POOL_KEEP_ATLEAST_ONE_POOL_PAGE
+#define _AFX_POOL_DONT_AUTOFREE_PAGE
 
 _AFXINL afxBool AfxIsAnValidPoolUnit(afxPool* pool, afxSize idx)
 {
@@ -317,7 +318,7 @@ _AFX afxError _AfxInflatePoolDir(afxPool* pool, afxUnit pagCnt)
         afxSize diff = pagCnt - pool->pageCnt;
         AFX_ASSERT(diff);
 
-        if (AfxReallocate(sizeof(pool->pages[0]) * (pool->pageCnt + diff), pool->memAlign, AfxHere(), (void**)&pool->pages))
+        if (AfxReallocate(AfxHere(), sizeof(pool->pages[0]) * (pool->pageCnt + diff), pool->memAlign, (void**)&pool->pages))
         {
             AfxThrowError();
             return err;
@@ -366,7 +367,7 @@ _AFX afxError AfxTakePoolUnit(afxPool* pool, afxSize idx, void *val)
         pagSiz = AFX_ALIGN_SIZE(pagSiz, pool->memAlign);
 
         afxByte* pagHeap;
-        if (AfxAllocate(pagSiz + sizeof(*pag), pool->memAlign, AfxHere(), (void**)&pagHeap))
+        if (AfxAllocate(AfxHere(), pagSiz + sizeof(*pag), pool->memAlign, (void**)&pagHeap))
         {
             AfxThrowError();
             return err;
@@ -543,14 +544,14 @@ _AFX afxError DeletePoolPage(afxPool* pool, afxUnit pagIdx)
         //pag->base = NIL;
         AfxPopLink(&pag->link);
         void*pagHeap = pag->base;
-        AfxDeallocate((void**)&pagHeap, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&pagHeap);
         pool->pages[pagIdx] = NIL;
 
         if (pagIdx == pool->pageCnt - 1) // if is the last page
         {
             if (pagIdx) // if exist other ones
             {
-                if (AfxReallocate(sizeof(pool->pages[0]) * (pool->pageCnt - 1), pool->memAlign, AfxHere(), (void**)&pool->pages))
+                if (AfxReallocate(AfxHere(), sizeof(pool->pages[0]) * (pool->pageCnt - 1), pool->memAlign, (void**)&pool->pages))
                 {
                     AfxThrowError();
                 }
@@ -561,7 +562,7 @@ _AFX afxError DeletePoolPage(afxPool* pool, afxUnit pagIdx)
             }
             else
             {
-                AfxDeallocate((void**)&pool->pages, AfxHere());
+                AfxDeallocate(AfxHere(), (void**)&pool->pages);
                 --pool->pageCnt;
             }
         }
@@ -648,8 +649,9 @@ _AFX afxError AfxReclaimPoolUnits(afxPool* pool, afxHere const dbg, afxUnit cnt,
         --pool->totalUsedCnt;
 
         AFX_ASSERT(!AfxGetPoolUnit(pool, idx, NIL));
+#ifndef _AFX_POOL_DONT_AUTOFREE_PAGE
         if ((0 == pag->usedCnt)
-#ifdef KEEP_ATLEAST_ONE_POOL_PAGE
+#ifdef _AFX_POOL_KEEP_ATLEAST_ONE_POOL_PAGE
             // Avoid reallocation every time (mainly for device IO contexts).
             && (pool->pageCnt > 1)
 #endif
@@ -658,6 +660,7 @@ _AFX afxError AfxReclaimPoolUnits(afxPool* pool, afxHere const dbg, afxUnit cnt,
             DeletePoolPage(pool, pageIdx);
         }
         AFX_ASSERT(!AfxGetPoolUnit(pool, idx, NIL));
+#endif
     }
     return err;
 }
@@ -903,7 +906,7 @@ _AFX afxError AfxExhaustPool(afxPool* pool, afxBool keepPages)
 
             if (pag->base)
             {
-                AfxDeallocate((void**)&pag->base, AfxHere());
+                AfxDeallocate(AfxHere(), (void**)&pag->base);
                 pag->base = NIL;
             }
             pool->pages[i] = NIL;
@@ -912,7 +915,7 @@ _AFX afxError AfxExhaustPool(afxPool* pool, afxBool keepPages)
         if (pool->pageCnt)
         {
             AFX_ASSERT(pool->pages);
-            AfxDeallocate((void**)&pool->pages, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&pool->pages);
             pool->pages = NIL;
         }
         pool->pageCnt = 0;

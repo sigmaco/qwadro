@@ -505,7 +505,7 @@ _AVX afxClassConfig const _AVX_CLASS_CONFIG_SAMP =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AVX afxError AvxConfigureSampler(afxDrawSystem dsys, avxSamplerConfig* cfg)
+_AVX afxError _AvxDsysSwConfigureSampCb(afxDrawSystem dsys, avxSamplerConfig* cfg)
 {
     afxError err = { 0 };
     // dsys must be a valid afxDrawSystem handle.
@@ -603,7 +603,23 @@ _AVX afxError AvxConfigureSampler(afxDrawSystem dsys, avxSamplerConfig* cfg)
     return err;
 }
 
-_AVX afxError AvxAcquireSamplers(afxDrawSystem dsys, afxUnit cnt, avxSamplerConfig const cfg[], avxSampler samplers[])
+_AVX afxError AvxConfigureSampler(afxDrawSystem dsys, avxSamplerConfig* cfg)
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->cfgSampCb(dsys, cfg)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    return err;
+}
+
+_AVX afxError _AvxDsysSwAcquireSampCb(afxDrawSystem dsys, afxUnit cnt, avxSamplerConfig const cfg[], avxSampler samplers[])
 {
     afxError err = { 0 };
     // dsys must be a valid afxDrawSystem handle.
@@ -613,11 +629,6 @@ _AVX afxError AvxAcquireSamplers(afxDrawSystem dsys, afxUnit cnt, avxSamplerConf
     AFX_ASSERT(cfg);
     // samplers must be a valid pointer to a avxSampler handle.
     AFX_ASSERT(samplers);
-
-    // dsys must support at least one bridge with one of the GRAPHICS or COMPUTE capabilities.    
-    afxDrawBridge dexu;
-    afxBool bridgedFound = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_GFX/* | avxService_PCX*/, NIL, 0, 1, &dexu);
-    AFX_ASSERT(bridgedFound);
 
     afxClass* cls = (afxClass*)_AvxDsysGetDdi(dsys)->sampCls(dsys);
     AFX_ASSERT_CLASS(cls, afxFcc_SAMP);
@@ -643,6 +654,32 @@ _AVX afxError AvxAcquireSamplers(afxDrawSystem dsys, afxUnit cnt, avxSamplerConf
     if (err)
         return err;
 
+    AFX_ASSERT_OBJECTS(afxFcc_SAMP, cnt, samplers);
+
+    return err;
+}
+
+_AVX afxError AvxAcquireSamplers(afxDrawSystem dsys, afxUnit cnt, avxSamplerConfig const cfg[], avxSampler samplers[])
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(cnt);
+    // cfg must be a valid pointer to a valid avxSamplerConfig structure.
+    AFX_ASSERT(cfg);
+    // samplers must be a valid pointer to a avxSampler handle.
+    AFX_ASSERT(samplers);
+
+    // dsys must support at least one bridge with one of the GRAPHICS or COMPUTE capabilities.    
+    afxDrawBridge dexu;
+    afxBool bridgedFound = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_GFX/* | avxService_PCX*/, NIL, 0, 1, &dexu);
+    AFX_ASSERT(bridgedFound);
+
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->acqSampCb(dsys, cnt, cfg, samplers)))
+    {
+        AfxThrowError();
+        return err;
+    }
     AFX_ASSERT_OBJECTS(afxFcc_SAMP, cnt, samplers);
 
 #if AVX_VALIDATION_ENABLED

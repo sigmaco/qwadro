@@ -920,7 +920,7 @@ _AFXINL void AfxDeallocateString(afxString *s)
     
     if (s->cap && s->buf)
     {
-        AfxDeallocate((void**)&s->buf, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&s->buf);
         s->buf = NIL;
     }
     AfxResetStrings(1, s);
@@ -949,7 +949,7 @@ _AFXINL afxError AfxAllocateString(afxString* s, afxUnit cap, void const *start,
 
         void *buf = NIL;
 
-        if (effectiveCap && AfxAllocate(effectiveCap, 0, AfxHere(), (void**)&buf))
+        if (effectiveCap && AfxAllocate(AfxHere(), effectiveCap, 0, (void**)&buf))
             AfxThrowError();
 
         AfxMakeString(s, effectiveCap, buf, 0);

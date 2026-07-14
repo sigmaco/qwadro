@@ -579,7 +579,7 @@ _AFX void AfxStream3(afxUnit cnt, void const* src, afxUnit srcOffset, afxSize sr
     }
 }
 
-_AFX afxError AfxDeallocate(void** pp, afxHere const hint)
+_AFX afxError AfxDeallocate(afxHere const hint, void** pp)
 {
     afxError err = { 0 };
     void* p = *pp;
@@ -611,7 +611,7 @@ _AFX afxError AfxDeallocate(void** pp, afxHere const hint)
     return err;
 }
 
-_AFX afxError AfxReallocate(afxSize siz, afxUnit align, afxHere const hint, void** pp)
+_AFX afxError AfxReallocate(afxHere const hint, afxSize siz, afxUnit align, void** pp)
 {
     afxError err = { 0 };
     AFX_ASSERT(siz);
@@ -677,7 +677,7 @@ _AFX afxError AfxReallocate(afxSize siz, afxUnit align, afxHere const hint, void
     return err;
 }
 
-_AFX afxError AfxCoallocate(afxSize cnt, afxSize siz, afxUnit align, afxHere const hint, void** pp)
+_AFX afxError AfxCoallocate(afxHere const hint, afxSize cnt, afxSize siz, afxUnit align, void** pp)
 {
     afxError err = { 0 };
     AFX_ASSERT(cnt);
@@ -721,7 +721,7 @@ _AFX afxError AfxCoallocate(afxSize cnt, afxSize siz, afxUnit align, afxHere con
     return err;
 }
 
-_AFX afxError AfxAllocate(afxSize siz, afxUnit align, afxHere const hint, void** pp)
+_AFX afxError AfxAllocate(afxHere const hint, afxSize siz, afxUnit align, void** pp)
 {
     afxError err = { 0 };
     AFX_ASSERT(hint);

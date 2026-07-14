@@ -384,7 +384,9 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
                     if (vox->playing2 && !vox->paused)
                     {
                         //amxProcessVoice(vox, &trax->tracks[0].aud.aud->buf->storage[0].hostedAlloc.bytemap[sink->rb.capacity % audio_ringbuffer_writable(&sink->rb)], frameCnt);
-                        amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 1);
+                        amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 2);
+                        AfxStream2(room.frameCnt, (afxReal[]) { 0 }, 0, (void*)(room.offset + sizeof(float)), 2);
+                        
                     }
                 }
                 AmxUnlockSinkBuffer(sink, NIL);
@@ -500,7 +502,7 @@ _AMX afxInt _AMX_MPU_THREAD_PROC(afxMixBridge mexu)
     //afxUnit portId = mexu->portId;
 
     amxMpu* mpu;
-    if (AfxAllocate(sizeof(*mpu), 0, AfxHere(), (void**)&mpu))
+    if (AfxAllocate(AfxHere(), sizeof(*mpu), 0, (void**)&mpu))
         AfxThrowError();
 
     AfxZero(mpu, sizeof(*mpu));
@@ -556,7 +558,7 @@ _AMX afxInt _AMX_MPU_THREAD_PROC(afxMixBridge mexu)
     AfxDisposeObjects(1, &mpu->b);
 
     AFX_ASSERT(mpu == mexu->mpu);
-    AfxDeallocate((void**)&mpu, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&mpu);
 
     return 0;
 }

@@ -181,7 +181,7 @@ _AMX afxError _AmxMbufDtorCb(amxBuffer mbuf)
     {
         if (mbuf->storage[0].host.bytemap && (!mbuf->base || (mbuf->base != mbuf)))
         {
-            AfxDeallocate((void**)&mbuf->storage[0].host.bytemap, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&mbuf->storage[0].host.bytemap);
         }
     }
 #endif
@@ -392,7 +392,7 @@ _AMX afxError _AmxMbufCtorCb(amxBuffer buf, void** args, afxUnit invokeNo)
     }
     else
     {
-        if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&buf->storage[0].host.bytemap))
+        if (AfxAllocate(AfxHere(), buf->reqSiz, buf->reqAlign, (void**)&buf->storage[0].host.bytemap))
         {
             AfxThrowError();
         }

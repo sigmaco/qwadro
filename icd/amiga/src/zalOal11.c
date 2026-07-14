@@ -139,7 +139,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
         AfxDisposeObjects(1, &oalDll);
 
     zalOalSinkIdd* idd;
-    if (AfxAllocate(sizeof(zalOalSinkIdd), 0, AfxHere(), (void**)&idd))
+    if (AfxAllocate(AfxHere(), sizeof(zalOalSinkIdd), 0, (void**)&idd))
     {
         AfxThrowError();
         return;
@@ -160,7 +160,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
 
     idd->bufDataSiz = asi->m.freq;
 
-    if (AfxAllocate(idd->bufDataSiz, 0, AfxHere(), (void**)&idd->bufData))
+    if (AfxAllocate(AfxHere(), idd->bufDataSiz, 0, (void**)&idd->bufData))
     {
         AfxThrowError();
         //return err;
@@ -190,7 +190,7 @@ _ZAL void _ZalSpuInitOalSink(amxMpu* spu, afxSink asi)
     // TODO Dtor
 
     if (err)
-        AfxDeallocate((void**)&idd, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&idd);
 }
 
 _ZAL afxError _ZalAsioDtorCb(afxSink asi)

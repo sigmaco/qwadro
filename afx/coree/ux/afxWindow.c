@@ -39,7 +39,7 @@ _AUX afxClass const* _AuxWndGetWidClass(afxWindow wnd)
     return cls;
 }
 
-_AUX afxError _AfxWndChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
+_AUX afxError _AfxWndSwChangeIconCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -121,7 +121,7 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     return err;
 }
 
-_AUX afxError _AfxWndChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
+_AUX afxError _AfxWndSwChangeCursorCb(afxWindow wnd, avxRaster font, avxRasterRegion const* rgn, afxInt hotspotX, afxInt hotspotY)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -357,7 +357,7 @@ _AUX afxError AfxRequestWindowCursor(afxWindow wnd, afxRect const* confinement, 
     return err;
 }
 
-_AUX afxUnit _AfxWndFormatTitleCb(afxWindow wnd)
+_AUX afxUnit _AfxWndSwFormatTitleCb(afxWindow wnd)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -401,103 +401,70 @@ _AUX afxUnit AfxFormatWindowTitle(afxWindow wnd, afxChar const* fmt, ...)
     return wnd->title.s.len;
 }
 
-_AUX afxBool AfxGetOnSurfaceScreenPosition(afxWindow wnd, afxUnit const screenPos[2], afxUnit surfPos[2])
+_AUX afxBool AfxGetOnWindowScreenArea(afxWindow wnd, afxBool incFrame, afxRect const* screenRc, afxRect* surfRc)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    AFX_ASSERT(screenPos);
-    AFX_ASSERT(surfPos);
+    AFX_ASSERT(screenRc);
+    AFX_ASSERT(surfRc);
 
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
-
-    afxBool rslt = 0;
-    surfPos[0] = screenPos[0] - wnd->frameRc.x;
-    surfPos[1] = screenPos[1] - wnd->frameRc.y;
-    return rslt;
-}
-
-_AUX afxBool AfxGetOnScreenSurfacePosition(afxWindow wnd, afxUnit const surfPos[2], afxUnit screenPos[2])
-{
-    afxError err = { 0 };
-    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    AFX_ASSERT(screenPos);
-    AFX_ASSERT(surfPos);
-
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+    //AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
     afxBool rslt = 0;
-    screenPos[0] = surfPos[0] + wnd->frameRc.x;
-    screenPos[1] = surfPos[1] + wnd->frameRc.y;
-    return rslt;
-}
 
-
-afxRect ResolveSurfaceRect(
-    afxRect const* screen,
-    afxRect const* desired,
-    afxAnchor anchor,
-    afxRect const* current)
-{
-    afxRect out = *desired;
-
-    // If no anchor is specified, just preserve position
-    if (anchor == 0)
+    if (!incFrame)
     {
-        out.x = current->x;
-        out.y = current->y;
-        return out;
+        surfRc->x = screenRc->x - wnd->frameRc.x + wnd->frameMarginL;
+        surfRc->y = screenRc->y - wnd->frameRc.y + wnd->frameMarginT;
+        surfRc->w = AFX_MIN(screenRc->w, wnd->surfaceRc.w);
+        surfRc->h = AFX_MIN(screenRc->h, wnd->surfaceRc.h);
+    }
+    else
+    {
+        surfRc->x = screenRc->x - wnd->frameRc.x;
+        surfRc->y = screenRc->y - wnd->frameRc.y;
+        surfRc->w = AFX_MIN(screenRc->w, wnd->frameRc.w);
+        surfRc->h = AFX_MIN(screenRc->h, wnd->frameRc.h);
     }
 
-    // Compute the anchor points in both rects
-    afxInt screenAx = screen->x;
-    afxInt screenAy = screen->y;
-    afxInt winAx = 0;
-    afxInt winAy = 0;
-
-    // Screen anchor point
-    if (anchor & afxAnchor_LEFT)
-        screenAx = screen->x;
-    else if (anchor & afxAnchor_CENTER)
-        screenAx = screen->x + screen->w / 2;
-    else if (anchor & afxAnchor_RIGHT)
-        screenAx = screen->x + screen->w;
-
-    if (anchor & afxAnchor_TOP)
-        screenAy = screen->y;
-    else if (anchor & afxAnchor_MIDDLE)
-        screenAy = screen->y + screen->h / 2;
-    else if (anchor & afxAnchor_BOTTOM)
-        screenAy = screen->y + screen->h;
-
-    // Window anchor point (relative to window's own rect)
-    if (anchor & afxAnchor_LEFT)
-        winAx = 0;
-    else if (anchor & afxAnchor_CENTER)
-        winAx = desired->w / 2;
-    else if (anchor & afxAnchor_RIGHT)
-        winAx = desired->w;
-
-    if (anchor & afxAnchor_TOP)
-        winAy = 0;
-    else if (anchor & afxAnchor_MIDDLE)
-        winAy = desired->h / 2;
-    else if (anchor & afxAnchor_BOTTOM)
-        winAy = desired->h;
-
-    // Position the window so its anchor point coincides with the screen's anchor point
-    out.x = screenAx - winAx + desired->x;
-    out.y = screenAy - winAy + desired->y;
-
-    return out;
+    return rslt;
 }
 
-_AUX afxBool AfxGetWindowRect(afxWindow wnd, afxAnchor anchor, afxRect* surface)
+_AUX afxBool AfxGetOnScreenWindowArea(afxWindow wnd, afxBool incFrame, afxRect const* surfRc, afxRect* screenRc)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+    AFX_ASSERT(screenRc);
+    AFX_ASSERT(surfRc);
+
+    //AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+
+    afxBool rslt = 0;
+
+    if (!incFrame)
+    {
+        screenRc->x = surfRc->x - wnd->frameRc.x + wnd->frameMarginL;
+        screenRc->y = surfRc->y - wnd->frameRc.y + wnd->frameMarginT;
+        screenRc->w = AFX_MIN(surfRc->w, wnd->surfaceRc.w);
+        screenRc->h = AFX_MIN(surfRc->h, wnd->surfaceRc.h);
+    }
+    else
+    {
+        screenRc->x = surfRc->x + wnd->frameRc.x;
+        screenRc->y = surfRc->y + wnd->frameRc.y;
+        screenRc->w = AFX_MIN(surfRc->w, wnd->frameRc.w);
+        screenRc->h = AFX_MIN(surfRc->h, wnd->frameRc.h);
+    }
+    return rslt;
+}
+
+_AUX afxBool AfxGetWindowArea(afxWindow wnd, afxAnchor anchor, afxRect* surface)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
     AFX_ASSERT(surface);
 
-    AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
+    //AFX_ASSERT(AfxGetTid() == AfxGetObjectTid(wnd));
 
     afxRect rect = { 0, 0, 0, 0 };
 
@@ -618,7 +585,7 @@ _AUX afxBool AfxGetWindowRect(afxWindow wnd, afxAnchor anchor, afxRect* surface)
     return 1;    
 }
 
-_AUX afxError AfxResetWindowBounds(afxWindow wnd, afxRect const* min, afxRect const* max)
+_AUX afxError AfxAdjustWindowBounds(afxWindow wnd, afxRect const* min, afxRect const* max)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -628,9 +595,14 @@ _AUX afxError AfxResetWindowBounds(afxWindow wnd, afxRect const* min, afxRect co
 
     if (max)
         wnd->frameRcMax = *max;
+
+    afxRect rc;
+    AfxClampRect(&rc, &wnd->frameRc, &wnd->frameRcMin, &wnd->frameRcMax);
+
+    // FIXME: Should call AfxAdjustWindow whether new bounds constrain the current surface area.
 }
 
-_AUX afxError _AfxWndAdjustCb(afxWindow wnd, afxAnchor anchor, afxRect* c)
+_AUX afxError _AfxWndSwAdjustCb(afxWindow wnd, afxAnchor anchor, afxRect* c)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -725,7 +697,7 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
     {
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &surfaceDout);
         afxRect area;
-        AfxGetWindowRect(wnd, /*wnd->anchor*/NIL, &area);
+        AfxGetWindowArea(wnd, /*wnd->anchor*/NIL, &area);
         area.w = wnd->surfaceRc.w;
         area.h = wnd->surfaceRc.h;
 
@@ -817,7 +789,7 @@ _AUX afxBool _AuxWidEmitEventCb(afxWidget wid, auxEvent *ev)
     return FALSE;
 }
 
-_AUX afxBool _AuxWndEventHandlerSW(afxWindow wnd, auxEvent *ev)
+_AUX afxBool _AuxWndSwEventHandlerCb(afxWindow wnd, auxEvent *ev)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -895,16 +867,16 @@ _AUX afxBool AFX_WND_EVENT_HANDLER(afxWindow wnd, auxEvent *ev)
     return wnd->ddi->evhCb(wnd, ev);
 }
 
-_AUX _auxWndDdi const _AUX_DDI_WND =
+_AUX _auxWndDdi const _AUX_WND_DDI_SW =
 {
-    .evhCb = _AuxWndEventHandlerSW,
-    .adjustCb = _AfxWndAdjustCb,
-    .titleCb = _AfxWndFormatTitleCb,
-    .chIconCb = _AfxWndChangeIconCb,
-    .chCursCb = _AfxWndChangeCursorCb,
+    .evhCb = _AuxWndSwEventHandlerCb,
+    .adjustCb = _AfxWndSwAdjustCb,
+    .titleCb = _AfxWndSwFormatTitleCb,
+    .chIconCb = _AfxWndSwChangeIconCb,
+    .chCursCb = _AfxWndSwChangeCursorCb,
 };
 
-_AUX afxError _AuxWndDtorCb(afxWindow wnd)
+_AUX afxError _AuxWndSwDtorCb(afxWindow wnd)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -919,7 +891,7 @@ _AUX afxError _AuxWndDtorCb(afxWindow wnd)
     return err;
 }
 
-_AUX afxError _AuxWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
+_AUX afxError _AuxWndSwCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
@@ -935,7 +907,7 @@ _AUX afxError _AuxWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
         return err;
     }
     
-    wnd->ddi = &_AUX_DDI_WND;
+    wnd->ddi = &_AUX_WND_DDI_SW;
     wnd->dwm = &env->dwm;
 
     wnd->anchor = cfg->anchor;
@@ -989,20 +961,20 @@ _AUX afxError _AuxWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
     return err;
 }
 
-_AUX afxClassConfig const _AUX_WND_CLASS_CONFIG =
+_AUX afxClassConfig const _AUX_WND_CLS_CFG =
 {
     .fcc = afxFcc_WND,
     .name = "Window",
     .desc = "Desktop Environment Window",
     .fixedSiz = sizeof(AFX_OBJECT(afxWindow)),
-    .ctor = (void*)_AuxWndCtorCb,
-    .dtor = (void*)_AuxWndDtorCb,
+    .ctor = (void*)_AuxWndSwCtorCb,
+    .dtor = (void*)_AuxWndSwDtorCb,
     .event = (void*)AFX_WND_EVENT_HANDLER
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2d const origin, afxV2d const extent)
+_AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, afxV2d const origin, afxV2d const extent)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
@@ -1012,13 +984,13 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
     cfg2 = *cfg;
 #if 0
     if (!cfg2.dsys)
-        AfxGetEnvironmentAvx(env, &cfg2.dsys, NIL);
+        AfxGetUxVideo(env, &cfg2.dsys, NIL);
 #endif
     if (!cfg2.eventCb)
         cfg2.eventCb = AFX_WND_EVENT_HANDLER;
 
     afxDesktop* dwm = &env->dwm;
-    afxRect rc = { .w = cfg2.dout.ccfg.whd.w, .h = cfg2.dout.ccfg.whd.h };
+    afxRect rc = { .w = cfg2.dout.ccfg.whd.w,.h = cfg2.dout.ccfg.whd.h };
 
     if (origin)
     {
@@ -1057,13 +1029,28 @@ _AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2
         AfxThrowError();
         err = err2;
     }
-    
+
     *cfg = cfg2;
 
     return err;
 }
 
-_AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, afxWindow* window)
+_AUX afxError AfxConfigureWindow(afxEnvironment env, afxWindowConfig* cfg, afxV2d const origin, afxV2d const extent)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AuxEnvGetDdi(env)->cfgWndCb(env, cfg, origin, extent)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    return err;
+}
+
+_AUX afxError _AuxEnvSwAcquireWndCb(afxEnvironment env, afxWindowConfig const* cfg, afxWindow* window)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
@@ -1086,6 +1073,27 @@ _AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, a
         return err;
     }
 
+    AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
+
+    AFX_ASSERT(window);
+    *window = wnd;
+
+    return err;
+}
+
+_AUX afxError AfxAcquireWindow(afxEnvironment env, afxWindowConfig const* cfg, afxWindow* window)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+    AFX_ASSERT(window);
+
+    AFX_ASSERT(cfg);
+    afxWindow wnd = NIL;
+    if (AfxFailed(_AuxEnvGetDdi(env)->acqWndCb(env, cfg, &wnd)))
+    {
+        AfxThrowError();
+        return err;
+    }
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
     AFX_ASSERT(window);

@@ -39,7 +39,7 @@ _ZGLINL afxError _ZglDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt,
 #if 0
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -73,7 +73,7 @@ _ZGLINL afxError _ZglDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
         else
         {
 #if 0
-            if (AfxAllocate(ras->m.reqSiz, ras->m.reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), ras->m.reqSiz, ras->m.reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }
@@ -104,7 +104,7 @@ _ZGLINL afxError _ZglDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt,
 #if 0
             if (bufs->host.bytemap)
             {
-                if (AfxDeallocate((void**)&bufs->host.bytemap, AfxHere()))
+                if (AfxDeallocate(AfxHere(), (void**)&bufs->host.bytemap))
                 {
                     AfxThrowError();
                 }
@@ -137,7 +137,7 @@ _ZGLINL afxError _ZglDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
         else
         {
 #if 0
-            if (AfxAllocate(buf->m.reqSiz, buf->m.reqAlign, AfxHere(), (void**)&bufs->host.bytemap))
+            if (AfxAllocate(AfxHere(), buf->m.reqSiz, buf->m.reqAlign, (void**)&bufs->host.bytemap))
             {
                 AfxThrowError();
             }
@@ -175,6 +175,11 @@ _ZGL _avxDsysDdi const _ZGL_DDI_DSYS =
     .deallocBufCb = _ZglDsysDeallocateBuffersCb_SW,
 
     //.waitFencCb = _ZglWaitFencOnHost
+
+    .cfgSampCb = _AvxDsysSwConfigureSampCb,
+    .acqSampCb = _AvxDsysSwAcquireSampCb,
+    .cfgCanvCb = _AvxDsysSwConfigureCanvCb,
+    .acqCanvCb = _AvxDsysSwAcquireCanvCb
 };
 
 _ZGL afxError _ZglDsysDtorCb(afxDrawSystem dsys)
@@ -310,14 +315,14 @@ _ZGL afxError _ZglDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
             fencClsConf.ctor = (void*)_ZglFencCtorCb;
             fencClsConf.dtor = (void*)_ZglFencDtorCb;
 
-            afxClassConfig doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+            afxClassConfig doutClsCfg = _AVX_DOUT_CLS_CFG;
             //doutClsCfg.fixedSiz = sizeof(AFX_OBJ(afxSurface));
             //doutClsCfg.ctor = (void*)_ZglDoutCtorCb;
             //doutClsCfg.dtor = (void*)_ZglDoutDtorCb;
 
             if (_AuxIcdGetInteropDoutClass(dsys, &AFX_STRING("wgl"), &doutClsCfg))
             {
-                doutClsCfg = _AVX_CLASS_CONFIG_DOUT;
+                doutClsCfg = _AVX_DOUT_CLS_CFG;
             }
 
             afxClassConfig dexuClsCfg = _AVX_CLASS_CONFIG_DEXU;

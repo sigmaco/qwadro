@@ -48,7 +48,7 @@ AUX afxError AfxAcquireFonts
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AFX afxError AfxTranscribe(afxFont fnt, afxRect const* area, afxUnit col, afxUnit row, afxString const* text);
+AFX afxError AfxTranscribe(afxDrawContext dctx, afxFont fnt, afxRect const* area, afxUnit col, afxUnit row, afxString const* text);
 
 AFX afxError AfxFlushDeviceFont(afxFont fnt, afxDrawContext dctx, avxViewport const* vp);
 

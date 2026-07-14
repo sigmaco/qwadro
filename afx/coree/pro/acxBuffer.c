@@ -173,7 +173,7 @@ _ACX afxError _AcxSbufDtorCb(acxBuffer sbuf)
     {
         if (sbuf->storage[0].hostedAlloc.bytemap && (!sbuf->base || (sbuf->base != sbuf)))
         {
-            AfxDeallocate((void**)&sbuf->storage[0].hostedAlloc.bytemap, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&sbuf->storage[0].hostedAlloc.bytemap);
         }
     }
     return err;
@@ -383,7 +383,7 @@ _ACX afxError _AcxSbufCtorCb(acxBuffer buf, void** args, afxUnit invokeNo)
     }
     else
     {
-        if (AfxAllocate(buf->reqSiz, buf->reqAlign, AfxHere(), (void**)&buf->storage[0].hostedAlloc.bytemap))
+        if (AfxAllocate(AfxHere(), buf->reqSiz, buf->reqAlign, (void**)&buf->storage[0].hostedAlloc.bytemap))
         {
             AfxThrowError();
         }

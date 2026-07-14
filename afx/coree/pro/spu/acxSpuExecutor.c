@@ -256,7 +256,7 @@ _ACX afxInt _ACX_SPU_THREAD_PROC(afxWarpBridge sexu)
     //afxUnit portId = sexu->portId;
 
     acxSpu* spu;
-    if (AfxAllocate(sizeof(*spu), 0, AfxHere(), (void**)&spu))
+    if (AfxAllocate(AfxHere(), sizeof(*spu), 0, (void**)&spu))
         AfxThrowError();
 
     AfxZero(spu, sizeof(*spu));
@@ -298,7 +298,7 @@ _ACX afxInt _ACX_SPU_THREAD_PROC(afxWarpBridge sexu)
     } while (1);
 
     AFX_ASSERT(spu == sexu->spu);
-    AfxDeallocate((void**)&spu, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&spu);
 
     return 0;
 }

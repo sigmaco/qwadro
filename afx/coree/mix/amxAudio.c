@@ -585,7 +585,7 @@ _AMX afxError AmxLoadAudios(afxMixSystem msys, afxUnit cnt, afxUri const uris[],
             AfxThrowError();
 
         void* data;
-        AfxAllocate(hdr.dataSiz, 0, AfxHere(), (void**)&data);
+        AfxAllocate(AfxHere(), hdr.dataSiz, 0, (void**)&data);
 
         AfxReadStream(iob, hdr.dataSiz, 0, data);
 
@@ -602,7 +602,7 @@ _AMX afxError AmxLoadAudios(afxMixSystem msys, afxUnit cnt, afxUri const uris[],
         AmxWaitForMixBridges(msys, 0, 0);
         
         _AmxUpdateAudio(audios[fIdx], &iop, data);
-        AfxDeallocate((void**)&data, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&data);
 
         AmxPrintAudio(audios[fIdx], &iop.period, AfxUri("../test.wav"));
 

@@ -58,7 +58,7 @@ _ARX afxError _ArxDtecDtorCb(arxTechnique dtec)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DTEC, 1, &dtec);
     
-    AfxDeallocate((void**)&dtec->passes, AfxHere());
+    AfxDeallocate(AfxHere(), (void**)&dtec->passes);
 
     return err;
 }
@@ -72,7 +72,7 @@ _ARX afxError _ArxDtecCtorCb(arxTechnique dtec, void** args, afxUnit invokeNo)
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     afxUnit const passCnt = *(((afxUnit const*)args[1]) + invokeNo);
 
-     AfxAllocate(passCnt * sizeof(dtec->passes[0]), 0, AfxHere(), (void**)&dtec->passes);
+     AfxAllocate(AfxHere(), passCnt * sizeof(dtec->passes[0]), 0, (void**)&dtec->passes);
 
     for (afxUnit i = 0; i < passCnt; i++)
     {

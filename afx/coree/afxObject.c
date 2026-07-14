@@ -294,17 +294,17 @@ _AFX afxError AfxDisconnectObjects(afxObject obj, afxBool(*handler)(afxObject ob
                 {
                     AfxPopLink(&flt->watched);
                     AfxPopLink(&flt->holder);
-                    AfxDeallocate((void**)&flt, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&flt);
 
                     if (hdr->watchers && hdr->watchers->cnt == 0)
                     {
-                        AfxDeallocate((void**)&hdr->watchers, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&hdr->watchers);
                         hdr->watchers = NIL;
                     }
 
                     if (filterInst->watching && filterInst->watching->cnt == 0)
                     {
-                        AfxDeallocate((void**)&filterInst->watching, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&filterInst->watching);
                         filterInst->watching = NIL;
                     }
 
@@ -319,13 +319,13 @@ _AFX afxError AfxDisconnectObjects(afxObject obj, afxBool(*handler)(afxObject ob
 
         if (hdr->watchers && hdr->watchers->cnt == 0)
         {
-            AfxDeallocate((void**)&hdr->watchers, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&hdr->watchers);
             hdr->watchers = NIL;
         }
 
         if (filterInst->watching && filterInst->watching->cnt == 0)
         {
-            AfxDeallocate((void**)&filterInst->watching, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&filterInst->watching);
             filterInst->watching = NIL;
         }
     }
@@ -368,7 +368,7 @@ _AFX afxError AfxConnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, 
             }
             else
             {
-                if (AfxAllocate(sizeof(*hdr->watchers), 0, AfxHere(), (void**)&hdr->watchers)) AfxThrowError();
+                if (AfxAllocate(AfxHere(), sizeof(*hdr->watchers), 0, (void**)&hdr->watchers)) AfxThrowError();
                 else
                 {
                     AfxMakeChain(hdr->watchers, watched);
@@ -379,7 +379,7 @@ _AFX afxError AfxConnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, 
             {
                 if (!filterInst->watching)
                 {
-                    if (AfxAllocate(sizeof(*filterInst->watching), 0, AfxHere(), (void**)&filterInst->watching)) AfxThrowError();
+                    if (AfxAllocate(AfxHere(), sizeof(*filterInst->watching), 0, (void**)&filterInst->watching)) AfxThrowError();
                     else
                     {
                         AfxMakeChain(filterInst->watching, obj);
@@ -388,7 +388,7 @@ _AFX afxError AfxConnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, 
 
                 if (!err)
                 {
-                    if (AfxAllocate(sizeof(*flt), 0, AfxHere(), (void**)&flt)) AfxThrowError();
+                    if (AfxAllocate(AfxHere(), sizeof(*flt), 0, (void**)&flt)) AfxThrowError();
                     else
                     {
                         AfxPushLink(&flt->holder, filterInst->watching);
@@ -404,13 +404,13 @@ _AFX afxError AfxConnectObjects(afxObject obj, afxBool(*handler)(afxObject obj, 
 
                 if (hdr->watchers && hdr->watchers->cnt == 0)
                 {
-                    AfxDeallocate((void**)&hdr->watchers, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&hdr->watchers);
                     hdr->watchers = NIL;
                 }
 
                 if (filterInst->watching && filterInst->watching->cnt == 0)
                 {
-                    AfxDeallocate((void**)&filterInst->watching, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&filterInst->watching);
                     filterInst->watching = NIL;
                 }
             }

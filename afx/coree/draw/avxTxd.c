@@ -95,7 +95,7 @@ _AVX afxError AvxAddTextures(avxTxd txd, afxUnit cnt, afxString const names[])
         if (found)
             continue;
 
-        if (AfxAllocate(sizeof(*tex), 0, AfxHere(), (void**)&tex))
+        if (AfxAllocate(AfxHere(), sizeof(*tex), 0, (void**)&tex))
         {
             AfxThrowError();
             break;

@@ -81,7 +81,7 @@ _AFX void* AfxPushSlabUnit(afxSlabAllocator* mgr)
         slab = slab->next;
     }
 
-    if (!slabFound && AfxAllocate((unitsPerSlab * (mgr->unitSiz + sizeof(afxSlabLink))) + sizeof(*slab), mgr->unitAlign, AfxHere(), (void**)&slab))
+    if (!slabFound && AfxAllocate(AfxHere(), (unitsPerSlab * (mgr->unitSiz + sizeof(afxSlabLink))) + sizeof(*slab), mgr->unitAlign, (void**)&slab))
     {
         AfxThrowError();
         return 0;
@@ -221,7 +221,7 @@ _AFX afxError AfxDismantleSlabAllocator(afxSlabAllocator* mgr)
 #endif
             slab->next->prev = slab->prev;
             slab->prev->next = slab->next;
-            AfxDeallocate((void**)&slab, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&slab);
             slab = anchor->next;
         } while (slab != anchor);
     }

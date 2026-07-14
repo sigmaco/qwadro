@@ -34,15 +34,6 @@
 #define AVX_MAX_VERTEX_SOURCES (32)
 #define AVX_MAX_VERTEX_ATTRIBS (32)
 
-AFX_DEFINE_STRUCT(avxVertexSource)
-{
-    avxBuffer       buf;
-    afxUnit32       offset; // the start of buffer.
-    afxUnit32       range; // the size in bytes of vertex data bound from buffer.
-    afxUnit32       stride; // the byte stride between consecutive elements within the buffer.
-  //afxUnit32       instRate; // the number of successive instances that will use the same value of the vertex attribute when instanced rendering is enabled.
-};
-
 AFX_DEFINE_STRUCT(avxVertexStream)
 {
     // Binding index (matches the vertex buffer bound) which this stream takes its data from.
@@ -55,8 +46,10 @@ AFX_DEFINE_STRUCT(avxVertexStream)
     afxFlags        flags;
 };
 
-#define AVX_VERTEX_STREAM(uPin, uMinStride, uInstRate) (avxVertexStream) \
-    { .pin = (uPin), .minStride = (uMinStride), .instRate = (uInstRate) }
+#define AVX_VERTEX_STREAM(uPin, uMinStride, uInstRate) \
+    (avxVertexStream) { .pin = (uPin), \
+                        .minStride = (uMinStride), \
+                        .instRate = (uInstRate) }
 
 typedef enum avxVertexAttrFlag
 {
@@ -82,8 +75,11 @@ AFX_DEFINE_STRUCT(avxVertexAttr)
     afxFlags        flags;
 };
 
-#define AVX_VERTEX_ATTR(uLocation, uPin, uOffset, eFmt) (avxVertexAttr) \
-    { .location = (uLocation), .pin = (uPin), .offset = (uOffset), .fmt = (eFmt) }
+#define AVX_VERTEX_ATTR(uLocation, uPin, uOffset, eFmt) \
+    (avxVertexAttr) {   .location = (uLocation), \
+                        .pin = (uPin), \
+                        .offset = (uOffset), \
+                        .fmt = (eFmt) }
 
 AFX_DEFINE_STRUCT(avxVertexDescription)
 // Represents a complete description of how vertex data is fed into the graphics pipeline.

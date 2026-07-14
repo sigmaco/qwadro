@@ -162,10 +162,10 @@ _ARX afxError _ArxGesDtorCb(arxGesture ges)
     AFX_ASSERT_OBJECTS(afxFcc_GES, 1, &ges);
 
     if (ges->pivots)
-        AfxDeallocate((void**)&ges->pivots, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ges->pivots);
 
     if (ges->pivotLodError)
-        AfxDeallocate((void**)&ges->pivotLodError, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ges->pivotLodError);
 
     if (ges->pivotCurve)
     {
@@ -175,11 +175,11 @@ _ARX afxError _ArxGesDtorCb(arxGesture ges)
             arxCurve curves[3] = { t->translation, t->transmission, t->transmutation};
             AfxDisposeObjects(3, curves);
         }
-        AfxDeallocate((void**)&ges->pivotCurve, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ges->pivotCurve);
     }
 
     if (ges->vectors)
-        AfxDeallocate((void**)&ges->vectors, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ges->vectors);
 
     if (ges->vecCurve)
     {
@@ -188,7 +188,7 @@ _ARX afxError _ArxGesDtorCb(arxGesture ges)
             arxVectorialGesture* v = &ges->vecCurve[i];
             AfxDisposeObjects(1, &v->value);
         }
-        AfxDeallocate((void**)&ges->vecCurve, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ges->vecCurve);
     }
 
     return err;
@@ -217,18 +217,18 @@ _ARX afxError _ArxGesCtorCb(arxGesture ges, void** args, afxUnit invokeNo)
 
     if (vecCnt)
     {
-        AfxAllocate(vecCnt * sizeof(ges->vecCurve[0]), 0, AfxHere(), (void**)&ges->vecCurve);
-        AfxAllocate(vecCnt * sizeof(ges->vectors[0]), 0, AfxHere(), (void**)&ges->vectors);
+        AfxAllocate(AfxHere(), vecCnt * sizeof(ges->vecCurve[0]), 0, (void**)&ges->vecCurve);
+        AfxAllocate(AfxHere(), vecCnt * sizeof(ges->vectors[0]), 0, (void**)&ges->vectors);
     }
 
     if (pivotCnt)
     {
-        AfxAllocate(pivotCnt * sizeof(ges->pivotCurve[0]), 0, AfxHere(), (void**)&ges->pivotCurve);
-        AfxAllocate(pivotCnt * sizeof(ges->pivots[0]), 0, AfxHere(), (void**)&ges->pivots);
+        AfxAllocate(AfxHere(), pivotCnt * sizeof(ges->pivotCurve[0]), 0, (void**)&ges->pivotCurve);
+        AfxAllocate(AfxHere(), pivotCnt * sizeof(ges->pivots[0]), 0, (void**)&ges->pivots);
 
         if (gesb->incPivotLodError)
         {
-            AfxAllocate(pivotCnt * sizeof(ges->pivotLodError[0]), 0, AfxHere(), (void**)&ges->pivotLodError);
+            AfxAllocate(AfxHere(), pivotCnt * sizeof(ges->pivotLodError[0]), 0, (void**)&ges->pivotLodError);
         }
     }
 

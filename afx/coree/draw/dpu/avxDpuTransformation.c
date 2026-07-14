@@ -128,7 +128,7 @@ void fetch_vertex(MyVertexInput* out, int vertexIdx, const avxVertexInput layout
 {
     for (int attrIdx = 0; attrIdx < layout->totalAttrCnt; ++attrIdx)
     {
-        avxVertexAttr* attr = &layout->attrs[attrIdx];
+        _avxVinAttr* attr = &layout->attrs[attrIdx];
         _avxVinStream* fetch = NULL;
 
         // Find the fetch config for this attribute

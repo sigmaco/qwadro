@@ -206,7 +206,7 @@ void fillResampleInput(amxVoice vs)
     vs->rs.in_pos = 0;
 
     amxFormat fmt = vs->src.buf->fmt;
-    int numChans = 2;
+    int numChans = 1;
     afxSize sampleSize = minimumBytesPerFrame(fmt, 1);
     afxSize frameSize = sampleSize * numChans;
 

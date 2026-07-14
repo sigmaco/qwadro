@@ -30,7 +30,7 @@ _AFX afxError AfxDeployRing(afxRing* ring, afxUnit unitSiz, afxUnit32 cap)
     ring->readableItemCnt = 0;
     ring->unitSiz = unitSiz;
 
-    if (AfxAllocate(cap * unitSiz, AFX_SIMD_ALIGNMENT, AfxHere(), (void**)&ring->data))
+    if (AfxAllocate(AfxHere(), cap * unitSiz, AFX_SIMD_ALIGNMENT, (void**)&ring->data))
         AfxThrowError();
 
     return err;
@@ -45,7 +45,7 @@ _AFX void AfxDismantleRing(afxRing* ring)
 
     if (ring->data)
     {
-        AfxDeallocate((void**)&ring->data, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ring->data);
         ring->data = NIL;
     }
 }
@@ -122,7 +122,7 @@ _AFX afxBool AfxGrowRing(afxRing* ring, afxUnit32 growBy)
     afxByte* newData;
     afxUnit unitSiz = ring->unitSiz;
 
-    if (!AfxAllocate(newItemCnt * unitSiz, 0, AfxHere(), (void**)&newData))
+    if (!AfxAllocate(AfxHere(), newItemCnt * unitSiz, 0, (void**)&newData))
     {
         if (ring->readableItemCnt)
         {
@@ -143,7 +143,7 @@ _AFX afxBool AfxGrowRing(afxRing* ring, afxUnit32 growBy)
             }
         }
 
-        AfxDeallocate((void**)&ring->data, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&ring->data);
         ring->data = newData;
         ring->cap = newItemCnt;
 

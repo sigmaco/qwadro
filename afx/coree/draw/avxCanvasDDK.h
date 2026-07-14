@@ -76,4 +76,7 @@ AFX_OBJECT(avxCanvas)
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_CANV;
 
+AVX afxError _AvxDsysSwConfigureCanvCb(afxDrawSystem dsys, avxCanvasConfig* cfg);
+AVX afxError _AvxDsysSwAcquireCanvCb(afxDrawSystem dsys, avxCanvasConfig const* cfg, afxUnit cnt, avxCanvas canvases[]);
+
 #endif//AVX_CANVAS_DDK_H

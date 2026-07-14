@@ -579,7 +579,10 @@ _QOW _auxEnvDdi const _QOW_DDI_ENV =
     .getCurs = (void*)getMousePosition,
     .fseCb = (void*)immergeWindow,
     .promote = (void*)_QowPromoteWindow,
-    .grabCursorCb = (void*)grabCursor
+    .grabCursorCb = (void*)grabCursor,
+
+    .cfgWndCb = _AvxEnvSwConfigureWndCb,
+    .acqWndCb = _AuxEnvSwAcquireWndCb,
 };
 
 _QOW afxError _QowEnvDtorCb(afxEnvironment env)
@@ -591,7 +594,7 @@ _QOW afxError _QowEnvDtorCb(afxEnvironment env)
 
     AfxDeregisterChainedClasses(&env->m.classes);
 
-    _AUX_ENV_CLASS_CONFIG.dtor(env);
+    _AUX_ENV_CLS_CFG.dtor(env);
 
     UnregisterClassA(env->wndClss.lpszClassName, env->wndClss.hInstance);
 
@@ -641,14 +644,14 @@ _QOW afxError _QowEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
     _auxEnvAcq cfg2 = { 0 };
     cfg2 = *cfg;
 
-    afxClassConfig wndClsCfg = _AUX_WND_CLASS_CONFIG;
+    afxClassConfig wndClsCfg = _AUX_WND_CLS_CFG;
     wndClsCfg.fixedSiz = sizeof(AFX_OBJ(afxWindow));
     wndClsCfg.ctor = (void*)_QowWndCtorCb;
     wndClsCfg.dtor = (void*)_QowWndDtorCb;
 
     cfg2.wndClsCfg = &wndClsCfg;
 
-    if (_AUX_ENV_CLASS_CONFIG.ctor(env, (void*[]) { icd, &cfg2 }, 0))
+    if (_AUX_ENV_CLS_CFG.ctor(env, (void*[]) { icd, &cfg2 }, 0))
     {
         AfxThrowError();
         return err;
@@ -727,7 +730,7 @@ _QOW afxError _QowEnvCtorCb(afxEnvironment env, void** args, afxUnit invokeNo)
     {
         AfxDeregisterChainedClasses(&env->m.classes);
 
-        _AUX_ENV_CLASS_CONFIG.dtor(env);
+        _AUX_ENV_CLS_CFG.dtor(env);
     }
     return err;
 }

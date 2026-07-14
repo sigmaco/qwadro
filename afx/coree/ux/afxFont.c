@@ -160,7 +160,7 @@ _AUX void AfxQueryFontGlyph(afxFont fnt, afxReal fntHeight, afxUnit cnt, afxUnit
 // We can better handle it by binding the font to a surface, where the binding state would hold the dynamic data.
 // And, we could draw it during presentation calls.
 
-_AFX afxError AfxTranscribe(afxFont fnt, afxRect const* area, afxUnit col, afxUnit row, afxString const* text)
+_AFX afxError AfxTranscribe(afxDrawContext dctx, afxFont fnt, afxRect const* area, afxUnit col, afxUnit row, afxString const* text)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FNT, 1, &fnt);
@@ -220,7 +220,9 @@ _AFX afxError AfxTranscribe(afxFont fnt, afxRect const* area, afxUnit col, afxUn
 
     afxSize vboOffset;
     afxUnit vboRange;
-    afxReal* verts = (afxReal*)&fnt->fntVboPtr[20 * ((col * 32) + row)];
+
+    afxReal* verts = AvxAdvanceBufferedRing(&fnt->fntVboRng, numchar, &vboOffset, &vboRange);
+    //afxReal* verts = (afxReal*)&fnt->fntVboPtr[20 * ((col * 32) + row)];
 
     //afxReal* verts = AvxGetBufferMap(dout->fntVbo, 0, 20 * text->len);
     void const* bufStart = verts;
@@ -260,6 +262,42 @@ _AFX afxError AfxTranscribe(afxFont fnt, afxRect const* area, afxUnit col, afxUn
 
     fnt->fntStoreLen += numchar;
 
+    avxBufferedStream bufi = { 0 };
+    bufi.buf = fnt->fntVbo;
+    bufi.offset = vboOffset;
+    bufi.range = vboRange;
+    bufi.stride = sizeof(afxV2d) + sizeof(afxV2d) + sizeof(afxByte[4]);
+    AvxCmdBindVertexBuffers(dctx, 0, 1, &bufi);
+    AvxCmdDraw(dctx, 4, numchar, 0, 0);
+
+    return err;
+}
+
+_AFX afxError AvxCmdBeginDeviceFont(afxDrawContext dctx, afxFont fnt, avxViewport const* vp)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT_OBJECTS(afxFcc_FNT, 1, &fnt);
+
+    AvxCmdBindPipeline(dctx, fnt->fntPip, NIL, NIL);
+
+    afxM4d p;
+    AfxM4dReset(p);
+    AfxComputeOffcenterOrthographicMatrix(p, 0, vp->extent[0], 0, vp->extent[1], -1.f, 1.f, FALSE, avxClipSpaceDepth_NEG_ONE_TO_ONE);
+    //AfxComputeBasicOrthographicMatrix(p, vp.extent[0] / vp.extent[1], 1.0, 3.0, &AVX_CLIP_SPACE_OPENGL);
+    AvxCmdPushConstants(dctx, 0, sizeof(p), p);
+
+    //AvxCmdBindRasters(dctx, avxBus_GFX, 0, 0, 1, &dout->fntRas);
+    AvxCmdBindSamplers(dctx, avxBus_GFX, 0, 0, 1, &fnt->fntSamp);
+
+    return err;
+}
+
+_AFX afxError AvxCmdEndDeviceFont(afxDrawContext dctx)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    
     return err;
 }
 
@@ -416,7 +454,7 @@ _AUX afxError _AuxFntCtorCb(afxFont fnt, void** args, afxUnit invokeNo)
         fnt->fntSamp = fntSamp;
         fnt->fntPip = pip;
 
-        AvxMakeBufferedRing(&fnt->fntVboRng, fnt->fntVbo, 0, 32 * 15, 20, AVX_BUFFER_ALIGNMENT, 2);
+        AvxMakeBufferedRing(&fnt->fntVboRng, fnt->fntVbo, 0, vboSpec.size, 20, AVX_BUFFER_ALIGNMENT, 2);
 
         fnt->fntEnabled = TRUE;
     }

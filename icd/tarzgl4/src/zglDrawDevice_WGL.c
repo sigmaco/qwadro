@@ -153,7 +153,7 @@ _ZGL afxResult _ZglDdevIoctrlCb(afxDrawDevice ddev, afxUnit reqCode, va_list va)
 #if 0
         if (!ddev->idd)
         {
-            if (AfxAllocate(sizeof(ddev->idd[0]), 0, AfxHere(), (void**)&ddev->idd)) AfxThrowError();
+            if (AfxAllocate(AfxHere(), sizeof(ddev->idd[0]), 0, (void**)&ddev->idd)) AfxThrowError();
             else
             {
                 afxUri uri;
@@ -272,7 +272,7 @@ _ZGL afxResult _ZglDdevIoctrlCb(afxDrawDevice ddev, afxUnit reqCode, va_list va)
                 }
 
                 if (err)
-                    AfxDeallocate((void**)&ddev->idd, AfxHere());
+                    AfxDeallocate(AfxHere(), (void**)&ddev->idd);
             }
         }
 #endif
@@ -290,7 +290,7 @@ _ZGL afxResult _ZglDdevIoctrlCb(afxDrawDevice ddev, afxUnit reqCode, va_list va)
             if (ddev->idd->oglDll)
                 AfxDisposeObjects(1, &ddev->idd->oglDll);
 
-            AfxDeallocate((void**)&ddev->idd, AfxHere());
+            AfxDeallocate(AfxHere(), (void**)&ddev->idd);
             ddev->idd = NIL;
         }
 #endif

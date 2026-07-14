@@ -1053,7 +1053,7 @@ _ARX afxError _ArxRctxDtorCb(arxRenderContext rctx)
     AfxExhaustPool(&rctx->visualModels, FALSE);
     AfxExhaustPool(&rctx->visualMaterials, FALSE);
 
-    if (AfxDeallocate((void**)&rctx->frames, AfxHere()))
+    if (AfxDeallocate(AfxHere(), (void**)&rctx->frames))
     {
         AfxThrowError();
     }
@@ -1099,7 +1099,7 @@ _ARX afxError _ArxRctxCtorCb(arxRenderContext rctx, void** args, afxUnit invokeN
     rctx->frameIdx = 0;
     rctx->frameId = 0;
 
-    if (AfxAllocate(rctx->frameCnt * sizeof(rctx->frames[0]), NIL, AfxHere(), (void**)&rctx->frames))
+    if (AfxAllocate(AfxHere(), rctx->frameCnt * sizeof(rctx->frames[0]), NIL, (void**)&rctx->frames))
     {
         AfxThrowError();
         return err;

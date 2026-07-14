@@ -73,9 +73,9 @@ AVX afxBool _AvxGetIcd(afxSystem sys, afxUnit icdIdx, afxModule* driver);
 
 AFX afxError AvxGetIcd(afxUnit unit, afxModule* avxIcd);
 
-AVX afxError _AvxIcdConfigureDsysSW(afxModule avxIcd, avxSystemConfig* cfg);
+AVX afxError _AvxIcdSwConfigureDsysCb(afxModule avxIcd, avxSystemConfig* cfg);
 
-AVX afxError _AvxIcdEstablishDsysSW(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system);
+AVX afxError _AvxIcdSwEstablishDsysCb(afxModule avxIcd, avxSystemConfig const* cfg, afxDrawSystem* system);
 
 AVX _avxDdiIcd const* _AvxGetDdi(afxModule avxIcd);
 

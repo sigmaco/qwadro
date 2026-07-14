@@ -1581,7 +1581,7 @@ _QOW afxError _ZglDoutAdjust_WGL(afxSurface dout, afxRect const* area, afxBool f
 {
     afxError err = { 0 };
 
-    _AvxDoutAdjustCb(dout, area, fse);
+    _AvxDoutSwAdjustCb(dout, area, fse);
 
     return err;
 }
@@ -1590,7 +1590,7 @@ _QOW afxError _ZglDoutImplRegenBuffers(afxSurface dout, afxBool build)
 {
     afxError err = { 0 };
 
-    if (_AvxDoutRegenBuffers(dout, build))
+    if (_AvxDoutSwRegenCb(dout, build))
         AfxThrowError();
 
     if (dout->wgl.swaps)
@@ -1627,8 +1627,8 @@ _QOW _avxDoutDdi const _ZGL_DDI_DOUT =
     .ioctlCb = _ZglDoutIoctl_WGL,
     .adjustCb = _ZglDoutAdjust_WGL,
     .regenCb = _ZglDoutImplRegenBuffers,
-    .lockCb = _AvxDoutLockBufferCb,
-    .unlockCb = _AvxDoutUnlockBufferCb,
+    .lockCb = _AvxDoutSwLockBufCb,
+    .unlockCb = _AvxDoutSwUnlockBufCb,
     .presentCb = _ZglDoutPresent_WGL,
     .presOnDpuCb = (void*)_DpuPresentDout_BlitSwapFbo
 };
@@ -1642,12 +1642,12 @@ _QOW afxError _ZglDoutDtorCb(afxSurface dout)
 
     if (dout->m.idd)
     {
-        AfxDeallocate((void**)&dout->m.idd, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&dout->m.idd);
         dout->m.idd = NIL;
     }
 
     if (dout->wgl.swaps)
-        AfxDeallocate((void**)&dout->wgl.swaps, AfxHere());
+        AfxDeallocate(AfxHere(), (void**)&dout->wgl.swaps);
 
     AFX_ASSERT(!dout->wgl.hSwapRC); // disconnect should have released it.
 
@@ -1659,7 +1659,7 @@ _QOW afxError _ZglDoutDtorCb(afxSurface dout)
     if (dout->hDC)
         ReleaseDC(dout->hWnd, dout->hDC);
 
-    if (_AVX_CLASS_CONFIG_DOUT.dtor(dout))
+    if (_AVX_DOUT_CLS_CFG.dtor(dout))
         AfxThrowError();
 
     return err;
@@ -1678,7 +1678,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    if (_AVX_CLASS_CONFIG_DOUT.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
+    if (_AVX_DOUT_CLS_CFG.ctor(dout, (void*[]) { dpy, (void*)cfg }, 0))
     {
         AfxThrowError();
         return err;
@@ -1695,10 +1695,10 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     dout->wgl.swapOnWgl = TRUE;
     dout->wgl.swaps = NIL;
 
-    if (AfxAllocate(dout->m.swapCnt * sizeof(dout->wgl.swaps[0]), 0, AfxHere(), (void**)&dout->wgl.swaps))
+    if (AfxAllocate(AfxHere(), dout->m.swapCnt * sizeof(dout->wgl.swaps[0]), 0, (void**)&dout->wgl.swaps))
     {
         AfxThrowError();
-        _AVX_CLASS_CONFIG_DOUT.dtor(dout);
+        _AVX_DOUT_CLS_CFG.dtor(dout);
         return err;
     }
 
@@ -1870,7 +1870,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
 #endif
     }
 
-    if (err && _AVX_CLASS_CONFIG_DOUT.dtor(dout))
+    if (err && _AVX_DOUT_CLS_CFG.dtor(dout))
         AfxThrowError();
 
     return err;
