@@ -22,7 +22,7 @@
 #define _AFX_SYSTEM_C
 #include "afxSystemDDK.h"
 #define _AVX_DRAW_C
-#include "draw/avxIcd.h"
+#include "vga/icd/avxIcd.h"
 #define _AMX_MIX_C
 #include "mix/amxIcd.h"
 #define _AUX_UX_C

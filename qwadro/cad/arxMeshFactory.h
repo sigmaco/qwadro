@@ -21,13 +21,13 @@
 #define ARX_MESH_FACTORY_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 #include "qwadro/coll/afxBox.h"
 #include "qwadro/afxObject.h"
 #include "qwadro/etc/afxUrd.h"
 #include "qwadro/math/afxVertex.h"
-//#include "qwadro/draw/arxBufferizer.h"
+//#include "qwadro/vga/arxBufferizer.h"
 #include "qwadro/afxFixedString.h"
 #include "qwadro/cad/arxTriangulation.h"
 

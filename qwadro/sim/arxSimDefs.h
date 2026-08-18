@@ -37,7 +37,7 @@
 #ifndef ASX_SIM_DEFS_H
 #define ASX_SIM_DEFS_H
 
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 
 #ifndef __e2kinee__
 #   ifdef _DEBUG

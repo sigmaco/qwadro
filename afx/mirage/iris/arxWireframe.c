@@ -25,7 +25,7 @@
 #define _ARX_RENDER_CONTEXT_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 #include "arxWireframeShaders.h"
 
 // AFX_V4D_CLOUDFLARE --- 1, 1, 1, 1

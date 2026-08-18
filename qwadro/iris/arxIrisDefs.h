@@ -36,7 +36,7 @@
 #define ARX_IRIS_DEFS_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 
 // In RW3, RpGeometry is like a arxMesh. 

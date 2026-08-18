@@ -24,7 +24,7 @@
 #define _ARX_SKELETON_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 
 static afxString const mtlVshCode = AFX_STATIC_STRING_R(
 // EMOTION ENGINE (c) 2017 SIGMA TECHNOLOGY GROUP

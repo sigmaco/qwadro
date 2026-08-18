@@ -25,7 +25,7 @@
 #define _ARX_RENDER_CONTEXT_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 
 /*
     2025/12/18, 20h02. Enquanto eu tentava consertar esse código, num dos meus piores dias, eu tive uma visão de um jardim.

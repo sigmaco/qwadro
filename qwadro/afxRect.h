@@ -21,7 +21,7 @@
 #define AFX_RECT_H
 
 #include "qwadro/math/afxVector.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 
 typedef enum afxAnchor
 // Bitmask enumerants to handle rectangle sides as anchors.

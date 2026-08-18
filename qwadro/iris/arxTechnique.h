@@ -30,8 +30,8 @@
 #define ARX_TECHNIQUE_H
 
 #include "qwadro/iris/arxIrisDefs.h"
-#include "qwadro/draw/avxPipeline.h"
-#include "qwadro/draw/avxRasterization.h"
+#include "qwadro/vga/gfx/avxPipeline.h"
+#include "qwadro/vga/gfx/avxRasterization.h"
 
 AFX_DEFINE_STRUCT(arxDrawPass)
 {

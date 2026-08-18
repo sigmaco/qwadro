@@ -48,7 +48,7 @@
 #ifndef ARX_SCENARIO_H
 #define ARX_SCENARIO_H
 
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/iris/arxRenderModel.h"

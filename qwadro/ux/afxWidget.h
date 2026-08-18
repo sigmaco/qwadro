@@ -43,12 +43,12 @@
 #define AUX_WIDGET_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/draw/avxColor.h"
+#include "qwadro/vga/math/avxColor.h"
 #include "qwadro/afxChain.h"
 #include "qwadro/afxObject.h"
 #include "qwadro/afxUri.h"
 #include "qwadro/math/afxTransform.h"
-#include "qwadro/ux/afxFont.h"
+#include "qwadro/vga/dma/afxFont.h"
 #include "qwadro/ux/afxTheme.h"
 
 typedef enum afxWidgetFlag

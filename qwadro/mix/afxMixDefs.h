@@ -35,7 +35,7 @@
 #define AMX_MIX_DEFS_H
 
 #include "qwadro/afxSystem.h"
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 
 #ifndef __e2mixva__
 #   ifdef _DEBUG

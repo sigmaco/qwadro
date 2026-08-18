@@ -27,11 +27,11 @@
 #include "qwadro/ux/afxShell.h"
 #include "afxEnvironmentDDK.h"
 #include "../hid/afxHidDDK.h"
-#include "afxFontDDK.h"
+#include "../vga/dma/afxFontDDK.h"
 #include "afxWidgetDDK.h"
 #include "afxWindowDDK.h"
 #include "afxShellDDK.h"
-#include "../hid/afxDisplayDDK.h"
+#include "../vga/afxDisplayDDK.h"
 
 AFX_DECLARE_STRUCT(_auxIddIcd);
 
