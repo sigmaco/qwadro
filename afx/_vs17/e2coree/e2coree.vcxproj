@@ -76,6 +76,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\..\qwadro\mix\amxTrack.h" />
     <ClInclude Include="..\..\..\qwadro\scene\arxBuffer.h" />
     <ClInclude Include="..\..\..\qwadro\scene\arxBufferizer.h" />
     <ClInclude Include="..\..\..\qwadro\scene\arxCamera.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\..\coree\mix\amxSoundDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxSoundscapeDDK.h" />
     <ClInclude Include="..\..\coree\mix\afxMixSystemDDK.h" />
+    <ClInclude Include="..\..\coree\mix\amxTrackDDK.h" />
     <ClInclude Include="..\..\coree\mix\amxTrackerDDK.h" />
     <ClInclude Include="..\..\coree\mix\mpu\amxMpuAudio.h" />
     <ClInclude Include="..\..\coree\mix\mpu\amxMpuContext.h" />
@@ -578,6 +580,7 @@
     <ClCompile Include="..\..\coree\afxRing.c" />
     <ClCompile Include="..\..\coree\afxSlabAllocator.c" />
     <ClCompile Include="..\..\coree\afxStack.c" />
+    <ClCompile Include="..\..\coree\mix\amxTrack.c" />
     <ClCompile Include="..\..\dep\c11threads\c11threads_win32.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

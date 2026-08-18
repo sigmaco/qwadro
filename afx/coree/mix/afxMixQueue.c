@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
@@ -568,7 +568,7 @@ _AMX afxError _AmxMqueFlushSinks(afxMixQueue mque, afxUnit cnt, amxFlush const f
             AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
 
             iorp->Sink.ops[i].sink = sink;
-            iorp->Sink.ops[i].sampleCnt = flushes[i].sampleCnt;
+            iorp->Sink.ops[i].frameCnt = flushes[i].frameCnt;
             iorp->Sink.ops[i].wait = flushes[i].wait;
             iorp->Sink.ops[i].waitValue = flushes[i].waitValue;
             iorp->Sink.ops[i].signal = flushes[i].signal;
@@ -613,7 +613,7 @@ _AMX afxError _AmxMqueRefillSinks(afxMixQueue mque, afxUnit cnt, amxCaption cons
             AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
 
             iorp->Drink.ops[i].sink = sink;
-            iorp->Drink.ops[i].sampleCnt = captions[i].sampleCnt;
+            iorp->Drink.ops[i].frameCnt = captions[i].frameCnt;
             iorp->Drink.ops[i].wait = captions[i].wait;
             iorp->Drink.ops[i].waitValue = captions[i].waitValue;
             iorp->Drink.ops[i].signal = captions[i].signal;

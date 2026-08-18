@@ -24,7 +24,7 @@
 ZGL afxError _DpuBindAndSyncSamp(zglDpu* dpu, afxUnit glUnit, avxSampler samp);
 ZGL afxError _DpuSyncShd(zglDpu* dpu, avxShader shd, avxShaderType stage);
 ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxShader codb, avxPipeline pip);
-ZGL afxError _DpuSurfSync(zglDpu* dpu, _avxCanvasBin surf, glVmt const* gl); // must be used before texUpdate
+ZGL afxError _DpuSurfSync(zglDpu* dpu, _avxCanvasRig surf, glVmt const* gl); // must be used before texUpdate
 ZGL afxError DpuBindAndSyncRas(zglDpu* dpu, afxUnit glUnit, avxRaster tex, afxBool keepBound);
 ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxAddress const src);
 ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxUnit compressedSiz, afxAddress const src);

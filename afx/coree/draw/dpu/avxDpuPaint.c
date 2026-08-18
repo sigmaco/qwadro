@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -44,7 +44,7 @@ _AVX afxError _AvxDpuClearCanvas(avxDpu* dpu, afxUnit binCnt, afxUnit const bins
     for (afxUnit i = 0; i < binCnt; i++)
     {
         avxRaster ras;
-        if (!AvxGetDrawBuffers(dpu->canv, bins[i], 1, &ras))
+        if (!AvxGetCanvasBuffers(dpu->canv, bins[i], 1, &ras))
             continue;
 
         afxByte* dstData = _AvxGetClientRasterData(ras, 0);
@@ -100,7 +100,7 @@ _AVX void _AvxDpuCommenceDrawScope(avxDpu* dpu, avxCanvas canv, afxRect const* a
 
     afxUnit maxColSurCnt;
     afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };
-    afxUnit maxSurCnt = AvxQueryCanvasBins(canv, &maxColSurCnt, &dsSurIdx[0], &dsSurIdx[1]);
+    afxUnit maxSurCnt = AvxQueryCanvasRigs(canv, &maxColSurCnt, &dsSurIdx[0], &dsSurIdx[1]);
     afxBool hasDs = ((dsSurIdx[1] != AFX_INVALID_INDEX) || (dsSurIdx[0] != AFX_INVALID_INDEX));
     afxBool combinedDs = (hasDs && (dsSurIdx[1] == dsSurIdx[0]));
     cCnt = AFX_MIN(cCnt, maxColSurCnt);
@@ -272,13 +272,13 @@ _AVX void _AvxDpuConcludeDrawScope(avxDpu* dpu)
     if (canv)
     {
         afxUnit surCnt;
-        surCnt = AvxQueryCanvasBins(canv, NIL, NIL, NIL);
+        surCnt = AvxQueryCanvasRigs(canv, NIL, NIL, NIL);
 #if 0
         if (surCnt)
         {
             AFX_ASSERT(_AVX_MAX_SURF_PER_CANV >= surCnt);
             avxRaster surfaces[_AVX_MAX_SURF_PER_CANV];
-            AvxGetDrawBuffers(canv, 0, surCnt, surfaces);
+            AvxGetCanvasBuffers(canv, 0, surCnt, surfaces);
 
             for (afxUnit i = 0; i < surCnt; i++)
             {
@@ -325,10 +325,10 @@ _AVX afxError _AvxDpuResolveCanvas(avxDpu* dpu, avxCanvas src, avxCanvas dst, af
             Avoid any format conversion or scaling.
     */
 
-    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->binCnt) && (dbufIdx < dst->binCnt); sbufIdx++, dbufIdx++)
+    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->rigCnt) && (dbufIdx < dst->rigCnt); sbufIdx++, dbufIdx++)
     {
-        if (src->bins[sbufIdx].buf && dst->bins[dbufIdx].buf)
-            _AvxDpuResolveRaster(dpu, dst->bins[dbufIdx].buf, opCnt, ops, src->bins[sbufIdx].buf);
+        if (src->rigs[sbufIdx].ras && dst->rigs[dbufIdx].ras)
+            _AvxDpuResolveRaster(dpu, dst->rigs[dbufIdx].ras, opCnt, ops, src->rigs[sbufIdx].ras);
     }
     return err;
 }
@@ -352,10 +352,10 @@ _AVX afxError _AvxDpuBlitCanvas(avxDpu* dpu, avxCanvas src, avxCanvas dst, afxUn
         (e.g., for mipmap generation or format conversion), a shader-based blit might be required.
     */
 
-    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->binCnt) && (dbufIdx < dst->binCnt); sbufIdx++, dbufIdx++)
+    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->rigCnt) && (dbufIdx < dst->rigCnt); sbufIdx++, dbufIdx++)
     {
-        if (src->bins[sbufIdx].buf && dst->bins[dbufIdx].buf)
-            _AvxDpuBlitRaster(dpu, dst->bins[dbufIdx].buf, opCnt, ops, src->bins[sbufIdx].buf, flt);
+        if (src->rigs[sbufIdx].ras && dst->rigs[dbufIdx].ras)
+            _AvxDpuBlitRaster(dpu, dst->rigs[dbufIdx].ras, opCnt, ops, src->rigs[sbufIdx].ras, flt);
     }
     return err;
 }

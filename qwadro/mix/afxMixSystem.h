@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -41,6 +41,7 @@
 #include "qwadro/mix/amxBuffer.h"
 #include "qwadro/mix/amxBuffered.h"
 #include "qwadro/mix/amxTracker.h"
+#include "qwadro/mix/amxTrack.h"
 #include "qwadro/mix/amxPump.h"
 
 #define AMX_MAX_BRIDGES (32)

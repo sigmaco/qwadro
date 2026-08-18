@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This file is part of Advanced RenderWare Extensions.
@@ -58,24 +58,12 @@ _ARX afxError _ArxMshlDtorCb(arxMeshLinkage mshl)
 
     afxBool transplanted = mshl->origSkl && (mshl->origSkl != mshl->mdl->skl);
 
-    afxAllocation stashes[] =
+    afxAllocation const stashes[] =
     {
-        {
-            .cnt = mshl->mtlCnt,
-            .siz = sizeof(mshl->mtlMap[0]),
-            .var = (void**)&mshl->mtlMap
-        },
-        {
-            .cnt = mshl->biasCnt,
-            .siz = sizeof(mshl->biasToJntMap[0]),
-            .var = (void**)&mshl->biasToJntMap
-        },
-        {
-            // different from biasCnt to allow it to reuse biasToJntMap when not transplanted.
-            .cnt = transplanted ? mshl->biasCnt : 0,
-            .siz = sizeof(mshl->biasFromJntMap[0]),
-            .var = (void**)&mshl->biasFromJntMap
-        }
+        AFX_ALLOCATION(mshl->mtlCnt, sizeof(mshl->mtlMap[0]), 0, (void**)&mshl->mtlMap),
+        AFX_ALLOCATION(mshl->biasCnt, sizeof(mshl->biasToJntMap[0]), 0, (void**)&mshl->biasToJntMap),
+        // different from biasCnt to allow it to reuse biasToJntMap when not transplanted.
+        AFX_ALLOCATION((transplanted ? mshl->biasCnt : 0), sizeof(mshl->biasFromJntMap[0]), 0, (void**)&mshl->biasFromJntMap)
     };
 
     if (AfxDeallocateInstanceData(mshl, ARRAY_SIZE(stashes), stashes))
@@ -97,7 +85,7 @@ _ARX afxError _ArxMshlCtorCb(arxMeshLinkage mshl, void** args, afxUnit invokeNo)
     arxModel mdl = args[1];
     AFX_ASSERT_OBJECTS(afxFcc_MDL, 1, &mdl);
     AFX_ASSERT(args[2]);
-    arxMeshRigging const* rigi = AFX_CAST(arxMeshRigging const*, args[2]) + invokeNo;
+    arxMeshRig const* rigi = AFX_CAST(arxMeshRig const*, args[2]) + invokeNo;
     
     arxSkeletonInfo skli;
     arxSkeleton skl = mdl->skl;
@@ -120,24 +108,12 @@ _ARX afxError _ArxMshlCtorCb(arxMeshLinkage mshl, void** args, afxUnit invokeNo)
     afxUnit mtlCnt = mshi.mtlCnt;
     afxUnit biasCnt = mshi.biasCnt;
 
-    afxAllocation stashes[] =
+    afxAllocation const stashes[] =
     {
-        {
-            .cnt = mtlCnt,
-            .siz = sizeof(mshl->mtlMap[0]),
-            .var = (void**)&mshl->mtlMap
-        },
-        {
-            .cnt = biasCnt,
-            .siz = sizeof(mshl->biasToJntMap[0]),
-            .var = (void**)&mshl->biasToJntMap
-        },
-        {
-            // different from biasCnt to allow it to reuse biasToJntMap when not transplanted.
-            .cnt = transplanted ? biasCnt : 0,
-            .siz = sizeof(mshl->biasFromJntMap[0]),
-            .var = (void**)&mshl->biasFromJntMap
-        }
+        AFX_ALLOCATION(mtlCnt, sizeof(mshl->mtlMap[0]), 0, (void**)&mshl->mtlMap),
+        AFX_ALLOCATION(biasCnt, sizeof(mshl->biasToJntMap[0]), 0, (void**)&mshl->biasToJntMap),        
+        // different from biasCnt to allow it to reuse biasToJntMap when not transplanted.
+        AFX_ALLOCATION((transplanted ? biasCnt : 0), sizeof(mshl->biasFromJntMap[0]), 0, (void**)&mshl->biasFromJntMap)
     };
 
     if (AfxAllocateInstanceData(mshl, ARRAY_SIZE(stashes), stashes))
@@ -363,7 +339,7 @@ _ARXINL afxUnit ArxGetRiggedMeshes(arxModel mdl, afxUnit baseRigIdx, afxUnit rig
     return rslt;
 }
 
-_ARX afxError ArxRigMeshes(arxModel mdl, afxUnit baseRigIdx, afxUnit rigCnt, arxMeshRigging const meshes[])
+_ARX afxError _ArxRigMeshes(arxModel mdl, afxUnit baseRigIdx, afxUnit rigCnt, arxMeshRig const rigs[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDL, 1, &mdl);
@@ -377,7 +353,7 @@ _ARX afxError ArxRigMeshes(arxModel mdl, afxUnit baseRigIdx, afxUnit rigCnt, arx
 
     for (afxUnit it = 0; it < rigCnt; it++)
     {
-        arxMeshRigging const* rigi = meshes ? &meshes[it] : &(arxMeshRigging const) { 0 };
+        arxMeshRig const* rigi = rigs ? &rigs[it] : &(arxMeshRig const) { 0 };
 
         arxSkeletonInfo origSkli;
         arxSkeleton origSkl = rigi->origSkl;
@@ -617,17 +593,13 @@ _ARX afxError _ArxMdlDtorCb(arxModel mdl)
     AFX_ASSERT_OBJECTS(afxFcc_MDL, 1, &mdl);
 
     if (mdl->rigCnt)
-        ArxRigMeshes(mdl, 0, mdl->rigCnt, NIL);
+        _ArxRigMeshes(mdl, 0, mdl->rigCnt, NIL);
 
     AFX_ASSERT(mdl->usedRigCnt == 0);
 
     afxAllocation stashes[] =
     {
-        {
-            .cnt = mdl->rigCnt,
-            .siz = sizeof(mdl->rigs[0]),
-            .var = (void**)&mdl->rigs
-        }
+        AFX_ALLOCATION(mdl->rigCnt, sizeof(mdl->rigs[0]), 0, (void**)&mdl->rigs)
     };
 
     if (AfxDeallocateInstanceData(mdl, ARRAY_SIZE(stashes), stashes))
@@ -685,11 +657,7 @@ _ARX afxError _ArxMdlCtorCb(arxModel mdl, void** args, afxUnit invokeNo)
 
     afxAllocation stashes[] =
     {
-        {
-            .cnt = rigCnt,
-            .siz = sizeof(mdl->rigs[0]),
-            .var = (void**)&mdl->rigs
-        }
+        AFX_ALLOCATION(rigCnt, sizeof(mdl->rigs[0]), 0, (void**)&mdl->rigs)
     };
 
     if (AfxAllocateInstanceData(mdl, ARRAY_SIZE(stashes), stashes))
@@ -734,7 +702,7 @@ _ARX afxError _ArxMdlCtorCb(arxModel mdl, void** args, afxUnit invokeNo)
 
             AfxZero(mdl->rigs, rigCnt * sizeof(mdl->rigs[0]));
             mdl->rigCnt = rigCnt;
-
+            
             AFX_ASSERT(mdl->rigCnt == rigCnt);
 
             arxMtd mtd = mdlb->mtd;
@@ -863,8 +831,35 @@ _ARX afxError ArxAssembleModels(arxScenario scio, afxUnit cnt, afxString const u
     AFX_ASSERT_CLASS(cls, afxFcc_MDL);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)models, (void const*[]) { scio, urns, blueprints }))
+    {
         AfxThrowError();
+        return err;
+    }
 
+    AFX_ASSERT_OBJECTS(afxFcc_MDL, cnt, models);
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        arxModelBlueprint const* mdlb = &blueprints[i];
+
+        if (mdlb->rigs)
+        {
+            AFX_ASSERT(mdlb->rigCnt);
+
+            arxModel mdl = models[i];
+
+            if (_ArxRigMeshes(mdl, 0, mdlb->rigCnt, mdlb->rigs))
+            {
+                AfxThrowError();
+                break; // stop rigging since it all will be disposed.
+            }
+        }
+    }
+
+    if (err)
+    {
+        AfxDisposeObjects(cnt, models);
+    }
     return err;
 }
 

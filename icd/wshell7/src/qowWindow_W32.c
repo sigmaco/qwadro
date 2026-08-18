@@ -300,7 +300,7 @@ _QOW HICON _AuxCreateWin32IconFromRaster(avxRaster ras, avxRasterRegion const* r
         if (AvxDumpRaster(ras, 1, &iop, dst, NIL, 0))
             AfxThrowError();
 
-        afxDrawSystem dsys = AvxGetRasterHost(ras);
+        afxDrawSystem dsys = AvxGetRasterSystem(ras);
         AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, 0);
 
         HBITMAP mask;

@@ -1445,7 +1445,7 @@ afxError RegisterPresentVdus(afxModule icd)
         AfxFormatString(&s.s, "dxgi%u", adapterIndex);
         dpi.dev.urn = s.s;
 
-        if (_AuxRegisterDisplays(icd, 1, &dpi, &dpy))
+        if (AfxAcquireDisplays(icd, 1, &dpi, &dpy))
         {
             AfxThrowError();
         }
@@ -1545,7 +1545,7 @@ afxError RegisterPresentVdus(afxModule icd)
             AfxFormatString(&s.s, "gdi%u", ddIdx);
             dpi.dev.urn = s.s;
 
-            if (_AuxRegisterDisplays(icd, 1, &dpi, &dpy))
+            if (AfxAcquireDisplays(icd, 1, &dpi, &dpy))
             {
                 AfxThrowError();
             }

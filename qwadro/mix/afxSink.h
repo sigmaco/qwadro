@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -43,10 +43,39 @@
 
 #include "qwadro/mix/afxMixDefs.h"
 #include "qwadro/mix/amxBuffer.h"
+#include "qwadro/mix/amxTrack.h"
 
 AFX_DECLARE_STRUCT(afxSinkInterface);
 
 // one video frame is equivalent to one audio interval
+
+typedef enum amxSinkEventId
+{
+    amxSinkEventId_0 = 1743,
+    amxSinkEventId_STARTED,
+    amxSinkEventId_PAUSED,
+    amxSinkEventId_STOPPED,
+    amxSinkEventId_MARKED,
+    amxSinkEventId_PREROLLED,
+    amxSinkEventId_RATE_CHANGED,
+    amxSinkEventId_SAMPLE_REQUESTED,
+    amxSinkEventId_FORMAT_CHANGED,
+    amxSinkEventId_01,
+} amxSinkEventId;
+
+AFX_DEFINE_STRUCT(amxSample)
+{
+    amxBufferedStream iob;
+
+    // Sets the duration of the sample.
+    afxUnit64 durTime;
+
+    // Sets flags associated with the sample.
+    afxMask flags;
+
+    // The presentation time.
+    afxUnit64 sampTime;
+};
 
 typedef enum amxUsage { amxUsage_CAPTURE, amxUsage_MIX, amxUsage_RESAMPLE, amxUsage_STORAGE, amxUsage_SOUND } amxUsage;
 typedef enum amxFlag { amxFlag_X } amxFlags;
@@ -79,24 +108,23 @@ AFX_DEFINE_STRUCT(amxSinkPin)
     amxFlags    bufFlags;
     afxUnit     chanCnt; // 2 --- stereo
     afxUnit     freq; // 48000 --- 48kHz
-    afxUnit     samplesPerFrame; // (freq / 60)
+    afxUnit     framesPerSample; // (freq / 60)
     afxUnit     latency; // 3
-};
-
-AFX_DEFINE_STRUCT(amxSinkConfig)
-{
-    afxUnit     pinCnt;
-    amxSinkPin  pins[32];
 };
 
 AFX_DEFINE_STRUCT(afxSinkConfig)
 {
+    //afxUnit         pinCnt;
+    //amxSinkPin      pins[32];
+    afxUnit         trakCnt;
+    amxTrackConfig  traks[8];
+
     afxUnit     vaioId;
     afxUri      endpoint;
     amxFormat   fmt; // amxFormat_M32f
     afxUnit     chanCnt; // 2 --- stereo
     afxUnit     freq; // 48000 --- 48kHz
-    afxUnit     samplesPerFrame; // (freq / 60)
+    afxUnit     framesPerSample; // (freq / 60)
     afxUnit     latency; // 3
 #if 0
     // bass
@@ -189,7 +217,7 @@ AFX_DEFINE_STRUCT(amxBufferedAudio)
 AMX afxError AmxGetSinkTrack
 (
     afxSink sink, 
-    amxAudio* track
+    amxTrack* track
 );
 
 AMX afxError AmxLockSinkBuffer
@@ -206,6 +234,14 @@ AMX afxError AmxUnlockSinkBuffer
     afxSink sink, 
     afxFlags flags
 );
+
+AMX afxError AfxProcessSample(afxSink asi, afxUnit idx, amxSample const* samp);
+// Delivers a sample to the stream. The media sink processes the sample.
+#if 0
+{
+
+};
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 

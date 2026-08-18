@@ -43,8 +43,8 @@ _QOW afxError _QowSinkLockCb(afxSink asi, afxUnit64 timeout, afxMask exuMask, af
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
 
-    afxUnit paddingFrameCnt, bufFrameCnt;
-    afxUnit wRoom = wasapiOutputGetRoom(&asi->idd.wasapi, &paddingFrameCnt, &bufFrameCnt);
+    afxUnit paddingFrameCnt, availBufFrameCnt;
+    afxUnit wRoom = wasapiOutputGetRoom(&asi->idd.wasapi, &paddingFrameCnt, &availBufFrameCnt);
     
     void* p;
     err = wasapiOutputLock(&asi->idd.wasapi, minFrameCnt, &p);
@@ -87,9 +87,9 @@ _QOW void _QowSinkFlushCb(afxSink asi)
     if (bufFrameCnt)
     {
         //AFX_ASSERT(asi->idd.wasapi.bufferFrameCount >= bufFrameCnt - paddingFrameCnt);
-
+        
         afxUnit frameCnt = 0;
-        if ((frameCnt = audio_ringbuffer_available(&asi->m.rb)))
+        //if ((frameCnt = audio_ringbuffer_available(&asi->m.rb)))
         {
 #if 0
             afxUnit minFrameCnt = AFX_MIN(frameCnt, bufFrameCnt);
@@ -103,15 +103,46 @@ _QOW void _QowSinkFlushCb(afxSink asi)
 #else
             if (asi->idd.wasapi.pRenderClient)
             {
-                wasapiOutputRb(&asi->idd.wasapi, &asi->m.rb);
+                //wasapiOutputRb(&asi->idd.wasapi, &asi->m.rb);
             }
             else
             {
-                wasapiInputRb(&asi->idd.wasapi, &asi->m.rb);
+                //wasapiInputRb(&asi->idd.wasapi, &asi->m.rb);
             }
 #endif
         }
     }
+}
+
+_QOW afxBool _QowSinkShouldProcessCb(afxSink asi, afxUnit idx)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
+
+    return wasapiShouldProcess(&asi->idd.wasapi);
+}
+
+_QOW afxError _QowSinkProcessSampleCb(afxSink asi, afxUnit idx, amxSample const* samp)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &asi);
+
+    afxUnit paddingFrameCnt, availBufFrameCnt;
+    afxUnit wRoom = wasapiOutputGetRoom(&asi->idd.wasapi, &paddingFrameCnt, &availBufFrameCnt);
+
+    afxUnit minFrameCnt = samp->iob.range / samp->iob.stride;// asi->m.freq * samp->durTime;
+    minFrameCnt = AFX_MIN(minFrameCnt, availBufFrameCnt);
+
+    afxByte* p;
+    err = wasapiOutputLock(&asi->idd.wasapi, minFrameCnt, (void**)&p);
+
+    afxSize addr = AmxGetBufferedStreamAddress(&samp->iob);
+
+    AfxStream2(minFrameCnt*2, (void*)addr, samp->iob.stride/2, p, asi->m.chanCnt * sizeof(float)/2);
+
+    err = wasapiOutputUnlock(&asi->idd.wasapi, asi->idd.wasapi.lockedOutFrameCnt, NIL);
+
+    return err;
 }
 
 _QOW _amxSinkDdi const _QOW_SINK_IMPL =
@@ -120,7 +151,9 @@ _QOW _amxSinkDdi const _QOW_SINK_IMPL =
     .lockCb = _QowSinkLockCb,
     .unlockCb = _QowSinkUnlockCb,
     .pauseCb = _QowSinkPauseCb,
-    .resetCb = _QowSinkResetCb
+    .resetCb = _QowSinkResetCb,
+    .shouldProcessCb = _QowSinkShouldProcessCb,
+    .processCb = _QowSinkProcessSampleCb,
 };
 
 _QOW afxError _QowSinkDtorCb(afxSink asi)
@@ -131,6 +164,7 @@ _QOW afxError _QowSinkDtorCb(afxSink asi)
     afxMixDevice sdev = AfxGetHost(asi);
 
     _ZalWasapiPause(&asi->idd.wasapi, 1);
+    _ZalWasapiReset(&asi->idd.wasapi);
 
     if (_ZalWasapiDestroy(&asi->idd.wasapi))
     {

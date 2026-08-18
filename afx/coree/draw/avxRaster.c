@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -30,7 +30,7 @@
  // cube array       = img x wh1 >> lod
  // 3d               =   1 x whd >> lod
 
-_AVXINL afxDrawSystem AvxGetRasterHost(avxRaster ras)
+_AVXINL afxDrawSystem AvxGetRasterSystem(avxRaster ras)
 {
     afxError err = { 0 };
     // @ras must be a valid avxRaster handle.
@@ -119,7 +119,7 @@ _AVXINL avxRange AvxGetRasterExtent(avxRaster ras, afxUnit lodIdx)
     return whd;
 }
 
-_AVXINL void AvxDescribeRaster(avxRaster ras, avxRasterInfo* desc, avxSubrasterInfo* sub, avxExorasterInfo* exo)
+_AVXINL void AvxGetRasterInfo(avxRaster ras, avxRasterInfo* desc)
 {
 #if AVX_VALIDATION_ENABLED
     afxError err = { 0 };
@@ -136,25 +136,55 @@ _AVXINL void AvxDescribeRaster(avxRaster ras, avxRasterInfo* desc, avxSubrasterI
     desc->exuMask = 0;
     desc->udd = ras->udd;
     desc->tag = ras->tag;
+}
 
-    if (sub)
+_AVXINL afxError AvxGetSubrasterInfo(avxRaster ras, avxSubrasterInfo* sub)
+{
+#if AVX_VALIDATION_ENABLED
+    afxError err = { 0 };
+    // @ras must be a valid avxRaster handle.
+    AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
+    AFX_ASSERT(sub);
+#endif//AVX_VALIDATION_ENABLED
+
+    *sub = (avxSubrasterInfo)
     {
-        *sub = (avxSubrasterInfo)
-        {
-            .ras = ras->base,
+        .ras = ras->base,
             .baseLayer = ras->baseLayer,
             .baseLod = ras->baseMip,
             .swizzle = ras->swizzling
-        };
-    }
+    };
 
-    if (exo)
-    {
-        *exo = (avxExorasterInfo)
-        {
-            0
-        };
-    }
+    sub->lodCnt = ((ras->spp > 1) ? (ras->spp >> 1) : ras->mipCnt);
+    sub->fmt = ras->fmt;
+    sub->flags = ras->flags;
+    
+    sub->udd = ras->udd;
+    sub->tag = ras->tag;
+
+    return (ras->base == ras) ? afxError_INVALID : afxError_NONE;
+}
+
+_AVXINL afxError AvxGetExorasterInfo(avxRaster ras, avxExorasterInfo* exo)
+{
+#if AVX_VALIDATION_ENABLED
+    afxError err = { 0 };
+    // @ras must be a valid avxRaster handle.
+    AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
+    AFX_ASSERT(exo);
+#endif//AVX_VALIDATION_ENABLED
+    exo->rasi.lodCnt = ((ras->spp > 1) ? (ras->spp >> 1) : ras->mipCnt);
+    exo->rasi.whd = AvxGetRasterExtent(ras, 0);
+    exo->rasi.fmt = ras->fmt;
+    exo->rasi.flags = ras->flags;
+    exo->rasi.usage = ras->usage;
+
+    exo->rasi.exuMask = 0;
+    exo->rasi.udd = ras->udd;
+    exo->rasi.tag = ras->tag;
+
+    //return (ras->base != ras) ? afxError_INVALID : afxError_NONE;
+    return afxError_INVALID;
 }
 
 _AVXINL void _AvxSanitizeRasterRegion(avxRaster ras, afxUnit cnt, avxRasterRegion const raw[], avxRasterRegion san[])
@@ -368,7 +398,7 @@ _AVX afxError _AvxRasDtorCb(avxRaster ras)
         AfxDisposeObjects(1, &ras->base);
     }
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     if (_AvxDsysGetDdi(dsys)->deallocRasCb(dsys, 1, &ras))
     {
         AfxThrowError();
@@ -382,7 +412,7 @@ _AVX afxError _AvxRasCtorCb(avxRaster ras, void** args, afxUnit invokeNo)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     avxRasterInfo const* rasi = args[1] ? ((avxRasterInfo const*)args[1]) + invokeNo : NIL;
     avxSubrasterInfo const* subi = args[2] ? ((avxSubrasterInfo const*)args[2]) + invokeNo : NIL;
     avxExorasterInfo const* exorasi = args[3] ? ((avxExorasterInfo const*)args[3]) + invokeNo : NIL;
@@ -652,7 +682,7 @@ _AVX afxError AvxAcquireRasters(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo c
     for (afxUnit i = 0; i < cnt; i++)
     {
         avxRasterInfo rasi;
-        AvxDescribeRaster(rasters[i], &rasi, NIL, NIL);
+        AvxGetRasterInfo(rasters[i], &rasi);
 
         AFX_ASSERT(rasi.lodCnt >= info[i].lodCnt);
         AFX_ASSERT(rasi.whd.w >= info[i].whd.w);
@@ -670,7 +700,7 @@ _AVX afxError AvxAcquireRasters(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo c
     return err;
 }
 
-_AVX afxError AvxAcquireExternalRasters(afxDrawSystem dsys, afxUnit cnt, avxExorasterInfo const info[], avxRaster rasters[])
+_AVX afxError AvxAcquireExorasters(afxDrawSystem dsys, afxUnit cnt, avxExorasterInfo const info[], avxRaster rasters[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -743,7 +773,7 @@ _AVX afxError AvxAcquireExternalRasters(afxDrawSystem dsys, afxUnit cnt, avxExor
     {
         avxExorasterInfo exo;
         avxRasterInfo rasi;
-        AvxDescribeRaster(rasters[i], &rasi, NIL, &exo);
+        AvxGetRasterInfo(rasters[i], &rasi);
 
         AFX_ASSERT(rasi.lodCnt >= info[i].rasi.lodCnt);
         AFX_ASSERT(rasi.whd.w >= info[i].rasi.whd.w);
@@ -761,7 +791,7 @@ _AVX afxError AvxAcquireExternalRasters(afxDrawSystem dsys, afxUnit cnt, avxExor
     return err;
 }
 
-_AVX afxError AvxReacquireRasters(afxDrawSystem dsys, afxUnit cnt, avxSubrasterInfo const info[], avxRaster rasters[])
+_AVX afxError AvxAcquireSubrasters(afxDrawSystem dsys, afxUnit cnt, avxSubrasterInfo const info[], avxRaster rasters[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -800,7 +830,8 @@ _AVX afxError AvxReacquireRasters(afxDrawSystem dsys, afxUnit cnt, avxSubrasterI
     {
         avxSubrasterInfo sub;
         avxRasterInfo rasi;
-        AvxDescribeRaster(rasters[i], &rasi, &sub, NIL);
+        AvxGetRasterInfo(rasters[i], &rasi);
+        AvxGetSubrasterInfo(rasters[i], &sub);
 
         AFX_ASSERT(sub.ras == info[i].ras);
         AFX_ASSERT(sub.lodCnt >= info[i].lodCnt);

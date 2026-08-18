@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Video Graphics Extensions.
@@ -731,4 +731,28 @@ _AVX afxError AvxDecodeRasterFile(avxRasterFile const* meta, afxStream in, void*
     default: AfxThrowError();
     }
     return err;
+}
+
+_AVX afxError AvxOpenRasterFile(avxRasterFile const* meta, afxStream in, void* dst)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(meta);
+    AFX_ASSERT(meta->rowStride);
+    AFX_ASSERT(meta->rowsPerImg);
+}
+
+_AVX afxError AvxCloseRasterFile(avxRasterFile const* meta)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(meta);
+}
+
+_AVX afxError AvxUseRasterFileStream(avxRasterFile const* meta, afxStream in)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(meta);
+    AFX_ASSERT(meta->rowStride);
+    AFX_ASSERT(meta->rowsPerImg);
 }

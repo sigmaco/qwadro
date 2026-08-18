@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -1024,7 +1024,9 @@ _AVX _avxDsysDdi const _AVX_DDI_DSYS =
     .cfgSampCb = _AvxDsysSwConfigureSampCb,
     .acqSampCb = _AvxDsysSwAcquireSampCb,
     .cfgCanvCb = _AvxDsysSwConfigureCanvCb,
-    .acqCanvCb = _AvxDsysSwAcquireCanvCb
+    .acqCanvCb = _AvxDsysSwAcquireCanvCb,
+    .cfgPipCb = _AvxDsysSwConfigurePipCb,
+    .acqPipCb = _AvxDsysSwAcquirePipCb
 };
 
 _AVX afxError _AvxDsysDtorCb(afxDrawSystem dsys)

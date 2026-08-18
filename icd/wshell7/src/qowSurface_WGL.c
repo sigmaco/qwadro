@@ -91,7 +91,7 @@ _QOWINL afxError _QowDoutFindPixelFormat(afxSurface dout)
     }
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &dout->m.ccfg.bins[0].fmt, &pfd);
+    AvxDescribeFormats(1, &dout->m.ccfg.rigs[0].fmt, &pfd);
 
     int pxlAttrPairCnt = 0;
     int pxlAttrPairs[][2] =

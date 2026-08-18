@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Video Graphics Extensions.
@@ -94,7 +94,7 @@ _AVX afxError AvxUpdateRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
     transfer.dst.ras = ras;
     transfer.src.src = src;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -132,7 +132,7 @@ _AVX afxError AvxDumpRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const ops[
     transfer.src.ras = ras;
     transfer.dst.dst = dst;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
     
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -158,8 +158,8 @@ _AVX afxError AvxCopyRaster(avxRaster ras, afxUnit opCnt, avxRasterCopy const op
     AFX_ASSERT(ops);
 
     avxRasterInfo rasi, rasi2;
-    AvxDescribeRaster(src, &rasi, NIL, NIL);
-    AvxDescribeRaster(ras, &rasi2, NIL, NIL);
+    AvxGetRasterInfo(src, &rasi);
+    AvxGetRasterInfo(ras, &rasi2);
 
 #if AVX_VALIDATION_ENABLED
 
@@ -182,7 +182,7 @@ _AVX afxError AvxCopyRaster(avxRaster ras, afxUnit opCnt, avxRasterCopy const op
     transfer.src.ras = src;
     transfer.dst.ras = ras;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -222,7 +222,7 @@ _AVX afxError AvxPackRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const ops[
     transfer.src.ras = ras;
     transfer.dst.buf = buf;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -261,7 +261,7 @@ _AVX afxError AvxUnpackRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
     transfer.dst.ras = ras;
     transfer.src.buf = buf;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -303,7 +303,7 @@ _AVX afxError AvxUploadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
     transfer.dst.ras = ras;
     transfer.src.iob = in;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -342,7 +342,7 @@ _AVX afxError AvxDownloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const 
     transfer.src.ras = ras;
     transfer.dst.iob = out;
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     if (_AvxDsysGetDdi(dsys)->transferCb(dsys, &transfer, opCnt, ops))
@@ -438,7 +438,7 @@ _AVX afxError AvxPrintRaster(avxRaster ras, avxRasterIo const* iop, afxUnit lodC
         }
     }
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     AvxWaitForDrawBridges(dsys, AFX_TIMEOUT_INFINITE, exuMask); // we need to wait for completation before releasing the stream.
     
     AfxDisposeObjects(1, &file);
@@ -496,7 +496,7 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
         AvxDecodeRasterFile(&tgai, file, data);
         AvxUpdateRaster(ras, 1, &op, data, NIL, exuMask);
 
-        AvxWaitForDrawBridges(AvxGetRasterHost(ras), AFX_TIMEOUT_INFINITE, exuMask);
+        AvxWaitForDrawBridges(AvxGetRasterSystem(ras), AFX_TIMEOUT_INFINITE, exuMask);
 
         AfxDeallocate(AfxHere(), (void**)&data);
     }
@@ -531,7 +531,7 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
             AvxDecodeRasterFile(&tgai, file, data);
             AvxUpdateRaster(ras, 1, &iopClamped, data, NIL, exuMask);
 
-            AvxWaitForDrawBridges(AvxGetRasterHost(ras), AFX_TIMEOUT_INFINITE, exuMask);
+            AvxWaitForDrawBridges(AvxGetRasterSystem(ras), AFX_TIMEOUT_INFINITE, exuMask);
 
             AfxDeallocate(AfxHere(), (void**)&data);
         }

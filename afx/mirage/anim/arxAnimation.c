@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This file is part of Advanced RenderWare Extensions.
@@ -112,7 +112,7 @@ _ARX afxError _ArxAniRelinkGesturesCb(arxAnimation ani, afxUnit baseSlot, afxUni
     return err;
 }
 
-_ARX afxError ArxRelinkGestures(arxAnimation ani, afxUnit baseSlot, afxUnit slotCnt, arxGesture gestures[])
+_ARX afxError _ArxRelinkGestures(arxAnimation ani, afxUnit baseSlot, afxUnit slotCnt, arxGesture gestures[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_ANI, 1, &ani);
@@ -232,9 +232,11 @@ _ARX afxError _ArxAniCtorCb(arxAnimation ani, void** args, afxUnit invokeNo)
     if (gesCnt)
     {
         AfxZero(ani->gesSlots, sizeof(ani->gesSlots[0]) * gesCnt);
-        
-        if (anib->gestures && ArxRelinkGestures(ani, 0, gesCnt, anib->gestures))
+
+#if 0 // can not be called here because it will not use ICD callback.
+        if (anib->gestures && _ArxRelinkGestures(ani, 0, gesCnt, anib->gestures))
             AfxThrowError();
+#endif
     }
     AFX_ASSERT(ani->gesSlotCnt == gesCnt);
 
@@ -271,6 +273,27 @@ _ARX afxError ArxAssembleAnimations(arxScenario scio, afxUnit cnt, arxAnimationB
     }
 
     AFX_ASSERT_OBJECTS(afxFcc_ANI, cnt, animations);
+    
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        arxAnimationBlueprint const* anib = &blueprints[i];
+
+        if (anib->gestures)
+        {
+            arxAnimation ani = animations[i];
+
+            if (_ArxRelinkGestures(ani, 0, anib->gesSlotCnt, anib->gestures))
+            {
+                AfxThrowError();
+                break; // stop rigging since it all will be disposed.
+            }
+        }
+    }
+
+    if (err)
+    {
+        AfxDisposeObjects(cnt, animations);
+    }
 
     return err;
 }

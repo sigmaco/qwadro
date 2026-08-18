@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
  // This software is part of Advanced Video Graphics Extensions.
@@ -199,7 +199,7 @@ _AVX afxError AvxCmdPackRaster(afxDrawContext dctx, avxRaster ras, afxUnit opCnt
     AFX_ASSERT(ops);
 
     avxRasterInfo rasi;
-    AvxDescribeRaster(ras, &rasi, NIL, NIL);
+    AvxGetRasterInfo(ras, &rasi);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(PackRaster), sizeof(cmd->PackRaster) + (opCnt * sizeof(cmd->PackRaster.ops[0])), &cmdId);
@@ -244,7 +244,7 @@ _AVX afxError AvxCmdUnpackRaster(afxDrawContext dctx, avxRaster ras, afxUnit opC
     AFX_ASSERT(ops);
 
     avxRasterInfo rasi;
-    AvxDescribeRaster(ras, &rasi, NIL, NIL);
+    AvxGetRasterInfo(ras, &rasi);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(UnpackRaster), sizeof(cmd->UnpackRaster) + (opCnt * sizeof(cmd->UnpackRaster.ops[0])), &cmdId);
@@ -289,8 +289,8 @@ _AVX afxError AvxCmdCopyRaster(afxDrawContext dctx, avxRaster dst, afxUnit opCnt
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
 
     avxRasterInfo rasi, rasi2;
-    AvxDescribeRaster(src, &rasi, NIL, NIL);
-    AvxDescribeRaster(dst, &rasi2, NIL, NIL);
+    AvxGetRasterInfo(src, &rasi);
+    AvxGetRasterInfo(dst, &rasi2);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(CopyRaster), sizeof(cmd->CopyRaster) + (opCnt * sizeof(cmd->CopyRaster.ops[0])), &cmdId);
@@ -337,8 +337,8 @@ _AVX afxError AvxCmdResolveRaster(afxDrawContext dctx, avxRaster dst, afxUnit op
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
 
     avxRasterInfo rasi, rasi2;
-    AvxDescribeRaster(src, &rasi, NIL, NIL);
-    AvxDescribeRaster(dst, &rasi2, NIL, NIL);
+    AvxGetRasterInfo(src, &rasi);
+    AvxGetRasterInfo(dst, &rasi2);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ResolveRaster), sizeof(cmd->ResolveRaster) + (opCnt * sizeof(cmd->ResolveRaster.ops[0])), &cmdId);
@@ -384,8 +384,8 @@ _AVX afxError AvxCmdBlitRaster(afxDrawContext dctx, avxRaster dst, afxUnit opCnt
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
 
     avxRasterInfo rasi, rasi2;
-    AvxDescribeRaster(src, &rasi, NIL, NIL);
-    AvxDescribeRaster(dst, &rasi2, NIL, NIL);
+    AvxGetRasterInfo(src, &rasi);
+    AvxGetRasterInfo(dst, &rasi2);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(BlitRaster), sizeof(cmd->BlitRaster) + (opCnt * sizeof(cmd->BlitRaster.ops[0])), &cmdId);
@@ -431,7 +431,7 @@ _AVX afxError AvxCmdClearRaster(afxDrawContext dctx, avxRaster ras, avxClearValu
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterInfo rasi;
-    AvxDescribeRaster(ras, &rasi, NIL, NIL);
+    AvxGetRasterInfo(ras, &rasi);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(ClearRaster), sizeof(cmd->ClearRaster), &cmdId);

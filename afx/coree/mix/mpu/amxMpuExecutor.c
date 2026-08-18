@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>
@@ -67,7 +67,7 @@ _AMX afxError _AmxMpuWork_SinkCb(amxMpu* mpu, _amxIoReqPacket* work)
 {
     afxError err = { 0 };
 
-    audio_ringbuffer_advance_write(&work->Sink.ops[0].sink->rb, work->Sink.ops[0].sampleCnt);
+    //audio_ringbuffer_advance_write(&work->Sink.ops[0].sink->rb, work->Sink.ops[0].frameCnt);
 
     //work->Sink.sink->pushCb(work->Sink.sink, work->Sink.buf, &work->Sink.seg);
     return err;
@@ -345,8 +345,10 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         //frameCnt = AFX_MIN(frameCnt, sink->freq / 50); // 50Hz~ update; considering the 10ms of latency.
         //if (!frameCnt) continue;
 
+#if 0
         amxBufferedTrack room;
         if (!AmxLockSinkBuffer(sink, 0, NIL, 512, &room))
+#endif
         {
             afxUnit i = 0;
             amxVoice vox;
@@ -357,10 +359,12 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
                 if (vox->playing2 && !vox->paused)
                 {
                     //amxProcessVoice(vox, &trax->tracks[0].aud.aud->buf->storage[0].hostedAlloc.bytemap[sink->rb.capacity % audio_ringbuffer_writable(&sink->rb)], frameCnt);
-                    amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 1);
+                    //amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 1);
                 }
             }
+#if 0
             AmxUnlockSinkBuffer(sink, NIL);
+#endif
         }
     };
 
@@ -371,9 +375,10 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         while (AfxEnumerateObjects(sinkCls, j++, 1, (afxObject*)&sink))
         {
             AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
-
+#if 0
             amxBufferedTrack room;
             if (!AmxLockSinkBuffer(sink, 0, NIL, 512, &room))
+#endif
             {
                 amxVoice vox;
                 afxUnit i = 0;
@@ -384,12 +389,29 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
                     if (vox->playing2 && !vox->paused)
                     {
                         //amxProcessVoice(vox, &trax->tracks[0].aud.aud->buf->storage[0].hostedAlloc.bytemap[sink->rb.capacity % audio_ringbuffer_writable(&sink->rb)], frameCnt);
-                        amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 2);
-                        AfxStream2(room.frameCnt, (afxReal[]) { 0 }, 0, (void*)(room.offset + sizeof(float)), 2);
+                        //amxProcessVoice(vox, (afxReal*)room.offset, room.frameCnt, 2);
+                        //AfxStream2(room.frameCnt, (afxReal[]) { 0 }, 0, (void*)(room.offset + sizeof(float)), 2);
                         
+                        if (sink->ddi->shouldProcessCb(sink, 0))
+                        {
+                            afxEvent ev = { 0 };
+                            ev.id = amxSinkEventId_SAMPLE_REQUESTED;
+                            //ev.udd[0] = (afxSize) { 0 };
+                            //AfxEmitEvent(sink, &ev);
+
+                            afxReal tmp[512][2] = { 0 };
+                            amxSample samp = { 0 };
+                            samp.iob.offset = (afxSize)&tmp[0];
+                            samp.iob.range = sizeof(tmp);
+                            samp.iob.stride = sizeof(tmp[0]);
+                            amxProcessVoice(vox, (afxReal*)samp.iob.offset, 512, 2);
+                            sink->ddi->processCb(sink, 0, &samp);
+                        }
                     }
                 }
+#if 0
                 AmxUnlockSinkBuffer(sink, NIL);
+#endif
             }
         }
     }
@@ -447,8 +469,17 @@ _AMX afxBool _AmxMpu_ProcCb(amxMpu* mpu)
         afxClass* sinkCls = (afxClass*)_AmxMsysGetSinkClass(msys);
         while (AfxEnumerateObjects(sinkCls, ii++, 1, (afxObject*)&sink))
         {
+#if 0
             if (sink->ddi->flushCb)
                 sink->ddi->flushCb(sink);
+#endif
+#if 0
+            if (sink->ddi->shouldProcessCb(sink))
+            {
+                amxSample samp = { 0 };
+                sink->ddi->processCb(sink, 0, &samp);
+            }
+#endif
         }
     }
 #endif

@@ -10,9 +10,9 @@
  *                      Q W A D R O   D R A W   I / O   S Y S T E M
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -148,5 +148,9 @@ AFX_OBJECT(avxPipeline)
 #endif//_AVX_PIPELINE_C
 
 AVX afxClassConfig const _AVX_CLASS_CONFIG_PIP;
+
+AVX afxError _AvxDsysSwConfigurePipCb(afxDrawSystem dsys, avxPipelineConfig* cfg);
+
+AVX afxError _AvxDsysSwAcquirePipCb(afxDrawSystem dsys, afxUnit cnt, avxPipelineConfig const cfg[], avxPipeline pipelines[]);
 
 #endif//AVX_PIPELINE_DDK_H

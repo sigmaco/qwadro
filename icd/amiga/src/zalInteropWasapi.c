@@ -292,6 +292,18 @@ _ZAL afxError wasapiOutputLock(zalWasapi* idd, afxUnit frameCnt, void** pMap)
     return err;
 }
 
+_ZAL afxBool wasapiShouldProcess(zalWasapi* idd)
+{
+    afxError err = { 0 };
+
+    DWORD waitResult = WaitForSingleObject(idd->bufferReady, 0);
+    if (waitResult != WAIT_OBJECT_0)
+    {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 _ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb)
 {
     afxError err = { 0 };

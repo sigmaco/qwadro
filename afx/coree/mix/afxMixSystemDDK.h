@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -23,6 +23,7 @@
 #include "qwadro/mix/afxMixSystem.h"
 #include "mpu/amxMpuExecutor.h"
 #include "amxSoundscapeDDK.h"
+#include "amxTrackDDK.h"
 
 #ifndef _AMX_MIX_C
 AFX_DECLARE_STRUCT(_amxMsysDdi);
@@ -58,6 +59,7 @@ AFX_DEFINE_STRUCT(__amxMsysAcq)
     afxClassConfig const* sndsClsCfg;
 
     afxClassConfig const* vidClsCfg;
+    afxClassConfig const* trakClsCfg;
     //afxClassConfig const* viddClsCfg;
     afxClassConfig const* mdecClsCfg;
     afxClassConfig const* mencClsCfg;
@@ -115,6 +117,7 @@ AFX_OBJECT(afxMixSystem)
     afxClass            pmpCls;
     afxClass            mixCls;
     afxClass            traxCls;
+    afxClass            trakCls;
     afxClass            mcdcCls;
     afxClass            msrcCls;
     afxClass            msnkCls;
@@ -160,6 +163,7 @@ AMX afxClassConfig const _AMX_TRAX_CLASS_CONFIG;
 AMX afxClassConfig const _AMX_MBUF_CLASS_CONFIG;
 AMX afxClassConfig const _AMX_SND_CLASS_CONFIG;
 AMX afxClassConfig const _AMX_AUD_CLASS_CONFIG;
+AMX afxClassConfig const _AMX_TRAK_CLASS_CONFIG;
 AMX afxClassConfig const _AMX_SNDS_CLASS_CONFIG;
 
 AMX afxClassConfig const _AMX_VID_CLASS_CONFIG;

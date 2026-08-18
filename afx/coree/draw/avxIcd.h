@@ -10,9 +10,9 @@
  *                      Q W A D R O   D R A W   I / O   S Y S T E M
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL];
 AVX afxClass const* _AvxIcdGetDdevClass(afxModule icd);
 AVX afxClass const* _AvxIcdGetDsysClass(afxModule icd);
 
-AVX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[]);
+AVX afxError AfxAcquireDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[]);
 AVX afxError _AvxIcdRegisterDevices(afxModule icd, afxUnit cnt, _avxDdevReg const infos[], afxDrawDevice devices[]);
 AVX afxError _AvxIcdImplement(afxSystem sys, _avxImplementation const* cfg);
 

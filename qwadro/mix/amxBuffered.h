@@ -10,9 +10,9 @@
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -62,5 +62,77 @@ AMX void* AmxAdvanceBufferedRing
     afxSize* pOffset, 
     afxUnit* pRange
 );
+
+AMXINL afxSize AmxGetBufferedStreamAddress
+(
+    amxBufferedStream const* iob
+)
+{
+    afxError err = { afxError_NONE };
+    AFX_ASSERT(iob);
+
+    amxBuffer buf = iob->buf;
+
+    if (buf)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &buf);
+        return AmxGetBufferAddress(buf, iob->offset);
+    }
+    return iob->offset;
+}
+
+AMXINL afxSize AmxGetBufferedMapAddress
+(
+    amxBufferedMap const* iob
+)
+{
+    afxError err = { afxError_NONE };
+    AFX_ASSERT(iob);
+
+    amxBuffer buf = iob->buf;
+
+    if (buf)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &buf);
+        return AmxGetBufferAddress(buf, iob->offset);
+    }
+    return iob->offset;
+}
+
+AMXINL afxSize AmxGetBufferedStreamCapacity
+(
+    amxBufferedStream const* iob
+)
+{
+    afxError err = { afxError_NONE };
+    AFX_ASSERT(iob);
+
+    amxBuffer buf = iob->buf;
+
+    if (buf)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &buf);
+        return AFX_MIN(AmxGetBufferCapacity(buf, iob->offset), iob->range);
+    }
+    return iob->range;
+}
+
+AMXINL afxSize AmxGetBufferedMapCapacity
+(
+    amxBufferedMap const* iob
+)
+{
+    afxError err = { afxError_NONE };
+    AFX_ASSERT(iob);
+
+    amxBuffer buf = iob->buf;
+
+    if (buf)
+    {
+        AFX_ASSERT_OBJECTS(afxFcc_MBUF, 1, &buf);
+        return AFX_MIN(AmxGetBufferCapacity(buf, iob->offset), iob->range);
+    }
+    return iob->range;
+}
 
 #endif//AMX_BUFFERED_H

@@ -10,9 +10,9 @@
  *         Q W A D R O   R E N D E R I Z A T I O N   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This file is part of Advanced RenderWare Extensions.
@@ -40,26 +40,26 @@ typedef enum arxModelFlag
     arxModelFlag_NONE
 } arxModelFlags;
 
+AFX_DEFINE_STRUCT(arxModelInfo)
+{
+    arxSkeleton         skl;
+    arxSkeletonInfo     skli;
+
+    afxUnit             lodType;
+    afxReal             allowedLodErrFadingFactor;
+    afxTransform        displace;
+
+    arxMtd              mtd;
+    afxUnit             rigCnt;
+    afxUnit             riggedMeshCnt;
+};
+
 typedef enum arxMeshRigFlag
 {
     arxMeshRigFlag_TRANSPLANTED = AFX_BITMASK(0)
 } arxMeshRigFlags;
 
-AFX_DEFINE_STRUCT(arxModelInfo)
-{
-    arxSkeleton     skl;
-    arxSkeletonInfo skli;
-
-    afxUnit         lodType;
-    afxReal         allowedLodErrFadingFactor;
-    afxTransform    displace;
-
-    arxMtd          mtd;
-    afxUnit         rigCnt;
-    afxUnit         riggedMeshCnt;
-};
-
-AFX_DEFINE_STRUCT(arxMeshRigging)
+AFX_DEFINE_STRUCT(arxMeshRig)
 {
     arxMeshRigFlags flags;
     arxMesh         msh;
@@ -85,9 +85,10 @@ AFX_DEFINE_STRUCT(arxModelBlueprint)
     afxBool             scalable;
     afxBool             deformable;
     afxUnit             lodType;
+    afxTransform        displace;
     arxMtd              mtd;
     afxUnit             rigCnt;
-    afxTransform        displace;
+    arxMeshRig const*   rigs;
 };
 
 ARX afxBool ArxGetModelUrn
@@ -145,12 +146,12 @@ ARX afxUnit ArxGetRiggedMeshes
     arxMesh meshes[]
 );
 
-ARX afxError ArxRigMeshes
+ARX afxError _ArxRigMeshes
 (
     arxModel mdl, 
     afxUnit baseRigIdx, 
     afxUnit rigCnt, 
-    arxMeshRigging const meshes[]
+    arxMeshRig const rigs[]
 );
 
 ARX afxBool ArxIsRiggedMeshTransplanted

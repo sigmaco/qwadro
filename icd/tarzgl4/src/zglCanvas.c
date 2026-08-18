@@ -258,11 +258,11 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
         else
         {
             afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };
-            afxUnit surCnt = AvxQueryCanvasBins(canv, &surCnt, &dsSurIdx[0], &dsSurIdx[1]);
+            afxUnit surCnt = AvxQueryCanvasRigs(canv, &surCnt, &dsSurIdx[0], &dsSurIdx[1]);
             afxBool combinedDs = (dsSurIdx[1] == dsSurIdx[0]) && (dsSurIdx[0] != AFX_INVALID_INDEX);
             avxRaster surfaces[_ZGL_MAX_SURF_PER_CANV];
             AFX_ASSERT(_ZGL_MAX_SURF_PER_CANV >= surCnt);
-            AvxGetDrawBuffers(canv, 0, surCnt, surfaces);
+            AvxGetCanvasBuffers(canv, 0, surCnt, surfaces);
 
             afxUnit colorIdx = 0;
             GLenum glAttachment;
@@ -524,7 +524,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
 
     afxUnit maxColSurCnt;
     afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };
-    afxUnit maxSurCnt = AvxQueryCanvasBins(canv, &maxColSurCnt, &dsSurIdx[0], &dsSurIdx[1]);
+    afxUnit maxSurCnt = AvxQueryCanvasRigs(canv, &maxColSurCnt, &dsSurIdx[0], &dsSurIdx[1]);
     afxBool hasDs = ((dsSurIdx[1] != AFX_INVALID_INDEX) || (dsSurIdx[0] != AFX_INVALID_INDEX));
     afxBool combinedDs = (hasDs && (dsSurIdx[1] == dsSurIdx[0]));
     cCnt = AFX_MIN(cCnt, maxColSurCnt);
@@ -810,13 +810,13 @@ _ZGL void DpuConcludeDrawScope(zglDpu* dpu)
     if (canv)
     {
         afxUnit surCnt;
-        surCnt = AvxQueryCanvasBins(canv, NIL, NIL, NIL);
+        surCnt = AvxQueryCanvasRigs(canv, NIL, NIL, NIL);
 #if 0
         if (surCnt)
         {
             AFX_ASSERT(_ZGL_MAX_SURF_PER_CANV >= surCnt);
             avxRaster surfaces[_ZGL_MAX_SURF_PER_CANV];
-            AvxGetDrawBuffers(canv, 0, surCnt, surfaces);
+            AvxGetCanvasBuffers(canv, 0, surCnt, surfaces);
 
             for (afxUnit i = 0; i < surCnt; i++)
             {
@@ -873,7 +873,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
     for (afxUnit i = 0; i < bufCnt; i++)
     {
         avxRaster ras;
-        if(!AvxGetDrawBuffers(dpu->canv, bins[i], 1, &ras))
+        if(!AvxGetCanvasBuffers(dpu->canv, bins[i], 1, &ras))
             continue;
 
         for (afxUnit j = 0; j < areaCnt; j++)
@@ -998,10 +998,10 @@ _ZGL afxError _ZglDpuResolveCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, af
             Avoid any format conversion or scaling.
     */
 
-    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->m.binCnt) && (dbufIdx < dst->m.binCnt); sbufIdx++, dbufIdx++)
+    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->m.rigCnt) && (dbufIdx < dst->m.rigCnt); sbufIdx++, dbufIdx++)
     {
-        if (src->m.bins[sbufIdx].buf && dst->m.bins[dbufIdx].buf)
-            _ZglDpuResolveRaster(dpu, src->m.bins[sbufIdx].buf, dst->m.bins[dbufIdx].buf, opCnt, ops);
+        if (src->m.rigs[sbufIdx].ras && dst->m.rigs[dbufIdx].ras)
+            _ZglDpuResolveRaster(dpu, src->m.rigs[sbufIdx].ras, dst->m.rigs[dbufIdx].ras, opCnt, ops);
     }
     return err;
 }
@@ -1026,10 +1026,10 @@ _ZGL afxError _ZglDpuBlitCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUn
         (e.g., for mipmap generation or format conversion), a shader-based blit might be required.
     */
 
-    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->m.binCnt) && (dbufIdx < dst->m.binCnt); sbufIdx++, dbufIdx++)
+    for (afxUnit sbufIdx = 0, dbufIdx = 0; (sbufIdx < src->m.rigCnt) && (dbufIdx < dst->m.rigCnt); sbufIdx++, dbufIdx++)
     {
-        if (src->m.bins[sbufIdx].buf && dst->m.bins[dbufIdx].buf)
-            _ZglDpuBlitRaster(dpu, src->m.bins[sbufIdx].buf, dst->m.bins[dbufIdx].buf, opCnt, ops, flt);
+        if (src->m.rigs[sbufIdx].ras && dst->m.rigs[dbufIdx].ras)
+            _ZglDpuBlitRaster(dpu, src->m.rigs[sbufIdx].ras, dst->m.rigs[dbufIdx].ras, opCnt, ops, flt);
     }
     return err;
 }
@@ -1088,15 +1088,15 @@ _ZGL afxError _ZglCanvDtor(avxCanvas canv)
 
     afxDrawSystem dsys = AvxGetCanvasHost(canv);
 
-    for (afxUnit i = 0; i < canv->m.binCnt; i++)
+    for (afxUnit i = 0; i < canv->m.rigCnt; i++)
     {
-        avxRaster ras = canv->m.bins[i].buf;
+        avxRaster ras = canv->m.rigs[i].ras;
 
         if (ras)
         {
             AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
             AfxDisposeObjects(1, &ras);
-            canv->m.bins[i].buf = NIL;
+            canv->m.rigs[i].ras = NIL;
         }
     }
 

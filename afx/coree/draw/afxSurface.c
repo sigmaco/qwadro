@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -482,7 +482,7 @@ _AVX afxError _AvxDoutSwRegenCb(afxSurface dout, afxBool build)
 
                     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
                     avxRaster ras;
-                    AvxGetDrawBuffers(canv, 0, 1, &ras);
+                    AvxGetCanvasBuffers(canv, 0, 1, &ras);
                     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
 #if 0
@@ -827,7 +827,7 @@ _AVX afxBool AvxGetSurfaceBuffer(afxSurface dout, afxUnit bufIdx, avxRaster* buf
         if (AvxGetSurfaceCanvas(dout, bufIdx, &canv, &area))
         {
             AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-            if (AvxGetDrawBuffers(canv, 0, 1, &ras))
+            if (AvxGetCanvasBuffers(canv, 0, 1, &ras))
             {
                 AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
             }
@@ -869,7 +869,7 @@ _AVX afxError AvxPrintSurfaceBuffer(afxSurface dout, afxUnit bufIdx, avxRasterIo
         AFX_ASSERT(uri);
         AFX_ASSERT(!AfxIsUriBlank(uri));
 
-        if (AvxPrintDrawBuffer(canv, 0, op, uri, exuMask))
+        if (AvxPrintCanvasBuffer(canv, 0, op, uri, exuMask))
             AfxThrowError();
     }
     return err;
@@ -1014,15 +1014,15 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AvxConfigureCanvas(dsys, &dout->ccfg);
     dout->wwOverHw = dout->ccfg.whd.w / dout->ccfg.whd.h;
 
-    if (!dout->ccfg.binCnt)
+    if (!dout->ccfg.rigCnt)
     {
-        AFX_ASSERT(dout->ccfg.binCnt);
+        AFX_ASSERT(dout->ccfg.rigCnt);
         AfxThrowError();
     }
 #if 0
     for (afxUnit i = 0; i < dout->ccfg.annexCnt; i++)
     {
-        avxDrawBin* a = &dout->ccfg.annexes[i];
+        avxCanvasRig* a = &dout->ccfg.annexes[i];
     }
 #endif
     // swapchain
@@ -1076,7 +1076,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AFX_ASSERT_EXTENT(dout->resolution.d, dout->ccfg.whd.d);
 
     AFX_ASSERT(dout->swapCnt);
-    AFX_ASSERT(dout->ccfg.bins[0].usage & avxRasterUsage_DRAW);
+    AFX_ASSERT(dout->ccfg.rigs[0].usage & avxRasterUsage_DRAW);
     AFX_ASSERT(dout->refreshRate);
     AFX_ASSERT(dout->wpOverHp);
     AFX_ASSERT(dout->wrOverHr);
@@ -1125,14 +1125,14 @@ _AVX afxError _AvxDpySwConfigureDoutCb(afxDisplay dpy, afxSurfaceConfig* cfg)
     // Used to opt for sRGB format. Safe if used after being zeroed.
     //cfg->colorSpc = avxColorSpace_STANDARD;
 
-    if (!cfg->ccfg.binCnt)
+    if (!cfg->ccfg.rigCnt)
     {
-        cfg->ccfg.binCnt = 1;
+        cfg->ccfg.rigCnt = 1;
 
         if (cfg->colorSpc == avxColorSpace_STANDARD)
-            cfg->ccfg.bins[0].fmt = avxFormat_BGRA8v;
+            cfg->ccfg.rigs[0].fmt = avxFormat_BGRA8v;
         else
-            cfg->ccfg.bins[0].fmt = avxFormat_BGRA8un;
+            cfg->ccfg.rigs[0].fmt = avxFormat_BGRA8un;
     }
 
     if (AvxConfigureCanvas(dsys, &cfg->ccfg))

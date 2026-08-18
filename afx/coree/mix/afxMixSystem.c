@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -608,6 +608,10 @@ _AMX afxError _AmxMsysCtorCb(afxMixSystem msys, void** args, afxUnit invokeNo)
         clsCfg = cfg->wavClsCfg ? *cfg->wavClsCfg : _AMX_AUD_CLASS_CONFIG;
         AFX_ASSERT(clsCfg.fcc == afxFcc_AUD);
         AfxMountClass(&msys->wavCls, NIL, classes, &clsCfg);
+
+        clsCfg = cfg->trakClsCfg ? *cfg->trakClsCfg : _AMX_TRAK_CLASS_CONFIG;
+        AFX_ASSERT(clsCfg.fcc == afxFcc_AUD);
+        AfxMountClass(&msys->trakCls, NIL, classes, &clsCfg);
 
         clsCfg = cfg->vidClsCfg ? *cfg->vidClsCfg : _AMX_VID_CLASS_CONFIG;
         AFX_ASSERT(clsCfg.fcc == afxFcc_VID);

@@ -10,9 +10,9 @@
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -172,20 +172,25 @@ AVX afxError AvxDecodeRasterFile(avxRasterFile const* info, afxStream in, void* 
     The AvxLoadRasters() function loads multiple rasters from specified URIs into a drawing system.
 */
 
-AVX afxError            AvxLoadRasters
+AVX afxError AvxLoadRasters
 (
     // The system which will host the new acquired rasters.
-    afxDrawSystem       dsys,
+    afxDrawSystem dsys,
+
     // The number of rasters to be acquired and loaded.
-    afxUnit             cnt,
+    afxUnit cnt,
+
     // An array of structures prescribing the rasters to be acquired.
     avxRasterInfo const info[],
+
     // An array of URIs locating the source files.
-    afxUri const        uri[],
+    afxUri const uri[],
+
     // An optional array of TGA descriptors to retrieve additional data.
-    avxRasterFile       tga[],
+    avxRasterFile tga[],
+
     // An array of handles for each acquired raster.
-    avxRaster           rasters[]
+    avxRaster rasters[]
 );
 
 #endif//AVX_RASTER_FILE_H

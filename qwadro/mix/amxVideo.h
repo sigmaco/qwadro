@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -66,6 +66,12 @@ AFX_DEFINE_STRUCT(amxVideoEncodeConfig)
 
 // video processor only
 
+AMX afxError AmxConfigureVideo
+(
+    afxMixSystem msys,
+    amxVideoConfig const* cfg
+);
+
 AMX afxError AmxAcquireVideos
 (
     afxMixSystem msys, 
@@ -74,12 +80,24 @@ AMX afxError AmxAcquireVideos
     amxVideo videos[]
 );
 
+AMX afxError AmxConfigureVideoDecoder
+(
+    afxMixSystem msys,
+    amxVideoConfig const* cfg
+);
+
 AMX afxError AmxAcquireVideoDecoders
 (
     afxMixSystem msys, 
     afxUnit cnt, 
     amxVideoDecodeConfig const cfg[], 
     amxVideo videos[]
+);
+
+AMX afxError AmxConfigureVideoEncoder
+(
+    afxMixSystem msys,
+    amxVideoConfig const* cfg
 );
 
 AMX afxError AmxAcquireVideoEncoders

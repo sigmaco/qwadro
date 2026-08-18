@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -1264,7 +1264,36 @@ _AVX afxError AvxAssemblePcxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipeli
     return err;
 }
 
-_AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipelineConfig const cfg[], avxPipeline pipelines[])
+_AVX afxError _AvxDsysSwConfigurePipCb(afxDrawSystem dsys, avxPipelineConfig* cfg)
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    avxLimits const* limits = _AvxDsysGetLimits(dsys);
+    avxFeatures const* features = _AvxDsysGetReqFeatures(dsys);
+    AFX_ASSERT(limits);
+
+    return err;
+}
+
+_AVX afxError AvxConfigureGfxPipeline(afxDrawSystem dsys, avxPipelineConfig* cfg)
+{
+    afxError err = { 0 };
+    // dsys must be a valid afxDrawSystem handle.
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+
+    AFX_ASSERT(cfg);
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->cfgPipCb(dsys, cfg)))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    return err;
+}
+
+_AVX afxError _AvxDsysSwAcquirePipCb(afxDrawSystem dsys, afxUnit cnt, avxPipelineConfig const cfg[], avxPipeline pipelines[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
@@ -1276,6 +1305,30 @@ _AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipeli
     AFX_ASSERT_CLASS(cls, afxFcc_PIP);
 
     if (AfxAcquireObjects(cls, cnt, (afxObject*)pipelines, (void const*[]) { dsys, (void*)cfg, (void*)cfg }))
+    {
+        AfxThrowError();
+        return err;
+    }
+
+    AFX_ASSERT_OBJECTS(afxFcc_PIP, cnt, pipelines);
+
+    return err;
+}
+
+_AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipelineConfig const cfg[], avxPipeline pipelines[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
+    AFX_ASSERT(pipelines);
+    AFX_ASSERT(cfg);
+    AFX_ASSERT(cnt);
+
+    // dsys must support at least one bridge with one of the GRAPHICS or COMPUTE capabilities.    
+    afxDrawBridge dexu;
+    afxBool bridgedFound = AvxChooseDrawBridges(dsys, AFX_INVALID_INDEX, avxService_GFX/* | avxService_PCX*/, NIL, 0, 1, &dexu);
+    AFX_ASSERT(bridgedFound);
+
+    if (AfxFailed(_AvxDsysGetDdi(dsys)->acqPipCb(dsys, cnt, cfg, pipelines)))
     {
         AfxThrowError();
         return err;
@@ -1380,7 +1433,7 @@ _AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipeli
                 AFX_ASSERT(pip->logicOpEnabled == c->pixelLogicOpEnabled);
             }
         }
-        
+
         //AFX_ASSERT(pip->primShaderSupported == c->primShaderSupported);
 
     }
