@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This file is part of Advanced RenderWare Extensions.
@@ -46,16 +46,16 @@ AFX_DEFINE_STRUCT(FMA_CUR_HDR)
     afxUnit32       ctrlDirOffset;
 };
 
-AFX_DEFINE_STRUCT(FMA_MOT_VEC_HDR)
-// SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED VECTORIAL MOTION HEADER
+AFX_DEFINE_STRUCT(FMA_GES_VEC_HDR)
+// SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED VECTORIAL GESION HEADER
 {
     afxUnit32       seqKey;
     afxInt32        dimension;
     afxUnit32       valueCurIdx;
 };
 
-AFX_DEFINE_STRUCT(FMA_MOT_PVT_HDR)
-// SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED 4D PIVOTAL MOTION HEADER
+AFX_DEFINE_STRUCT(FMA_GES_PVT_HDR)
+// SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED 4D PIVOTAL GESION HEADER
 {
     afxUnit32       flags;
     afxUnit32       transmissionCurIdx;
@@ -63,7 +63,7 @@ AFX_DEFINE_STRUCT(FMA_MOT_PVT_HDR)
     afxUnit32       transmutationCurIdx;
 };
 
-AFX_DEFINE_STRUCT(FMA_MOT_HDR)
+AFX_DEFINE_STRUCT(FMA_GES_HDR)
 // SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED MOTION HEADER
 {
     afxUnit32       flags;
@@ -77,7 +77,7 @@ AFX_DEFINE_STRUCT(FMA_MOT_HDR)
     afxUnit32       vecDir;
     afxUnit32       vecInfoDir;
     afxTransform    displacement;
-    afxUnit32       rootMotPvtFlags;
+    afxUnit32       rootGesPvtFlags;
     afxUnit32       rootTransmissionCurIdx;
     afxUnit32       rootTranslationCurIdx;
     afxUnit32       rootTransmutationCurIdx;
@@ -91,7 +91,7 @@ AFX_DEFINE_STRUCT(FMA_MOT_HDR)
 };
 
 AFX_DEFINE_STRUCT(FMA_ANI_HDR)
-// SIGMA/ENGITECH, FULL MOTION ANIMATION, SERIALIZED ANIMATION HEADER
+// SIGMA/ENGITECH, FULL GESION ANIMATION, SERIALIZED ANIMATION HEADER
 {
     afxUnit8        fcc[4];
     afxUnit32       hdrSiz;
@@ -110,9 +110,9 @@ AFX_DEFINE_STRUCT(FMA_ANI_HDR)
     afxReal32      oversampling;
 
     afxUnit32       flags;
-    afxUnit32       motCnt;
-    afxUnit32       motIdBase;
-    afxUnit32       motInfoBase;
+    afxUnit32       gesCnt;
+    afxUnit32       gesIdBase;
+    afxUnit32       gesInfoBase;
 };
 
 #pragma pack(pop)
@@ -179,20 +179,20 @@ _ARX afxError AfxSerializeCurves(afxStream out, afxUnit cnt, arxCurve curves[])
     return err;
 }
 
-_ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, arxGesture gestures[])
+_ARX afxError AfxSerializeGestures(afxStream out, afxString* sdb, afxUnit cnt, arxGesture gestures[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &out);
     AFX_ASSERT_OBJECTS(afxFcc_GES, cnt, gestures);
     afxUnit gesIdx = 0;
 
-    FMA_MOT_HDR* motHdrs;
-    if (AfxAllocate(AfxHere(), cnt * sizeof(motHdrs[0]), 0, (void**)&motHdrs))
+    FMA_GES_HDR* gesHdrs;
+    if (AfxAllocate(AfxHere(), cnt * sizeof(gesHdrs[0]), 0, (void**)&gesHdrs))
         AfxThrowError();
 
-    afxSize motHdrOffBkp = AfxAskStreamPosn(out);
+    afxSize gesHdrOffBkp = AfxAskStreamPosn(out);
     // skip the room to the headers
-    if (AfxAdvanceStream(out, cnt * sizeof(motHdrs[0])))
+    if (AfxAdvanceStream(out, cnt * sizeof(gesHdrs[0])))
         AfxThrowError();
 
     afxSize endOfHdrs = AfxAskStreamPosn(out);
@@ -201,29 +201,29 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
     {
         arxGesture ges = gestures[gesIdx];
 
-        FMA_MOT_HDR motHdr = { 0 };
+        FMA_GES_HDR gesHdr = { 0 };
 
-        motHdr.flags = ges->flags;
-        motHdr.pvtCnt = ges->pivotCnt;
-        motHdr.vecCnt = ges->vecCnt;
-        motHdr.displacement = ges->displacement;
+        gesHdr.flags = ges->flags;
+        gesHdr.pvtCnt = ges->pivotCnt;
+        gesHdr.vecCnt = ges->vecCnt;
+        gesHdr.displacement = ges->displacement;
 
-        AfxV3dCopy(motHdr.loopTranslation, ges->loopTranslation);
+        AfxV3dCopy(gesHdr.loopTranslation, ges->loopTranslation);
 
         if (ges->periodicLoop)
         {
-            motHdr.periodicLoopRadius = ges->periodicLoop->radius;
-            motHdr.periodicLoop_dAngle = ges->periodicLoop->dAngle;
-            motHdr.periodicLoop_dZ = ges->periodicLoop->dZ;
-            AfxV3dCopy(motHdr.periodicLoopBasisX, ges->periodicLoop->basisX);
-            AfxV3dCopy(motHdr.periodicLoopBasisY, ges->periodicLoop->basisY);
-            AfxV3dCopy(motHdr.periodicLoopAxis, ges->periodicLoop->axis);
+            gesHdr.periodicLoopRadius = ges->periodicLoop->radius;
+            gesHdr.periodicLoop_dAngle = ges->periodicLoop->dAngle;
+            gesHdr.periodicLoop_dZ = ges->periodicLoop->dZ;
+            AfxV3dCopy(gesHdr.periodicLoopBasisX, ges->periodicLoop->basisX);
+            AfxV3dCopy(gesHdr.periodicLoopBasisY, ges->periodicLoop->basisY);
+            AfxV3dCopy(gesHdr.periodicLoopAxis, ges->periodicLoop->axis);
         }
 
         if (ges->pivotCnt)
         {
             // write pivots' identifier strings.
-            motHdr.pvtDir = AfxAskStreamPosn(out);
+            gesHdr.pvtDir = AfxAskStreamPosn(out);
             if (ArxWriteMappedStrings(out, sdb, ges->pivotCnt, ges->pivots))
                 AfxThrowError();
         }
@@ -231,7 +231,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
         if (ges->vecCnt)
         {
             // write vectors' identifier strings.
-            motHdr.vecDir = AfxAskStreamPosn(out);
+            gesHdr.vecDir = AfxAskStreamPosn(out);
             if (ArxWriteMappedStrings(out, sdb, ges->vecCnt, ges->vectors))
                 AfxThrowError();
         }
@@ -241,8 +241,8 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
         afxUnit curIdx = 0;
         afxUnit totalCurCnt = (ges->pivotCnt * 3) + (ges->vecCnt * 1) + (ges->root ? 3 : 0);
         arxCurve* curves = NIL;
-        FMA_MOT_PVT_HDR* pvtHdrs = NIL;
-        FMA_MOT_VEC_HDR* vecHdrs = NIL;
+        FMA_GES_PVT_HDR* pvtHdrs = NIL;
+        FMA_GES_VEC_HDR* vecHdrs = NIL;
 
         if (totalCurCnt)
         {
@@ -258,7 +258,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             // prepare pivots
             for (afxUnit i = 0; i < ges->pivotCnt; i++)
             {
-                FMA_MOT_PVT_HDR* hdr = &pvtHdrs[i];
+                FMA_GES_PVT_HDR* hdr = &pvtHdrs[i];
                 hdr->flags = ges->pivotCurve[i].flags;
 
                 hdr->transmissionCurIdx = curIdx++;
@@ -278,7 +278,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             // prepare vectors
             for (afxUnit i = 0; i < ges->vecCnt; i++)
             {
-                FMA_MOT_VEC_HDR* hdr = &vecHdrs[i];
+                FMA_GES_VEC_HDR* hdr = &vecHdrs[i];
                 hdr->seqKey = ges->vecCurve[i].seqKey;
                 hdr->dimension = ges->vecCurve[i].dimension;
                 hdr->valueCurIdx = curIdx++;
@@ -289,20 +289,20 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
         // prepare root curves
         if (ges->root)
         {
-            motHdr.rootMotPvtFlags = ges->root->flags;
-            motHdr.rootTransmissionCurIdx = curIdx++;
-            curves[motHdr.rootTransmissionCurIdx] = ges->root->transmission;
-            motHdr.rootTranslationCurIdx = curIdx++;
-            curves[motHdr.rootTranslationCurIdx] = ges->root->translation;
-            motHdr.rootTransmutationCurIdx = curIdx++;
-            curves[motHdr.rootTransmutationCurIdx] = ges->root->transmutation;
+            gesHdr.rootGesPvtFlags = ges->root->flags;
+            gesHdr.rootTransmissionCurIdx = curIdx++;
+            curves[gesHdr.rootTransmissionCurIdx] = ges->root->transmission;
+            gesHdr.rootTranslationCurIdx = curIdx++;
+            curves[gesHdr.rootTranslationCurIdx] = ges->root->translation;
+            gesHdr.rootTransmutationCurIdx = curIdx++;
+            curves[gesHdr.rootTransmutationCurIdx] = ges->root->transmutation;
         }
 
         // write all curves
-        motHdr.curDir = AfxAskStreamPosn(out);
+        gesHdr.curDir = AfxAskStreamPosn(out);
         AFX_ASSERT(curIdx == totalCurCnt);
-        motHdr.totalCurCnt = curIdx;
-        if (AfxSerializeCurves(out, motHdr.totalCurCnt, curves))
+        gesHdr.totalCurCnt = curIdx;
+        if (AfxSerializeCurves(out, gesHdr.totalCurCnt, curves))
             AfxThrowError();
 
         AfxDeallocate(AfxHere(), (void**)&curves);
@@ -315,7 +315,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
 
             if (ges->pivotLodError)
             {
-                motHdr.pvtLodErrDir = AfxAskStreamPosn(out);
+                gesHdr.pvtLodErrDir = AfxAskStreamPosn(out);
 
                 if (AfxWriteStream(out, ges->pivotCnt * sizeof(ges->pivotLodError[0]), 0, ges->pivotLodError))
                     AfxThrowError();
@@ -324,11 +324,11 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             // go back, write pivot headers and return.
 
             // make room
-            motHdr.pvtInfoDir = AfxAskStreamPosn(out);
+            gesHdr.pvtInfoDir = AfxAskStreamPosn(out);
             //AfxAdvanceStream(out, sizeof(pvtHdrs[0]) * ges->pivotCnt);
 
             afxSize bkpPos = AfxAskStreamPosn(out);
-            //AfxSeekStream(out, motHdr.pvtInfoDir, afxSeekOrigin_BEGIN);
+            //AfxSeekStream(out, gesHdr.pvtInfoDir, afxSeekOrigin_BEGIN);
             AfxWriteStream(out, sizeof(pvtHdrs[0]) * ges->pivotCnt, 0, pvtHdrs);
             //AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN);
 
@@ -340,12 +340,12 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
         if (ges->vecCnt)
         {
             // make room
-            motHdr.vecInfoDir = AfxAskStreamPosn(out);
+            gesHdr.vecInfoDir = AfxAskStreamPosn(out);
             if (AfxAdvanceStream(out, sizeof(vecHdrs[0]) * ges->vecCnt))
                 AfxThrowError();
 
             afxUnit bkpPos = AfxAskStreamPosn(out);
-            if (AfxSeekStream(out, motHdr.vecInfoDir, afxSeekOrigin_BEGIN))
+            if (AfxSeekStream(out, gesHdr.vecInfoDir, afxSeekOrigin_BEGIN))
                 AfxThrowError();
 
             if (AfxWriteStream(out, sizeof(vecHdrs[0]) * ges->vecCnt, 0, vecHdrs))
@@ -357,16 +357,16 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
             AfxDeallocate(AfxHere(), (void**)&vecHdrs);
         }
 
-        motHdrs[gesIdx] = motHdr;
+        gesHdrs[gesIdx] = gesHdr;
 
     } while (!err && (++gesIdx < cnt));
 
     // write out all gestures' headers
     afxUnit bkpPos = AfxAskStreamPosn(out);
-    if (AfxSeekStream(out, motHdrOffBkp, afxSeekOrigin_BEGIN))
+    if (AfxSeekStream(out, gesHdrOffBkp, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    if (AfxWriteStream(out, cnt * sizeof(motHdrs[0]), 0, motHdrs))
+    if (AfxWriteStream(out, cnt * sizeof(gesHdrs[0]), 0, gesHdrs))
         AfxThrowError();
 
     AFX_ASSERT(endOfHdrs == AfxAskStreamPosn(out));
@@ -374,7 +374,7 @@ _ARX afxError AfxSerializeMotions(afxStream out, afxString* sdb, afxUnit cnt, ar
     if (AfxSeekStream(out, bkpPos, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    AfxDeallocate(AfxHere(), (void**)&motHdrs);
+    AfxDeallocate(AfxHere(), (void**)&gesHdrs);
 
     return err;
 }
@@ -399,7 +399,7 @@ _ARX afxError AfxSerializeAnimation(arxAnimation ani, afxStream out)
     AfxV3dZero(aniHdr.origin);
     aniHdr.unitsPerMeter = 1.f;
     aniHdr.flags = ani->flags;
-    aniHdr.motCnt = ani->gesSlotCnt;
+    aniHdr.gesCnt = ani->gesSlotCnt;
     aniHdr.dur = ani->dur;
     aniHdr.oversampling = ani->oversampling;
     aniHdr.timeStep = ani->timeStep;
@@ -408,26 +408,26 @@ _ARX afxError AfxSerializeAnimation(arxAnimation ani, afxStream out)
     if (AfxAdvanceStream(out, sizeof(aniHdr)))
         AfxThrowError();
 
-    aniHdr.motIdBase = AfxAskStreamPosn(out);
+    aniHdr.gesIdBase = AfxAskStreamPosn(out);
 
     afxUnit totalCurCnt = 0;
-    afxUnit uniqueMotCnt = 0;
+    afxUnit uniqueGesCnt = 0;
     arxGesture gestures[256];
 
-    for (afxUnit i = 0; i < aniHdr.motCnt; i++)
+    for (afxUnit i = 0; i < aniHdr.gesCnt; i++)
     {
         arxGesture ges = ani->gesSlots[i].ges;
 
         if (ges)
         {
-            gestures[uniqueMotCnt++] = ges;
+            gestures[uniqueGesCnt++] = ges;
             ArxWriteMappedStrings(out, &sdb.s, 1, &ges->id);
         }
     }
 
-    aniHdr.motInfoBase = AfxAskStreamPosn(out);
+    aniHdr.gesInfoBase = AfxAskStreamPosn(out);
 
-    if (AfxSerializeMotions(out, &sdb.s, uniqueMotCnt, gestures))
+    if (AfxSerializeGestures(out, &sdb.s, uniqueGesCnt, gestures))
         AfxThrowError();
 
     {
@@ -476,7 +476,183 @@ _ARX afxError ArxArchiveAnimation(arxAnimation ani, afxUri const* uri)
     return err;
 }
 
-_ARX afxError ArxUploadAnimation(arxScenario scio, afxString const* urn, afxStream in, arxAnimation* animation)
+_ARX afxError ArxUploadCurves(arxScenario scio, afxArena* arena, afxString const* sdb, afxStream in, afxUnit curCnt, FMA_CUR_HDR const curHdrs[], afxString const urns[], arxCurve curves[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(curves);
+
+    arxCurveInfo* curis = AfxRequestArena(arena, sizeof(curis[0]), curCnt, NIL, 0);
+
+    for (afxUnit j = 0; j < curCnt; j++)
+    {
+        arxCurveInfo* curi = &curis[j];
+        *curi = (arxCurveInfo) { 0 };
+        FMA_CUR_HDR const* curHdr = &curHdrs[j];
+
+        curi->knotCnt = curHdr->knotCnt;
+        curi->degree = curHdr->degree;
+        curi->fmt = curHdr->fmt;
+        curi->dimens = curHdr->dimens;
+
+        if (curHdr->ctrlCnt)
+        {
+            afxReal* ctrls = AfxRequestArena(arena, sizeof(ctrls[0]), curHdr->ctrlCnt, NIL, 0);
+            if (AfxReadStreamAt(in, curHdr->ctrlDirOffset, curHdr->ctrlCnt * sizeof(ctrls[0]), 0, ctrls))
+                AfxThrowError();
+
+            curi->ctrls = ctrls;
+        }
+
+        if (curHdr->knotCnt)
+        {
+            afxReal* knots = AfxRequestArena(arena, sizeof(knots[0]), curHdr->knotCnt, NIL, 0);
+            if (AfxReadStreamAt(in, curHdr->knotDirOffset, curHdr->knotCnt * sizeof(knots[0]), 0, knots))
+                AfxThrowError();
+
+            curi->knots = knots;
+        }
+    }
+
+    if (ArxAcquireCurves(scio, curCnt, curis, curves))
+        AfxThrowError();
+
+#if 0
+    for (afxUnit j = 0; j < gesHdr->totalCurCnt; j++)
+    {
+        K4D_CUR_HDR* curHdr = &curHdrs[j];
+
+        if (curHdr->ctrlCnt)
+        {
+            afxReal* ctrls = AfxRequestArena(&arena, curHdr->ctrlCnt * sizeof(ctrls[0]));
+            AfxSeekStream(in, curHdr->ctrlDirOffset, afxSeekOrigin_BEGIN);
+            AfxReadStream(in, curHdr->ctrlCnt * sizeof(ctrls[0]), 0, ctrls);
+        }
+
+        if (curHdr->knotCnt)
+        {
+            afxReal* knots = AfxRequestArena(&arena, curHdr->knotCnt * sizeof(knots[0]));
+            AfxSeekStream(in, curHdr->knotDirOffset, afxSeekOrigin_BEGIN);
+            AfxReadStream(in, curHdr->knotCnt * sizeof(knots[0]), 0, knots);
+        }
+    }
+#endif
+
+    AfxReclaimArena(arena, curis, sizeof(curis[0]) * curCnt);
+
+    return err;
+}
+
+_ARX afxError ArxUploadGestures(arxScenario scio, afxArena* arena, afxString const* sdb, afxStream in, afxUnit gesCnt, FMA_GES_HDR const gesHdrs[], afxString const urns[], arxGesture gestures[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(gestures);
+
+    arxGestureBlueprint* gesbs = AfxRequestArena(arena, sizeof(gesbs[0]), gesCnt, NIL, 1);
+
+    for (afxUnit i = 0; i < gesCnt; i++)
+    {
+        FMA_GES_HDR const* gesHdr = &gesHdrs[i];
+        arxGestureBlueprint* gesb = &gesbs[i];
+
+        afxString* pivots = AfxRequestArena(arena, sizeof(pivots[0]), gesHdr->pvtCnt, NIL, 0);;
+        afxString* vectors = gesHdr->vecCnt ? AfxRequestArena(arena, sizeof(vectors[0]), gesHdr->vecCnt, NIL, 0) : NIL;
+
+        gesb->displacement = gesHdr->displacement;
+        gesb->incPivotLodError = !!gesHdr->pvtLodErrDir;
+        gesb->pivotCnt = gesHdr->pvtCnt;
+        gesb->vecCnt = gesHdr->vecCnt;
+        gesb->pivots = pivots;
+        gesb->vectors = vectors;
+        AfxMakeString32(&gesb->id, &urns[i]);
+
+        if (gesb->pivotCnt)
+        {
+            AfxSeekStream(in, gesHdr->pvtDir, afxSeekOrigin_BEGIN);
+            ArxReadMappedStrings(in, sdb, gesHdr->pvtCnt, pivots);
+        }
+
+        if (gesb->vecCnt)
+        {
+            AfxSeekStream(in, gesHdr->vecDir, afxSeekOrigin_BEGIN);
+            ArxReadMappedStrings(in, sdb, gesHdr->vecCnt, vectors);
+        }
+    }
+
+    if (ArxAssembleGestures(scio, gesCnt, gesbs, gestures))
+        AfxThrowError();
+
+    AfxReclaimArena(arena, gesbs, sizeof(gesbs) * gesCnt);
+
+    for (afxUnit i = 0; i < gesCnt; i++)
+    {
+        FMA_GES_HDR const* gesHdr = &gesHdrs[i];
+
+        AfxV3dCopy(gestures[i]->loopTranslation, gesHdr->loopTranslation);
+
+        FMA_CUR_HDR* curHdrs = AfxRequestArena(arena, sizeof(curHdrs[0]), gesHdr->totalCurCnt, NIL, 0);
+
+        arxCurve* curves = AfxRequestArena(arena, sizeof(curves[0]), gesHdr->totalCurCnt, NIL, 0);
+
+        if (AfxReadStreamAt(in, gesHdr->curDir, gesHdr->totalCurCnt * sizeof(curHdrs[0]), 0, curHdrs))
+            AfxThrowError();
+
+        if (ArxUploadCurves(scio, arena, sdb, in, gesHdr->totalCurCnt, curHdrs, NIL, curves))
+            AfxThrowError();
+
+        AfxReclaimArena(arena, curHdrs, sizeof(curHdrs[0]) * gesHdr->totalCurCnt);
+
+        FMA_GES_PVT_HDR* pvtHdrs = AfxRequestArena(arena, sizeof(pvtHdrs[0]), gesHdr->pvtCnt, NIL, 0);
+        if (AfxReadStreamAt(in, gesHdr->pvtInfoDir, gesHdr->pvtCnt * sizeof(pvtHdrs[0]), 0, pvtHdrs))
+            AfxThrowError();
+
+        for (afxUnit j = 0; j < gesHdr->pvtCnt; j++)
+        {
+            FMA_GES_PVT_HDR* pvtHdr = &pvtHdrs[j];
+
+            arxPivotalGesture mt = { 0 };
+            mt.flags = pvtHdr->flags;
+            mt.translation = curves[pvtHdr->translationCurIdx];
+            mt.transmission = curves[pvtHdr->transmissionCurIdx];
+            mt.transmutation = curves[pvtHdr->transmutationCurIdx];
+            ArxUpdateGestureTransforms(gestures[i], j, 1, &mt, sizeof(mt));
+        }
+
+        if (gesHdr->pvtLodErrDir)
+        {
+            if (AfxReadStreamAt(in, gesHdr->pvtLodErrDir, gesHdr->pvtCnt * sizeof(gestures[i]->pivotLodError[0]), 0, gestures[i]->pivotLodError))
+                AfxThrowError();
+        }
+
+        if (gesHdr->vecCnt)
+        {
+            FMA_GES_VEC_HDR* vecHdrs = AfxRequestArena(arena, sizeof(vecHdrs[0]), gesHdr->vecCnt, NIL, 0);
+            if (AfxReadStreamAt(in, gesHdr->vecInfoDir, gesHdr->vecCnt * sizeof(vecHdrs[0]), 0, vecHdrs))
+                AfxThrowError();
+
+            for (afxUnit j = 0; j < gesHdr->vecCnt; j++)
+            {
+                FMA_GES_VEC_HDR* vecHdr = &vecHdrs[j];
+
+                arxVectorialGesture mv = { 0 };
+                mv.seqKey = vecHdr->seqKey;
+                mv.dimension = vecHdr->dimension;
+                mv.value = curves[vecHdr->valueCurIdx];
+                ArxUpdateGestureVectors(gestures[i], j, 1, &mv, sizeof(mv));
+            }
+        }
+
+        //AfxDisposeObjects(gesHdr->totalCurCnt, curves);
+
+    }
+
+    return err;
+}
+
+_ARX afxError ArxUploadAnimation(arxScenario scio, afxStream in, FMA_ANI_HDR const* aniHdr, afxString const* urn, arxAnimation* animation)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
@@ -488,10 +664,6 @@ _ARX afxError ArxUploadAnimation(arxScenario scio, afxString const* urn, afxStre
     afxArena arena;
     AfxMakeArena(&arena, NIL, AfxHere());
 
-#pragma push(pack, 1)
-    FMA_ANI_HDR aniHdr;
-#pragma pop(pack)
-
     afxString4096 sdb;
     AfxMakeString4096(&sdb, NIL);
 
@@ -499,184 +671,45 @@ _ARX afxError ArxUploadAnimation(arxScenario scio, afxString const* urn, afxStre
     arxGesture gestures[256];
     arxModelFlags rigFlags[256];
 
-    if (AfxReadStream(in, sizeof(aniHdr), 0, &aniHdr))
-        AfxThrowError();
-
     afxSize posBkp = AfxAskStreamPosn(in);
-    if (AfxSeekStream(in, aniHdr.sdbStart, afxSeekOrigin_BEGIN))
+    if (AfxSeekStream(in, aniHdr->sdbStart, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    if (AfxReadString(&sdb.s, in, aniHdr.sdbSiz))
+    if (AfxReadString(&sdb.s, in, aniHdr->sdbSiz))
+        AfxThrowError();
+
+    if (AfxSeekStream(in, aniHdr->gesIdBase, afxSeekOrigin_BEGIN))
+        AfxThrowError();
+
+    if (ArxReadMappedStrings(in, &sdb.s, aniHdr->gesCnt, strings))
+        AfxThrowError();
+
+    if (AfxSeekStream(in, aniHdr->gesInfoBase, afxSeekOrigin_BEGIN))
+        AfxThrowError();
+
+    FMA_GES_HDR* gesHdrs = AfxRequestArena(&arena, sizeof(gesHdrs[0]), aniHdr->gesCnt, NIL, 0);
+
+    if (AfxReadStream(in, aniHdr->gesCnt * sizeof(gesHdrs[0]), 0, gesHdrs))
+        AfxThrowError();
+
+    if (ArxUploadGestures(scio, &arena, &sdb.s, in, aniHdr->gesCnt, gesHdrs, strings, gestures))
         AfxThrowError();
 
     arxAnimation ani;
     arxAnimationBlueprint anib = { 0 };
-    anib.dur = aniHdr.dur;
-    anib.timeStep = aniHdr.timeStep;
-    anib.oversampling = aniHdr.oversampling;
-    anib.gesSlotCnt = aniHdr.motCnt;
+    anib.dur = aniHdr->dur;
+    anib.timeStep = aniHdr->timeStep;
+    anib.oversampling = aniHdr->oversampling;
+    anib.gesSlotCnt = aniHdr->gesCnt;
+    anib.gestures = gestures;
     AfxMakeString32(&anib.id, urn);
     if (ArxAssembleAnimations(scio, 1, &anib, &ani))
         AfxThrowError();
 
-    if (AfxSeekStream(in, aniHdr.motIdBase, afxSeekOrigin_BEGIN))
-        AfxThrowError();
+    //if (_ArxRelinkGestures(ani, i, 1, &gestures[i]))
+        //AfxThrowError();
 
-    if (ArxReadMappedStrings(in, &sdb.s, aniHdr.motCnt, strings))
-        AfxThrowError();
-
-    if (AfxSeekStream(in, aniHdr.motInfoBase, afxSeekOrigin_BEGIN))
-        AfxThrowError();
-
-    FMA_MOT_HDR* motHdrs = AfxRequestArena(&arena, sizeof(motHdrs[0]), aniHdr.motCnt, NIL, 0);
-
-    if (AfxReadStream(in, aniHdr.motCnt * sizeof(motHdrs[0]), 0, motHdrs))
-        AfxThrowError();
-
-    arxGestureBlueprint* motbs = AfxRequestArena(&arena, sizeof(motbs[0]), aniHdr.motCnt, NIL, 1);
-
-    for (afxUnit i = 0; i < aniHdr.motCnt; i++)
-    {
-        FMA_MOT_HDR* motHdr = &motHdrs[i];
-        arxGestureBlueprint* gesb = &motbs[i];
-
-        afxString* pivots = AfxRequestArena(&arena, sizeof(pivots[0]), motHdr->pvtCnt, NIL, 0);;
-        afxString* vectors = motHdr->vecCnt ? AfxRequestArena(&arena, sizeof(vectors[0]), motHdr->vecCnt, NIL, 0) : NIL;
-
-        gesb->displacement = motHdr->displacement;
-        gesb->incPivotLodError = !!motHdr->pvtLodErrDir;
-        gesb->pivotCnt = motHdr->pvtCnt;
-        gesb->vecCnt = motHdr->vecCnt;
-        gesb->pivots = pivots;
-        gesb->vectors = vectors;
-        AfxMakeString32(&gesb->id, &strings[i]);
-
-        if (gesb->pivotCnt)
-        {
-            AfxSeekStream(in, motHdr->pvtDir, afxSeekOrigin_BEGIN);
-            ArxReadMappedStrings(in, &sdb.s, motHdr->pvtCnt, pivots);
-        }
-
-        if (gesb->vecCnt)
-        {
-            AfxSeekStream(in, motHdr->vecDir, afxSeekOrigin_BEGIN);
-            ArxReadMappedStrings(in, &sdb.s, motHdr->vecCnt, vectors);
-        }
-    }
-
-    if (ArxAssembleGestures(scio, aniHdr.motCnt, motbs, gestures))
-        AfxThrowError();
-    
-    for (afxUnit i = 0; i < aniHdr.motCnt; i++)
-    {
-        FMA_MOT_HDR* motHdr = &motHdrs[i];
-
-        AfxV3dCopy(gestures[i]->loopTranslation, motHdr->loopTranslation);
-
-        FMA_CUR_HDR* curHdrs = AfxRequestArena(&arena, sizeof(curHdrs[0]), motHdr->totalCurCnt, NIL, 0);
-        arxCurveInfo* curis = AfxRequestArena(&arena, sizeof(curis[0]), motHdr->totalCurCnt, NIL, 0);
-        arxCurve curvesStatic[256];
-        arxCurve* curves = curvesStatic;// AfxRequestArena(&arena, motHdr->totalCurCnt * sizeof(curves[0]));
-        if (AfxReadStreamAt(in, motHdr->curDir, motHdr->totalCurCnt * sizeof(curHdrs[0]), 0, curHdrs))
-            AfxThrowError();
-        
-        for (afxUnit j = 0; j < motHdr->totalCurCnt; j++)
-        {
-            arxCurveInfo* curi = &curis[j];
-            *curi = (arxCurveInfo) { 0 };
-            FMA_CUR_HDR* curHdr = &curHdrs[j];
-
-            curi->knotCnt = curHdr->knotCnt;
-            curi->degree = curHdr->degree;
-            curi->fmt = curHdr->fmt;
-            curi->dimens = curHdr->dimens;
-
-            if (curHdr->ctrlCnt)
-            {
-                afxReal* ctrls = AfxRequestArena(&arena, sizeof(ctrls[0]), curHdr->ctrlCnt, NIL, 0);
-                if (AfxReadStreamAt(in, curHdr->ctrlDirOffset, curHdr->ctrlCnt * sizeof(ctrls[0]), 0, ctrls))
-                    AfxThrowError();
-
-                curi->ctrls = ctrls;
-            }
-
-            if (curHdr->knotCnt)
-            {
-                afxReal* knots = AfxRequestArena(&arena, sizeof(knots[0]), curHdr->knotCnt, NIL, 0);
-                if (AfxReadStreamAt(in, curHdr->knotDirOffset, curHdr->knotCnt * sizeof(knots[0]), 0, knots))
-                    AfxThrowError();
-
-                curi->knots = knots;
-            }
-        }
-
-        if (ArxAcquireCurves(scio, motHdr->totalCurCnt, curis, curves))
-            AfxThrowError();
-#if 0
-        for (afxUnit j = 0; j < motHdr->totalCurCnt; j++)
-        {
-            K4D_CUR_HDR* curHdr = &curHdrs[j];
-
-            if (curHdr->ctrlCnt)
-            {
-                afxReal* ctrls = AfxRequestArena(&arena, curHdr->ctrlCnt * sizeof(ctrls[0]));
-                AfxSeekStream(in, curHdr->ctrlDirOffset, afxSeekOrigin_BEGIN);
-                AfxReadStream(in, curHdr->ctrlCnt * sizeof(ctrls[0]), 0, ctrls);
-            }
-
-            if (curHdr->knotCnt)
-            {
-                afxReal* knots = AfxRequestArena(&arena, curHdr->knotCnt * sizeof(knots[0]));
-                AfxSeekStream(in, curHdr->knotDirOffset, afxSeekOrigin_BEGIN);
-                AfxReadStream(in, curHdr->knotCnt * sizeof(knots[0]), 0, knots);
-            }
-        }
-#endif
-        FMA_MOT_PVT_HDR* pvtHdrs = AfxRequestArena(&arena, sizeof(pvtHdrs[0]), motHdr->pvtCnt, NIL, 0);
-        if (AfxReadStreamAt(in, motHdr->pvtInfoDir, motHdr->pvtCnt * sizeof(pvtHdrs[0]), 0, pvtHdrs))
-            AfxThrowError();
-
-        for (afxUnit j = 0; j < motHdr->pvtCnt; j++)
-        {
-            FMA_MOT_PVT_HDR* pvtHdr = &pvtHdrs[j];
-
-            arxPivotalGesture mt = { 0 };
-            mt.flags = pvtHdr->flags;
-            mt.translation = curves[pvtHdr->translationCurIdx];
-            mt.transmission = curves[pvtHdr->transmissionCurIdx];
-            mt.transmutation = curves[pvtHdr->transmutationCurIdx];
-            ArxUpdateGestureTransforms(gestures[i], j, 1, &mt, sizeof(mt));
-        }
-
-        if (motHdr->pvtLodErrDir)
-        {
-            if (AfxReadStreamAt(in, motHdr->pvtLodErrDir, motHdr->pvtCnt * sizeof(gestures[i]->pivotLodError[0]), 0, gestures[i]->pivotLodError))
-                AfxThrowError();
-        }
-
-        if (motHdr->vecCnt)
-        {
-            FMA_MOT_VEC_HDR* vecHdrs = AfxRequestArena(&arena, sizeof(vecHdrs[0]), motHdr->vecCnt, NIL, 0);
-            if (AfxReadStreamAt(in, motHdr->vecInfoDir, motHdr->vecCnt * sizeof(vecHdrs[0]), 0, vecHdrs))
-                AfxThrowError();
-
-            for (afxUnit j = 0; j < motHdr->vecCnt; j++)
-            {
-                FMA_MOT_VEC_HDR* vecHdr = &vecHdrs[j];
-
-                arxVectorialGesture mv = { 0 };
-                mv.seqKey = vecHdr->seqKey;
-                mv.dimension = vecHdr->dimension;
-                mv.value = curves[vecHdr->valueCurIdx];
-                ArxUpdateGestureVectors(gestures[i], j, 1, &mv, sizeof(mv));
-            }
-        }
-
-        //AfxDisposeObjects(motHdr->totalCurCnt, curves);
-
-        if (ArxRelinkGestures(ani, i, 1, &gestures[i]))
-            AfxThrowError();
-    }
+    AfxDisposeObjects(aniHdr->gesCnt, gestures);
 
     AfxDismantleArena(&arena);
 
@@ -698,7 +731,12 @@ _ARX afxError ArxLoadAnimation(arxScenario scio, afxString const* urn, afxUri co
     if (AfxReopenFile(iob, uri, afxFileFlag_R))
         AfxThrowError();
 
-    if (ArxUploadAnimation(scio, urn, iob, animation))
+    FMA_ANI_HDR aniHdr;
+
+    if (AfxReadStream(iob, sizeof(aniHdr), 0, &aniHdr))
+        AfxThrowError();
+
+    if (ArxUploadAnimation(scio, iob, &aniHdr, urn, animation))
         AfxThrowError();
 
     AfxDisposeObjects(1, &iob);

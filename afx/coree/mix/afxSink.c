@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -66,15 +66,16 @@ _AMX afxError AfxMuteAudioSink(afxSink sink, afxBool mute)
     return err;
 }
 
-_AMX afxError AmxGetSinkTrack(afxSink sink, amxAudio* track)
+_AMX afxError AmxGetSinkTrack(afxSink sink, amxTrack* track)
 {
     afxError err = { 0 };
     // sink must be a valid afxSink handle.
     AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
-    *track = sink->buffers[0];
+    *track = sink->traks[0];
     return err;
 }
 
+#if 0
 _AMX afxError AmxLockSinkBuffer(afxSink sink, afxUnit64 timeout, afxMask exuMask, afxUnit minFrameCnt, amxBufferedTrack* room)
 // Pull an available sink buffer
 {
@@ -163,6 +164,61 @@ _AMX afxError AmxUnlockSinkBuffer(afxSink sink, afxFlags flags)
 #endif
     return err;
 }
+#endif
+
+/*
+    Você cria/obtém um IMFMediaSink.
+    O sink possui um ou mais IMFStreamSink, normalmente um para cada stream (áudio, vídeo etc.).
+    O tipo de mídia é configurado no IMFStreamSink.
+    Os IMFSample contendo os dados de áudio/vídeo são entregues ao IMFStreamSink::ProcessSample().
+    O IMFMediaSink coordena esses stream sinks e, dependendo do tipo, renderiza os dados ou os grava.
+*/
+
+afxBool AMX_SINK_EVENT_HANDLER(afxSink sink, afxEvent* ev)
+{
+    /*
+        Each stream sink sends one or more MEStreamSinkRequestSample events. 
+        In response to each of these events, the client gets the next sample of data for that stream and calls IMFStreamSink::ProcessSample.
+
+        In addition, stream sinks must send the following events when they have completed the state transitions:
+        OnClockStart, OnClockRestart: MEStreamSinkStarted event
+        OnClockPause: MEStreamSinkPaused event
+        OnClockStop: MEStreamSinkStopped event
+    */
+
+    switch (ev->id)
+    {
+    case amxSinkEventId_SAMPLE_REQUESTED:
+    {
+        amxSample samp = { 0 };
+        //AfxProcessSample(sink, 0, &samp);
+        break;
+    }
+    case amxSinkEventId_PAUSED:
+    {
+
+        break;
+    }
+    case amxSinkEventId_STOPPED:
+    {
+
+        break;
+    }
+    case amxSinkEventId_STARTED:
+    {
+
+        break;
+    }
+    case amxSinkEventId_MARKED:
+    {
+
+        break;
+    }
+    default:
+        break;
+    }
+    return 1;
+}
 
 _AMX _amxSinkDdi const _AMX_SINK_IMPL =
 {
@@ -176,12 +232,12 @@ _AMX afxError _AmxAsioDtorCb(afxSink sink)
     afxMixDevice mdev = AfxGetAudioSinkDevice(sink);
     AFX_ASSERT_OBJECTS(afxFcc_MDEV, 1, &mdev);
 
-    AfxExhaustInterlockedQueue(&sink->freeBuffers);
-    AfxExhaustInterlockedQueue(&sink->readyBuffers);
+    //AfxExhaustInterlockedQueue(&sink->freeBuffers);
+    //AfxExhaustInterlockedQueue(&sink->readyBuffers);
 
     // Dispose all acquired buffer objects.
-    AfxDisposeObjects(sink->latency, sink->buffers);
-
+    //AfxDisposeObjects(sink->latency, sink->buffers);
+#if 0
     afxAllocation const stashs[] =
     {
         {
@@ -191,6 +247,7 @@ _AMX afxError _AmxAsioDtorCb(afxSink sink)
         }
     };
     AfxDeallocateInstanceData(sink, ARRAY_SIZE(stashs), stashs);
+#endif
 
     if (sink->ddi->iddDtorCb)
         sink->ddi->iddDtorCb(sink);
@@ -221,9 +278,10 @@ _AMX afxError _AmxAsioCtorCb(afxSink sink, void** args, afxUnit invokeNo)
     sink->fmt = cfg->fmt ? cfg->fmt : def.fmt;
     sink->chanCnt = cfg->chanCnt ? cfg->chanCnt : def.chanCnt;
     sink->freq = cfg->freq ? cfg->freq : def.freq;
-    sink->samplesPerFrame = cfg->samplesPerFrame ? cfg->samplesPerFrame : def.samplesPerFrame;
+    sink->framesPerSample = cfg->framesPerSample ? cfg->framesPerSample : def.framesPerSample;
     sink->latency = cfg->latency ? cfg->latency : def.latency;
 
+#if 0
     afxAllocation const stashs[] =
     {
         {
@@ -238,35 +296,17 @@ _AMX afxError _AmxAsioCtorCb(afxSink sink, void** args, afxUnit invokeNo)
         AfxThrowError();
         return err;
     }
+#endif
 
-    AfxZero(sink->buffers, sizeof(sink->buffers[0]) * sink->latency);
-
-    AfxMakeInterlockedQueue(&sink->freeBuffers, sizeof(afxUnit), sink->latency);
-    AfxMakeInterlockedQueue(&sink->readyBuffers, sizeof(afxUnit), sink->latency);
-
-    amxAudioInfo audi = { 0 };
-    audi.chanCnt = sink->chanCnt;
-    audi.fmt = sink->fmt;
-    audi.freq = sink->freq;
-    audi.sampCnt = sink->freq * AFX_MAX(1, sink->latency);
-    audi.segCnt = 1;
-    audi.udd = sink;
-
-    if (AmxAcquireAudios(msys, 1, &audi, &sink->buffers[0]))
+    if (AmxAcquireTracks(msys, cfg->trakCnt, cfg->traks, sink->traks))
     {
         AfxThrowError();
-        // Dispose all objects acquire up to this iteration.
-        //AfxDisposeObjects(1, &sink->buffers[0]);
     }
 
-    // Enqueue our buffer into the queue of disponible buffers.
-    AfxPushInterlockedQueue(&sink->freeBuffers, (afxUnit[]) { 0 });
-
-    audio_ringbuffer_init(&sink->rb, (void*)AmxGetBufferAddress(AmxGetAudioBuffer(sink->buffers[0]), 0), 4, sink->freq, 2);
-
+#if 0
     if (err)
         AfxDeallocateInstanceData(sink, ARRAY_SIZE(stashs), stashs);
-    
+#endif
     return err;
 }
 
@@ -291,8 +331,15 @@ _AMX afxError AfxConfigureAudioSink(afxMixSystem msys, afxSinkConfig* cfg)
     cfg->fmt = amxFormat_S32f; // 32-bit stereo
     cfg->freq = 48000; // DVD
     cfg->chanCnt = 2; // stereo
-    cfg->samplesPerFrame = cfg->freq / 60;
+    cfg->framesPerSample = cfg->freq / 60;
     cfg->latency = 6;
+
+    cfg->trakCnt = AFX_MAX(1, cfg->trakCnt);
+    cfg->traks[0].fmt = cfg->fmt;
+    cfg->traks[0].freq = cfg->freq;
+    cfg->traks[0].frameCnt = cfg->framesPerSample;
+    cfg->traks[0].chanCnt = cfg->chanCnt;
+
     return err;
 }
 
@@ -348,10 +395,10 @@ _AMX afxError AmxFlushSinks(afxMixSystem msys, afxUnit cnt, amxFlush const flush
         }
         AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
 
-        afxUnit sampleCnt = pres->sampleCnt;
-        if (sampleCnt >= sink->samplesPerFrame)
+        afxUnit frameCnt = pres->frameCnt;
+        if (frameCnt >= sink->framesPerSample)
         {
-            AFX_ASSERT_RANGE(sink->samplesPerFrame, sampleCnt, 1);
+            AFX_ASSERT_RANGE(sink->framesPerSample, frameCnt, 1);
             continue;
         }
 
@@ -425,10 +472,10 @@ _AMX afxError AmxRefillSinks(afxMixSystem msys, afxUnit cnt, amxCaption const ca
         }
         AFX_ASSERT_OBJECTS(afxFcc_ASIO, 1, &sink);
 
-        afxUnit sampleCnt = cap->sampleCnt;
-        if (sampleCnt >= sink->samplesPerFrame)
+        afxUnit frameCnt = cap->frameCnt;
+        if (frameCnt >= sink->framesPerSample)
         {
-            AFX_ASSERT_RANGE(sink->samplesPerFrame, sampleCnt, 1);
+            AFX_ASSERT_RANGE(sink->framesPerSample, frameCnt, 1);
             continue;
         }
 

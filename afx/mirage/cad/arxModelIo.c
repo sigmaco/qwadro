@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -27,131 +27,6 @@
 #define _ASX_SIMULATION_C
 //#include "afx/targa/avxIcd.h"
 #include "../scene/arxIcd.h"
-
-#pragma pack(push, 1)
-
-AFX_DEFINE_STRUCT(MXD_MSHS_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED MESH SECTION HEADER
-{
-    arxMeshSectionFlags flags;
-    afxUnit32 mtlIdx;
-    afxUnit32 baseTriIdx;
-    afxUnit32 triCnt;
-};
-
-AFX_DEFINE_STRUCT(MXD_MSHV_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED MESH BIAS HEADER
-{
-    arxMeshBiasFlags flags;
-    afxUnit trisBaseOff;
-    afxUnit32 triCnt;
-};
-
-AFX_DEFINE_STRUCT(MXD_MSHM_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED MESH MORPH HEADER
-{
-    arxMeshMorphFlags flags;
-    afxUnit morphedAttrCnt;
-    afxMask32 morphedAttrs;
-    afxUnit baseVtx;
-};
-
-AFX_DEFINE_STRUCT(MXD_VTX_ATTR_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED VERTEX ATTRIBUTE HEADER
-{
-    arxVertexFlags  flags;
-    afxUnit32       baseDataOffset;
-    avxFormat       encodedFmt;
-    avxFormat       decodedFmt;
-};
-
-AFX_DEFINE_STRUCT(MXD_MSH_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED MESH HEADER
-{
-    arxMeshFlags    flags;
-    avxTopology     topology; // actually only TRILIST
-    afxUnit         triCnt; // count of primitives.
-    afxUnit32       sideToAdjacentMapBaseOff; // [edgeCnt]
-    afxUnit         mtlCnt; // used by sections
-    afxUnit32       mtlIdsBaseOff; // [mtlCnt]
-    afxUnit         secCnt;
-    afxUnit32       sectionsBaseOff; // [secCnt]
-    afxUnit         biasCnt;
-    afxUnit32       biasesBaseOff;
-    // nested bias identifier strings for fast lookup.
-    afxUnit32       biasIdsBaseOff;
-    afxUnit         jointsForTriCnt;
-    afxUnit32       jointsForTriMapBaseOff;
-    afxUnit         triToJointCnt;
-    afxUnit32       triToJointMapBaseOff;
-
-    // VERTEX DATA
-    afxUnit         vtxCnt;
-    afxUnit32       vtxToVtxMapBaseOff; // [vtxCnt]
-    afxUnit32       vtxToTriMapBaseOff; // [vtxCnt]
-    afxUnit         minIdxSiz;
-    afxUnit         idxCnt; // count of primitive indices.
-    afxUnit32       indicesBaseOff; // [idxCnt] --- indices into primitive vertices.
-    afxUnit         attrCnt; // used by morphes.
-    afxUnit32       vtxAttrIdsBaseOff;
-    afxUnit32       vtxAttrInfoBaseOff;
-
-    // SHAPE DATA
-    afxUnit         morphCnt;
-    afxUnit32       morphsBaseOff;
-    // nested section AABB for fast lookup
-    afxUnit32       secAabbBaseOff; // [morphCnt][secCnt]
-    // nested bias OBB for fast lookup.
-    afxUnit32       biasObbBaseOff; // [morphCnt][biasCnt]
-    // nested morph tags for fast lookup.
-    afxUnit32       morphTagsBaseOff; // [morphCnt]
-
-};
-
-AFX_DEFINE_STRUCT(MXD_MDL_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, SERIALIZED MODEL HEADER
-{
-    afxUnit8        fcc[4];
-    afxUnit32       hdrSiz;
-    afxUnit32       hdrVer;
-    afxUnit32       segCnt;
-    afxUnit32       segStart;
-    afxUnit32       sdbSiz;
-    afxUnit32       sdbStart;
-
-    afxM3d          basis;
-    afxV3d          origin;
-    afxReal         unitsPerMeter;
-
-    afxUnit32       flags;
-    afxUnit32       lodType;
-    afxUnit32       boneCnt;
-    afxUnit32       jntPiBase;
-    afxUnit32       jntLtBase;
-    afxUnit32       jntIwBase;
-    afxUnit32       jntLeBase;
-    afxUnit32       jntIdBase;
-    afxUnit32       jntUddBase;
-    afxTransform    displace;
-    afxUnit32       mshCnt;
-    afxUnit32       mshIdBase;
-    afxUnit32       mshInfoBase;
-    afxUnit32       rigCnt;
-    afxUnit32       rigBase;
-
-    // look for joint extensions
-    // look for rig extensions
-};
-
-AFX_DEFINE_STRUCT(MXD_MSHR_HDR)
-// SIGMA/ENGITECH, MODEL EXCHANGE DICTIONARY, MODEL-MESH RIG HEADER
-{
-    afxUnit32       mshIdx;
-    afxUnit32       flags;
-    // transplanted skeleton is a runtime thing
-};
-
-#pragma pack(pop)
 
 _ARX afxUnit ArxMeasureNestedStrings(afxUnit cnt, afxString const strings[])
 {
@@ -747,170 +622,144 @@ _ARX afxError ArxArchiveModel(arxModel mdl, afxUri const* uri)
     return err;
 }
 
-_ARX afxError ArxUploadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxString const* urn, afxStream in, arxModel* model)
+_ARX afxError ArxUploadSkeleton(arxScenario scio, afxArena* arena, afxString const* sdb, afxStream in, MXD_MDL_HDR const* mdlHdr, afxString const* urn, arxSkeleton* skeleton)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
-    AFX_ASSERT(model);
+    AFX_ASSERT(skeleton);
 
-    // Qwadro doesn't use afxChunkID_STRUCT
-
-    afxArena arena;
-    AfxMakeArena(&arena, NIL, AfxHere());
-
-#pragma push(pack, 1)
-    MXD_MDL_HDR mdlHdr;
-#pragma pop(pack)
-
-    afxString4096 sdb;
-    AfxMakeString4096(&sdb, NIL);
-
-    afxString strings[256];
-    arxMesh meshes[256];
-    arxMeshRigging rigis[256];
-
-    if (AfxReadStream(in, sizeof(mdlHdr), 0, &mdlHdr))
+    if (AfxSeekStream(in, mdlHdr->jntIdBase, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    afxSize posBkp = AfxAskStreamPosn(in);
-    if (AfxSeekStream(in, mdlHdr.sdbStart, afxSeekOrigin_BEGIN))
+    afxString* strings = AfxRequestArena(arena, sizeof(strings[0]), mdlHdr->boneCnt, NIL, 0);
+
+    if (ArxReadMappedStrings(in, sdb, mdlHdr->boneCnt, strings))
         AfxThrowError();
 
-    AfxReadString(&sdb.s, in, mdlHdr.sdbSiz);
-
-    if (AfxSeekStream(in, mdlHdr.jntIdBase, afxSeekOrigin_BEGIN))
-        AfxThrowError();
-
-    if (ArxReadMappedStrings(in, &sdb.s, mdlHdr.boneCnt, strings))
-        AfxThrowError();
-
-    arxModel mdl;
-    arxModelBlueprint mdlb = { 0 };
-    mdlb.lodType = mdlHdr.lodType;
-    mdlb.mtd = mtd;
-    mdlb.rigCnt = mdlHdr.rigCnt;
-    mdlb.displace = mdlHdr.displace;
-    
-    if (skl) mdlb.skl = skl;
-    else
-    {
-        mdlb.boneCnt = mdlHdr.boneCnt;
-        mdlb.bones = strings;
-    }
-
-    if (ArxAssembleModels(scio, 1, urn, &mdlb, &mdl))
-        AfxThrowError();
-
-    arxModelInfo mdli;
-    ArxDescribeModel(mdl, &mdli);
-
-    arxSkeleton origSkl = NIL;
+    arxSkeleton skl = NIL;
     arxSkeletonInfo skli = { 0 };
-
-    if (!skl)
-        origSkl = mdli.skl;
-    else
+    skli.boneCnt = mdlHdr->boneCnt;
+    skli.bones = strings;
+    if (ArxAcquireSkeletons(scio, 1, urn, &skli, &skl))
     {
-        skli.boneCnt = mdlHdr.boneCnt;
-        skli.bones = strings;
-        if (ArxAcquireSkeletons(scio, 1, urn, &skli, &origSkl))
-            AfxThrowError();
+        AfxThrowError();
     }
+
+    AfxReclaimArena(arena, strings, sizeof(strings[0]) * mdlHdr->boneCnt);
 
     if (!err)
     {
-        afxUnit32* parentIdx = AfxRequestArena(&arena, sizeof(parentIdx[0]), mdlHdr.boneCnt, NIL, 0);
-        if (AfxReadStreamAt(in, mdlHdr.jntPiBase, mdlHdr.boneCnt * sizeof(parentIdx[0]), 0, parentIdx))
+        afxUnit32* parentIdx = AfxRequestArena(arena, sizeof(parentIdx[0]), mdlHdr->boneCnt, NIL, 0);
+
+        if (AfxReadStreamAt(in, mdlHdr->jntPiBase, mdlHdr->boneCnt * sizeof(parentIdx[0]), 0, parentIdx))
             AfxThrowError();
 
-        for (afxUnit i = 0; i < mdlHdr.boneCnt; i++)
+        for (afxUnit i = 0; i < mdlHdr->boneCnt; i++)
         {
             AfxReportComment("upload bone %i -> %i", i, parentIdx[i]);
         }
 
-        ArxReplaceBoneParents(origSkl, 0, mdlb.boneCnt, parentIdx, sizeof(parentIdx[0]));
+        ArxReplaceBoneParents(skl, 0, mdlHdr->boneCnt, parentIdx, sizeof(parentIdx[0]));
 
-        afxTransform* local = AfxRequestArena(&arena, sizeof(local[0]), mdlHdr.boneCnt, NIL, 0);
-        if (AfxReadStreamAt(in, mdlHdr.jntLtBase, mdlHdr.boneCnt * sizeof(local[0]), 0, local))
+        AfxReclaimArena(arena, parentIdx, sizeof(parentIdx[0]) * mdlHdr->boneCnt);
+
+        afxTransform* local = AfxRequestArena(arena, sizeof(local[0]), mdlHdr->boneCnt, NIL, 0);
+
+        if (AfxReadStreamAt(in, mdlHdr->jntLtBase, mdlHdr->boneCnt * sizeof(local[0]), 0, local))
             AfxThrowError();
 
-        ArxReplaceBoneTransforms(origSkl, 0, mdlb.boneCnt, local);
+        ArxReplaceBoneTransforms(skl, 0, mdlHdr->boneCnt, local);
 
-        afxM4d* iw = AfxRequestArena(&arena, sizeof(iw[0]), mdlHdr.boneCnt, NIL, 0);
-        if (AfxSeekStream(in, mdlHdr.jntIwBase, afxSeekOrigin_BEGIN))
+        AfxReclaimArena(arena, local, sizeof(local[0]) * mdlHdr->boneCnt);
+
+        afxM4d* iw = AfxRequestArena(arena, sizeof(iw[0]), mdlHdr->boneCnt, NIL, 0);
+
+        if (AfxReadStreamAt(in, mdlHdr->jntIwBase, mdlHdr->boneCnt * sizeof(iw[0]), 0, iw))
             AfxThrowError();
 
-        if (AfxReadStreamAt(in, mdlHdr.jntIwBase, mdlHdr.boneCnt * sizeof(iw[0]), 0, iw))
+        AfxReclaimArena(arena, iw, sizeof(iw[0]) * mdlHdr->boneCnt);
+
+        ArxReplaceBoneInversors(skl, 0, mdlHdr->boneCnt, iw, sizeof(iw[0]));
+
+        afxReal* lodErr = AfxRequestArena(arena, sizeof(lodErr[0]), mdlHdr->boneCnt, NIL, 0);
+
+        if (AfxReadStreamAt(in, mdlHdr->jntLeBase, mdlHdr->boneCnt * sizeof(lodErr[0]), 0, lodErr))
             AfxThrowError();
 
-        ArxReplaceBoneInversors(origSkl, 0, mdlb.boneCnt, iw, sizeof(iw[0]));
+        ArxReplaceBoneNegligence(skl, 0, mdlHdr->boneCnt, lodErr);
 
-        afxReal* lodErr = AfxRequestArena(&arena, sizeof(lodErr[0]), mdlHdr.boneCnt, NIL, 0);
-        if (AfxReadStreamAt(in, mdlHdr.jntLeBase, mdlHdr.boneCnt * sizeof(lodErr[0]), 0, lodErr))
-            AfxThrowError();
+        AfxReclaimArena(arena, lodErr, sizeof(lodErr[0]) * mdlHdr->boneCnt);
 
-        ArxReplaceBoneNegligence(origSkl, 0, mdlb.boneCnt, lodErr);
+        if (err)
+        {
+            AfxDisposeObjects(1, &skl);
+        }
     }
 
-    if (AfxSeekStream(in, mdlHdr.mshIdBase, afxSeekOrigin_BEGIN))
-        AfxThrowError();
+    *skeleton = skl;
 
-    // Read mesh identifier strings.
-    if (ArxReadMappedStrings(in, &sdb.s, mdlHdr.mshCnt, strings))
-        AfxThrowError();
+    return err;
+}
 
-    if (AfxSeekStream(in, mdlHdr.mshInfoBase, afxSeekOrigin_BEGIN))
-        AfxThrowError();
+
+_ARX afxError ArxUploadMeshes(arxScenario scio, afxArena* arena, afxString const* sdb, afxStream in, afxUnit mshCnt, MXD_MSH_HDR const mshHdrs[], afxString const urns[], arxMesh meshes[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(meshes);
 
     arxMeshBlueprint mshb = { 0 };
-    
-    MXD_MSH_HDR* mshHdrs = AfxRequestArena(&arena, sizeof(mshHdrs[0]), mdlHdr.mshCnt, NIL, 0);
 
-    if (AfxReadStream(in, mdlHdr.mshCnt * sizeof(MXD_MSH_HDR), 0, mshHdrs))
-        AfxThrowError();
+    arxMeshBlueprint* mshbs = AfxRequestArena(arena, sizeof(mshbs[0]), mshCnt, NIL, 0);
 
-    arxMeshBlueprint* mshbs = AfxRequestArena(&arena, sizeof(mshbs[0]), mdlHdr.mshCnt, NIL, 0);
-
-    for (afxUnit i = 0; i < mdlHdr.mshCnt; i++)
+    for (afxUnit i = 0; i < mshCnt; i++)
     {
-        MXD_MSH_HDR* mshHdr = &mshHdrs[i];
+        MXD_MSH_HDR const* mshHdr = &mshHdrs[i];
         arxMeshBlueprint* mshb = &mshbs[i];
         AfxZero(mshb, sizeof(mshb[0]));
 
-        afxString* attrs = AfxRequestArena(&arena, sizeof(attrs[0]), mshHdr->attrCnt, NIL, 0);
+        afxString* attrs = AfxRequestArena(arena, sizeof(attrs[0]), mshHdr->attrCnt, NIL, 0);
+        afxString* biases = AfxRequestArena(arena, sizeof(biases[0]), mshHdr->biasCnt, NIL, 0);
+        afxString* morphTags = AfxRequestArena(arena, sizeof(morphTags[0]), mshHdr->morphCnt, NIL, 0);
+        afxString* materials = AfxRequestArena(arena, sizeof(materials[0]), mshHdr->mtlCnt, NIL, 0);
+
         if (AfxSeekStream(in, mshHdr->vtxAttrIdsBaseOff, afxSeekOrigin_BEGIN))
             AfxThrowError();
 
-        if (ArxReadMappedStrings(in, &sdb.s, mshHdr->attrCnt, attrs))
+        if (ArxReadMappedStrings(in, sdb, mshHdr->attrCnt, attrs))
             AfxThrowError();
+
         mshb->attrCnt = mshHdr->attrCnt;
         mshb->attrs = attrs;
 
-        afxString* biases = AfxRequestArena(&arena, sizeof(biases[0]), mshHdr->biasCnt, NIL, 0);
+
         if (AfxSeekStream(in, mshHdr->biasIdsBaseOff, afxSeekOrigin_BEGIN))
             AfxThrowError();
 
-        if (ArxReadMappedStrings(in, &sdb.s, mshHdr->biasCnt, biases))
+        if (ArxReadMappedStrings(in, sdb, mshHdr->biasCnt, biases))
             AfxThrowError();
         mshb->biasCnt = mshHdr->biasCnt;
         mshb->biases = biases;
 
-        afxString* morphTags = AfxRequestArena(&arena, sizeof(morphTags[0]), mshHdr->morphCnt, NIL, 0);
+
         if (AfxSeekStream(in, mshHdr->morphTagsBaseOff, afxSeekOrigin_BEGIN))
             AfxThrowError();
 
-        if (ArxReadMappedStrings(in, &sdb.s, mshHdr->morphCnt, morphTags))
+        if (ArxReadMappedStrings(in, sdb, mshHdr->morphCnt, morphTags))
             AfxThrowError();
+
         mshb->morphCnt = mshHdr->morphCnt;
         mshb->morphTags = morphTags;
 
-        afxString* materials = AfxRequestArena(&arena, sizeof(materials[0]), mshHdr->mtlCnt, NIL, 0);
+
         if (AfxSeekStream(in, mshHdr->mtlIdsBaseOff, afxSeekOrigin_BEGIN))
             AfxThrowError();
 
-        if (ArxReadMappedStrings(in, &sdb.s, mshHdr->mtlCnt, materials))
+        if (ArxReadMappedStrings(in, sdb, mshHdr->mtlCnt, materials))
             AfxThrowError();
+
         mshb->materials = materials;
 
         mshb->mtlCnt = mshHdr->mtlCnt;
@@ -921,12 +770,14 @@ _ARX afxError ArxUploadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxS
 
     }
 
-    if (ArxBuildMeshes(scio, mdlHdr.mshCnt, strings, mshbs, meshes))
+    if (ArxBuildMeshes(scio, mshCnt, urns, mshbs, meshes))
         AfxThrowError();
 
-    for (afxUnit i = 0; i < mdlHdr.mshCnt; i++)
+    AfxReclaimArena(arena, mshbs, sizeof(mshbs[0]) * mshCnt);
+
+    for (afxUnit i = 0; i < mshCnt; i++)
     {
-        MXD_MSH_HDR* mshHdr = &mshHdrs[i];
+        MXD_MSH_HDR const* mshHdr = &mshHdrs[i];
         arxMesh msh = meshes[i];
 
         if (AfxSeekStream(in, mshHdr->indicesBaseOff, afxSeekOrigin_BEGIN))
@@ -997,10 +848,84 @@ _ARX afxError ArxUploadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxS
         }
     }
 
-    if (AfxSeekStream(in, mdlHdr.rigBase, afxSeekOrigin_BEGIN))
+    return err;
+}
+
+_ARX afxError ArxUploadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxStream in, MXD_MDL_HDR const* mdlHdr, afxString const* urn, arxModel* model)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
+    AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &in);
+    AFX_ASSERT(model);
+
+    // Qwadro doesn't use afxChunkID_STRUCT
+
+    afxArena arena;
+    AfxMakeArena(&arena, NIL, AfxHere());
+
+    afxString4096 sdb;
+    AfxMakeString4096(&sdb, NIL);
+
+    afxSize posBkp = AfxAskStreamPosn(in);
+    if (AfxSeekStream(in, mdlHdr->sdbStart, afxSeekOrigin_BEGIN))
         AfxThrowError();
 
-    for (afxUnit i = 0; i < mdlHdr.rigCnt; i++)
+    AfxReadString(&sdb.s, in, mdlHdr->sdbSiz);
+
+    afxBool sklAcquired = FALSE;
+    arxSkeleton origSkl = NIL;
+
+    if (skl)
+        origSkl = skl;
+    else
+    {
+        if (ArxUploadSkeleton(scio, &arena, &sdb.s, in, mdlHdr, urn, &origSkl))
+            AfxThrowError();
+        else
+            sklAcquired = TRUE;
+    }
+
+    if (AfxSeekStream(in, mdlHdr->mshInfoBase, afxSeekOrigin_BEGIN))
+        AfxThrowError();
+
+    MXD_MSH_HDR* mshHdrs = AfxRequestArena(&arena, sizeof(mshHdrs[0]), mdlHdr->mshCnt, NIL, 0);
+
+    if (AfxReadStream(in, mdlHdr->mshCnt * sizeof(MXD_MSH_HDR), 0, mshHdrs))
+        AfxThrowError();
+
+    afxString* strings = AfxRequestArena(&arena, sizeof(strings[0]), mdlHdr->mshCnt, NIL, 0);
+
+    if (AfxSeekStream(in, mdlHdr->mshIdBase, afxSeekOrigin_BEGIN))
+        AfxThrowError();
+
+    // Read mesh identifier strings.
+    if (ArxReadMappedStrings(in, &sdb.s, mdlHdr->mshCnt, strings))
+        AfxThrowError();
+
+    arxMesh* meshes = AfxRequestArena(&arena, sizeof(meshes[0]), mdlHdr->mshCnt, NIL, 0);
+
+    if (ArxUploadMeshes(scio, &arena, &sdb.s, in, mdlHdr->mshCnt, mshHdrs, strings, meshes))
+        AfxThrowError();
+
+    AfxReclaimArena(&arena, strings, sizeof(strings[0]) * mdlHdr->mshCnt);
+    AfxReclaimArena(&arena, mshHdrs, sizeof(mshHdrs[0]) * mdlHdr->mshCnt);
+
+    if (AfxSeekStream(in, mdlHdr->rigBase, afxSeekOrigin_BEGIN))
+        AfxThrowError();
+
+    arxMeshRig* rigis = AfxRequestArena(&arena, sizeof(rigis[0]), mdlHdr->rigCnt, NIL, 0);
+
+    if (!mtd)
+    {
+        if (ArxAcquireMtds(scio, 1, urn, NIL, &mtd))
+            AfxThrowError();
+        else
+        {
+            AFX_ASSERT_OBJECTS(afxFcc_MTL, 1, &mtd);
+        }
+    }
+
+    for (afxUnit i = 0; i < mdlHdr->rigCnt; i++)
     {
         MXD_MSHR_HDR mshrHdr;
         if (AfxReadStream(in, sizeof(mshrHdr), 0, &mshrHdr))
@@ -1013,18 +938,33 @@ _ARX afxError ArxUploadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxS
 
         rigis[i].flags = mshrHdr.flags;
         rigis[i].msh = msh;
-        rigis[i].origSkl = mdl->skl;
+        rigis[i].origSkl = origSkl;
 
         arxMaterial mtlArray[256];
-        ArxDeclareMaterials(mdli.mtd, mshi.mtlCnt, rigis[i].msh->materials, mtlArray);
-
-        arxMeshLinkage rig = mdl->rigs[i];
-        if (!rig) continue;
-        rig->flags |= mshrHdr.flags;
+        ArxDeclareMaterials(mtd, mshi.mtlCnt, rigis[i].msh->materials, mtlArray);
     }
 
-    if (ArxRigMeshes(mdl, 0, mdlHdr.rigCnt, rigis))
+    arxModel mdl;
+    arxModelBlueprint mdlb = { 0 };
+    mdlb.lodType = mdlHdr->lodType;
+    mdlb.mtd = mtd;
+    mdlb.rigCnt = mdlHdr->rigCnt;
+    mdlb.rigs = rigis;
+    mdlb.displace = mdlHdr->displace;
+    mdlb.skl = origSkl;
+    
+    if (ArxAssembleModels(scio, 1, urn, &mdlb, &mdl))
         AfxThrowError();
+
+    AfxReclaimArena(&arena, rigis, sizeof(rigis[0]) * mdlHdr->rigCnt);
+
+    AfxDisposeObjects(mdlHdr->mshCnt, meshes);
+
+    if (sklAcquired)
+        AfxDisposeObjects(1, &origSkl);
+
+    arxModelInfo mdli;
+    ArxDescribeModel(mdl, &mdli);
 
     AfxDismantleArena(&arena);
 
@@ -1053,7 +993,12 @@ _ARX afxError ArxLoadModel(arxScenario scio, arxMtd mtd, arxSkeleton skl, afxStr
     }
     else
     {
-        if (ArxUploadModel(scio, mtd, skl, urn, iob, model))
+        MXD_MDL_HDR mdlHdr;
+
+        if (AfxReadStream(iob, sizeof(mdlHdr), 0, &mdlHdr))
+            AfxThrowError();
+
+        if (ArxUploadModel(scio, mtd, skl, iob, &mdlHdr, urn, model))
             AfxThrowError();
     }
     AfxDisposeObjects(1, &iob);

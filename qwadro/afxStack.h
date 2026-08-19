@@ -10,9 +10,9 @@
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   ////////////////////////////////////////////////////////////////////////////////

@@ -179,7 +179,9 @@ _ZGL _avxDsysDdi const _ZGL_DDI_DSYS =
     .cfgSampCb = _AvxDsysSwConfigureSampCb,
     .acqSampCb = _AvxDsysSwAcquireSampCb,
     .cfgCanvCb = _AvxDsysSwConfigureCanvCb,
-    .acqCanvCb = _AvxDsysSwAcquireCanvCb
+    .acqCanvCb = _AvxDsysSwAcquireCanvCb,
+    .cfgPipCb = _AvxDsysSwConfigurePipCb,
+    .acqPipCb = _AvxDsysSwAcquirePipCb
 };
 
 _ZGL afxError _ZglDsysDtorCb(afxDrawSystem dsys)

@@ -10,9 +10,9 @@
  *                  Q W A D R O   E X E C U T I O N   E C O S Y S T E M
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 #ifndef AFX_FCC_H
@@ -299,7 +299,7 @@ typedef enum afxFcc
     afxFcc_IMGH     = AFX_MAKE_FCC('i', 'm', 'g', 'h'), // AfxImageHub
     afxFcc_IMIO     = AFX_MAKE_FCC('i', 'm', 'i', 'o'), // AfxImageIoAssistent
     afxFcc_RAS      = AFX_MAKE_FCC('t', 'e', 'x', '\0'), // avxRaster
-    afxFcc_SURF     = AFX_MAKE_FCC('s', 'u', 'r', 'f'), // _avxCanvasBin
+    afxFcc_SURF     = AFX_MAKE_FCC('s', 'u', 'r', 'f'), // _avxCanvasRig
     afxFcc_TEXB     = AFX_MAKE_FCC('t', 'e', 'x', 'b'), // afxTextureBlueprint
 
     afxFcc_MDL      = AFX_MAKE_FCC('m', 'd', 'l', '\0'), // arxModel

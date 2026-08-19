@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced User Experience Extensions.
@@ -843,7 +843,7 @@ _AUX afxBool _AuxWndSwEventHandlerCb(afxWindow wnd, auxEvent *ev)
         {
             AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
             afxRect whd = wnd->surfaceRc;
-            if (AvxAdjustSurface(dout, &whd, wnd->fullscreen))
+            if (AvxAdjustSurface(dout, &whd))
                 AfxThrowError();
         }
         break;

@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA A4D <https://sigmaco.org/a4d>

@@ -78,4 +78,6 @@ ZAL afxError    wasapiOutputLock(zalWasapi* idd, afxUnit frameCnt, void** pMap);
 ZAL afxError wasapiOutputRb(zalWasapi* idd, AudioRingBuffer* rb);
 ZAL afxError wasapiInputRb(zalWasapi* idd, AudioRingBuffer* rb);
 
+ZAL afxBool wasapiShouldProcess(zalWasapi* idd);
+
 #endif//ZAL_INTEROP_WASAPI_H

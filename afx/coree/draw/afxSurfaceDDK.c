@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -38,6 +38,9 @@ _AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresent
 
         afxSurface dout = pres->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+
+        AfxIncAtom32(&dout->submCnt);
+
 #if 0
         if (pres->waitOnDpu && pres->dout->ddi->presOnDpuCb)
         {
@@ -87,10 +90,10 @@ _AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresent
                 }
             }
 
-            --dout->swaps[pres->bufIdx].locked;
-            AfxPushInterlockedQueue(&dout->freeBuffers, (afxUnit[]) { pres->bufIdx });
-            //AfxDecAtom32(&dout->m.submCnt);
+            _AvxDoutSwUnlockBufCb(dout, pres->bufIdx);
         }
+
+        AfxDecAtom32(&dout->submCnt);
     }
     return err;
 }
@@ -105,6 +108,8 @@ _AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption co
 
         afxSurface dout = cap->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
+
+        AfxIncAtom32(&dout->submCnt);
 #if 0
         if (pres->waitOnDpu && pres->dout->ddi->presOnDpuCb)
         {
@@ -154,10 +159,10 @@ _AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption co
                 }
             }
 
-            --dout->swaps[cap->bufIdx].locked;
-            AfxPushInterlockedQueue(&dout->freeBuffers, (afxUnit[]) { cap->bufIdx });
-            //AfxDecAtom32(&dout->m.submCnt);
+            _AvxDoutSwUnlockBufCb(dout, cap->bufIdx);
         }
+
+        AfxDecAtom32(&dout->submCnt);
     }
     return err;
 }

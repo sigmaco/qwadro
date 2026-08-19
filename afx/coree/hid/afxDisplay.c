@@ -10,9 +10,9 @@
  *                     S I G M A   T E C H N O L O G Y   G R O U P
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -334,7 +334,7 @@ _AUX afxClassConfig const _AUX_DPY_CLASS_CONFIG =
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AUX afxError _AuxRegisterDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[])
+_AUX afxError AfxAcquireDisplays(afxModule icd, afxUnit cnt, afxDisplayConfig const cfg[], afxDisplay displays[])
 {
     afxError err = { 0 };
     AFX_ASSERT(displays);

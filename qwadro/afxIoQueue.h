@@ -10,9 +10,9 @@
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////

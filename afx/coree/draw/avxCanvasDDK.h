@@ -10,9 +10,9 @@
  *                      Q W A D R O   D R A W   I / O   S Y S T E M
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
   //////////////////////////////////////////////////////////////////////////////
@@ -37,9 +37,9 @@ AFX_DEFINE_STRUCT(_avxCanvDdi)
 };
 
 #ifdef _AVX_CANVAS_C
-AFX_DEFINE_STRUCT(_avxCanvasBin)
+AFX_DEFINE_STRUCT(_avxCanvasRig)
 {
-    avxRaster       buf; // the texture subresource that will be output to for this color attachment.
+    avxRaster       ras; // the texture subresource that will be output to for this color attachment.
     avxRaster       resolve; // the texture subresource that will receive the resolved output for this color attachment if view is multisampled.
     afxBool         managed;
     avxFormat       fmt; // the format of the image that will be used for the attachment.
@@ -66,11 +66,11 @@ AFX_OBJECT(avxCanvas)
     avxRange            whd; // D is layered
     afxUnit             lodCnt; // multisampling level (2^lodCnt)
     afxUnit             linkedCnt;
-    afxUnit             binCnt; // immutable
-    _avxCanvasBin*      bins;
+    afxUnit             rigCnt; // immutable
+    _avxCanvasRig*      rigs;
     afxFlags            ownershipMask; // one for each surface. Forcing it to be limited to max 32 surfaces.
     afxUnit             colorCnt;
-    afxUnit             dsBinIdx[2];
+    afxUnit             dsRigIdx[2];
 };
 #endif//_AVX_CANVAS_C
 

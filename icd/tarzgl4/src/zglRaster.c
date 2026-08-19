@@ -2136,7 +2136,7 @@ _ZGL afxError _ZglRasDtor(avxRaster ras)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
 
     if (ras->glHandle)
     {
@@ -2158,7 +2158,7 @@ _ZGL afxError _ZglRasCtor(avxRaster ras, void** args, afxUnit invokeNo)
 {
     afxError err = { 0 };
 
-    afxDrawSystem dsys = AvxGetRasterHost(ras);
+    afxDrawSystem dsys = AvxGetRasterSystem(ras);
     avxRasterInfo const* rasi = args[1] ? ((avxRasterInfo const*)args[1]) + invokeNo : NIL;
     avxSubrasterInfo const* subi = args[2] ? ((avxSubrasterInfo const*)args[2]) + invokeNo : NIL;
     avxExorasterInfo const* exorasi = args[3] ? ((avxExorasterInfo const*)args[3]) + invokeNo : NIL;

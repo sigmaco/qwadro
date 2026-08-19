@@ -10,9 +10,9 @@
  *            Q W A D R O   M U L T I M E D I A   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This software is part of Advanced Multimedia Extensions.
@@ -54,6 +54,9 @@ AFX_DEFINE_STRUCT(_amxSinkDdi)
 
     afxError(*pauseCb)(afxSink asi, afxBool pause);
     afxError(*resetCb)(afxSink asi);
+
+    afxBool (*shouldProcessCb)(afxSink asi, afxUnit idx);
+    afxError(*processCb)(afxSink asi, afxUnit idx, amxSample const* samp);
 };
 
 #ifdef _AMX_SINK_C
@@ -68,21 +71,16 @@ AFX_OBJECT(afxSink)
     afxString const     tag;
     void*               udd; // user-defined data
 
+    afxUnit             trakCnt;
+    amxTrack            traks[8]; // temporarily fixed/static.
+
     amxFormat           fmt;
     afxUnit             freq; // Hz
     afxUnit             chanCnt;
-    afxUnit             samplesPerFrame; // in samples
+    afxUnit             framesPerSample; // in samples
     afxUnit             latency; // frames ready
-    amxAudio*           buffers;
-    afxInterlockedQueue freeBuffers;
-    afxInterlockedQueue readyBuffers;
-    afxAtom32           sinkingBufIdx;
 
     afxUnit             muteReqCnt;
-
-    afxRing             ioRing;
-
-    AudioRingBuffer rb;
 
     afxClock    startClock;
     afxClock    lastClock;

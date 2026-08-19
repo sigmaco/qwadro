@@ -371,7 +371,8 @@ int main(int argc, char const* argv[])
             AfxDisposeObjects(1, &dctx);
 #endif
 
-            AfxDoUx(0, AFX_TIMEOUT_INFINITE);
+            // Will block infinitely on surface resizing due to swaplock.
+            //AfxDoUx(0, AFX_TIMEOUT_INFINITE);
 
             if (compiled)
             {
@@ -397,6 +398,8 @@ int main(int argc, char const* argv[])
             {
                 AvxUnlockSurfaceBuffer(dout, outBufIdx);
             }
+
+            AfxDoUx(0, AFX_TIMEOUT_INFINITE);
         }
     }
 

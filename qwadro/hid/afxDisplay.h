@@ -10,9 +10,9 @@
  *        Q W A D R O   V I D E O   G R A P H I C S   I N F R A S T R U C T U R E
  *
  *                               (c) 2017 SIGMA FEDERATION
- *                               ESTADO-MAIOR DA SEGURIDADE
- *                                 SIGMA TECHNOLOGY GROUP
- *                                        ENGITECH
+ *                               ESTADO-MAJOR DA SECURIDAD
+ *                                SIGMA TECHNOLOGY GROUP
+ *                                       ENGITECH
  */
 
 // This code is part of SIGMA GL/2.
@@ -286,6 +286,17 @@ AFX_DEFINE_STRUCT(afxDisplayConfig)
     // An user-defined data to be attached to it.
     void* udd;
 };
+
+AUX afxError AfxAcquireDisplays
+(
+    afxModule icd, 
+
+    afxUnit cnt, 
+
+    afxDisplayConfig const cfg[], 
+
+    afxDisplay displays[]
+);
 
 /*
     The AfxEnumerateDisplays() function enumerates the available displays connected to a specific graphics driver (specified by icd). 
