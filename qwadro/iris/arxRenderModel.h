@@ -21,7 +21,7 @@
 #define ARX_RENDERABLE_MODEL_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 #include "qwadro/cad/arxMesh.h"
 #include "qwadro/cad/arxModel.h"

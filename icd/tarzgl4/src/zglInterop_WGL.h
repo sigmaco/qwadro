@@ -20,7 +20,7 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 //#define WIN32_LEAN_AND_MEAN 1
 
-#include "afx/coree/draw/avxIcd.h"
+#include "afx/coree/vga/icd/avxIcd.h"
 //#include "qwadro/afxQwadro.h"
 
 #ifndef AVX_DRV_SRC

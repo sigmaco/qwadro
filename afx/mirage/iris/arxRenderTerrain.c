@@ -23,7 +23,7 @@
 #define _ARX_SCENARIO_C
 #define _ARX_RENDER_CONTEXT_C
 #include "../scene/arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 
 
 

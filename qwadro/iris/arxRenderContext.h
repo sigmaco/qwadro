@@ -21,7 +21,7 @@
 #define ARX_DRAW_INPUT_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 #include "qwadro/iris/arxIrisDefs.h"
 #include "qwadro/iris/arxRenderPuppet.h"

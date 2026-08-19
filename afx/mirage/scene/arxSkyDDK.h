@@ -20,7 +20,7 @@
 #ifndef ARX_SKY_DDK_H
 #define ARX_SKY_DDK_H
 
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 #include "qwadro/scene/arxScenario.h"
 #include "qwadro/iris/arxRenderContext.h"
 #include "../cad/arxModelDDK.h"

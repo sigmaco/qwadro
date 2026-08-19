@@ -23,7 +23,7 @@
 #define _ARX_BODY_C
 #define _ARX_MATERIAL_C
 #define _ARX_VERTEX_BUFFER_C
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 #include "../scene/arxIcd.h"
 
 #if 0

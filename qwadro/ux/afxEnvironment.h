@@ -70,10 +70,10 @@
 #define AUX_ENVIRONMENT_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/draw/avxViewport.h"
+#include "qwadro/vga/math/avxViewport.h"
 #include "qwadro/hid/afxKeyboard.h"
 #include "qwadro/ux/afxShell.h"
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 #include "qwadro/mix/afxMixSystem.h"
 
 #define AFX_MAX_USERS_PER_ENVIRONMENT (2)

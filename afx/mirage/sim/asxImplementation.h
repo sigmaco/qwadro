@@ -22,7 +22,7 @@
 #define ASX_IMPLEMENTATION_H
 
 #include "../../../afx/coree/afxSystemDDK.h"
-#include "../../../afx/coree/draw/avxIcd.h"
+#include "../../../afx/coree/vga/icd/avxIcd.h"
 #include "qwadro/sim/arxEngine.h"
 #include "qwadro/sim/arxSimulation.h"
 #include "asxImpl_Executor.h"

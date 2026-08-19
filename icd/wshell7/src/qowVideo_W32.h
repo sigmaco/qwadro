@@ -45,7 +45,7 @@
 #define _AVX_SURFACE_C
 #define _AVX_SURFACE_IMPL
 #include "../qwadro/afx/coree/ux/auxIcd.h"
-#include "../qwadro/afx/coree/draw/avxIcd.h"
+#include "../qwadro/afx/coree/vga/icd/avxIcd.h"
 #include "../../icd/tarzgl4/src/zglDefs.h"
 
 #define USE_DXGI_DISPLAY 1

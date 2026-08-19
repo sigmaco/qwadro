@@ -26,7 +26,7 @@
 #define AUX_LAYOUT_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/draw/avxColor.h"
+#include "qwadro/vga/math/avxColor.h"
 #include "qwadro/afxChain.h"
 #include "qwadro/afxObject.h"
 #include "qwadro/afxUri.h"

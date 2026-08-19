@@ -21,7 +21,7 @@
 #define ACX_WARP_DEFS_H
 
 #include "qwadro/afxSystem.h"
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 
 #ifndef __e2serpro__
 #   ifdef _DEBUG

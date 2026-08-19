@@ -21,7 +21,7 @@
 #define ARX_RENDERABLE_TERRAIN_H
 
 #include "qwadro/sim/arxSimDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 #include "qwadro/iris/arxIrisDefs.h"
 

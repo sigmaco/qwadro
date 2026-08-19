@@ -26,7 +26,7 @@
 
 #include "../afxSystemDDK.h"
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/draw/avxViewport.h"
+#include "qwadro/vga/math/avxViewport.h"
 #include "qwadro/ux/afxShell.h"
 //#include "qwadro/../../dep_/vgl1/vgl1.h"
 

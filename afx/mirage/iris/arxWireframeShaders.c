@@ -24,7 +24,7 @@
 #define _ARX_SKELETON_C
 #define _ARX_SCENARIO_C
 #include "../scene/arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 
 #define AFX_R(...) #__VA_ARGS__
 //#define AFX_R(_raw_string_literal_) "\n" #_raw_string_literal_

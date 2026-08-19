@@ -38,9 +38,9 @@
 #define AUX_WINDOW_H
 
 #include "qwadro/ux/afxUxDefs.h"
-#include "qwadro/draw/avxViewport.h"
+#include "qwadro/vga/math/avxViewport.h"
 #include "qwadro/ux/afxWidget.h"
-#include "qwadro/draw/afxSurface.h"
+#include "qwadro/vga/afxSurface.h"
 
 // our facade
 

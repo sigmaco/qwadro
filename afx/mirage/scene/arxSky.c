@@ -20,7 +20,7 @@
 #define _ARX_SCENE_C
 #define _ARX_SKY_C
 #include "arxIcd.h"
-#include "../afx/coree/draw/avxIcd.h"
+#include "../afx/coree/vga/icd/avxIcd.h"
 
 afxV3d const skyboxVertices[] =
 {

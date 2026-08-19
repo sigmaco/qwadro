@@ -73,10 +73,10 @@
 #define ARX_CAMERA_H
 
 #include "qwadro/iris/arxIrisDefs.h"
-#include "qwadro/draw/afxDrawDefs.h"
+#include "qwadro/vga/afxDrawDefs.h"
 #include "qwadro/afxArray.h"
 #include "qwadro/coll/afxFrustum.h"
-#include "qwadro/draw/avxMatrix.h"
+#include "qwadro/vga/math/avxMatrix.h"
 #include "qwadro/scene/arxNode.h"
 
 typedef enum afxCameraFlag

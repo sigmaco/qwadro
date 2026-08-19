@@ -54,7 +54,7 @@
 // AFX
 #include "qwadro/afxSystem.h"
 // AVX
-#include "qwadro/draw/afxDrawSystem.h"
+#include "qwadro/vga/afxDrawSystem.h"
 // AMX
 #include "qwadro/mix/afxMixSystem.h"
 // AUX
