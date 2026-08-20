@@ -46,7 +46,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 0,
         .stride = 0,
         .compCnt = 0,
-        .type = { avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 0, 0, 0 },
         .defaults = { 0, 0, 0, 0 },
         .isNormalized = { 0, 0, 0, 0 },
@@ -113,7 +113,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_R8un] = // R8_UNORM (0x140)
     {
         .tag = AFX_STRING("R8un"),
-        .type = {avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {8, 0, 0, 0},
@@ -196,7 +196,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_R8sn] = // R8_SNORM (0x141)
     {
         .tag = AFX_STRING("R8sn"),
-        .type = {avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {8, 0, 0, 0},
@@ -248,7 +248,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_R16un] = // R16_UNORM (0x10a)
     {
         .tag = AFX_STRING("R16un"),
-        .type = {avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {16, 0, 0, 0},
@@ -264,7 +264,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_RG16un] = // R16G16_UNORM (0xcc)
     {
         .tag = AFX_STRING("RG16un"),
-        .type = {avxFormatType_UN, avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {16, 16, 0, 0},
@@ -284,7 +284,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_R16sn] = // R16_SNORM (0x10b)
     {
         .tag = AFX_STRING("R16sn"),
-        .type = {avxFormatType_SN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_SN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {16, 0, 0, 0},
@@ -299,7 +299,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_RG16sn] = // R16G16_SNORM (0xcd)
     {
         .tag = AFX_STRING("RG16sn"),
-        .type = {avxFormatType_SN, avxFormatType_SN, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_SN, avxFormatType_SN, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .bpc = {16, 16, 0, 0},
@@ -319,7 +319,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_RG16f] = // R16G16_FLOAT (0xD0)
     {
         .tag = AFX_STRING("RG16f"),
-        .type = {avxFormatType_F, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_F, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 1, 0, 0},
         .bpc = {16, 16, 0, 0},
@@ -573,7 +573,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     [avxFormat_B5G6R5un] = // B5G6R5_UNORM (0x100)
     {
         .tag = AFX_STRING("B5G6R5un"),
-        .type = {avxFormatType_UN, avxFormatType_UN, avxFormatType_UN, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_UN, avxFormatType_UN, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},                         // Defaults for missing components
         .swizzle = {2, 1, 0, 0},
         .bpc = {5, 6, 5, 0},
@@ -618,7 +618,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 1,
         .bpc = {8, 0, 0, 0},
         .bpp = 8,
-        .type = {avxFormatType_U, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_U, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x1},
         .swizzle = {0, 0, 0, 0},
         .isNormalized = { FALSE, FALSE, FALSE, FALSE },
@@ -634,7 +634,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 1,
         .bpc = {16, 0, 0, 0},
         .bpp = 16,
-        .type = {avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .isNormalized = { TRUE, FALSE, FALSE, FALSE },
@@ -650,7 +650,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 2,
         .bpc = {16, 8, 0, 0},
         .bpp = 24,
-        .type = { avxFormatType_UN, avxFormatType_U, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_U, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = {0, 1, 2, 3},
         .defaults = {0, 0, 0x1, 0x3f800000},
         .isNormalized = { TRUE, FALSE, FALSE, FALSE },
@@ -666,7 +666,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 1,
         .bpc = {24, 0, 0, 0},
         .bpp = 32,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = {0, 1, 2, 3},
         .defaults = {0, 0, 0, 0x3f800000},
         .isNormalized = { TRUE, FALSE, FALSE, FALSE },
@@ -682,7 +682,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 2,
         .bpc = {24, 8, 0, 0},
         .bpp = 32,
-        .type = { avxFormatType_UN, avxFormatType_U, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_U, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = {0, 1, 2, 3},
         .defaults = {0, 0, 0x1, 0x3f800000},
         .isNormalized = { TRUE, FALSE, FALSE, FALSE },
@@ -698,7 +698,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 1,
         .bpc = {32, 0, 0, 0},
         .bpp = 32,
-        .type = {avxFormatType_F, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_F, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = {0, 0, 0, 0x3f800000},
         .swizzle = {0, 0, 0, 0},
         .isNormalized = { FALSE, FALSE, FALSE, FALSE },
@@ -714,7 +714,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .compCnt = 2,
         .bpc = { 32, 8, 0, 0 },
         .bpp = 64,
-        .type = {avxFormatType_F, avxFormatType_U, avxFormatType_UNK, avxFormatType_UNK},
+        .type = {avxFormatType_F, avxFormatType_U, avxFormatType_NIL, avxFormatType_NIL},
         .defaults = { 0, 0, 0x1, 0x3f800000},
         .swizzle = { 0, 0, 0, 0 },
         .isNormalized = { TRUE, FALSE, FALSE, FALSE },
@@ -734,7 +734,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 64,
         .stride = 8,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -749,7 +749,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 64,
         .stride = 8,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -764,7 +764,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 64,
         .stride = 8,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -779,7 +779,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 128,
         .stride = 16,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -794,7 +794,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 128,
         .stride = 16,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -809,7 +809,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 128,
         .stride = 16,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -824,7 +824,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 128,
         .stride = 16,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -839,7 +839,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 64,
         .stride = 8,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -854,7 +854,7 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
         .bpp = 128,
         .stride = 16,
         .compCnt = 1,
-        .type = { avxFormatType_UN, avxFormatType_UNK, avxFormatType_UNK, avxFormatType_UNK },
+        .type = { avxFormatType_UN, avxFormatType_NIL, avxFormatType_NIL, avxFormatType_NIL },
         .swizzle = { 0, 1, 2, 3 },
         .defaults = { 0, 0, 0, 0x3f800000 },
         .isNormalized = { TRUE, 0, 0, 0 },
@@ -865,20 +865,16 @@ _AVX avxFormatDescription const _AvxStdPfds[avxFormat_TOTAL] =
     },
 };
 
-_AVXINL void AvxDescribeFormats(afxUnit cnt, avxFormat const formats[], avxFormatDescription pfd[])
+_AVXINL afxError AvxDescribeFormat(avxFormat fmt, avxFormatDescription* pfd)
 {
     afxError err = { 0 };
-    AFX_ASSERT(formats);
+    AFX_ASSERT(avxFormat_TOTAL > fmt);
     AFX_ASSERT(pfd);
-    AFX_ASSERT(cnt);
 
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        avxFormat fmt = formats[i];
-        AFX_ASSERT(avxFormat_TOTAL > fmt);
-        fmt = AFX_MIN(fmt, avxFormat_TOTAL - 1);
-        pfd[i] = _AvxStdPfds[fmt];
-    }
+    if (fmt >= avxFormat_TOTAL)
+        fmt = avxFormat_NIL;
+
+    *pfd = _AvxStdPfds[fmt];
 }
 
 _AVXINL afxUnit AvxChooseFormats(avxFormatDescription const* pfd, afxUnit maxCnt, avxFormat formats[])
@@ -969,7 +965,7 @@ _AVXINL afxUnit AvxChooseFormats(avxFormatDescription const* pfd, afxUnit maxCnt
     return rslt;
 }
 
-_AVXINL afxUnit AfxGetBpp(avxFormat fmt)
+_AVXINL afxUnit AfxGetFormatBpp(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);
@@ -978,7 +974,7 @@ _AVXINL afxUnit AfxGetBpp(avxFormat fmt)
     return _AvxStdPfds[fmt].bpp;
 }
 
-_AVXINL afxBool AvxTestCombinedDsFormat(avxFormat fmt)
+_AVXINL afxBool AvxIsCombinedDepthFormat(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);
@@ -995,7 +991,7 @@ _AVXINL afxBool AvxTestCombinedDsFormat(avxFormat fmt)
     return FALSE;
 }
 
-_AVXINL afxBool AvxTestDepthFormat(avxFormat fmt)
+_AVXINL afxBool AvxIsDepthFormat(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);
@@ -1015,7 +1011,7 @@ _AVXINL afxBool AvxTestDepthFormat(avxFormat fmt)
     return _AvxStdPfds[fmt].flags & avxFormatFlag_DEPTH;
 }
 
-_AVXINL afxBool AvxTestStencilFormat(avxFormat fmt)
+_AVXINL afxBool AvxIsStencilFormat(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);
@@ -1033,7 +1029,7 @@ _AVXINL afxBool AvxTestStencilFormat(avxFormat fmt)
     return _AvxStdPfds[fmt].flags & avxFormatFlag_STENCIL;
 }
 
-_AVXINL afxBool AvxTestSrgbFormat(avxFormat fmt)
+_AVXINL afxBool AvxIsDisplayFormat(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);
@@ -1041,7 +1037,7 @@ _AVXINL afxBool AvxTestSrgbFormat(avxFormat fmt)
     return _AvxStdPfds[fmt].flags & avxFormatFlag_sRGB;
 }
 
-_AVXINL afxBool AvxTestCompressedFormat(avxFormat fmt)
+_AVXINL afxBool AvxIsCompressedFormat(avxFormat fmt)
 {
     afxError err = { 0 };
     AFX_ASSERT(fmt);

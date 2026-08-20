@@ -273,7 +273,7 @@ _AVX afxError AvxPrepareRasterFile(avxRasterFile* tga, avxRasterIo* iop, afxUnit
     AFX_ASSERT(fmt);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
 
     // begin file
     // record the TGA 2000 header
@@ -575,7 +575,7 @@ _AVX afxError AvxReadRasterFile(avxRasterFile* info, afxStream in)
         */
 
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, (avxFormat[]) { info->fmt }, &pfd);
+        AvxDescribeFormat(info->fmt, &pfd);
         info->rowStride = (tgai.width / pfd.bcWh[0]) * pfd.stride;
         info->rowsPerImg = (tgai.height + (pfd.bcWh[1] - 1)) / pfd.bcWh[1];
         info->decSiz = info->rowsPerImg * info->rowStride;

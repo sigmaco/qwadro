@@ -446,7 +446,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
             }
             cachedAttrOffset[i] = cacheStride[cacheIdx[i]];
             avxFormatDescription pfd;
-            AvxDescribeFormats(1, &fmt, &pfd);
+            AvxDescribeFormat(fmt, &pfd);
             cacheStride[cacheIdx[i]] += pfd.stride;//AfxVertexFormatGetSize(cachedAttrFmt[i]);
         }
 
@@ -517,7 +517,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
                         if (data)
                         {
                             avxFormatDescription pfd;
-                            AvxDescribeFormats(1, &fmt, &pfd);
+                            AvxDescribeFormat(fmt, &pfd);
                             afxSize srcStride = pfd.stride;// AfxVertexFormatGetSize(fmt);
                             AFX_ASSERT(srcStride);
                             AfxStream3(msh->vtxCnt, data, 0, srcStride, dst, cachedAttrOffset[j], cache->streams[srcIdx].stride);

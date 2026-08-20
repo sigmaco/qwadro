@@ -550,7 +550,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
     DpuBindAndSyncBuf(dpu, GL_PIXEL_UNPACK_BUFFER, NIL, TRUE); // KEEP IT HERE?
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->m.fmt, &pfd);
+    AvxDescribeFormat(ras->m.fmt, &pfd);
 
     for (afxUnit i = 0; i < opCnt; i++)
     {
@@ -570,7 +570,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
         gl->PixelStorei(GL_UNPACK_ROW_LENGTH, rowLen); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_UNPACK_IMAGE_HEIGHT, rowsPerImg); _ZglThrowErrorOccuried();
 
-        if (!AvxTestCompressedFormat(ras->m.fmt))
+        if (!AvxIsCompressedFormat(ras->m.fmt))
         {
             switch (glTarget)
             {
@@ -893,7 +893,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
         gl->PixelStorei(GL_PACK_ROW_LENGTH, rowLen); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_IMAGE_HEIGHT, rowsPerImg); _ZglThrowErrorOccuried();
 
-        if (AvxTestCompressedFormat(ras->m.fmt))
+        if (AvxIsCompressedFormat(ras->m.fmt))
         {
             if (gl->GetCompressedTextureSubImage)
             {
@@ -1046,7 +1046,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
     bufBound = TRUE; // required for all ops.
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->m.fmt, &pfd);
+    AvxDescribeFormat(ras->m.fmt, &pfd);
 
     for (afxUnit i = 0; i < opCnt; i++)
     {
@@ -1068,7 +1068,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
 
         // load from PBO
 
-        if (!AvxTestCompressedFormat(ras->m.fmt))
+        if (!AvxIsCompressedFormat(ras->m.fmt))
         {
             switch (glTarget)
             {
@@ -1385,7 +1385,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
         afxUnit bufSiz = op->rowStride * op->rowStride;
         // TODO: obrigar a especificação de um tamanho sempre que for exportar?
 
-        if (AvxTestCompressedFormat(ras->m.fmt))
+        if (AvxIsCompressedFormat(ras->m.fmt))
         {
             if (gl->GetCompressedTextureSubImage)
             {
@@ -1531,7 +1531,7 @@ _ZGL afxError _DpuDownloadRaster(zglDpu* dpu, avxRaster ras, afxStream out, afxU
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->m.fmt, &pfd);
+    AvxDescribeFormat(ras->m.fmt, &pfd);
 
     for (afxUnit i = 0; i < opCnt; i++)
     {
@@ -1559,7 +1559,7 @@ _ZGL afxError _DpuDownloadRaster(zglDpu* dpu, avxRaster ras, afxStream out, afxU
         afxUnit bufSiz = op->rowStride * op->rowStride;
         // TODO: obrigar a especificação de um tamanho sempre que for exportar?
 
-        if (AvxTestCompressedFormat(ras->m.fmt))
+        if (AvxIsCompressedFormat(ras->m.fmt))
         {
             GLint compressed;
             gl->GetTexLevelParameteriv(ras->glTarget, op->rgn.lodIdx, GL_TEXTURE_COMPRESSED, &compressed);
@@ -1653,7 +1653,7 @@ _ZGL afxError _DpuUploadRaster(zglDpu* dpu, avxRaster ras, afxStream in, afxUnit
         gl->PixelStorei(GL_UNPACK_ROW_LENGTH, rowLen); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_UNPACK_IMAGE_HEIGHT, rowsPerImg); _ZglThrowErrorOccuried();
 
-        if (!AvxTestCompressedFormat(ras->m.fmt))
+        if (!AvxIsCompressedFormat(ras->m.fmt))
         {
             if (zglUnpackTextureSubImage(gl, ras->glTarget, ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, ras->glFmt, ras->glType, pbo, 0))
                 AfxThrowError();
@@ -1718,8 +1718,8 @@ _ZGL afxError DpuCopyRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit o
     DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, src, TRUE);
 
     avxFormatDescription srcPfd, dstPfd;
-    AvxDescribeFormats(1, &src->m.fmt, &srcPfd);
-    AvxDescribeFormats(1, &dst->m.fmt, &dstPfd);
+    AvxDescribeFormat(src->m.fmt, &srcPfd);
+    AvxDescribeFormat(dst->m.fmt, &dstPfd);
 
     for (afxUnit i = 0; i < opCnt; i++)
     {

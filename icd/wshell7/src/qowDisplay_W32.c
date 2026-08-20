@@ -243,7 +243,7 @@ _QOW afxError _QowVduCtorCb(afxDisplayPort vdu, void** args, afxUnit invokeNo)
                         for (afxUnit i = 0; i < fmtCnt; i++)
                         {
                             avxFormatDescription fd;
-                            AvxDescribeFormats(1, &formats[i], &fd);
+                            AvxDescribeFormat(formats[i], &fd);
                             AfxReportMessage("fmt %.*s", AfxPushString(&fd.tag));
                         }
                     }
@@ -393,7 +393,7 @@ _QOW afxUnit _QowDpyQueryModesCb(afxDisplay dpy, afxUnit port, avxFormat fmt, af
     {
         static DXGI_FORMAT const avxToDxgiFmtMap[] =
         {
-            [avxFormat_UNDEFINED] = DXGI_FORMAT_UNKNOWN,
+            [avxFormat_NIL] = DXGI_FORMAT_UNKNOWN,
             [avxFormat_RGBA32f] = DXGI_FORMAT_R32G32B32A32_FLOAT,
             [avxFormat_RGBA32u] = DXGI_FORMAT_R32G32B32A32_UINT,
             [avxFormat_RGBA32i] = DXGI_FORMAT_R32G32B32A32_SINT,
@@ -503,7 +503,7 @@ _QOW afxUnit _QowDpyQueryModesCb(afxDisplay dpy, afxUnit port, avxFormat fmt, af
     if (dpy->type == qowDisplayType_GDI)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &fmt, &pfd);
+        AvxDescribeFormat(fmt, &pfd);
         AFX_ASSERT(pfd.rasCaps);
 
         HDC hScreenDc = GetDC(NIL);
@@ -937,7 +937,7 @@ _QOW afxError _QowDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
                     for (afxUnit i = 0; i < fmtCnt; i++)
                     {
                         avxFormatDescription fd;
-                        AvxDescribeFormats(1, &formats[i], &fd);
+                        AvxDescribeFormat(formats[i], &fd);
                         AfxReportMessage("fmt %.*s", AfxPushString(&fd.tag));
                     }
                     break;
@@ -1252,7 +1252,7 @@ _QOW afxUnit _ZglEnumerateDisplayFormats(afxModule icd, afxUnit port, afxUnit cn
     for (afxUnit fmtIdx = 0; fmtIdx < fmtCnt; fmtIdx++)
     {
         pfd = (avxFormatDescription) { 0 };
-        AvxDescribeFormats(1, &formats[fmtIdx], &pfd);
+        AvxDescribeFormat(formats[fmtIdx], &pfd);
 
         int pxlAttrPairs[30][2] =
         {
@@ -1333,7 +1333,7 @@ _QOW afxUnit _ZglEnumerateDisplayModes(afxModule icd, afxUnit port, avxFormat fm
     AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     AFX_ASSERT(pfd.rasCaps);
 
     HDC hScreenDc = GetDC(NIL);

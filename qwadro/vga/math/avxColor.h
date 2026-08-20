@@ -25,9 +25,11 @@
 #include "qwadro/math/afxVector.h"
 
 #ifdef AFX_ARCH_LE
-#   define AVX_ARGB(a, r, g, b) (afxUnit32)(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
+#   define AVX_ARGB(a, r, g, b) \
+        (afxUnit32)(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 #else
-#   define AVX_ARGB(a, r, g, b) (afxUnit32)(((b) << 24) | ((g) << 16) | ((r) << 8) | (a))
+#   define AVX_ARGB(a, r, g, b) \
+        (afxUnit32)(((b) << 24) | ((g) << 16) | ((r) << 8) | (a))
 #endif
 
 typedef afxV4d      AFX_SIMD avxColor;
@@ -35,10 +37,14 @@ typedef afxV4d      AFX_SIMD avxColor;
 typedef afxUnit8     AFX_SIMD afxRgb8[3];
 typedef afxUnit8     AFX_SIMD afxRgba8[4];
 
-#define AVX_COLOR(x_, y_, z_, w_) (avxColor){ \
-    (afxReal)(x_), (afxReal)(y_), (afxReal)(z_), (afxReal)(w_) }
+#define AVX_COLOR(x_, y_, z_, w_) \
+    (avxColor){ (afxReal)(x_), \
+                (afxReal)(y_), \
+                (afxReal)(z_), \
+                (afxReal)(w_) }
 
-#define AVX_DEFAULT_BLEND_CONSTANTS AVX_COLOR(0, 0, 0, 0)
+#define AVX_DEFAULT_BLEND_CONSTANTS \
+    AVX_COLOR(0, 0, 0, 0)
 
 typedef enum avxColorSpace
 {
@@ -92,64 +98,64 @@ AFX_DEFINE_STRUCT(avxColorBlend)
 // Describes how the color and/or alpha components of a fragment are blended.
 {
     // Blend operation is used to calculate the RGB values to write to the color attachment. 
-    avxBlendOp          rgbBlendOp; // ADD
+    avxBlendOp      rgbBlendOp; // ADD
 
     // Blend factor is used to determine the source factors (Sr,Sg,Sb). 
-    avxBlendFactor      rgbSrcFactor; // ONE
+    avxBlendFactor  rgbSrcFactor; // ONE
 
     // Blend factor is used to determine the destination factors (Dr,Dg,Db). 
-    avxBlendFactor      rgbDstFactor; // ZERO
+    avxBlendFactor  rgbDstFactor; // ZERO
 
     // Blend operation is used to calculate the alpha values to write to the color attachment.
-    avxBlendOp          aBlendOp; // ADD
+    avxBlendOp      aBlendOp; // ADD
 
     // Blend factor is used to determine the source factor Sa.
-    avxBlendFactor      aSrcFactor; // ONE
+    avxBlendFactor  aSrcFactor; // ONE
 
     // Blend factor is used to determine the destination factor Da.
-    avxBlendFactor      aDstFactor; // ZERO
+    avxBlendFactor  aDstFactor; // ZERO
 };
 
-#define AVX_DEFAULT_COLOR_BLEND (avxColorBlend) { \
-    .rgbBlendOp = avxBlendOp_ADD, \
-    .rgbSrcFactor = avxBlendFactor_ONE, \
-    .rgbDstFactor = avxBlendFactor_ZERO, \
-    .aBlendOp = avxBlendOp_ADD, \
-    .aSrcFactor = avxBlendFactor_ONE, \
-    .aDstFactor = avxBlendFactor_ZERO }
+#define AVX_DEFAULT_COLOR_BLEND \
+    (avxColorBlend) {   .rgbBlendOp = avxBlendOp_ADD, \
+                        .rgbSrcFactor = avxBlendFactor_ONE, \
+                        .rgbDstFactor = avxBlendFactor_ZERO, \
+                        .aBlendOp = avxBlendOp_ADD, \
+                        .aSrcFactor = avxBlendFactor_ONE, \
+                        .aDstFactor = avxBlendFactor_ZERO }
 
 AFX_DEFINE_STRUCT(avxColorOutput)
 {
     // Surface format compatible with pixel output.
-    avxFormat           fmt;
+    avxFormat       fmt;
 
     // controls whether blending is enabled for the corresponding color attachment. 
     // If blending is not enabled, the source fragment’s color for that attachment is passed through unmodified.
-    afxBool             blendEnabled; // FALSE
+    afxBool         blendEnabled; // FALSE
 
     // Describes how the color or alpha components of a fragment are blended.
-    avxColorBlend       blendConfig;
+    avxColorBlend   blendConfig;
 
     // A bitmask to allow discarding of some or all color components.
-    avxColorMask        discardMask; // NIL = write all
+    avxColorMask    discardMask; // NIL = write all
 };
 
-#define AVX_DEFAULT_COLOR_OUTPUT (avxColorOutput) { \
-    .fmt = avxFormat_UNDEFINED, \
-    .blendEnabled = FALSE, \
-    .blendConfig = AVX_DEFAULT_COLOR_BLEND, \
-    .discardMask = 0x00000000 }
+#define AVX_DEFAULT_COLOR_OUTPUT \
+    (avxColorOutput) {  .fmt = avxFormat_NIL, \
+                        .blendEnabled = FALSE, \
+                        .blendConfig = AVX_DEFAULT_COLOR_BLEND, \
+                        .discardMask = 0x00000000 }
 
 AFX_DEFINE_STRUCT(avxSwizzling)
 {
     avxColorSwizzle r, g, b, a;
 };
 
-#define AVX_COLOR_SWIZZLING_IDENTITY (avxSwizzling) { \
-    .r = avxColorSwizzle_R, \
-    .g = avxColorSwizzle_G, \
-    .b = avxColorSwizzle_B, \
-    .a = avxColorSwizzle_A }
+#define AVX_COLOR_SWIZZLING_IDENTITY \
+    (avxSwizzling) {    .r = avxColorSwizzle_R, \
+                        .g = avxColorSwizzle_G, \
+                        .b = avxColorSwizzle_B, \
+                        .a = avxColorSwizzle_A }
 
 AVXINL void     AvxResetColor(avxColor c);
 

@@ -96,7 +96,7 @@ _AVX afxUnit AvxQueryVertexStride(avxVertexInput vin, afxUnit baseSrcIdx, afxUni
             _avxVinAttr const* via = &vin->attrs[attrIdx];
 
             avxFormatDescription pfd;
-            AvxDescribeFormats(1, &via->fmt, &pfd);
+            AvxDescribeFormat(via->fmt, &pfd);
             siz += pfd.stride;
         }
 

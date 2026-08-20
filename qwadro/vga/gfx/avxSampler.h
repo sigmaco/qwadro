@@ -250,7 +250,7 @@ AFX_DEFINE_STRUCT(avxSamplerConfig)
     .borderColor = AVX_DEFAULT_CLEAR_VALUE, \
     .unnormalizedCoords = FALSE, \
     .isYuv = FALSE, \
-    .yuvFmt = avxFormat_UNDEFINED, \
+    .yuvFmt = avxFormat_NIL, \
     .yuvMtx = avxColorMatrix_RGB, \
     .useNarrowRange = FALSE, \
     .yuvSizzle = { \

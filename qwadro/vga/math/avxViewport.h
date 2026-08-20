@@ -39,7 +39,21 @@ AFX_DEFINE_STRUCT(avxOrigin)
     afxInt x, y, z;
 };
 
-AFX_DEFINE_STRUCT(avxRange2)
+#define AVX_ORIGIN(x_, y_, z_) \
+    (avxOrigin) {   .x = (afxInt)(x_), \
+                    .y = (afxInt)(y_), \
+                    .z = (afxInt)(z_) }
+
+#define AVX_ORIGIN_ZERO \
+    AVX_ORIGIN( 0, 0, 0 )
+
+#define AVX_ORIGIN_MIN \
+    AVX_ORIGIN( AFX_I32_MIN, AFX_I32_MIN, AFX_I32_MIN )
+
+#define AVX_ORIGIN_MAX \
+    AVX_ORIGIN( AFX_I32_MAX, AFX_I32_MAX, AFX_I32_MAX )
+
+AFX_DEFINE_STRUCT(avxExtent2)
 // Structure specifying the extent of a area.
 {
     // The width and height of the represented area, respectively.
@@ -53,57 +67,43 @@ AFX_DEFINE_STRUCT(avxExtent)
     afxUnit w, h, d;
 };
 
-#define AVX_ORIGIN(x_, y_, z_) \
-    (avxOrigin) {   .x = (afxInt)(x_), \
-                    .y = (afxInt)(y_), \
-                    .z = (afxInt)(z_) }
+#define AVX_EXTENT(w_, h_, d_) \
+    (avxExtent){    .w = (afxUnit)(w_), \
+                    .h = (afxUnit)(h_), \
+                    .d = (afxUnit)(d_) }
 
-#define AVX_ORIGIN_ZERO \
-    AVX_RANGE( 0, 0, 0 )
+#define AVX_EXTENT_ZERO \
+    AVX_EXTENT( 0, 0, 0 )
 
-#define AVX_ORIGIN_MIN \
-    AVX_RANGE( AFX_I32_MIN, AFX_I32_MIN, AFX_I32_MIN )
+#define AVX_EXTENT_MIN \
+    AVX_EXTENT( 1, 1, 1 )
 
-#define AVX_ORIGIN_MAX \
-    AVX_RANGE( AFX_I32_MAX, AFX_I32_MAX, AFX_I32_MAX )
+#define AVX_EXTENT_MAX \
+    AVX_EXTENT( AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX )
 
-#define AVX_RANGE(w_, h_, d_) \
-    (avxExtent){ .w = (afxUnit)(w_), \
-                .h = (afxUnit)(h_), \
-                .d = (afxUnit)(d_) }
-
-#define AVX_RANGE_ZERO \
-    AVX_RANGE( 0, 0, 0 )
-
-#define AVX_RANGE_MIN \
-    AVX_RANGE( 1, 1, 1 )
-
-#define AVX_RANGE_MAX \
-    AVX_RANGE( AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX )
-
-AVXINL avxExtent AvxMinRange(avxExtent const a, avxExtent const b);
-AVXINL avxExtent AvxMaxRange(avxExtent const a, avxExtent const b);
-AVXINL avxExtent AvxClampRange(avxExtent const in, avxExtent const min, avxExtent const max);
-AVXINL avxExtent AvxLimitRange(avxOrigin const origin, avxExtent const extent);
+AVXINL avxExtent AvxGetMiniExtent(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxGetMaxiExtent(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxGetClampedExtent(avxExtent const in, avxExtent const min, avxExtent const max);
+AVXINL avxExtent AvxGetLimitedExtent(avxOrigin const origin, avxExtent const extent);
 
 
-AVXINL afxBool AvxIsRangeEqual(avxExtent const whd, avxExtent const other);
-AVXINL afxBool AvxIsRangeLequal(avxExtent const whd, avxExtent const other);
-AVXINL afxBool AvxIsRangeLess(avxExtent const whd, avxExtent const other);
-AVXINL afxBool AvxIsRangeZero(avxExtent const whd);
-AVXINL avxExtent AvxAddRange(avxExtent const a, avxExtent const b);
-AVXINL avxExtent AvxSubtractRange(avxExtent const a, avxExtent const b);
-AVXINL avxExtent AvxDivideRange(avxExtent const in, afxUnit div);
-AVXINL avxExtent AvxModRange(avxExtent const in, afxUnit div);
-AVXINL avxExtent AvxScaleRange(avxExtent const in, afxUnit s);
-AVXINL avxExtent AvxHalfRange(avxExtent const in);
+AVXINL afxBool AvxIsExtentEqual(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsExtentLequal(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsExtentLess(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsExtentZero(avxExtent const whd);
+AVXINL avxExtent AvxGetAddedExtent(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxGetSubtractedExtent(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxGetDividedExtent(avxExtent const in, afxUnit div);
+AVXINL avxExtent AvxGetModuliExtent(avxExtent const in, afxUnit div);
+AVXINL avxExtent AvxGetScaledExtent(avxExtent const in, afxUnit s);
+AVXINL avxExtent AvxGetHalfExtent(avxExtent const in);
 AVXINL afxUnit AvxSumRange(avxExtent const whd);
 AVXINL afxUnit AvxMagRange(avxExtent const whd);
 AVXINL afxUnit AvxDotRange(avxExtent const whd, avxExtent const other);
 
-AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxExtent const max);
+AVXINL avxOrigin AvxGetClampedOrigin(avxOrigin const origin, avxExtent const max);
 
-AVXINL avxOrigin AvxHalfOrigin(avxOrigin const in);
+AVXINL avxOrigin AvxGetHalfOrigin(avxOrigin const in);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -120,10 +120,13 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, avxViewport)
 {
     // [x, y] are the viewport's bottom left corner (x,y).
     afxV2d origin;
+
     // [w, h] are the viewport's width and height, respectively.
     afxV2d extent;
+
     // is the normalized min depth range for the viewport.
     afxReal minDepth;
+
     // is the normalized max depth range for the viewport.
     afxReal maxDepth;
 };
@@ -149,21 +152,26 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, avxViewport)
     The floating-point viewport bounds are represented with an implementation-dependent precision.
 */
 
-#define AVX_VIEWPORT(x_, y_, w_, h_, minDepth_, maxDepth_) \
+#define AVX_VIEWPORT(   x_, y_, \
+                        w_, h_, \
+                        minDepth_, maxDepth_) \
     (avxViewport) { .origin = { (afxReal)(x_), (afxReal)(y_) }, \
                     .extent = { (afxReal)(w_), (afxReal)(h_) }, \
                     .minDepth = (afxReal)(minDepth_), \
                     .maxDepth = (afxReal)(maxDepth_) }
 
 #define AVX_VIEWPORT_MIN \
-    AVX_VIEWPORT( AFX_R32_MIN, AFX_R32_MIN, 1, 1, 0 0);
+    AVX_VIEWPORT(   AFX_R32_MIN, AFX_R32_MIN, \
+                    1, 1, \
+                    0 0);
 
 #define AVX_VIEWPORT_MAX \
-    AVX_VIEWPORT( AFX_R32_MAX, AFX_R32_MAX , AFX_R32_MAX, AFX_R32_MAX, 1, 1 );
+    AVX_VIEWPORT(   AFX_R32_MAX, AFX_R32_MAX, \
+                    AFX_R32_MAX, AFX_R32_MAX, \
+                    1, 1 );
 
-AVXINL void AfxMakeViewport
+AVXINL avxViewport AfxMakeViewport
 (
-    avxViewport* vp, 
     afxReal x, 
     afxReal y, 
     afxReal w, 
@@ -172,22 +180,21 @@ AVXINL void AfxMakeViewport
     afxReal maxDepth
 );
 
-AVXINL void AvxFlipViewport
+AVXINL avxViewport AvxGetFlippedViewport
 (
-    avxViewport* vp, 
-    avxViewport const* in, 
+    avxViewport const vp, 
     afxBool swapDepthRange
 );
 
 AVX void AvxViewportTransform
 (
-    avxViewport const* vp, 
+    avxViewport const vp, 
     avxViewportFlags flags, 
     afxUnit cnt, 
-    afxV4d const ndcPos[], 
+    afxV4d const ndcPos[],
+    afxUnit srcStride,
     afxV4d canvPos[], 
-    afxUnit dstStride, 
-    afxUnit srcStride
+    afxUnit dstStride
 );
 
 #endif//AVX_VIEWPORT_H

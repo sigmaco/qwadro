@@ -96,7 +96,7 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
-    rasi.usage = avxRasterUsage_SRC;
+    rasi.usage = avxRasterUsage_PACK;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {
@@ -179,7 +179,7 @@ _AUX afxError AfxLoadWindowCursor(afxWindow wnd, afxUri const* uri)
     avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
-    rasi.usage = avxRasterUsage_SRC;
+    rasi.usage = avxRasterUsage_PACK;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {

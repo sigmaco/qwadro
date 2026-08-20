@@ -278,7 +278,7 @@ _QOW afxError _QowRelinkDoutCb_GDI(afxSurface dout)
     if (!dout->dcPixFmt)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &dout->m.ccfg.rigs[0].fmt, &pfd);
+        AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
         PIXELFORMATDESCRIPTOR wpfd = { 0 };
         wpfd.nSize = sizeof(wpfd);

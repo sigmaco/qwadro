@@ -328,7 +328,7 @@ _ARX afxError ArxLoadHeighmap(arxTerrain ter, afxUnit secIdx, afxUri const* uri)
 
     avxFormat fmt = tga.fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
 
 
 
@@ -964,7 +964,7 @@ _ARX afxError ArxGenerateHeightmappedTerrain(arxScenario scio, afxUri const* uri
 
     avxFormat fmt = tga.fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
 
     //tga.width = tga.width, tga.height = tga.height / 8;
 

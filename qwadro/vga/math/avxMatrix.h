@@ -103,6 +103,8 @@
 typedef enum avxClipSpaceDepth
 // The depth mapping used by projection to map depth values into the clip space.
 {
+    avxClipSpaceDepth_NIL,
+
     // Direct3D and Vulkan uses a normalized depth range from 0 (near plane) to 1 (far plane). 
     // This is a more intuitive depth range, as it maps more directly to values that are easy to work with in shaders 
     // and computations, and it's compatible with the way hardware handles depth buffers.
@@ -156,48 +158,184 @@ typedef enum avxClipSpaceDepth
 
 // Shadow
 
-AVXINL void     AfxComputeShadowM4d(afxM4d m, afxPlane const p, afxReal const lightPos[3]);
+AVXINL void AfxComputeShadowM4d(afxM4d m, afxPlane const p, afxReal const lightPos[3]);
 
 // Cubemap
 
-AVXINL void     AfxCubemapMatrix_OpenGL(afxM4d m, afxUnit face);
-AVXINL void     AfxCubemapMatrix_Direct3D(afxM4d m, afxUnit face);
+AVXINL void AfxCubemapMatrix_OpenGL
+(
+    afxM4d m, 
+    afxUnit face
+);
+
+AVXINL void AfxCubemapMatrix_Direct3D
+(
+    afxM4d m, 
+    afxUnit face
+);
 
 // View space
 
-AVXINL void     AfxComputeLookToMatrix(afxM4d m, afxV3d const eye, afxV3d const dir, afxV3d const up, afxBool nonRhcs);
-AVXINL void     AfxComputeLookAtMatrix(afxM4d m, afxV3d const eye, afxV3d const target, afxV3d const up, afxBool nonRhcs);
+AVXINL void AfxComputeLookToMatrix
+(
+    afxM4d m, 
+    afxV3d const eye, 
+    afxV3d const dir, 
+    afxV3d const up, 
+    afxBool nonRhcs
+);
+
+AVXINL void AfxComputeLookAtMatrix
+(
+    afxM4d m, 
+    afxV3d const eye, 
+    afxV3d const target, 
+    afxV3d const up, 
+    afxBool nonRhcs
+);
 
 // Orthographic projective space
 
-AVXINL void     AfxComputeOrthographicMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeOffcenterOrthographicMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void AfxComputeOrthographicMatrix
+(
+    afxM4d m, 
+    afxV2d const extent, 
+    afxReal near, 
+    afxReal far, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
+
+AVXINL void AfxComputeOffcenterOrthographicMatrix
+(
+    afxM4d m, 
+    afxReal left, 
+    afxReal right, 
+    afxReal bottom, 
+    afxReal top, 
+    afxReal near, 
+    afxReal far, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
 
 /// Computa uma afxM4d de projeção ortográfica desde uma afxBox.
-AVXINL void     AfxComputeBoundingOrthographicMatrix(afxM4d m, afxBox const aabb, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void AfxComputeBoundingOrthographicMatrix
+(
+    afxM4d m, 
+    afxBox const aabb, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
 
 /// Computa uma afxM4d de projeção ortográfica genérica.
-AVXINL void     AfxComputeBasicOrthographicMatrix(afxM4d m, afxReal aspectRatio, afxReal scale, afxReal range, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void AfxComputeBasicOrthographicMatrix
+(
+    afxM4d m, 
+    afxReal aspectRatio,
+    afxReal scale, 
+    afxReal range, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
 
 // Perspective projective space
 
-AVXINL void     AfxComputePerspectiveMatrix(afxM4d m, afxV2d const extent, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeFovPerspectiveMatrix(afxM4d m, afxReal fovY, afxReal aspectRatio, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
-AVXINL void     AfxComputeOffcenterPerspectiveMatrix(afxM4d m, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void AfxComputePerspectiveMatrix
+(
+    afxM4d m, 
+    afxV2d const extent, 
+    afxReal near, 
+    afxReal far, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
 
-AVXINL void     AfxComputeBasicPerspectiveMatrix(afxM4d m, afxReal aspectRatio, afxReal range, afxBool nonRhcs, avxClipSpaceDepth clip);
+AVXINL void AfxComputeFovPerspectiveMatrix
+(
+    afxM4d m, 
+    afxReal fovY, 
+    afxReal aspectRatio, 
+    afxReal near, 
+    afxReal far, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
+
+AVXINL void AfxComputeOffcenterPerspectiveMatrix
+(
+    afxM4d m, 
+    afxReal left, 
+    afxReal right, 
+    afxReal bottom, 
+    afxReal top, 
+    afxReal near, 
+    afxReal far, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
+
+AVXINL void AfxComputeBasicPerspectiveMatrix
+(
+    afxM4d m, 
+    afxReal aspectRatio, 
+    afxReal range, 
+    afxBool nonRhcs, 
+    avxClipSpaceDepth clip
+);
 
 // Decompose
 
-AVXINL void     AfxDecomposePerspectiveM4d(afxM4d m, afxV2d const extent, afxReal* near, afxReal* far);
-AVXINL void     AfxDecomposeFovPerspectiveM4d(afxM4d m, afxReal* fovY, afxReal* aspectRatio, afxReal* near, afxReal* far);
-AVXINL void     AfxDecomposeOffcenterPerspectiveM4d(afxM4d m, afxReal* left, afxReal* right, afxReal* top, afxReal* bottom, afxReal* near, afxReal* far);
+AVXINL void AfxDecomposePerspectiveM4d
+(
+    afxM4d m, 
+    afxV2d const extent, 
+    afxReal* near, 
+    afxReal* far
+);
+
+AVXINL void AfxDecomposeFovPerspectiveM4d
+(
+    afxM4d m, 
+    afxReal* fovY, 
+    afxReal* aspectRatio, 
+    afxReal* near, 
+    afxReal* far
+);
+
+AVXINL void AfxDecomposeOffcenterPerspectiveM4d
+(
+    afxM4d m, 
+    afxReal* left, 
+    afxReal* right, 
+    afxReal* top, 
+    afxReal* bottom, 
+    afxReal* near, 
+    afxReal* far
+);
 
 // RW
 
-AVXINL void     AfxComputeRenderWareViewM4d(afxM4d m, afxM4d const cam);
-AVXINL void     AfxComputeRenderWareProjectionM4d(afxM4d m, avxViewport const* vp, afxBool perspective);
+AVXINL void AfxComputeRenderWareViewM4d
+(
+    afxM4d m, 
+    afxM4d const cam
+);
 
-AVXINL void AvxDoNdcCoordinates(afxUnit cnt, afxV4d const clipPos[], afxV4d ndcPos[], afxUnit srcStride, afxUnit dstStride);
+AVXINL void AfxComputeRenderWareProjectionM4d
+(
+    afxM4d m, 
+    avxViewport const* vp, 
+    afxBool perspective
+);
+
+AVXINL void AvxDoNdcCoordinates
+(
+    afxUnit cnt, 
+    afxV4d const clipPos[], 
+    afxV4d ndcPos[], 
+    afxUnit srcStride, 
+    afxUnit dstStride
+);
 
 #endif//AVX_MATRIX_H

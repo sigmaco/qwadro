@@ -51,8 +51,8 @@ _AVX afxUnit AvxGetCanvasExtent(avxCanvas canv, avxOrigin const* origin, afxLaye
     if (origin)
     {
         origin2 = *origin;
-        origin2 = AvxClampOrigin(origin2, AVX_RANGE(extent2.w - 1, extent2.h - 1, extent2.d - 1));
-        extent2 = AvxSubtractRange(extent2, AVX_RANGE(origin2.x, origin2.y, origin2.z));
+        origin2 = AvxGetClampedOrigin(origin2, AVX_EXTENT(extent2.w - 1, extent2.h - 1, extent2.d - 1));
+        extent2 = AvxGetSubtractedExtent(extent2, AVX_EXTENT(origin2.x, origin2.y, origin2.z));
     }
     
     AFX_ASSERT(extent);
@@ -125,7 +125,7 @@ _AVX avxExtent AvxGetCanvasExtentNdc(avxCanvas canv, afxV2d const origin, afxV2d
     afxV2d at, ran;
     AfxV2dNdc(at, origin, AFX_V2D(canv->extent.w, canv->extent.h));
     AfxV2dNdc(ran, extent, AFX_V2D(canv->extent.w, canv->extent.h));
-    return AVX_RANGE(ran[0], ran[1], canv->extent.d);
+    return AVX_EXTENT(ran[0], ran[1], canv->extent.d);
 }
 
 _AVX afxUnit AvxQueryCanvasRigs(avxCanvas canv, afxUnit* colRigCnt, afxUnit* dRigIdx, afxUnit* sRigIdx)
@@ -582,20 +582,20 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
         AFX_ASSERT(sur->fmt);
         AFX_ASSERT(sur->lodCnt);
 
-        if (AvxTestDepthFormat(sur->fmt))
+        if (AvxIsDepthFormat(sur->fmt))
         {
             if (depthInIdx == AFX_INVALID_INDEX)
                 ++rigCnt;
 
             depthInIdx = i;
 
-            if ((combinedDs = AvxTestCombinedDsFormat(sur->fmt)))
+            if ((combinedDs = AvxIsCombinedDepthFormat(sur->fmt)))
                 stencilInIdx = depthInIdx;
 
             continue;
         }
 
-        if (AvxTestStencilFormat(sur->fmt))
+        if (AvxIsStencilFormat(sur->fmt))
         {
             if (stencilInIdx == AFX_INVALID_INDEX)
                 ++rigCnt;
@@ -837,20 +837,20 @@ _AVX afxError _AvxDsysSwConfigureCanvCb(afxDrawSystem dsys, avxCanvasConfig* cfg
             }
             else
             {
-                if (AvxTestDepthFormat(fmt))
+                if (AvxIsDepthFormat(fmt))
                 {
                     if (depthInIdx == AFX_INVALID_INDEX)
                         ++rigCnt;
 
                     depthInIdx = i;
 
-                    if ((combinedDs = AvxTestCombinedDsFormat(fmt)))
+                    if ((combinedDs = AvxIsCombinedDepthFormat(fmt)))
                         stencilInIdx = depthInIdx;
 
                     continue;
                 }
 
-                if (AvxTestStencilFormat(fmt))
+                if (AvxIsStencilFormat(fmt))
                 {
                     if (stencilInIdx == AFX_INVALID_INDEX)
                         ++rigCnt;

@@ -464,7 +464,7 @@ _AVX void _GetImageSubresourceLayout(afxDrawSystem dsys, avxRaster ras, afxUnit 
 {
     avxFormat fmt = ras->fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
 
     avxRasterArrangement lay2 = { 0 };
     afxWarp whd = { ras->extent.w, ras->extent.h, ras->extent.d };

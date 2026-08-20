@@ -447,11 +447,11 @@ _AVX afxError AvxPrintRaster(avxRaster ras, avxRasterIo const* iop, afxUnit lodC
         maxWhd = AvxGetRasterExtent(ras, lodIdxClamped);
         AFX_ASSERT_RANGE_WHD(maxWhd, iop->rgn.origin, iop->rgn.extent);
 
-        iopClamped.rgn.origin = AvxClampOrigin(iop->rgn.origin, maxWhd);
+        iopClamped.rgn.origin = AvxGetClampedOrigin(iop->rgn.origin, maxWhd);
 
         avxExtent maxRgnWhd;
-        maxRgnWhd = AvxSubtractRange(maxWhd, AVX_RANGE(iopClamped.rgn.origin.x, iopClamped.rgn.origin.y, iopClamped.rgn.origin.z));
-        iopClamped.rgn.extent = AvxClampRange(iop->rgn.extent, AVX_RANGE(1, 1, 1), maxRgnWhd);
+        maxRgnWhd = AvxGetSubtractedExtent(maxWhd, AVX_EXTENT(iopClamped.rgn.origin.x, iopClamped.rgn.origin.y, iopClamped.rgn.origin.z));
+        iopClamped.rgn.extent = AvxGetClampedExtent(iop->rgn.extent, AVX_EXTENT(1, 1, 1), maxRgnWhd);
 
         iopClamped.rgn = iop->rgn;
         iopClamped.rgn.lodIdx = lodIdxClamped;
@@ -488,8 +488,8 @@ _AVX afxError AvxPrintRaster(avxRaster ras, avxRasterIo const* iop, afxUnit lodC
             if (AvxDownloadRaster(ras, 1, &iopTmp, file, NIL, exuMask))
                 AfxThrowError();
 
-            iopTmp.rgn.origin = AvxHalfOrigin(iopTmp.rgn.origin);
-            iopTmp.rgn.extent = AvxHalfRange(iopTmp.rgn.extent);
+            iopTmp.rgn.origin = AvxGetHalfOrigin(iopTmp.rgn.origin);
+            iopTmp.rgn.extent = AvxGetHalfExtent(iopTmp.rgn.extent);
         }
     }
 
@@ -538,7 +538,7 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
     if (opCnt == 0)
     {
         avxRasterIo op = { 0 };
-        op.rgn.extent = AVX_RANGE(tgai.width, tgai.height, tgai.depth);
+        op.rgn.extent = AVX_EXTENT(tgai.width, tgai.height, tgai.depth);
         op.offset = 0;
         op.rowStride = tgai.rowStride;
         op.rowsPerImg = tgai.height;
@@ -569,11 +569,11 @@ _AVX afxError AvxReloadRaster(avxRaster ras, afxUnit opCnt, avxRasterIo const op
             maxWhd = AvxGetRasterExtent(ras, lodIdxClamped);
             AFX_ASSERT_RANGE_WHD(maxWhd, iop->rgn.origin, iop->rgn.extent);
 
-            iopClamped.rgn.origin = AvxClampOrigin(iop->rgn.origin, maxWhd);
+            iopClamped.rgn.origin = AvxGetClampedOrigin(iop->rgn.origin, maxWhd);
 
             avxExtent maxRgnWhdClamped;
-            maxRgnWhdClamped = AvxSubtractRange(maxWhd, AVX_RANGE(iopClamped.rgn.origin.x, iopClamped.rgn.origin.y, iopClamped.rgn.origin.z));
-            iopClamped.rgn.extent = AvxClampRange(iop->rgn.extent, AVX_RANGE(AFX_OR(iop->rgn.extent.w, maxRgnWhdClamped.w), AFX_OR(iop->rgn.extent.h, maxRgnWhdClamped.h), AFX_OR(iop->rgn.extent.d, maxRgnWhdClamped.d)), maxRgnWhdClamped);
+            maxRgnWhdClamped = AvxGetSubtractedExtent(maxWhd, AVX_EXTENT(iopClamped.rgn.origin.x, iopClamped.rgn.origin.y, iopClamped.rgn.origin.z));
+            iopClamped.rgn.extent = AvxGetClampedExtent(iop->rgn.extent, AVX_EXTENT(AFX_OR(iop->rgn.extent.w, maxRgnWhdClamped.w), AFX_OR(iop->rgn.extent.h, maxRgnWhdClamped.h), AFX_OR(iop->rgn.extent.d, maxRgnWhdClamped.d)), maxRgnWhdClamped);
 
             //iopClamped.rgn = iop->rgn;
             iopClamped.rgn.lodIdx = lodIdxClamped;
@@ -652,14 +652,14 @@ _AVX afxError AvxLoadRasters(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo cons
                 rasi.extent.d = AFX_MAX(1, AFX_MAX(info[i].extent.d, tgai.depth));
 
                 rasi.flags = info[i].flags | (tgai.flags & avxTgaFlag_CUBEMAP ? avxRasterFlag_CUBEMAP : NIL);
-                rasi.usage = info[i].usage ? info[i].usage : avxRasterUsage_TEXTURE | avxRasterUsage_SRC;
+                rasi.usage = info[i].usage ? info[i].usage : avxRasterUsage_TEXTURE | avxRasterUsage_PACK;
             }
             else
             {
                 rasi.fmt = tgai.fmt;
                 rasi.lodCnt = tgai.lodCnt;
                 rasi.flags = tgai.flags & avxTgaFlag_CUBEMAP ? avxRasterFlag_CUBEMAP : NIL;
-                rasi.usage = avxRasterUsage_TEXTURE | avxRasterUsage_SRC;
+                rasi.usage = avxRasterUsage_TEXTURE | avxRasterUsage_PACK;
 
                 rasi.extent.w = tgai.width;
                 rasi.extent.h = tgai.height;
@@ -674,7 +674,7 @@ _AVX afxError AvxLoadRasters(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo cons
             else
             {
                 avxRasterIo op = { 0 };
-                op.rgn.extent = AVX_RANGE(tgai.width, tgai.height, tgai.depth);
+                op.rgn.extent = AVX_EXTENT(tgai.width, tgai.height, tgai.depth);
                 op.offset = 0;
                 op.rowStride = tgai.rowStride;
                 op.rowsPerImg = tgai.rowsPerImg;

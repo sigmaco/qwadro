@@ -64,7 +64,7 @@ _AVXINL avxFormat AvxDescribeRasterFormat(avxRaster ras, avxFormatDescription* p
 
     avxFormat fmt = ras->fmt;
     avxFormatDescription desc;
-    AvxDescribeFormats(1, &fmt, &desc);
+    AvxDescribeFormat(fmt, &desc);
     *pfd = desc;
     return fmt;
 }
@@ -453,7 +453,7 @@ _AVX afxBool AvxQueryRasterArrangement(avxRaster ras, avxRasterRegion const* rgn
     AFX_ASSERT_RANGE(ras->extent.d, rgn->origin.z, rgn->extent.d);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->fmt, &pfd);
+    AvxDescribeFormat(ras->fmt, &pfd);
 
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
     AFX_ASSERT(!rgn->origin.z || !is3d);
@@ -591,7 +591,7 @@ _AVX afxError _AvxRasCtorCb(avxRaster ras, void** args, afxUnit invokeNo)
         ras->baseMip = AFX_MIN(subi->baseLod, base->mipCnt - 1);
         ras->mipCnt = AFX_MAX(1, AFX_MIN(subi->lodCnt, base->mipCnt - ras->baseMip));
         ras->baseLayer = AFX_MIN(subi->baseLayer, base->extent.d - 1);
-        ras->extent = AVX_RANGE(base->extent.w, base->extent.h, AFX_MAX(1, AFX_MIN(subi->layerCnt, base->extent.d - ras->baseLayer)));
+        ras->extent = AVX_EXTENT(base->extent.w, base->extent.h, AFX_MAX(1, AFX_MIN(subi->layerCnt, base->extent.d - ras->baseLayer)));
 
         ras->swizzling.r = subi->swizzle.r;
         ras->swizzling.g = subi->swizzle.g;
@@ -703,13 +703,13 @@ _AVX afxError _AvxRasCtorCb(avxRaster ras, void** args, afxUnit invokeNo)
     }
     avxFormat fmt = rasi->fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     ras->fmt = fmt;
     ras->fmtStride = pfd.stride;
 
     ras->usage = rasi->usage;
 
-    ras->extent = AvxMaxRange(AVX_RANGE(AFX_MAX(1, pfd.bcWh[0]), AFX_MAX(1, pfd.bcWh[1]), 1), rasi->extent);
+    ras->extent = AvxGetMaxiExtent(AVX_EXTENT(AFX_MAX(1, pfd.bcWh[0]), AFX_MAX(1, pfd.bcWh[1]), 1), rasi->extent);
 
 
     // STORAGE

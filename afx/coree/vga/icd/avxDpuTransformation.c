@@ -77,7 +77,7 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
     for (afxUnit aIdx = 0; aIdx < vtxd->totalAttrCnt; aIdx++)
     {
         _avxVinAttr const* vtxa = &vtxd->attrs[aIdx];
-        AvxDescribeFormats(1, &vtxa->fmt, &attrFd[aIdx]);
+        AvxDescribeFormat(vtxa->fmt, &attrFd[aIdx]);
     }
 
     for (afxUnit instIdx = 0; instIdx < instCnt; instIdx++)

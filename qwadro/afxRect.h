@@ -117,7 +117,7 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRect)
     afxInt32 x, y;
     
     // the rectangle extent.
-    //avxRange2 extent;
+    //avxExtent2 extent;
     // The width and height of the represented area, respectively.
     afxUnit32 w, h;
 };

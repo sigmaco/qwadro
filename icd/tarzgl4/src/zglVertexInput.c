@@ -240,7 +240,7 @@ _ZGL void _ZglFlushVertexInputState(zglDpu* dpu)
 #endif
 
                 avxFormatDescription pfd;
-                AvxDescribeFormats(1, &attr->fmt, &pfd);
+                AvxDescribeFormat(attr->fmt, &pfd);
                 GLint glsiz = pfd.compCnt;
                 GLint glIntFmt;
                 GLenum glLayout;

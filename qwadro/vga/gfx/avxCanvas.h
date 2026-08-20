@@ -117,7 +117,7 @@ AFX_DEFINE_STRUCT(avxCanvasConfig)
 
 #define AVX_EMPTY_CANVAS_RIG \
     (avxCanvasRig) { .ras = NIL, \
-                        .fmt = avxFormat_UNDEFINED, \
+                        .fmt = avxFormat_NIL, \
                         .usage = avxRasterUsage_NIL, \
                         .flags = avxRasterFlag_NIL, \
                         .lodCnt = 1 }

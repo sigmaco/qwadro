@@ -21,7 +21,7 @@
 
 // EXTENT
 
-_AVXINL avxExtent AvxMinRange(avxExtent const a, avxExtent const b)
+_AVXINL avxExtent AvxGetMiniExtent(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
     return (avxExtent const)
@@ -32,7 +32,7 @@ _AVXINL avxExtent AvxMinRange(avxExtent const a, avxExtent const b)
     };
 }
 
-_AVXINL avxExtent AvxMaxRange(avxExtent const a, avxExtent const b)
+_AVXINL avxExtent AvxGetMaxiExtent(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
     return (avxExtent const)
@@ -43,7 +43,7 @@ _AVXINL avxExtent AvxMaxRange(avxExtent const a, avxExtent const b)
     };
 }
 
-_AVXINL avxExtent AvxClampRange(avxExtent const in, avxExtent const min, avxExtent const max)
+_AVXINL avxExtent AvxGetClampedExtent(avxExtent const in, avxExtent const min, avxExtent const max)
 {
     afxError err = { 0 };
     return (avxExtent const)
@@ -54,7 +54,7 @@ _AVXINL avxExtent AvxClampRange(avxExtent const in, avxExtent const min, avxExte
     };
 }
 
-_AVXINL avxExtent AvxLimitRange(avxOrigin const origin, avxExtent const extent)
+_AVXINL avxExtent AvxGetLimitedExtent(avxOrigin const origin, avxExtent const extent)
 {
     afxError err = { 0 };
     return (avxExtent const)
@@ -65,7 +65,7 @@ _AVXINL avxExtent AvxLimitRange(avxOrigin const origin, avxExtent const extent)
     };
 }
 
-_AVXINL afxBool AvxIsRangeEqual(avxExtent const whd, avxExtent const other)
+_AVXINL afxBool AvxIsExtentEqual(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     return  (whd.w == other.w) || 
@@ -73,7 +73,7 @@ _AVXINL afxBool AvxIsRangeEqual(avxExtent const whd, avxExtent const other)
             (whd.d == other.d);
 }
 
-_AVXINL afxBool AvxIsRangeLequal(avxExtent const whd, avxExtent const other)
+_AVXINL afxBool AvxIsExtentLequal(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
@@ -83,7 +83,7 @@ _AVXINL afxBool AvxIsRangeLequal(avxExtent const whd, avxExtent const other)
                 (whd.d <= other.d)) != 0);
 }
 
-_AVXINL afxBool AvxIsRangeLess(avxExtent const whd, avxExtent const other)
+_AVXINL afxBool AvxIsExtentLess(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
@@ -93,14 +93,14 @@ _AVXINL afxBool AvxIsRangeLess(avxExtent const whd, avxExtent const other)
                 (whd.d < other.d)) != 0);
 }
 
-_AVXINL afxBool AvxIsRangeZero(avxExtent const whd)
+_AVXINL afxBool AvxIsExtentZero(avxExtent const whd)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
     return (AFX_REAL(0) == (whd.w + whd.h + whd.d));
 }
 
-_AVXINL avxExtent AvxAddRange(avxExtent const a, avxExtent const b)
+_AVXINL avxExtent AvxGetAddedExtent(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -110,7 +110,7 @@ _AVXINL avxExtent AvxAddRange(avxExtent const a, avxExtent const b)
     };
 }
 
-_AVXINL avxExtent AvxSubtractRange(avxExtent const a, avxExtent const b)
+_AVXINL avxExtent AvxGetSubtractedExtent(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -120,7 +120,7 @@ _AVXINL avxExtent AvxSubtractRange(avxExtent const a, avxExtent const b)
     };
 }
 
-_AVXINL avxExtent AvxDivideRange(avxExtent const in, afxUnit div)
+_AVXINL avxExtent AvxGetDividedExtent(avxExtent const in, afxUnit div)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -130,7 +130,7 @@ _AVXINL avxExtent AvxDivideRange(avxExtent const in, afxUnit div)
     };
 }
 
-_AVXINL avxExtent AvxModRange(avxExtent const in, afxUnit div)
+_AVXINL avxExtent AvxGetModuliExtent(avxExtent const in, afxUnit div)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -140,7 +140,7 @@ _AVXINL avxExtent AvxModRange(avxExtent const in, afxUnit div)
     };
 }
 
-_AVXINL avxExtent AvxScaleRange(avxExtent const in, afxUnit s)
+_AVXINL avxExtent AvxGetScaledExtent(avxExtent const in, afxUnit s)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -150,7 +150,7 @@ _AVXINL avxExtent AvxScaleRange(avxExtent const in, afxUnit s)
     };
 }
 
-_AVXINL avxExtent AvxHalfRange(avxExtent const in)
+_AVXINL avxExtent AvxGetHalfExtent(avxExtent const in)
 {
     afxError err = { 0 };
     return (avxExtent const) {
@@ -182,7 +182,7 @@ _AVXINL afxUnit AvxDotRange(avxExtent const whd, avxExtent const other)
     return (whd.w * other.w) + (whd.h * other.h) + (whd.d * other.d);
 }
 
-_AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxExtent const max)
+_AVXINL avxOrigin AvxGetClampedOrigin(avxOrigin const origin, avxExtent const max)
 {
     afxError err = { 0 };
     return (avxOrigin) {
@@ -192,7 +192,7 @@ _AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxExtent const max)
     };
 }
 
-_AVXINL avxOrigin AvxHalfOrigin(avxOrigin const in)
+_AVXINL avxOrigin AvxGetHalfOrigin(avxOrigin const in)
 {
     afxError err = { 0 };
     return (avxOrigin) {
@@ -202,33 +202,26 @@ _AVXINL avxOrigin AvxHalfOrigin(avxOrigin const in)
     };
 }
 
-_AVXINL void AfxMakeViewport(avxViewport* vp, afxReal x, afxReal y, afxReal w, afxReal h, afxReal minDepth, afxReal maxDepth)
+_AVXINL avxViewport AfxMakeViewport(afxReal x, afxReal y, afxReal w, afxReal h, afxReal minDepth, afxReal maxDepth)
 {
     afxError err = { 0 };
-    AFX_ASSERT(vp);
     AFX_ASSERT(w);
     AFX_ASSERT(h);
-    *vp = (avxViewport const)
-    {
-        .origin = { x, y },
-        .extent = { w, h },
-        .minDepth = minDepth,
-        .maxDepth = maxDepth
-    };
+    return AVX_VIEWPORT(x, y,
+                        w, h,
+                        minDepth, maxDepth);
 }
 
-_AVXINL void AvxFlipViewport(avxViewport* vp, avxViewport const* in, afxBool swapDepthRange)
+_AVXINL avxViewport AvxGetFlippedViewport(avxViewport const vp, afxBool swapDepthRange)
 {
     afxError err = { 0 };
-    AFX_ASSERT(vp);
-    AFX_ASSERT(in);
-    avxViewport flipped = *in;
+    avxViewport flipped = vp;
 
     // Shift origin.y by height to move origin to top-left of original viewport
-    flipped.origin[1] = in->origin[1] + in->extent[1];
+    flipped.origin[1] = vp.origin[1] + vp.extent[1];
 
     // Negate the height to flip vertically
-    flipped.extent[1] = -in->extent[1];
+    flipped.extent[1] = -vp.extent[1];
 
     // Optionally swap minDepth and maxDepth if your depth range needs flipping:
     if (swapDepthRange)
@@ -237,13 +230,13 @@ _AVXINL void AvxFlipViewport(avxViewport* vp, avxViewport const* in, afxBool swa
         flipped.minDepth = flipped.maxDepth;
         flipped.maxDepth = md;
     }
-    *vp = flipped;
+    return flipped;
 }
 
-_AVXINL void AvxViewportTransform(avxViewport const* vp, avxViewportFlags flags, afxUnit cnt, afxV4d const ndcPos[], afxV4d canvPos[], afxUnit dstStride, afxUnit srcStride)
+_AVXINL void AvxViewportTransform(avxViewport const vp, avxViewportFlags flags, afxUnit cnt, afxV4d const ndcPos[], afxUnit srcStride, afxV4d canvPos[], afxUnit dstStride)
 {
     afxError err = { 0 };
-    AFX_ASSERT(vp);
+    //AFX_ASSERT(vp);
     AFX_ASSERT_ALIGNMENT(srcStride, sizeof(afxReal));
     AFX_ASSERT(!srcStride || (srcStride >= sizeof(afxV3d)));
     AFX_ASSERT_ALIGNMENT(dstStride, sizeof(afxReal));
@@ -255,12 +248,12 @@ _AVXINL void AvxViewportTransform(avxViewport const* vp, avxViewportFlags flags,
     afxReal const* ndcPos2 = &ndcPos[0][0];
     afxReal* canvPos2 = &canvPos[0][0];
 
-    afxReal vpX = vp->origin[0];
-    afxReal vpY = vp->origin[1];
-    afxReal vpW = vp->extent[0];
-    afxReal vpH = vp->extent[1];
-    afxReal minDepth = vp->minDepth;
-    afxReal depthDiff = (vp->maxDepth - vp->minDepth);
+    afxReal vpX = vp.origin[0];
+    afxReal vpY = vp.origin[1];
+    afxReal vpW = vp.extent[0];
+    afxReal vpH = vp.extent[1];
+    afxReal minDepth = vp.minDepth;
+    afxReal depthDiff = (vp.maxDepth - vp.minDepth);
 
     // If we're following Vulkan-style NDC where Z is already in [0, 1], skip the ndcZ * 0.5 + 0.5 step.
     if (flags & avxViewportFlag_NDCZ)

@@ -436,7 +436,7 @@ _ARXINL void* ArxAccessVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
     
     afxUnit32 attrBit = AFX_BITMASK(attrIdx);
@@ -489,7 +489,7 @@ _ARXINL afxError ArxInvertVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morph
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -535,7 +535,7 @@ _ARXINL afxError ArxNormalizeVertexData(arxMesh msh, afxUnit attrIdx, afxUnit mo
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -600,7 +600,7 @@ _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit b
 
     avxFormat attrFmt = msh->attrInfo[posAttrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &attrFmt, &pfd);
+    AvxDescribeFormat(attrFmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     if (attrFmt == avxFormat_RGB32f)

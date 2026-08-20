@@ -91,7 +91,7 @@ _QOWINL afxError _QowDoutFindPixelFormat(afxSurface dout)
     }
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &dout->m.ccfg.rigs[0].fmt, &pfd);
+    AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
     int pxlAttrPairCnt = 0;
     int pxlAttrPairs[][2] =
@@ -1226,7 +1226,7 @@ _QOW afxError _ZglRelinkDoutCb_WGL(afxSurface dout)
     if (!dout->dcPixFmt)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &dout->m.ccfg.bins[0].fmt, &pfd);
+        AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
         int pxlAttrPairCnt = 0;
         int pxlAttrPairs[][2] =

@@ -590,7 +590,7 @@ _AVX afxError _AvxDsysSwConfigureSampCb(afxDrawSystem dsys, avxSamplerConfig* cf
         cfg->yuvMtx = AFX_CLAMP(cfg->yuvMtx, avxColorMatrix_RGB, avxColorMatrix_TOTAL);
 
         // format must be a valid avxFormat value.
-        cfg->yuvFmt = AFX_CLAMP(cfg->yuvFmt, avxFormat_UNDEFINED + 1, avxFormat_TOTAL - 1);
+        cfg->yuvFmt = AFX_CLAMP(cfg->yuvFmt, avxFormat_NIL + 1, avxFormat_TOTAL - 1);
     }
 
     if (cfg->anisotropyEnabled)

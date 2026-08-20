@@ -51,22 +51,24 @@ typedef enum avxRasterUsage
     avxRasterUsage_NIL,
 
     // The texture can be used as the source of a copy operation.
-    avxRasterUsage_SRC      = AFX_BITMASK(0),
+    avxRasterUsage_PACK     = AFX_BITMASK(0),
 
     // The texture can be used as the destination of a copy or write operation.
-    avxRasterUsage_DST      = AFX_BITMASK(1),
-    avxRasterUsage_COPY     = (avxRasterUsage_SRC | avxRasterUsage_DST),
+    avxRasterUsage_UNPACK   = AFX_BITMASK(1),
 
-    // The texture can be used as a canvas' draw buffer.
-    avxRasterUsage_DRAW     = AFX_BITMASK(2),
+    avxRasterUsage_COPY     = (avxRasterUsage_PACK | avxRasterUsage_UNPACK),
 
     // The texture can be bound for use as a sampled texture in a shader.
-    avxRasterUsage_TEXTURE  = AFX_BITMASK(3),
+    avxRasterUsage_TEXTURE  = AFX_BITMASK(2),
+
+    // The texture can be used as a canvas' draw buffer.
+    avxRasterUsage_DRAW     = AFX_BITMASK(3),
+
     avxRasterUsage_DISPLAY  = (avxRasterUsage_TEXTURE | avxRasterUsage_DRAW),
     
     // The texture can be bound for use as a storage texture in a shader.
     avxRasterUsage_STORAGE  = AFX_BITMASK(4),
-    
+
     avxRasterUsage_ALL      = avxRasterUsage_COPY | avxRasterUsage_DISPLAY | avxRasterUsage_STORAGE,
 } avxRasterUsage;
 
@@ -105,7 +107,12 @@ typedef enum avxRasterFlag
     avxRasterFlag_ROW_MAJOR = AFX_BITMASK(10),
 
     // The raster will be backed by external memory.
-    avxRasterFlag_FOREIGN   = AFX_BITMASK(11)
+    avxRasterFlag_FOREIGN   = AFX_BITMASK(11),
+
+    // The raster is intended to be a temporary optimization hint, 
+    // creating memory-efficient draw targets that are only used within the current draw scope.
+    // Related draw scope operations may stay in tile memory, which avoids VRAM traffic and can avoid VRAM allocation for the rasters.
+    avxRasterFlag_TRANSIENT = AFX_BITMASK(12),
 } avxRasterFlags;
 
 typedef enum avxRasterLayout

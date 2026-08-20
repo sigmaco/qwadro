@@ -35,8 +35,8 @@ _AVXINL void _AvxDpuUpdateRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxR
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->fmt, &pfd);
-    afxBool compressed = AvxTestCompressedFormat(ras->fmt);
+    AvxDescribeFormat(ras->fmt, &pfd);
+    afxBool compressed = AvxIsCompressedFormat(ras->fmt);
     afxUnit pixelSize = pfd.stride;
 
     afxByte* dst = _AvxGetClientRasterData(ras, 0);
@@ -126,8 +126,8 @@ _AVXINL void _AvxDpuDumpRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRas
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->fmt, &pfd);
-    afxBool compressed = AvxTestCompressedFormat(ras->fmt);
+    AvxDescribeFormat(ras->fmt, &pfd);
+    afxBool compressed = AvxIsCompressedFormat(ras->fmt);
     afxUnit pixelSize = pfd.stride;
 
     afxByte const* src = _AvxGetClientRasterData(ras, 0);
@@ -253,8 +253,8 @@ _AVXINL void _AvxDpuUploadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxR
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->fmt, &pfd);
-    afxBool compressed = AvxTestCompressedFormat(ras->fmt);
+    AvxDescribeFormat(ras->fmt, &pfd);
+    afxBool compressed = AvxIsCompressedFormat(ras->fmt);
     afxUnit pixelSize = pfd.stride;
 
     afxByte* dst = _AvxGetClientRasterData(ras, 0);
@@ -350,8 +350,8 @@ _AVX void _AvxDpuDownloadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRa
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &ras->fmt, &pfd);
-    afxBool compressed = AvxTestCompressedFormat(ras->fmt);
+    AvxDescribeFormat(ras->fmt, &pfd);
+    afxBool compressed = AvxIsCompressedFormat(ras->fmt);
     afxUnit pixelSize = pfd.stride;
 
     afxByte const* src = _AvxGetClientRasterData(ras, 0);
@@ -448,8 +448,8 @@ _AVX void _AvxDpuCopyRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
 
     avxFormatDescription srcPfd, dstPfd;
-    AvxDescribeFormats(1, &src->fmt, &srcPfd);
-    AvxDescribeFormats(1, &dst->fmt, &dstPfd);
+    AvxDescribeFormat(src->fmt, &srcPfd);
+    AvxDescribeFormat(dst->fmt, &dstPfd);
 
     for (afxUnit i = 0; i < opCnt; i++)
     {
@@ -850,7 +850,7 @@ _AVX void _AvxDpuBlitRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
     */
 
     avxFormatDescription fmtDesc;
-    AvxDescribeFormats(1, &dst->fmt, &fmtDesc);
+    AvxDescribeFormat(dst->fmt, &fmtDesc);
 
     const afxByte* srcData = _AvxGetClientRasterData(src, 0);
     afxByte* dstData = _AvxGetClientRasterData(dst, 0);
@@ -1095,7 +1095,7 @@ _AVX void _AvxDpuClearRaster(avxDpu* dpu, avxRaster ras, avxClearValue const* cl
     afxUnit pixelStride = ras->fmtStride;
 
     avxFormatDescription fmtDesc;
-    AvxDescribeFormats(1, &ras->fmt, &fmtDesc);
+    AvxDescribeFormat(ras->fmt, &fmtDesc);
 
     avxRasterRegion rgn;
 

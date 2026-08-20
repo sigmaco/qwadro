@@ -70,7 +70,7 @@ _AVX avxPipelineConfig const AVX_PIPELINE_BLUEPRINT_DEFAULT =
     .depthTestEnabled = FALSE,
     .depthCompareOp = avxCompareOp_LESS,
     .depthWriteDisabled = FALSE,
-    .dsFmt = avxFormat_UNDEFINED,
+    .dsFmt = avxFormat_NIL,
     
     .depthBoundsTestEnabled = FALSE,
     .depthBounds = { 0, 1 },

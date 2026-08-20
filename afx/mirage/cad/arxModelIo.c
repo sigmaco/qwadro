@@ -352,7 +352,7 @@ _ARX afxError ArxArchiveMeshes(afxStream out, afxString* sdb, afxUnit cnt, arxMe
             msvas[i].flags = msh->attrInfo[i].flags;
 
             avxFormatDescription pfd;
-            AvxDescribeFormats(1, &msvas[i].encodedFmt, &pfd);
+            AvxDescribeFormat(msvas[i].encodedFmt, &pfd);
 
             afxSize fmtSiz = pfd.stride;// AfxVertexFormatGetSize(msvas[i].encodedFmt);
             msvas[i].baseDataOffset = AfxAskStreamPosn(out);
@@ -803,7 +803,7 @@ _ARX afxError ArxUploadMeshes(arxScenario scio, afxArena* arena, afxString const
             for (afxUnit k = 0; k < mshHdr->morphCnt; k++)
             {
                 avxFormatDescription pfd;
-                AvxDescribeFormats(1, &vaHdr.encodedFmt, &pfd);
+                AvxDescribeFormat(vaHdr.encodedFmt, &pfd);
                 afxUnit stride = pfd.stride;// AfxVertexFormatGetSize(vaHdr.encodedFmt);
 
                 if (ArxUploadVertexData(msh, j, k, 0, mshHdr->vtxCnt, in, stride))
