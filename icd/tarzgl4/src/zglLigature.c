@@ -529,7 +529,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
                             AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
                             AFX_ASSERT(AvxGetRasterUsage(ras, avxRasterUsage_STORAGE) == avxRasterUsage_STORAGE);
 
-                            gl->BindImageTexture(glUnit, ras->glHandle, ras->m.baseMip, (ras->m.whd.d > 1), ras->m.baseLayer, GL_READ_WRITE, ras->glIntFmt); _ZglThrowErrorOccuried();
+                            gl->BindImageTexture(glUnit, ras->glHandle, ras->m.baseMip, (ras->m.extent.d > 1), ras->m.baseLayer, GL_READ_WRITE, ras->glIntFmt); _ZglThrowErrorOccuried();
                         }
                     }
                     break;

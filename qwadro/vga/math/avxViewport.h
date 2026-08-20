@@ -46,7 +46,7 @@ AFX_DEFINE_STRUCT(avxRange2)
     afxUnit w, h;
 };
 
-AFX_DEFINE_STRUCT(avxRange)
+AFX_DEFINE_STRUCT(avxExtent)
 // Structure specifying the extent of a volume.
 {
     // The width, height and depth of the represented volume, respectively.
@@ -68,7 +68,7 @@ AFX_DEFINE_STRUCT(avxRange)
     AVX_RANGE( AFX_I32_MAX, AFX_I32_MAX, AFX_I32_MAX )
 
 #define AVX_RANGE(w_, h_, d_) \
-    (avxRange){ .w = (afxUnit)(w_), \
+    (avxExtent){ .w = (afxUnit)(w_), \
                 .h = (afxUnit)(h_), \
                 .d = (afxUnit)(d_) }
 
@@ -81,27 +81,27 @@ AFX_DEFINE_STRUCT(avxRange)
 #define AVX_RANGE_MAX \
     AVX_RANGE( AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX )
 
-AVXINL avxRange AvxMinRange(avxRange const a, avxRange const b);
-AVXINL avxRange AvxMaxRange(avxRange const a, avxRange const b);
-AVXINL avxRange AvxClampRange(avxRange const in, avxRange const min, avxRange const max);
-AVXINL avxRange AvxLimitRange(avxOrigin const origin, avxRange const extent);
+AVXINL avxExtent AvxMinRange(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxMaxRange(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxClampRange(avxExtent const in, avxExtent const min, avxExtent const max);
+AVXINL avxExtent AvxLimitRange(avxOrigin const origin, avxExtent const extent);
 
 
-AVXINL afxBool AvxIsRangeEqual(avxRange const whd, avxRange const other);
-AVXINL afxBool AvxIsRangeLequal(avxRange const whd, avxRange const other);
-AVXINL afxBool AvxIsRangeLess(avxRange const whd, avxRange const other);
-AVXINL afxBool AvxIsRangeZero(avxRange const whd);
-AVXINL avxRange AvxAddRange(avxRange const a, avxRange const b);
-AVXINL avxRange AvxSubtractRange(avxRange const a, avxRange const b);
-AVXINL avxRange AvxDivideRange(avxRange const in, afxUnit div);
-AVXINL avxRange AvxModRange(avxRange const in, afxUnit div);
-AVXINL avxRange AvxScaleRange(avxRange const in, afxUnit s);
-AVXINL avxRange AvxHalfRange(avxRange const in);
-AVXINL afxUnit AvxSumRange(avxRange const whd);
-AVXINL afxUnit AvxMagRange(avxRange const whd);
-AVXINL afxUnit AvxDotRange(avxRange const whd, avxRange const other);
+AVXINL afxBool AvxIsRangeEqual(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsRangeLequal(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsRangeLess(avxExtent const whd, avxExtent const other);
+AVXINL afxBool AvxIsRangeZero(avxExtent const whd);
+AVXINL avxExtent AvxAddRange(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxSubtractRange(avxExtent const a, avxExtent const b);
+AVXINL avxExtent AvxDivideRange(avxExtent const in, afxUnit div);
+AVXINL avxExtent AvxModRange(avxExtent const in, afxUnit div);
+AVXINL avxExtent AvxScaleRange(avxExtent const in, afxUnit s);
+AVXINL avxExtent AvxHalfRange(avxExtent const in);
+AVXINL afxUnit AvxSumRange(avxExtent const whd);
+AVXINL afxUnit AvxMagRange(avxExtent const whd);
+AVXINL afxUnit AvxDotRange(avxExtent const whd, avxExtent const other);
 
-AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxRange const max);
+AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxExtent const max);
 
 AVXINL avxOrigin AvxHalfOrigin(avxOrigin const in);
 

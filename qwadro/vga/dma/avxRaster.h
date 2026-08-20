@@ -243,13 +243,14 @@ AFX_DEFINE_STRUCT(avxRasterBlock)
 
 AFX_DEFINE_STRUCT(avxRasterRegion)
 {
-    afxUnit lodIdx;
+    afxUnit         lodIdx;
+    //afxLayeredRect  rc;
 
     // The initial x, y, z offsets in texels of the sub-region of the source or destination avxRaster data.
     avxOrigin origin;
 
     // The size in texels of the avxRaster to copy in width, height and depth.
-    avxRange whd;
+    avxExtent extent;
 };
 
 AFX_DEFINE_STRUCT(avxRasterInfo)
@@ -261,7 +262,7 @@ AFX_DEFINE_STRUCT(avxRasterInfo)
     avxFormat fmt;
 
     // The extent of the raster.
-    avxRange whd;
+    avxExtent extent;
 
     // The number of mipmaps/upsamples. Default is mipmap.
     afxUnit lodCnt;
@@ -451,11 +452,18 @@ AVX avxFormat AvxDescribeRasterFormat
     level of detail (LOD), specified by lodIdx.
 */
 
-AVX avxRange AvxGetRasterExtent
+AVXINL avxExtent AvxGetRasterExtent
 (
     avxRaster ras, 
 
     afxUnit lodIdx
+);
+
+AVXINL avxExtent AvxGetRasterExtentDisplaced
+(
+    avxRaster ras, 
+    afxUnit lodIdx, 
+    avxOrigin const origin
 );
 
 /*

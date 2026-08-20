@@ -241,9 +241,9 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
             */
 
             // Set framebuffer defaults (required when no attachments are used
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, canv->m.whd.w);
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, canv->m.whd.h);
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS, canv->m.whd.d);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, canv->m.extent.w);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, canv->m.extent.h);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS, canv->m.extent.d);
             gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_SAMPLES, (2 ^ canv->m.lodCnt));
             // From zglRaster.c
             // If you don't use the VK_EXT_sample_locations extension, 
@@ -298,7 +298,7 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
                     AfxThrowError();
                     glTexHandle = 0;
                     glTexTarget = GL_TEXTURE_2D;
-                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, 0, 0, (canv->m.whdMin.d > 1));
+                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, 0, 0, (canv->m.extentMin.d > 1));
                 }
                 else
                 {
@@ -320,7 +320,7 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
                         glTexTarget = ras->glTarget;
                         AFX_ASSERT(gl->IsTexture(glTexHandle));
                     }
-                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, ras->m.baseMip, ras->m.baseLayer, (canv->m.whdMin.d > 1));
+                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, ras->m.baseMip, ras->m.baseLayer, (canv->m.extentMin.d > 1));
                 }
             }
 
@@ -520,7 +520,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
 
     afxLayeredRect areaMax;
     AvxGetCanvasExtent(canv, NIL, &areaMax);
-    avxRange canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
+    avxExtent canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
 
     afxUnit maxColSurCnt;
     afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };

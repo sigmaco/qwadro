@@ -214,8 +214,8 @@ _AVX afxError AvxCmdPackRaster(afxDrawContext dctx, avxRaster ras, afxUnit opCnt
     {
         avxRasterIo const* op = &ops[i];
         AFX_ASSERT_RANGE(rasi.lodCnt, op->rgn.lodIdx, 1);
-        avxRange whd = AvxGetRasterExtent(ras, op->rgn.lodIdx);
-        AFX_ASSERT_RANGE_WHD(whd, op->rgn.origin, op->rgn.whd);
+        avxExtent extent = AvxGetRasterExtent(ras, op->rgn.lodIdx);
+        AFX_ASSERT_RANGE_WHD(extent, op->rgn.origin, op->rgn.extent);
     }
 #endif
     _AvxSanitizeRasterIo(ras, bufCap, opCnt, ops, cmd->UnpackRaster.ops);
@@ -259,8 +259,8 @@ _AVX afxError AvxCmdUnpackRaster(afxDrawContext dctx, avxRaster ras, afxUnit opC
     {
         avxRasterIo const* op = &ops[i];
         AFX_ASSERT_RANGE(rasi.lodCnt, op->rgn.lodIdx, 1);
-        avxRange whd = AvxGetRasterExtent(ras, op->rgn.lodIdx);
-        AFX_ASSERT_RANGE_WHD(whd, op->rgn.origin, op->rgn.whd);
+        avxExtent extent = AvxGetRasterExtent(ras, op->rgn.lodIdx);
+        AFX_ASSERT_RANGE_WHD(extent, op->rgn.origin, op->rgn.extent);
     }
 #endif
     _AvxSanitizeRasterIo(ras, bufCap, opCnt, ops, cmd->UnpackRaster.ops);
@@ -304,10 +304,10 @@ _AVX afxError AvxCmdCopyRaster(afxDrawContext dctx, avxRaster dst, afxUnit opCnt
         avxRasterCopy const* op = &ops[i];
 
         AFX_ASSERT_RANGE(rasi.lodCnt, op->src.lodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi.whd, op->src.origin, op->src.whd);
+        AFX_ASSERT_RANGE_WHD(rasi.extent, op->src.origin, op->src.extent);
 
         AFX_ASSERT_RANGE(rasi2.lodCnt, op->dstLodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi2.whd, op->dstOrigin, op->src.whd);
+        AFX_ASSERT_RANGE_WHD(rasi2.extent, op->dstOrigin, op->src.extent);
         
     }
 #endif
@@ -352,10 +352,10 @@ _AVX afxError AvxCmdResolveRaster(afxDrawContext dctx, avxRaster dst, afxUnit op
         avxRasterCopy const* op = &ops[i];
 
         AFX_ASSERT_RANGE(rasi.lodCnt, op->src.lodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi.whd, op->src.origin, op->src.whd);
+        AFX_ASSERT_RANGE_WHD(rasi.extent, op->src.origin, op->src.extent);
 
         AFX_ASSERT_RANGE(rasi2.lodCnt, op->dstLodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi2.whd, op->dstOrigin, op->src.whd);
+        AFX_ASSERT_RANGE_WHD(rasi2.extent, op->dstOrigin, op->src.extent);
     }
 #endif
     _AvxSanitizeRasterCopy(dst, src, opCnt, ops, cmd->ResolveRaster.ops);
@@ -400,10 +400,10 @@ _AVX afxError AvxCmdBlitRaster(afxDrawContext dctx, avxRaster dst, afxUnit opCnt
         avxRasterBlit const* op = &ops[i];
 
         AFX_ASSERT_RANGE(rasi.lodCnt, op->src.lodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi.whd, op->src.origin, op->dst.whd);
+        AFX_ASSERT_RANGE_WHD(rasi.extent, op->src.origin, op->dst.extent);
 
         AFX_ASSERT_RANGE(rasi2.lodCnt, op->dst.lodIdx, 1);
-        AFX_ASSERT_RANGE_WHD(rasi2.whd, op->dst.origin, op->dst.whd);
+        AFX_ASSERT_RANGE_WHD(rasi2.extent, op->dst.origin, op->dst.extent);
 
         _AvxSanitizeRasterRegion(src, 1, &op->src, &cmd->BlitRaster.ops[i].src);
         _AvxSanitizeRasterRegion(dst, 1, &op->dst, &cmd->BlitRaster.ops[i].dst);

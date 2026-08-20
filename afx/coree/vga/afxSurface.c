@@ -212,7 +212,7 @@ _AVX afxError AvxRequestSurfaceMode(afxSurface dout, avxModeSetting const* mode)
 
     afxReal64 physAspectRatio = mode->wpOverHp;
     afxReal refreshRate = mode->refreshRate;
-    avxRange resolution = mode->resolution;
+    avxExtent resolution = mode->resolution;
     afxBool exclusive = mode->exclusive;
 
     afxV3d whdNdc;
@@ -326,7 +326,7 @@ _AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool f
     dout->dstArea.w = dout->area.w + dwdiff;
     dout->dstArea.h = dout->area.h + dhdiff;
     dout->wwOverHw = (afxReal64)dout->area.w / (afxReal64)dout->area.h;
-    dout->ccfg.whd = AvxMaxRange(AVX_RANGE(1, 1, 1), AVX_RANGE(dout->area.w, dout->area.h, 1));
+    dout->ccfg.extent = AvxMaxRange(AVX_RANGE(1, 1, 1), AVX_RANGE(dout->area.w, dout->area.h, 1));
 
     return err;
 }
@@ -1012,7 +1012,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     dout->colorSpc = cfg->colorSpc ? cfg->colorSpc : avxColorSpace_STANDARD; // sRGB is the default
     dout->ccfg = cfg->ccfg;
     AvxConfigureCanvas(dsys, &dout->ccfg);
-    dout->wwOverHw = dout->ccfg.whd.w / dout->ccfg.whd.h;
+    dout->wwOverHw = dout->ccfg.extent.w / dout->ccfg.extent.h;
 
     if (!dout->ccfg.rigCnt)
     {
@@ -1028,7 +1028,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     // swapchain
     dout->swapCnt = AFX_MAX(cfg->latency, def.latency); // 2 or 3; double or triple buffered for via-memory presentation.
 
-    dout->area = AFX_RECT(0, 0, dout->ccfg.whd.w, dout->ccfg.whd.h);
+    dout->area = AFX_RECT(0, 0, dout->ccfg.extent.w, dout->ccfg.extent.h);
     dout->dstArea = dout->area;
     dout->srcArea = dout->area;
     dout->persistBlit = FALSE;
@@ -1071,9 +1071,9 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AFX_ASSERT(dout->resolution.w);
     AFX_ASSERT(dout->resolution.h);
     AFX_ASSERT(dout->resolution.d);
-    AFX_ASSERT_EXTENT(dout->resolution.w, dout->ccfg.whd.w);
-    AFX_ASSERT_EXTENT(dout->resolution.h, dout->ccfg.whd.h);
-    AFX_ASSERT_EXTENT(dout->resolution.d, dout->ccfg.whd.d);
+    AFX_ASSERT_EXTENT(dout->resolution.w, dout->ccfg.extent.w);
+    AFX_ASSERT_EXTENT(dout->resolution.h, dout->ccfg.extent.h);
+    AFX_ASSERT_EXTENT(dout->resolution.d, dout->ccfg.extent.d);
 
     AFX_ASSERT(dout->swapCnt);
     AFX_ASSERT(dout->ccfg.rigs[0].usage & avxRasterUsage_DRAW);

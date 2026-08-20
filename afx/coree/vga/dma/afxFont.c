@@ -80,7 +80,7 @@ AFX_DEFINE_STRUCT(auxGlyph)
 
 AFX_DEFINE_STRUCT(afxFontAtlas)
 {
-    avxRange    whd;
+    avxExtent    whd;
     avxRaster   ras;
 };
 

@@ -141,7 +141,7 @@ AFX_DEFINE_STRUCT(afxSurfaceConfig)
     // Boolean requesting full, exclusive control of the video endpoint.
     afxBool exclusive;
     // The screen resolution to be used to mode-set the video endpoint.
-    avxRange resolution;
+    avxExtent resolution;
     // The refresh rate to be used to mode-set the video endpoint.
     afxReal64 refreshRate;
     
@@ -434,7 +434,7 @@ AFX_DEFINE_STRUCT(avxModeSetting)
     afxReal         refreshRate;
 
     // The screen resolution (Width x Height).
-    avxRange        resolution;
+    avxExtent        resolution;
 
     // The width-to-physical aspect ratio.
     afxReal64       wrOverHr;

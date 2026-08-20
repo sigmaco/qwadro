@@ -467,7 +467,7 @@ _AVX void _GetImageSubresourceLayout(afxDrawSystem dsys, avxRaster ras, afxUnit 
     AvxDescribeFormats(1, &fmt, &pfd);
 
     avxRasterArrangement lay2 = { 0 };
-    afxWarp whd = { ras->whd.w, ras->whd.h, ras->whd.d };
+    afxWarp whd = { ras->extent.w, ras->extent.h, ras->extent.d };
     afxBool is3d = !!AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     if (AvxGetRasterFlags(ras, avxRasterFlag_MULTISAMP))
@@ -545,8 +545,8 @@ _AVX afxCmdId _AvxCmdRegenerateMipmapsSIGMA(afxDrawContext dctx, afxFlags flags,
     {
         avxRaster ras = rasters[rasIt];
         afxUnit mipLevels = ras->mipCnt;
-        afxUnit mipWidth = ras->whd.w;
-        afxUnit mipHeight = ras->whd.h;
+        afxUnit mipWidth = ras->extent.w;
+        afxUnit mipHeight = ras->extent.h;
 
         for (afxUnit i = 1; i < mipLevels; i++)
         {
@@ -556,9 +556,9 @@ _AVX afxCmdId _AvxCmdRegenerateMipmapsSIGMA(afxDrawContext dctx, afxFlags flags,
             avxRasterBlit blit =
             {
                 .src.lodIdx = i - 1,
-                .src.whd = { mipWidth, mipHeight, 1 },
+                .src.extent = { mipWidth, mipHeight, 1 },
                 .dst.lodIdx = i,
-                .dst.whd = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 }
+                .dst.extent = { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 }
             };
             AvxCmdBlitRaster(dctx, ras, 1, &blit, ras, avxTexelFilter_LINEAR);
 

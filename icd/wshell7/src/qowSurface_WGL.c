@@ -727,8 +727,8 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
             {
                 for (afxUnit i = 0; i < ctrl->hintCnt; i++)
                 {
-                    afxRect rc;
-                    if (AfxIntersectRects(&rc, &dout->m.area, &ctrl->hintRcs[i]))
+                    afxRect rc = AfxGetIntersectedRect(&dout->m.area, &ctrl->hintRcs[i]);
+                    if (!AfxIsRectVoid(&rc))
                     {
                         dout->wgl.AddSwapHintRectWIN(rc.x, rc.y, rc.w, rc.h); _ZglThrowErrorOccuried();
                     }
@@ -1372,7 +1372,7 @@ _QOW afxError _ZglRelinkDoutCb_WGL(afxSurface dout)
         }
     }
 
-    avxRange const screenRes =
+    avxExtent const screenRes =
     {
         GetDeviceCaps(dout->hDC, HORZRES),
         GetDeviceCaps(dout->hDC, VERTRES),
@@ -1744,7 +1744,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
 
     wglMakeCurrentWIN(bkpHdc, bkpGlrc);
 
-    avxRange const screenRes =
+    avxExtent const screenRes =
     {
         GetDeviceCaps(dout->hDC, HORZRES),
         GetDeviceCaps(dout->hDC, VERTRES),

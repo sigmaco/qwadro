@@ -117,7 +117,7 @@ _ARX afxError ArxReloadSkyVisual(arxSky sky, afxUri const* uri)
         avxRasterInfo rasi = { 0 };
         rasi.flags = avxRasterFlag_CUBEMAP;
         rasi.usage = avxRasterUsage_TEXTURE;
-        rasi.whd.d = 6;
+        rasi.extent.d = 6;
 
         afxUnit portId = 0;
 

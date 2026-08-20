@@ -50,12 +50,12 @@ _AVXINL void _AvxDpuUpdateRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxR
         AvxQueryRasterArrangement(ras, &op->rgn, &lay);
         afxByte* dstData = &dst[lay.offset];
 
-        avxRange mipSize = ras->whd;
+        avxExtent mipSize = ras->extent;
 
         afxByte* dstBase = dstData;
         const afxByte* srcBase = src + op->offset;
 
-        afxUnit copyW = op->rgn.whd.w, copyH = op->rgn.whd.h, copyD = op->rgn.whd.d;
+        afxUnit copyW = op->rgn.extent.w, copyH = op->rgn.extent.h, copyD = op->rgn.extent.d;
 
         if (!compressed)
         {
@@ -141,7 +141,7 @@ _AVXINL void _AvxDpuDumpRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRas
         AvxQueryRasterArrangement(ras, &op->rgn, &lay);
         afxByte const*  srcData = &src[lay.offset];
 
-        avxRange mipSize = ras->whd;
+        avxExtent mipSize = ras->extent;
         for (afxUnit i = 0; i < op->rgn.lodIdx; ++i) {
             mipSize.w = mipSize.w > 1 ? mipSize.w >> 1 : 1;
             mipSize.h = mipSize.h > 1 ? mipSize.h >> 1 : 1;
@@ -151,7 +151,7 @@ _AVXINL void _AvxDpuDumpRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRas
         const afxByte* srcBase = srcData;
         afxByte* dstBase = dst + op->offset;
 
-        afxUnit copyW = op->rgn.whd.w, copyH = op->rgn.whd.h, copyD = op->rgn.whd.d;
+        afxUnit copyW = op->rgn.extent.w, copyH = op->rgn.extent.h, copyD = op->rgn.extent.d;
 
         if (!compressed)
         {
@@ -268,7 +268,7 @@ _AVXINL void _AvxDpuUploadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxR
         AvxQueryRasterArrangement(ras, &op->rgn, &lay);
         afxByte* dstData = &dst[lay.offset];
 
-        avxRange mipSize = ras->whd;
+        avxExtent mipSize = ras->extent;
         for (afxUnit i = 0; i < op->rgn.lodIdx; ++i)
         {
             mipSize.w = mipSize.w > 1 ? mipSize.w >> 1 : 1;
@@ -279,7 +279,7 @@ _AVXINL void _AvxDpuUploadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxR
         afxByte* dstBase = dstData;
         afxSize srcBase = /*src +*/ op->offset;
 
-        afxUnit copyW = op->rgn.whd.w, copyH = op->rgn.whd.h, copyD = op->rgn.whd.d;
+        afxUnit copyW = op->rgn.extent.w, copyH = op->rgn.extent.h, copyD = op->rgn.extent.d;
 
         if (!compressed)
         {
@@ -365,7 +365,7 @@ _AVX void _AvxDpuDownloadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRa
         AvxQueryRasterArrangement(ras, &op->rgn, &lay);
         afxByte const*  srcData = &src[lay.offset];
 
-        avxRange mipSize = ras->whd;
+        avxExtent mipSize = ras->extent;
         for (afxUnit i = 0; i < op->rgn.lodIdx; ++i) {
             mipSize.w = mipSize.w > 1 ? mipSize.w >> 1 : 1;
             mipSize.h = mipSize.h > 1 ? mipSize.h >> 1 : 1;
@@ -375,7 +375,7 @@ _AVX void _AvxDpuDownloadRaster(avxDpu* dpu, avxRaster ras, afxUnit opCnt, avxRa
         const afxByte* srcBase = srcData;
         afxSize dstBase = /*dst +*/ op->offset;
 
-        afxUnit copyW = op->rgn.whd.w, copyH = op->rgn.whd.h, copyD = op->rgn.whd.d;
+        afxUnit copyW = op->rgn.extent.w, copyH = op->rgn.extent.h, copyD = op->rgn.extent.d;
 
         if (!compressed)
         {
@@ -456,7 +456,7 @@ _AVX void _AvxDpuCopyRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         avxRasterCopy const* op = &ops[i];
 
         avxRasterRegion dstRgn;
-        dstRgn.whd = op->src.whd;
+        dstRgn.extent = op->src.extent;
         dstRgn.origin = op->dstOrigin;
         dstRgn.lodIdx = op->dstLodIdx;
         avxRasterArrangement srcLay, dstLay;
@@ -473,8 +473,8 @@ _AVX void _AvxDpuCopyRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         afxBool compressed = srcPfd.flags & avxFormatFlag_BC;
 
         // Compute sizes for selected mip levels
-        avxRange srcMipSize = src->whd;
-        avxRange dstMipSize = dst->whd;
+        avxExtent srcMipSize = src->extent;
+        avxExtent dstMipSize = dst->extent;
         for (afxUnit i = 0; i < op->src.lodIdx; ++i)
         {
             srcMipSize.w = srcMipSize.w > 1 ? srcMipSize.w >> 1 : 1;
@@ -495,9 +495,9 @@ _AVX void _AvxDpuCopyRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         const afxByte* srcBase = srcData;
         afxByte* dstBase = dstData;
 
-        afxUnit copyW = op->src.whd.w;
-        afxUnit copyH = op->src.whd.h;
-        afxUnit copyD = op->src.whd.d;
+        afxUnit copyW = op->src.extent.w;
+        afxUnit copyH = op->src.extent.h;
+        afxUnit copyD = op->src.extent.d;
 
         if (!compressed)
         {
@@ -604,9 +604,9 @@ _AVX void _AvxDpuResolveRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRas
     {
         avxRasterCopy const* op = &ops[i];
 
-        for (afxUnit srcZ = 0, dstZ = 0; (srcZ < op->src.whd.d) && (dstZ < op->src.whd.d); srcZ++, dstZ++)
+        for (afxUnit srcZ = 0, dstZ = 0; (srcZ < op->src.extent.d) && (dstZ < op->src.extent.d); srcZ++, dstZ++)
         {
-            //gl->BlitFramebuffer(op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h, op->dstOrigin.x, op->dstOrigin.y, op->src.whd.w, op->src.whd.h, blitMask, filter); _ZglThrowErrorOccuried();
+            //gl->BlitFramebuffer(op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h, op->dstOrigin.x, op->dstOrigin.y, op->src.extent.w, op->src.extent.h, blitMask, filter); _ZglThrowErrorOccuried();
         }
     }
 }
@@ -614,7 +614,7 @@ _AVX void _AvxDpuResolveRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRas
 // Compute linear offset into data for pixel at x,y,z in mip
 static afxSize avxComputePixelOffset(
     afxUnit x, afxUnit y, afxUnit z,
-    avxRange mipSize,
+    avxExtent mipSize,
     afxUnit pixelStride)
 {
     return ((afxSize)z * mipSize.h * mipSize.w + (afxSize)y * mipSize.w + (afxSize)x) * pixelStride;
@@ -624,7 +624,7 @@ static afxSize avxComputePixelOffset(
 // Here assuming mipmaps are stored sequentially in memory; adjust if not.
 static afxSize avxComputeMipOffset(avxRaster raster, afxUnit lod) {
     afxSize offset = 0;
-    avxRange size = raster->whd;
+    avxExtent size = raster->extent;
     for (afxUnit i = 0; i < lod; ++i) {
         size.w = size.w >> 1; if (size.w == 0) size.w = 1;
         size.h = size.h >> 1; if (size.h == 0) size.h = 1;
@@ -638,7 +638,7 @@ static afxSize avxComputeMipOffset(avxRaster raster, afxUnit lod) {
 static void readPixel(
     const afxByte* base,
     afxUnit pixelStride,
-    avxRange mipSize,
+    avxExtent mipSize,
     const avxFormatDescription* fmtDesc,
     afxUnit x, afxUnit y, afxUnit z,
     float outComp[4])
@@ -708,7 +708,7 @@ static void readPixel(
 static void writePixel(
     afxByte* base,
     afxUnit pixelStride,
-    avxRange mipSize,
+    avxExtent mipSize,
     const avxFormatDescription* fmtDesc,
     afxUnit x, afxUnit y, afxUnit z,
     const float inComp[4])
@@ -779,7 +779,7 @@ static void writePixel(
 static void trilinearSample(
     const afxByte* base,
     afxUnit pixelStride,
-    avxRange mipSize,
+    avxExtent mipSize,
     const avxFormatDescription* fmtDesc,
     float sx, float sy, float sz,
     float outComp[4])
@@ -844,7 +844,7 @@ _AVX void _AvxDpuBlitRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         For LINEAR filter: perform trilinear interpolation of up to 8 neighboring source texels.
         Convert components to float, interpolate, then convert back.
         Use bpc[], type[] to read/write components safely.
-        Support layered and volumetric textures via avxRasterRegion.origin.z and .whd.z
+        Support layered and volumetric textures via avxRasterRegion.origin.z and .extent.z
         Handle mipmap levels via .lodIdx
         Assume avxRaster->data layout is linear with proper pixelStride and depth slices
     */
@@ -864,8 +864,8 @@ _AVX void _AvxDpuBlitRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         AvxQueryRasterArrangement(dst, &op->dst, &dstLay);
 
         // Compute mip sizes for src and dst
-        avxRange srcMipSize = op->src.whd;
-        avxRange dstMipSize = op->dst.whd;
+        avxExtent srcMipSize = op->src.extent;
+        avxExtent dstMipSize = op->dst.extent;
 
         // Prepare base pointers for src and dst mip levels
         const afxByte* srcBase = srcData + srcLay.offset;
@@ -873,18 +873,18 @@ _AVX void _AvxDpuBlitRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
 
         // Calculate scale factors for coordinate mapping:
         // srcCoord = srcOrigin + (dstCoord - dstOrigin) * (srcSize / dstSize)
-        afxReal scaleX = (afxReal)op->src.whd.w / (afxReal)op->dst.whd.w;
-        afxReal scaleY = (afxReal)op->src.whd.h / (afxReal)op->dst.whd.h;
-        afxReal scaleZ = (afxReal)op->src.whd.d / (afxReal)op->dst.whd.d;
+        afxReal scaleX = (afxReal)op->src.extent.w / (afxReal)op->dst.extent.w;
+        afxReal scaleY = (afxReal)op->src.extent.h / (afxReal)op->dst.extent.h;
+        afxReal scaleZ = (afxReal)op->src.extent.d / (afxReal)op->dst.extent.d;
 
         if (flt == avxTexelFilter_NEAREST)
         {
 #pragma omp parallel for collapse(3)
-            for (afxUnit z = 0; z < op->dst.whd.d; ++z)
+            for (afxUnit z = 0; z < op->dst.extent.d; ++z)
             {
-                for (afxUnit y = 0; y < op->dst.whd.h; ++y)
+                for (afxUnit y = 0; y < op->dst.extent.h; ++y)
                 {
-                    for (afxUnit x = 0; x < op->dst.whd.w; ++x)
+                    for (afxUnit x = 0; x < op->dst.extent.w; ++x)
                     {
                         afxUnit srcX = (afxUnit)(op->src.origin.x + (x + 0.5f) * scaleX);
                         afxUnit srcY = (afxUnit)(op->src.origin.y + (y + 0.5f) * scaleY);
@@ -908,12 +908,12 @@ _AVX void _AvxDpuBlitRaster(avxDpu* dpu, avxRaster dst, afxUnit opCnt, avxRaster
         }
         else
         {
-            // For each dst z,y,x within blit->dst.whd
-            for (afxUnit z = 0; z < op->dst.whd.d; ++z)
+            // For each dst z,y,x within blit->dst.extent
+            for (afxUnit z = 0; z < op->dst.extent.d; ++z)
             {
-                for (afxUnit y = 0; y < op->dst.whd.h; ++y)
+                for (afxUnit y = 0; y < op->dst.extent.h; ++y)
                 {
-                    for (afxUnit x = 0; x < op->dst.whd.w; ++x)
+                    for (afxUnit x = 0; x < op->dst.extent.w; ++x)
                     {
                         // Compute src coordinates in float
                         afxReal srcXf = op->src.origin.x + (x + 0.5f) * scaleX;
@@ -1102,9 +1102,9 @@ _AVX void _AvxDpuClearRaster(avxDpu* dpu, avxRaster ras, avxClearValue const* cl
     for (afxUnit lod = 0; lod < baseLodIdx; ++lod)
     {
         rgn.lodIdx = baseLodIdx + lod;
-        avxRange mipSize = AvxGetRasterExtent(ras, rgn.lodIdx);
-        rgn.whd = mipSize;
-        rgn.whd.d = 1;
+        avxExtent mipSize = AvxGetRasterExtent(ras, rgn.lodIdx);
+        rgn.extent = mipSize;
+        rgn.extent.d = 1;
 
         for (afxUnit layer = 0; layer < layerCnt; ++layer)
         {

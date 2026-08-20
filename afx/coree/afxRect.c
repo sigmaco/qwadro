@@ -26,41 +26,79 @@ _AFXINL afxUnit AfxGetRectSize(afxRect const* rc)
     return (rc->w * rc->h);
 }
 
-_AFXINL afxUnit AfxMergeRects(afxRect* rc, afxRect const* a, afxRect const* b)
+_AFXINL afxBool AfxIsRectVoid(afxRect const* rc)
 {
     afxError err = { 0 };
     AFX_ASSERT(rc);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    
-    // Essentially the inverse of AfxIntersectRects().
-    afxInt x = AFX_MIN(a->x, b->x);
-    afxInt y = AFX_MIN(a->y, b->y);
-    afxUnit w, h;
-    *rc = AFX_RECT( x, y,   (w = (AFX_MAX(a->x + a->w, b->x + b->w) - x)),
-                            (h = (AFX_MAX(a->y + a->h, b->y + b->h) - y)));
-
-    return (w * h);
+    //return (0 == AfxGetRectSize(rc));
+    return (0 == (rc->w * rc->h));
 }
 
-_AFXINL afxUnit AfxIntersectRects(afxRect* rc, afxRect const* a, afxRect const* b)
+_AFXINL afxRect AfxGetUnitedRect(afxRect const* rc, afxRect const* other)
 {
     afxError err = { 0 };
     AFX_ASSERT(rc);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
+    AFX_ASSERT(other);
+
+    // Essentially the inverse of AfxIntersectRects().
+    afxInt32 x = AFX_MIN(rc->x, other->x);
+    afxInt32 y = AFX_MIN(rc->y, other->y);
+    afxUnit32 w, h;
+    return AFX_RECT( x, y,
+                    (w = (AFX_MAX(rc->x + rc->w, other->x + other->w) - x)),
+                    (h = (AFX_MAX(rc->y + rc->h, other->y + other->h) - y)));
+}
+
+_AFXINL afxLayeredRect AfxGetUnitedRectLayered(afxLayeredRect const* rc, afxLayeredRect const* other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(other);
+
+    // Essentially the inverse of AfxIntersectRects().
+    afxInt32 x = AFX_MIN(rc->area.x, other->area.x);
+    afxInt32 y = AFX_MIN(rc->area.y, other->area.y);
+    afxInt32 z = AFX_MIN(rc->baseLayer, other->baseLayer);
+    afxUnit32 w, h, d;
+    return AFX_LAYERED_RECT( x, y, z,
+                            (w = (AFX_MAX(rc->area.x + rc->area.w, other->area.x + other->area.w)           - x)),
+                            (h = (AFX_MAX(rc->area.y + rc->area.h, other->area.y + other->area.h)           - y)),
+                            (d = (AFX_MAX(rc->baseLayer + rc->layerCnt, other->baseLayer + other->layerCnt) - z)));
+}
+
+_AFXINL afxRect AfxGetIntersectedRect(afxRect const* rc, afxRect const* other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(other);
 
     // Essentially the inverse of AfxMergeRects().
-    afxInt x = AFX_MAX(a->x, b->x);
-    afxInt y = AFX_MAX(a->y, b->y);
-    afxUnit w, h;
-    *rc = AFX_RECT( x, y,   (w = (AFX_MIN(a->x + a->w, b->x + b->w) - x)),
-                            (h = (AFX_MIN(a->y + a->h, b->y + b->h) - y)));
-
-    return (w * h);
+    afxInt32 x = AFX_MAX(rc->x, other->x);
+    afxInt32 y = AFX_MAX(rc->y, other->y);
+    afxUnit32 w, h;
+    return AFX_RECT( x, y,
+                    (w = (AFX_MIN(rc->x + rc->w, other->x + other->w) - x)),
+                    (h = (AFX_MIN(rc->y + rc->h, other->y + other->h) - y)));
 }
 
-_AFXINL afxBool AfxAreRectsEqual(afxRect const* a, afxRect const* b)
+_AFXINL afxLayeredRect AfxGetIntersectedRectLayered(afxLayeredRect const* rc, afxLayeredRect const* other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(other);
+
+    // Essentially the inverse of AfxMergeRects().
+    afxInt32 x = AFX_MAX(rc->area.x, other->area.x);
+    afxInt32 y = AFX_MAX(rc->area.y, other->area.y);
+    afxInt32 z = AFX_MAX(rc->baseLayer, other->baseLayer);
+    afxUnit32 w, h, d;
+    return AFX_LAYERED_RECT( x, y, z,
+                            (w = (AFX_MIN(rc->area.x + rc->area.w, other->area.x + other->area.w)           - x)),
+                            (h = (AFX_MIN(rc->area.y + rc->area.h, other->area.y + other->area.h)           - y)),
+                            (d = (AFX_MIN(rc->baseLayer + rc->layerCnt, other->baseLayer + other->layerCnt) - z)));
+}
+
+_AFXINL afxBool AfxIsRectEqual(afxRect const* a, afxRect const* b)
 {
     afxError err = { 0 };
     AFX_ASSERT(a);
@@ -68,7 +106,7 @@ _AFXINL afxBool AfxAreRectsEqual(afxRect const* a, afxRect const* b)
     return ((a->x == b->x) && (a->y == b->y) && (a->w == b->w) && (a->h == b->h));
 }
 
-_AFXINL afxBool AfxAreRectsOverlapping(afxRect const* a, afxRect const* b)
+_AFXINL afxBool AfxIsRectOverlapping(afxRect const* a, afxRect const* b)
 {
     afxError err = { 0 };
     AFX_ASSERT(a);
@@ -93,7 +131,7 @@ _AFXINL afxBool AfxAreRectsOverlapping(afxRect const* a, afxRect const* b)
     return TRUE; // overlapping
 }
 
-_AFXINL afxBool AfxDoesRectContainBiased(afxRect const* a, afxRect const* b, afxInt tolX, afxInt tolY)
+_AFXINL afxBool AfxRectContainsBiased(afxRect const* a, afxRect const* b, afxInt tolX, afxInt tolY)
 // Compare if rectangle \a a contains rectangle \a b in coordinate, with specified tolerance allowed.
 {
     afxError err = { 0 };
@@ -105,7 +143,7 @@ _AFXINL afxBool AfxDoesRectContainBiased(afxRect const* a, afxRect const* b, afx
             ((b->y + b->h) <= (a->y + a->h + tolY));
 }
 
-_AFXINL afxBool AfxDoesRectContain(afxRect const* a, afxRect const* b)
+_AFXINL afxBool AfxRectContains(afxRect const* a, afxRect const* b)
 // This checks that all corners of b are inside a, i.e., b is entirely within a.
 {
     afxError err = { 0 };
@@ -126,13 +164,13 @@ _AFXINL afxBool AfxIsRectOutside(afxRect const* a, afxRect const* b)
         b->y >= (a->y + (afxInt)a->h));
 }
 
-_AFXINL afxBool AfxDoRectsIntersect(afxRect const* a, afxRect const* b)
+_AFXINL afxBool AfxRectIntersects(afxRect const* a, afxRect const* b)
 // This test whether @a and @b overlap at all (fully or partially).
 {
-    return !((b->x + (afxInt)b->w) <= a->x ||
-        b->x >= (a->x + (afxInt)a->w) ||
-        (b->y + (afxInt)b->h) <= a->y ||
-        b->y >= (a->y + (afxInt)a->h));
+    return !(   (b->x + (afxInt)b->w) <= a->x ||
+                 b->x >= (a->x + (afxInt)a->w) ||
+                (b->y + (afxInt)b->h) <= a->y ||
+                 b->y >= (a->y + (afxInt)a->h));
 }
 
 _AFXINL void AfxExtractRectMargins(afxRect const* outer, afxRect const* inner, afxInt* left, afxInt* top, afxInt* right, afxInt* bottom)
@@ -154,13 +192,12 @@ _AFXINL void AfxExtractRectMargins(afxRect const* outer, afxRect const* inner, a
     *bottom = (outer->y + (afxInt)outer->h) - (inner->y + (afxInt)inner->h);
 }
 
-_AFXINL void AfxFlipRect(afxRect const* rc, afxUnit height, afxRect* flipped)
+_AFXINL afxRect AfxGetFlippedRect(afxRect const* rc, afxUnit height)
 {
     afxError err = { 0 };
-    AFX_ASSERT(flipped);
     AFX_ASSERT(height);
     AFX_ASSERT(rc);
-    *flipped = AFX_RECT(rc->x, (height - (rc->y + rc->h)), rc->w, rc->h);
+    return AFX_RECT(rc->x, (height - (rc->y + rc->h)), rc->w, rc->h);
 }
 
 _AFXINL afxUnit AfxScissorRect(afxRect const* rc, afxUnit maxW, afxUnit maxH, afxRect outsides[4])
@@ -195,36 +232,95 @@ _AFXINL afxUnit AfxScissorRect(afxRect const* rc, afxUnit maxW, afxUnit maxH, af
     return invRcCnt;
 }
 
-_AFXINL afxUnit AfxClampRect(afxRect* rc, afxRect const* src, afxRect const* min, afxRect const* max)
+_AFXINL afxRect AfxGetMiniRect(afxRect const* rc, afxRect const* other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(src);
-    AFX_ASSERT(min);
-    AFX_ASSERT(max);
     AFX_ASSERT(rc);
-    *rc = AFX_RECT( AFX_CLAMP(src->x, min->x, max->x),
-                    AFX_CLAMP(src->y, min->y, max->y),
-                    AFX_CLAMP(src->w, min->w, max->w),
-                    AFX_CLAMP(src->h, min->h, max->h));
-    // Returns the area = w * h; (like 4 x 2 = 8 square units)
-    return (rc->w * rc->h);
+    AFX_ASSERT(other);
+    return AFX_RECT(AFX_MIN(rc->x, other->x),
+                    AFX_MIN(rc->y, other->y),
+                    AFX_MIN(rc->w, other->w),
+                    AFX_MIN(rc->h, other->h));
 }
 
-_AFXINL void AfxAccumulateRects(afxRect* rc, afxUnit cnt, afxRect* in)
+_AFXINL afxLayeredRect AfxGetMiniRectLayered(afxLayeredRect const* rc, afxLayeredRect const* other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(in);
     AFX_ASSERT(rc);
+    AFX_ASSERT(other);
+    return AFX_LAYERED_RECT(AFX_MIN(rc->area.x,     other->area.x),
+                            AFX_MIN(rc->area.y,     other->area.y),
+                            AFX_MIN(rc->baseLayer,  other->baseLayer),
+                            AFX_MIN(rc->area.w,     other->area.w),
+                            AFX_MIN(rc->area.h,     other->area.h),
+                            AFX_MIN(rc->layerCnt,   other->layerCnt));
+}
+
+_AFXINL afxRect AfxGetMaxiRect(afxRect const* rc, afxRect const* other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(other);
+    return AFX_RECT(AFX_MAX(rc->x, other->x),
+                    AFX_MAX(rc->y, other->y),
+                    AFX_MAX(rc->w, other->w),
+                    AFX_MAX(rc->h, other->h));
+}
+
+_AFXINL afxLayeredRect AfxGetMaxiRectLayered(afxLayeredRect const* rc, afxLayeredRect const* other)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(other);
+    return AFX_LAYERED_RECT(AFX_MAX(rc->area.x,     other->area.x),
+                            AFX_MAX(rc->area.y,     other->area.y),
+                            AFX_MAX(rc->baseLayer,  other->baseLayer),
+                            AFX_MAX(rc->area.w,     other->area.w),
+                            AFX_MAX(rc->area.h,     other->area.h),
+                            AFX_MAX(rc->layerCnt,   other->layerCnt));
+}
+
+_AFXINL afxRect AfxGetClampedRect(afxRect const* rc, afxRect const* min, afxRect const* max)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(min);
+    AFX_ASSERT(max);
+    return AFX_RECT(    AFX_CLAMP(rc->x, min->x, max->x),
+                        AFX_CLAMP(rc->y, min->y, max->y),
+                        AFX_CLAMP(rc->w, min->w, max->w),
+                        AFX_CLAMP(rc->h, min->h, max->h));
+}
+
+_AFXINL afxLayeredRect AfxGetClampedRectLayered(afxLayeredRect const* rc, afxLayeredRect const* min, afxLayeredRect const* max)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rc);
+    AFX_ASSERT(min);
+    AFX_ASSERT(max);
+    return AFX_LAYERED_RECT(    AFX_CLAMP(rc->area.x,   min->area.x,    max->area.x),
+                                AFX_CLAMP(rc->area.y,   min->area.y,    max->area.y),
+                                AFX_CLAMP(rc->baseLayer,min->baseLayer, max->baseLayer),
+                                AFX_CLAMP(rc->area.w,   min->area.w,    max->area.w),
+                                AFX_CLAMP(rc->area.h,   min->area.h,    max->area.h),
+                                AFX_CLAMP(rc->layerCnt, min->layerCnt,  max->layerCnt));
+}
+
+_AFXINL afxRect AfxGetAccumulatedRect(afxUnit cnt, afxRect const rects[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT(rects);
+
     // Initialize to extreme values
-    afxInt minX = INT_MAX;
-    afxInt minY = INT_MAX;
-    afxUnit maxX = INT_MIN;
-    afxUnit maxY = INT_MIN;
+    afxInt32 minX = AFX_I32_MAX;
+    afxInt32 minY = AFX_I32_MAX;
+    afxUnit32 maxX = AFX_I32_MIN;
+    afxUnit32 maxY = AFX_I32_MIN;
 
     // Iterate over the list of rectangles
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxRect r = in[i];
+        afxRect r = rects[i];
 
         // Update min and max values for bounding rectangle
         if (r.x < minX) minX = r.x;
@@ -233,9 +329,8 @@ _AFXINL void AfxAccumulateRects(afxRect* rc, afxUnit cnt, afxRect* in)
         if (r.y + r.h > maxY) maxY = r.y + r.h;
     }
 
-    *rc = AFX_RECT(minX, minY, maxX - minX, maxY - minY);
+    return AFX_RECT(minX, minY, maxX - minX, maxY - minY);
 }
-
 
 afxRect ResolveSurfaceRect(
     afxRect const* screen,

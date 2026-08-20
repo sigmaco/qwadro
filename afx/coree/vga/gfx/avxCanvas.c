@@ -45,19 +45,19 @@ _AVX afxUnit AvxGetCanvasExtent(avxCanvas canv, avxOrigin const* origin, afxLaye
     afxError err = { 0 };
     // @canv must be a valid avxCanvas handle.
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
-    avxRange whd = canv->whd;
+    avxExtent extent2 = canv->extent;
     avxOrigin origin2 = (avxOrigin) { 0 };
 
     if (origin)
     {
         origin2 = *origin;
-        origin2 = AvxClampOrigin(origin2, AVX_RANGE(whd.w - 1, whd.h - 1, whd.d - 1));
-        whd = AvxSubtractRange(whd, AVX_RANGE(origin2.x, origin2.y, origin2.z));
+        origin2 = AvxClampOrigin(origin2, AVX_RANGE(extent2.w - 1, extent2.h - 1, extent2.d - 1));
+        extent2 = AvxSubtractRange(extent2, AVX_RANGE(origin2.x, origin2.y, origin2.z));
     }
     
     AFX_ASSERT(extent);
-    *extent = AFX_LAYERED_RECT(origin2.x, origin2.y, whd.w, whd.h, origin2.z, whd.d);
-    return whd.w * whd.h;
+    *extent = AFX_LAYERED_RECT(origin2.x, origin2.y, origin2.z, extent2.w, extent2.h, extent2.d);
+    return extent2.w * extent2.h;
 }
 
 _AVX afxUnit AvxClipCanvas_(avxCanvas canv, afxRect const* rc, afxBool flipY, avxViewport* vp)
@@ -67,22 +67,22 @@ _AVX afxUnit AvxClipCanvas_(avxCanvas canv, afxRect const* rc, afxBool flipY, av
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
     AFX_ASSERT(rc);
 
-    avxRange whd = canv->whd;
+    avxExtent extent = canv->extent;
     afxRect rcClip =
     {
-        .x = AFX_MIN(rc->x, (afxInt)whd.w - 1),
-        .y = AFX_MIN(rc->y, (afxInt)whd.h - 1),
-        .w = rc->w ? AFX_MIN(rc->w, (afxInt)whd.w - rcClip.x) : (afxInt)whd.w - rcClip.x,
-        .h = rc->h ? AFX_MIN(rc->h, (afxInt)whd.h - rcClip.y) : (afxInt)whd.h - rcClip.y
+        .x = AFX_MIN(rc->x, (afxInt)extent.w - 1),
+        .y = AFX_MIN(rc->y, (afxInt)extent.h - 1),
+        .w = rc->w ? AFX_MIN(rc->w, (afxInt)extent.w - rcClip.x) : (afxInt)extent.w - rcClip.x,
+        .h = rc->h ? AFX_MIN(rc->h, (afxInt)extent.h - rcClip.y) : (afxInt)extent.h - rcClip.y
     };
 
     if (flipY)
-        AfxFlipRect(&rcClip, whd.h, &rcClip);
+        rcClip = AfxGetFlippedRect(&rcClip, extent.h);
 
-    vp->origin[0] = AFX_MIN(rc->x, (afxInt)whd.w - 1);
-    vp->origin[1] = AFX_MIN(rc->y, (afxInt)whd.h - 1);
-    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)whd.w - 1));
-    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)whd.h - 1));
+    vp->origin[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
+    vp->origin[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
+    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
+    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
     vp->minDepth = 0;
     vp->maxDepth = 1;
     return (vp->extent[0] * vp->extent[1]);
@@ -95,37 +95,37 @@ _AVX afxUnit AvxClipCanvas2_(avxCanvas canv, afxRect const* rc, afxBool flipY, a
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
     AFX_ASSERT(rc);
 
-    avxRange whd = canv->whd;
+    avxExtent extent = canv->extent;
     afxRect rcClip =
     {
-        .x = AFX_MIN(rc->x, (afxInt)whd.w - 1),
-        .y = AFX_MIN(rc->y, (afxInt)whd.h - 1),
-        .w = rc->w ? AFX_MIN(rc->w, whd.w - rcClip.x) : (afxInt)whd.w - rcClip.x,
-        .h = rc->h ? AFX_MIN(rc->h, whd.h - rcClip.y) : (afxInt)whd.h - rcClip.y
+        .x = AFX_MIN(rc->x, (afxInt)extent.w - 1),
+        .y = AFX_MIN(rc->y, (afxInt)extent.h - 1),
+        .w = rc->w ? AFX_MIN(rc->w, extent.w - rcClip.x) : (afxInt)extent.w - rcClip.x,
+        .h = rc->h ? AFX_MIN(rc->h, extent.h - rcClip.y) : (afxInt)extent.h - rcClip.y
     };
 
     if (flipY)
-        AfxFlipRect(&rcClip, whd.h, &rcClip);
+        rcClip = AfxGetFlippedRect(&rcClip, extent.h);
 
-    vp->origin[0] = AFX_MIN(rc->x, (afxInt)whd.w - 1);
-    vp->origin[1] = AFX_MIN(rc->y, (afxInt)whd.h - 1);
-    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)whd.w - 1));
-    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)whd.h - 1));
+    vp->origin[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
+    vp->origin[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
+    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
+    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
     vp->minDepth = 0;
     vp->maxDepth = 1;
     return (vp->extent[0] * vp->extent[1]);
 }
 
-_AVX avxRange AvxGetCanvasExtentNdc(avxCanvas canv, afxV2d const origin, afxV2d const whd)
+_AVX avxExtent AvxGetCanvasExtentNdc(avxCanvas canv, afxV2d const origin, afxV2d const extent)
 {
     afxError err = { 0 };
     // @canv must be a valid avxCanvas handle.
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
     afxV2d at, ran;
-    AfxV2dNdc(at, origin, AFX_V2D(canv->whd.w, canv->whd.h));
-    AfxV2dNdc(ran, whd, AFX_V2D(canv->whd.w, canv->whd.h));
-    return AVX_RANGE(ran[0], ran[1], canv->whd.d);
+    AfxV2dNdc(at, origin, AFX_V2D(canv->extent.w, canv->extent.h));
+    AfxV2dNdc(ran, extent, AFX_V2D(canv->extent.w, canv->extent.h));
+    return AVX_RANGE(ran[0], ran[1], canv->extent.d);
 }
 
 _AVX afxUnit AvxQueryCanvasRigs(avxCanvas canv, afxUnit* colRigCnt, afxUnit* dRigIdx, afxUnit* sRigIdx)
@@ -273,9 +273,9 @@ _AVX afxError _AvxCanvRelinkDrawBuffersCb_SW(avxCanvas canv, afxBool regen, afxU
             rasi.usage = rig->usage | avxRasterUsage_DRAW;
             rasi.flags = rig->flags;
             rasi.fmt = rig->fmt;
-            rasi.whd.w = AFX_ALIGN_SIZE(canv->whd.w, 16); // aligned to tile
-            rasi.whd.h = AFX_ALIGN_SIZE(canv->whd.h, 16); // aligned to tile
-            rasi.whd.d = canv->whd.d;
+            rasi.extent.w = AFX_ALIGN_SIZE(canv->extent.w, 16); // aligned to tile
+            rasi.extent.h = AFX_ALIGN_SIZE(canv->extent.h, 16); // aligned to tile
+            rasi.extent.d = canv->extent.d;
 
             if (1 < (rasi.lodCnt = rig->lodCnt))
                 rasi.flags |= avxRasterFlag_MULTISAMP;
@@ -306,9 +306,9 @@ _AVX afxError _AvxCanvRelinkDrawBuffersCb_SW(avxCanvas canv, afxBool regen, afxU
                 continue;
             }
 
-            avxRange ext = AvxGetRasterExtent(ras, 0);
+            avxExtent ext = AvxGetRasterExtent(ras, 0);
             // Each buffer must be at least as large as the canvas dimensions.
-            if ((ext.w < canv->whd.w) && (ext.h < canv->whd.h) && (ext.d < canv->whd.d))
+            if ((ext.w < canv->extent.w) && (ext.h < canv->extent.h) && (ext.d < canv->extent.d))
             {
                 AfxThrowError();
                 continue;
@@ -416,12 +416,12 @@ _AVX afxError AvxPrintCanvasBuffer(avxCanvas canv, afxUnit rigIdx, avxRasterIo c
 
     if (op)
     {
-        AFX_ASSERT_RANGE((afxInt)canv->whd.w, op->rgn.origin.x, 1);
-        AFX_ASSERT_RANGE((afxInt)canv->whd.h, op->rgn.origin.y, 1);
-        AFX_ASSERT_RANGE((afxInt)canv->whd.d, op->rgn.origin.z, 1);
-        AFX_ASSERT2(canv->whd.w >= op->rgn.whd.w, op->rgn.whd.w);
-        AFX_ASSERT2(canv->whd.h >= op->rgn.whd.h, op->rgn.whd.h);
-        AFX_ASSERT2(canv->whd.d >= op->rgn.whd.d, op->rgn.whd.d);
+        AFX_ASSERT_RANGE((afxInt)canv->extent.w, op->rgn.origin.x, 1);
+        AFX_ASSERT_RANGE((afxInt)canv->extent.h, op->rgn.origin.y, 1);
+        AFX_ASSERT_RANGE((afxInt)canv->extent.d, op->rgn.origin.z, 1);
+        AFX_ASSERT2(canv->extent.w >= op->rgn.extent.w, op->rgn.extent.w);
+        AFX_ASSERT2(canv->extent.h >= op->rgn.extent.h, op->rgn.extent.h);
+        AFX_ASSERT2(canv->extent.d >= op->rgn.extent.d, op->rgn.extent.d);
             
         if (AvxPrintRaster(ras, op, 1, uri, exuMask))
             AfxThrowError();
@@ -432,7 +432,7 @@ _AVX afxError AvxPrintCanvasBuffer(avxCanvas canv, afxUnit rigIdx, avxRasterIo c
         avxRasterIo op2 = { 0 };
         AvxGetCanvasExtent(canv, NIL, &bounds);
         op2.rgn.origin = (avxOrigin) { bounds.area.x, bounds.area.y, bounds.baseLayer };
-        op2.rgn.whd = (avxRange){ bounds.area.w, bounds.area.h, bounds.layerCnt };
+        op2.rgn.extent = (avxExtent){ bounds.area.w, bounds.area.h, bounds.layerCnt };
 
         if (AvxPrintRaster(ras, &op2, 1, uri, exuMask))
             AfxThrowError();
@@ -452,7 +452,7 @@ _AVX afxError _AvxRedoDrawBuffers(avxCanvas canv)
 
     avxRasterInfo rasi = { 0 };
     rasi.lodCnt = 1;
-    rasi.whd = AvxGetCanvasExtent(canv, AVX_ORIGIN_ZERO);
+    rasi.extent = AvxGetCanvasExtent(canv, AVX_ORIGIN_ZERO);
 
     for (afxUnit i = 0; i < canv->rigCnt; i++)
     {
@@ -538,7 +538,7 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
     avxCanvasConfig const* cfg = args[1];
     AFX_ASSERT(cfg);
 
-    //afxWarp const* whd = args[1];
+    //afxWarp const* extent = args[1];
     //afxUnit surCnt = *(afxUnit const *)args[2];
     //avxCanvasRig const* surCfgs = args[3];
 
@@ -552,16 +552,16 @@ _AVX afxError _AvxCanvCtorCb(avxCanvas canv, void** args, afxUnit invokeNo)
     canv->udd = cfg->udd;
 
     avxLimits const* limits = _AvxDsysGetLimits(dsys);
-    // @whd must be less than or equal to maxCanvasWhd
-    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.w, cfg->whd.w);
-    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.h, cfg->whd.h);
-    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.d, cfg->whd.d);
+    // @extent must be less than or equal to maxCanvasWhd
+    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.w, cfg->extent.w);
+    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.h, cfg->extent.h);
+    AFX_ASSERT_CAPACITY(limits->maxCanvasWhd.d, cfg->extent.d);
 
-    canv->whd.w = AFX_MAX(1, cfg->whd.w);
-    canv->whd.h = AFX_MAX(1, cfg->whd.h);
-    canv->whd.d = AFX_MAX(1, cfg->whd.d);
-    canv->whdMin = canv->whd;
-    canv->whdMax = (avxRange){ limits->maxCanvasWhd.w, limits->maxCanvasWhd.h, limits->maxCanvasWhd.d};
+    canv->extent.w = AFX_MAX(1, cfg->extent.w);
+    canv->extent.h = AFX_MAX(1, cfg->extent.h);
+    canv->extent.d = AFX_MAX(1, cfg->extent.d);
+    canv->extentMin = canv->extent;
+    canv->extentMax = (avxExtent){ limits->maxCanvasWhd.w, limits->maxCanvasWhd.h, limits->maxCanvasWhd.d};
 
     AFX_ASSERT_CAPACITY(limits->canvasNoAttachmentsSampleCnts, cfg->lodCnt);
     canv->lodCnt = AFX_MAX(1, cfg->lodCnt);
@@ -793,10 +793,10 @@ _AVX afxError _AvxDsysSwConfigureCanvCb(afxDrawSystem dsys, avxCanvasConfig* cfg
     cfg2.tag = cfg->tag;
 
     avxLimits const* limits = _AvxDsysGetLimits(dsys);
-    // @whd must be less than or equal to limits(maxCanvasWhd).
-    cfg2.whd.w = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.w, cfg->whd.w));
-    cfg2.whd.h = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.h, cfg->whd.h));
-    cfg2.whd.d = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.d, cfg->whd.d));
+    // @extent must be less than or equal to limits(maxCanvasWhd).
+    cfg2.extent.w = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.w, cfg->extent.w));
+    cfg2.extent.h = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.h, cfg->extent.h));
+    cfg2.extent.d = AFX_MAX(1, AFX_MIN(limits->maxCanvasWhd.d, cfg->extent.d));
     
     cfg2.lodCnt = AFX_MAX(1, AFX_MIN(limits->canvasNoAttachmentsSampleCnts, cfg->lodCnt));
 
@@ -996,9 +996,9 @@ _AVX afxError AvxAcquireCanvas(afxDrawSystem dsys, avxCanvasConfig const* cfg, a
         avxCanvas canv = canvases[i];
 
         //AFX_ASSERT(canv->rigCnt >= cfg->surCnt);
-        AFX_ASSERT(canv->whd.w >= cfg->whd.w);
-        AFX_ASSERT(canv->whd.h >= cfg->whd.h);
-        AFX_ASSERT(canv->whd.d >= cfg->whd.d);
+        AFX_ASSERT(canv->extent.w >= cfg->extent.w);
+        AFX_ASSERT(canv->extent.h >= cfg->extent.h);
+        AFX_ASSERT(canv->extent.d >= cfg->extent.d);
         AFX_ASSERT((canv->flags & cfg->flags) == cfg->flags);
         AFX_ASSERT(canv->tag.start == cfg->tag.start);
 

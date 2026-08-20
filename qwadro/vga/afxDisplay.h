@@ -209,9 +209,9 @@ AFX_DEFINE_STRUCT(afxDisplayInfo)
 
 AFX_DEFINE_STRUCT(afxDisplayCapabilities)
 {
-    avxRange currExtent;
-    avxRange minBufExtent;
-    avxRange maxBufExtent;
+    avxExtent currExtent;
+    avxExtent minBufExtent;
+    avxExtent maxBufExtent;
     afxUnit minBufCnt;
     afxUnit maxBufCnt;
     avxVideoTransform currTransform;

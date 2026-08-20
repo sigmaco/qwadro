@@ -291,11 +291,11 @@ _AVX afxError AvxPrepareRasterFile(avxRasterFile* tga, avxRasterIo* iop, afxUnit
     */
 
     afxUnit uddSiz2 = AFX_ALIGN_SIZE(uddSiz, AFX_SIMD_ALIGNMENT);
-    afxUnit w = AFX_MAX(pfd.bcWh[0], AFX_ALIGN_SIZE(iop->rgn.whd.w, pfd.bcWh[0]));
-    afxUnit h = AFX_MAX(pfd.bcWh[1], AFX_ALIGN_SIZE(iop->rgn.whd.h, pfd.bcWh[1]));
-    iop->rgn.whd.w = w;
-    iop->rgn.whd.h = h;
-    iop->rgn.whd.d = AFX_MAX(1, iop->rgn.whd.d);
+    afxUnit w = AFX_MAX(pfd.bcWh[0], AFX_ALIGN_SIZE(iop->rgn.extent.w, pfd.bcWh[0]));
+    afxUnit h = AFX_MAX(pfd.bcWh[1], AFX_ALIGN_SIZE(iop->rgn.extent.h, pfd.bcWh[1]));
+    iop->rgn.extent.w = w;
+    iop->rgn.extent.h = h;
+    iop->rgn.extent.d = AFX_MAX(1, iop->rgn.extent.d);
     iop->rgn.origin.x = AFX_ALIGN_SIZE(iop->rgn.origin.x, pfd.bcWh[0]);
     iop->rgn.origin.y = AFX_ALIGN_SIZE(iop->rgn.origin.y, pfd.bcWh[1]);
     iop->rgn.origin.z = iop->rgn.origin.z;
@@ -322,7 +322,7 @@ _AVX afxError AvxPrepareRasterFile(avxRasterFile* tga, avxRasterIo* iop, afxUnit
     tgai.originZ = iop->rgn.origin.z;
     tgai.width = w;
     tgai.height = h;
-    tgai.depth = iop->rgn.whd.d;
+    tgai.depth = iop->rgn.extent.d;
     tgai.lodCnt = AFX_MAX(1, lodCnt);
     tgai.baseLod = iop->rgn.lodIdx;
     tgai.fmt = fmt ? fmt : avxFormat_BGRA8un;

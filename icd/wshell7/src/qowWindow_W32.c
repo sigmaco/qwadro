@@ -268,14 +268,14 @@ _QOW HICON _AuxCreateWin32IconFromRaster(avxRaster ras, avxRasterRegion const* r
     AFX_ASSERT(ras);
     AFX_ASSERT(rgn);
 
-    avxRange whd = rgn->whd;
+    avxExtent extent = rgn->extent;
     avxFormat fmt = AvxGetRasterFormat(ras);
     AFX_ASSERT(fmt == avxFormat_BGRA8un);
 
     BITMAPV5HEADER bi = { 0 };
     bi.bV5Size = sizeof(bi);
-    bi.bV5Width = whd.w;
-    bi.bV5Height = -((LONG)whd.h);
+    bi.bV5Width = extent.w;
+    bi.bV5Height = -((LONG)extent.h);
     bi.bV5Planes = 1;
     bi.bV5BitCount = 32;
     bi.bV5Compression = BI_BITFIELDS;
@@ -295,7 +295,7 @@ _QOW HICON _AuxCreateWin32IconFromRaster(avxRaster ras, avxRasterRegion const* r
         avxRasterIo iop = { 0 };
         iop.rgn = *rgn;
         //iop.rgn.whd = whd;
-        iop.rowStride = whd.w * (bi.bV5BitCount / 8);
+        iop.rowStride = extent.w * (bi.bV5BitCount / 8);
         
         if (AvxDumpRaster(ras, 1, &iop, dst, NIL, 0))
             AfxThrowError();
@@ -305,7 +305,7 @@ _QOW HICON _AuxCreateWin32IconFromRaster(avxRaster ras, avxRasterRegion const* r
 
         HBITMAP mask;
 
-        if (!(mask = CreateBitmap(whd.w, whd.h, 1, 1, NULL))) AfxThrowError();
+        if (!(mask = CreateBitmap(extent.w, extent.h, 1, 1, NULL))) AfxThrowError();
         else
         {
             ICONINFO ii = { 0 };
@@ -1100,7 +1100,7 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
         HDC dc;
         afxSurface dout = wnd->m.surfaceDout;
         AvxCallSurfaceEndpoint(dout, 0, &dc);
-        avxRange const resolution = { GetDeviceCaps(dc, HORZRES), GetDeviceCaps(dc, VERTRES), GetDeviceCaps(dc, PLANES) };
+        avxExtent const resolution = { GetDeviceCaps(dc, HORZRES), GetDeviceCaps(dc, VERTRES), GetDeviceCaps(dc, PLANES) };
         afxReal64 physAspRatio = AfxFindPhysicalAspectRatio(GetDeviceCaps(dc, HORZSIZE), GetDeviceCaps(dc, VERTSIZE));
         afxReal refreshRate = GetDeviceCaps(dc, VREFRESH);
 
@@ -2240,7 +2240,7 @@ _QOW afxError _QowWndCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
         {
             wnd->m.surfaceDout = dout;
 
-            afxRect rc = { .x = wcfg->x, .y = wcfg->y, .w = wcfg->dout.ccfg.whd.w, .h = wcfg->dout.ccfg.whd.h };
+            afxRect rc = { .x = wcfg->x, .y = wcfg->y, .w = wcfg->dout.ccfg.extent.w, .h = wcfg->dout.ccfg.extent.h };
             rc.w = AFX_MAX(1, rc.w);;
             rc.h = AFX_MAX(1, rc.h);
             AfxAdjustWindow(wnd, disp, dispPort, wnd->m.anchor, &rc);

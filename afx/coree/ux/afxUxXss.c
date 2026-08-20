@@ -97,8 +97,8 @@
      afxWindowConfig wcfg = { 0 };
      wcfg.x = x;
      wcfg.y = y;
-     wcfg.dout.ccfg.whd.w = w;
-     wcfg.dout.ccfg.whd.h = h;
+     wcfg.dout.ccfg.extent.w = w;
+     wcfg.dout.ccfg.extent.h = h;
      AfxConfigureWindow(env, &wcfg, NIL, NIL);
      AfxAcquireWindow(env, &wcfg, &wnd);
      XssPushInstance(vm, 0, wnd);

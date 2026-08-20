@@ -21,10 +21,10 @@
 
 // EXTENT
 
-_AVXINL avxRange AvxMinRange(avxRange const a, avxRange const b)
+_AVXINL avxExtent AvxMinRange(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
-    return (avxRange const)
+    return (avxExtent const)
     { 
         .w = AFX_MIN(a.w, b.w), 
         .h = AFX_MIN(a.h, b.h), 
@@ -32,10 +32,10 @@ _AVXINL avxRange AvxMinRange(avxRange const a, avxRange const b)
     };
 }
 
-_AVXINL avxRange AvxMaxRange(avxRange const a, avxRange const b)
+_AVXINL avxExtent AvxMaxRange(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
-    return (avxRange const)
+    return (avxExtent const)
     {
         .w = AFX_MAX(a.w, b.w), 
         .h = AFX_MAX(a.h, b.h), 
@@ -43,10 +43,10 @@ _AVXINL avxRange AvxMaxRange(avxRange const a, avxRange const b)
     };
 }
 
-_AVXINL avxRange AvxClampRange(avxRange const in, avxRange const min, avxRange const max)
+_AVXINL avxExtent AvxClampRange(avxExtent const in, avxExtent const min, avxExtent const max)
 {
     afxError err = { 0 };
-    return (avxRange const)
+    return (avxExtent const)
     {
         .w = AFX_CLAMP(in.w, min.w, max.w), 
         .h = AFX_CLAMP(in.h, min.h, max.h), 
@@ -54,10 +54,10 @@ _AVXINL avxRange AvxClampRange(avxRange const in, avxRange const min, avxRange c
     };
 }
 
-_AVXINL avxRange AvxLimitRange(avxOrigin const origin, avxRange const extent)
+_AVXINL avxExtent AvxLimitRange(avxOrigin const origin, avxExtent const extent)
 {
     afxError err = { 0 };
-    return (avxRange const)
+    return (avxExtent const)
     {
         .w = AFX_MIN(origin.x, (afxInt)(extent.w - 1)), 
         .h = AFX_MIN(origin.y, (afxInt)(extent.h - 1)), 
@@ -65,7 +65,7 @@ _AVXINL avxRange AvxLimitRange(avxOrigin const origin, avxRange const extent)
     };
 }
 
-_AVXINL afxBool AvxIsRangeEqual(avxRange const whd, avxRange const other)
+_AVXINL afxBool AvxIsRangeEqual(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     return  (whd.w == other.w) || 
@@ -73,7 +73,7 @@ _AVXINL afxBool AvxIsRangeEqual(avxRange const whd, avxRange const other)
             (whd.d == other.d);
 }
 
-_AVXINL afxBool AvxIsRangeLequal(avxRange const whd, avxRange const other)
+_AVXINL afxBool AvxIsRangeLequal(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
@@ -83,7 +83,7 @@ _AVXINL afxBool AvxIsRangeLequal(avxRange const whd, avxRange const other)
                 (whd.d <= other.d)) != 0);
 }
 
-_AVXINL afxBool AvxIsRangeLess(avxRange const whd, avxRange const other)
+_AVXINL afxBool AvxIsRangeLess(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
@@ -93,88 +93,88 @@ _AVXINL afxBool AvxIsRangeLess(avxRange const whd, avxRange const other)
                 (whd.d < other.d)) != 0);
 }
 
-_AVXINL afxBool AvxIsRangeZero(avxRange const whd)
+_AVXINL afxBool AvxIsRangeZero(avxExtent const whd)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
     return (AFX_REAL(0) == (whd.w + whd.h + whd.d));
 }
 
-_AVXINL avxRange AvxAddRange(avxRange const a, avxRange const b)
+_AVXINL avxExtent AvxAddRange(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = a.w + b.w,
         .h = a.h + b.h,
         .d = a.d + b.d
     };
 }
 
-_AVXINL avxRange AvxSubtractRange(avxRange const a, avxRange const b)
+_AVXINL avxExtent AvxSubtractRange(avxExtent const a, avxExtent const b)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = a.w - b.w,
         .h = a.h - b.h,
         .d = a.d - b.d
     };
 }
 
-_AVXINL avxRange AvxDivideRange(avxRange const in, afxUnit div)
+_AVXINL avxExtent AvxDivideRange(avxExtent const in, afxUnit div)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = in.w / div,
         .h = in.h / div,
         .d = in.d / div
     };
 }
 
-_AVXINL avxRange AvxModRange(avxRange const in, afxUnit div)
+_AVXINL avxExtent AvxModRange(avxExtent const in, afxUnit div)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = in.w % div,
         .h = in.h % div,
         .d = in.d % div
     };
 }
 
-_AVXINL avxRange AvxScaleRange(avxRange const in, afxUnit s)
+_AVXINL avxExtent AvxScaleRange(avxExtent const in, afxUnit s)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = in.w * s,
         .h = in.h * s,
         .d = in.d * s
     };
 }
 
-_AVXINL avxRange AvxHalfRange(avxRange const in)
+_AVXINL avxExtent AvxHalfRange(avxExtent const in)
 {
     afxError err = { 0 };
-    return (avxRange const) {
+    return (avxExtent const) {
         .w = AFX_MAX(in.w ? 1 : 0, in.w >> 1),
         .h = AFX_MAX(in.h ? 1 : 0, in.h >> 1),
         .d = AFX_MAX(in.d ? 1 : 0, in.d >> 1)
     };
 }
 
-_AVXINL afxUnit AvxSumRange(avxRange const whd)
+_AVXINL afxUnit AvxSumRange(avxExtent const whd)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
     return whd.w + whd.h + whd.d;
 }
 
-_AVXINL afxUnit AvxMagRange(avxRange const whd)
+_AVXINL afxUnit AvxMagRange(avxExtent const whd)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
     return whd.w * whd.h * whd.d;
 }
 
-_AVXINL afxUnit AvxDotRange(avxRange const whd, avxRange const other)
+_AVXINL afxUnit AvxDotRange(avxExtent const whd, avxExtent const other)
 {
     afxError err = { 0 };
     //AFX_ASSERT(whd);
@@ -182,7 +182,7 @@ _AVXINL afxUnit AvxDotRange(avxRange const whd, avxRange const other)
     return (whd.w * other.w) + (whd.h * other.h) + (whd.d * other.d);
 }
 
-_AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxRange const max)
+_AVXINL avxOrigin AvxClampOrigin(avxOrigin const origin, avxExtent const max)
 {
     afxError err = { 0 };
     return (avxOrigin) {

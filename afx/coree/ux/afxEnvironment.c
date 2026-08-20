@@ -318,13 +318,14 @@ _AUX afxBool AfxGetCursorPlacement(afxUnit seat, afxWindow wnd, afxBool onFrame,
 
             if (onFrame)
             {
-                rslt = AfxIntersectRects(rc, &cursRect, &frameRc);
+                *rc = AfxGetIntersectedRect(&cursRect, &frameRc);
             }
             else
             {
-                rslt = AfxIntersectRects(rc, &cursRect, &surfaceRc);
+                *rc = AfxGetIntersectedRect(&cursRect, &surfaceRc);
             }
         }
+        rslt = !AfxIsRectVoid(rc);
     }
     return rslt;
 }

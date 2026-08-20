@@ -61,9 +61,9 @@ AFX_OBJECT(avxCanvas)
     void*               udd;
 
     avxCanvasFlags      flags;
-    avxRange            whdMin; // when a user-provided raster are attached
-    avxRange            whdMax; // when a user-provided raster are attached
-    avxRange            whd; // D is layered
+    avxExtent           extentMin; // when a user-provided raster are attached
+    avxExtent           extentMax; // when a user-provided raster are attached
+    avxExtent           extent; // D is layered
     afxUnit             lodCnt; // multisampling level (2^lodCnt)
     afxUnit             linkedCnt;
     afxUnit             rigCnt; // immutable

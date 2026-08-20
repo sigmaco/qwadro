@@ -1105,7 +1105,7 @@ _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
         afxDrawSystem dsys = dpu->m.dsys;
         AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-        avxRange whd;
+        avxExtent whd;
         avxCanvas canv;
         AvxGetSurfaceCanvas(dout, outBufIdx, &canv);
         whd = AvxGetCanvasExtent(canv, (avxOrigin) { 0 });

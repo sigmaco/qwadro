@@ -106,7 +106,8 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
-    rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
+    avxExtent extent = AvxGetRasterExtent(ras, rgn.lodIdx);
+    rgn.extent = extent;
 
     afxError err2 = AfxChangeWindowIcon(wnd, ras, &rgn);
 
@@ -188,8 +189,8 @@ _AUX afxError AfxLoadWindowCursor(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
-    rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
-
+    avxExtent extent = AvxGetRasterExtent(ras, rgn.lodIdx);
+    rgn.extent = extent;
     afxError err2 = AfxChangeWindowCursor(wnd, ras, &rgn, 0, 0);
 
     if (err2 && (afxError_UNSUPPORTED != err2))
@@ -343,7 +344,9 @@ _AUX afxError AfxRequestWindowCursor(afxWindow wnd, afxRect const* confinement, 
     else
     {
         // Possibly replace Union with Intersection if that's more appropriate.
-        if (AfxIntersectRects(&wnd->cursConfinRect, &wnd->surfaceRc, confinement))
+        wnd->cursConfinRect = AfxGetIntersectedRect(&wnd->surfaceRc, confinement);
+
+        if (!AfxIsRectVoid(&wnd->cursConfinRect))
         {
             wnd->cursConfined = TRUE;
         }
@@ -596,8 +599,7 @@ _AUX afxError AfxAdjustWindowBounds(afxWindow wnd, afxRect const* min, afxRect c
     if (max)
         wnd->frameRcMax = *max;
 
-    afxRect rc;
-    AfxClampRect(&rc, &wnd->frameRc, &wnd->frameRcMin, &wnd->frameRcMax);
+    afxRect rc = AfxGetClampedRect(&wnd->frameRc, &wnd->frameRcMin, &wnd->frameRcMax);
 
     // FIXME: Should call AfxAdjustWindow whether new bounds constrain the current surface area.
 }
@@ -671,7 +673,7 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
         err2 = err;
     }
 
-    AFX_ASSERT(AfxDoesRectContain(&wnd->frameRc, &wnd->surfaceRc));
+    AFX_ASSERT(AfxRectContains(&wnd->frameRc, &wnd->surfaceRc));
 
 #if  0
     afxSurface frameDout = wnd->frameDout;
@@ -990,7 +992,7 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
         cfg2.eventCb = AFX_WND_EVENT_HANDLER;
 
     afxDesktop* dwm = &env->dwm;
-    afxRect rc = { .w = cfg2.dout.ccfg.whd.w,.h = cfg2.dout.ccfg.whd.h };
+    afxRect rc = { .w = cfg2.dout.ccfg.extent.w,.h = cfg2.dout.ccfg.extent.h };
 
     if (origin)
     {
@@ -1011,8 +1013,8 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
 
     cfg2.x = rc.x;
     cfg2.y = rc.y;
-    cfg2.dout.ccfg.whd.w = rc.w;
-    cfg2.dout.ccfg.whd.h = rc.h;
+    cfg2.dout.ccfg.extent.w = rc.w;
+    cfg2.dout.ccfg.extent.h = rc.h;
 
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg2.dout.dsys);
 
@@ -1024,7 +1026,7 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
     AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
 
     afxError err2;
-    if (err2 = AvxConfigureSurface(dpy, &cfg2.dout))
+    if ((err2 = AvxConfigureSurface(dpy, &cfg2.dout)))
     {
         AfxThrowError();
         err = err2;

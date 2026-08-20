@@ -88,8 +88,8 @@ _AMX afxError _AmxVidCtorCb(amxVideo vid, void** args, afxUnit invokeNo)
 
     avxCanvas canv;
     avxCanvasConfig ccfg = { 0 };
-    ccfg.whd.w = vid->maxCodedWh[0];
-    ccfg.whd.h = vid->maxCodedWh[1];
+    ccfg.extent.w = vid->maxCodedWh[0];
+    ccfg.extent.h = vid->maxCodedWh[1];
     ccfg.udd = vid;
     ccfg.tag = AFX_STRING("video");
     AvxConfigureCanvas(dsys, &ccfg);

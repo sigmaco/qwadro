@@ -114,7 +114,7 @@ AFX_OBJECT(afxSurface)
     afxObject           endpointNotifyObj; // must ensure life of draw output
     avxPresentNotifier  endpointNotifyFn;
 
-    avxRange            resolution; // Screen resolution. Absolute extent available.
+    avxExtent            resolution; // Screen resolution. Absolute extent available.
     afxReal64           wrOverHr; // (usually screen) resolution w/h
     afxReal64           wpOverHp; // physical w/h
     afxReal             refreshRate;

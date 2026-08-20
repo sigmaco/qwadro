@@ -57,9 +57,9 @@ _AVX afxError _AvxDpuClearCanvas(avxDpu* dpu, afxUnit binCnt, afxUnit const bins
             rgn.origin.x = area->area.x;
             rgn.origin.y = area->area.y;
             rgn.origin.z = (afxInt)area->baseLayer;
-            rgn.whd.w = area->area.w;
-            rgn.whd.h = area->area.h;
-            rgn.whd.d = area->layerCnt;
+            rgn.extent.w = area->area.w;
+            rgn.extent.h = area->area.h;
+            rgn.extent.d = area->layerCnt;
 
             avxFormat fmt = AvxGetRasterFormat(ras);
             avxRasterArrangement lay = { 0 };
@@ -96,7 +96,7 @@ _AVX void _AvxDpuCommenceDrawScope(avxDpu* dpu, avxCanvas canv, afxRect const* a
 
     afxLayeredRect areaMax;
     AvxGetCanvasExtent(canv, NIL, &areaMax);
-    avxRange canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
+    avxExtent canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
 
     afxUnit maxColSurCnt;
     afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };
