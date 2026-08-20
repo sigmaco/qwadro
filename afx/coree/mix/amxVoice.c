@@ -429,7 +429,7 @@ _AMX afxError AmxQueryVoiceState(amxVoice vox, amxBuffer* buf, afxUnit* bufQueue
     AFX_ASSERT_OBJECTS(afxFcc_VOX, 1, &vox);
 
     *buf = vox->src.buf;
-    *bufQueued = AfxLoadAtom32(&vox->bufQue.readPosn);
+    *bufQueued = AfxAtomicLoad32(&vox->bufQue.readPosn);
     *samplesPlayed = vox->samplesPlayed;
 
     return err;

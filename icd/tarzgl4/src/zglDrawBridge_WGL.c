@@ -1190,7 +1190,7 @@ _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
         DpuDraw(dpu, &dic);
 
         DpuConcludeDrawScope(dpu);
-        AfxDecAtom32(&dout->m.submCnt);
+        AfxAtomicDec32(&dout->m.submCnt);
     }
 
     return err;

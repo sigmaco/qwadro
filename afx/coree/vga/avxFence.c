@@ -38,7 +38,7 @@ _AVX afxUnit64 _AvxFencSW_GetValueCb(avxFence fenc)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
 
-    afxUnit64 value = (afxUnit64)AfxLoadAtom64(&fenc->value);
+    afxUnit64 value = (afxUnit64)AfxAtomicLoad64(&fenc->value);
 
     return value;
 }
@@ -63,12 +63,12 @@ _AVX afxError _AvxFencSW_SignalCb(avxFence fenc, afxUnit64 value)
 
     if (fenc->flags & avxFenceFlag_PROGRESSIVE)
     {
-        afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->value);
+        afxUnit64 curVal = (afxUnit64)AfxAtomicLoad64(&fenc->value);
 
         if (value > curVal)
         {
-            AfxStoreAtom64(&fenc->value, (afxInt64)value);
-            //AfxIncAtom64(&fenc->value);
+            AfxAtomicStore64(&fenc->value, (afxInt64)value);
+            //AfxAtomicInc64(&fenc->value);
         }
         else
         {
@@ -77,7 +77,7 @@ _AVX afxError _AvxFencSW_SignalCb(avxFence fenc, afxUnit64 value)
     }
     else
     {
-        AfxStoreAtom64(&fenc->value, (afxInt64)value);
+        AfxAtomicStore64(&fenc->value, (afxInt64)value);
     }
     return err;
 }
@@ -220,10 +220,10 @@ _AVX afxError _AvxDsysSW_WaitForFencesCb(afxDrawSystem dsys, afxUnit64 timeout, 
                 {
                     AFX_ASSERT(values);
                     // vkWaitSemaphores waits until the semaphore value is greater than or equal to the specified value.
-                    if (values[i] <= (afxUnit64)AfxLoadAtom64(&dfen->value))
+                    if (values[i] <= (afxUnit64)AfxAtomicLoad64(&dfen->value))
                         return err;
                 }
-                else if (AfxLoadAtom32(&dfen->signaled))
+                else if (AfxAtomicLoad32(&dfen->signaled))
                     return err;
             }
 
@@ -259,10 +259,10 @@ _AVX afxError _AvxDsysSW_WaitForFencesCb(afxDrawSystem dsys, afxUnit64 timeout, 
                 {
                     AFX_ASSERT(values);
                     // vkWaitSemaphores waits until the semaphore value is greater than or equal to the specified value.
-                    if (values[i] <= (afxUnit64)AfxLoadAtom64(&dfen->value))
+                    if (values[i] <= (afxUnit64)AfxAtomicLoad64(&dfen->value))
                         break;
                 }
-                else if (AfxLoadAtom32(&dfen->signaled))
+                else if (AfxAtomicLoad32(&dfen->signaled))
                     break;
 
                 if (timeout)
@@ -320,7 +320,7 @@ _AVX afxError AvxResetFences(afxDrawSystem dsys, afxUnit cnt, avxFence const fen
         // Applications looking for reset behavior should create a new instance of the synchronization primitive instead.
         if (!(dfen->flags & avxFenceFlag_PROGRESSIVE))
         {
-            AfxStoreAtom64(&dfen->signaled, 0);
+            AfxAtomicStore64(&dfen->signaled, 0);
         }
     }
 #endif

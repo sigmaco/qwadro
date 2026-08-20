@@ -65,7 +65,7 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
     avxFence fenc;
     AFX_ITERATE_CHAIN_B2F(fenc, onSignalChain, &dpu->fenceSignalChain)
     {
-        GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+        GLsync glHandle = AfxAtomicLoadPtr(&fenc->glHandleAtom);
         AFX_ASSERT(gl->IsSync(glHandle));
 
         // To block all CPU operations until a sync object is signaled, you call this function:
@@ -84,8 +84,8 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
             // the sync object was signaled before the function was called.
             AfxPopLink(&fenc->onSignalChain);
 #if 0
-            AfxStoreAtom32(&fenc->m.signaled, 1);
-            //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+            AfxAtomicStore32(&fenc->m.signaled, 1);
+            //AfxAtomicStore64(&fenc->m.value, fenc->nextValueToSignal);
             SetEvent(fenc->hEventW32);
 #else
             _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
@@ -98,8 +98,8 @@ _ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu)
             // the sync object was signaled within the given timeout period.
             AfxPopLink(&fenc->onSignalChain);
 #if 0
-            AfxStoreAtom32(&fenc->m.signaled, 1);
-            //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+            AfxAtomicStore32(&fenc->m.signaled, 1);
+            //AfxAtomicStore64(&fenc->m.value, fenc->nextValueToSignal);
             SetEvent(fenc->hEventW32);
 #else
             _ZglFencSignalOnHostCb(fenc, fenc->nextValueToSignal);
@@ -157,7 +157,7 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     afxBool reallyWait = FALSE;
 
-    afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+    afxUnit64 curVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value);
 
     if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
     {
@@ -172,7 +172,7 @@ _ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     if (reallyWait)
     {
-        GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+        GLsync glHandle = AfxAtomicLoadPtr(&fenc->glHandleAtom);
 
         if (glHandle)
         {
@@ -212,13 +212,13 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
     glVmt const* gl = dpu->gl;
 
 #if 0
-    afxUnit64 oldVal = (afxUnit64)AfxExchangeAtom64(&fenc->m.value, value);
+    afxUnit64 oldVal = (afxUnit64)AfxAtomicExchange64(&fenc->m.value, value);
     AFX_ASSERT(oldVal <= value);
     if (value > oldVal)
     {
         GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
         AFX_ASSERT(gl->IsSync(glHandle));
-        glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+        glHandle = AfxAtomicExchangePtr(&fenc->glHandleAtom, glHandle);
         gl->Flush(); // required so the other context sees the fence.
         if (glHandle)
         {
@@ -231,13 +231,13 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
     }
 #if 0
     afxUnit64 oldVal = 0;
-    if (value > (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+    if (value > (oldVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value)))
     {
-        if (!AfxCasAtom64(&fenc->m.value, &oldVal, value))
+        if (!AfxAtomicCas64(&fenc->m.value, &oldVal, value))
             AfxThrowError();
         GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
         AFX_ASSERT(gl->IsSync(glHandle));
-        glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+        glHandle = AfxAtomicExchangePtr(&fenc->glHandleAtom, glHandle);
         gl->Flush(); // required so the other context sees the fence.
         //ResetEvent(fenc->hEventW32);
 
@@ -260,7 +260,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
     afxBool reallyFence = FALSE;
 
-    afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+    afxUnit64 curVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value);
 
     if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
     {
@@ -280,7 +280,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 
         GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
         AFX_ASSERT(gl->IsSync(glHandle));
-        glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+        glHandle = AfxAtomicExchangePtr(&fenc->glHandleAtom, glHandle);
 
         // Flush() is required so the other context sees the fence immediately.
         gl->Flush();
@@ -301,7 +301,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
     }
     else
     {
-        GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+        GLsync glHandle = AfxAtomicLoadPtr(&fenc->glHandleAtom);
 
         if (glHandle)
         {
@@ -322,8 +322,8 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
             {
                 // the sync object was signaled before the function was called.
 #if 0
-                AfxStoreAtom32(&fenc->m.signaled, 1);
-                //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+                AfxAtomicStore32(&fenc->m.signaled, 1);
+                //AfxAtomicStore64(&fenc->m.value, fenc->nextValueToSignal);
                 SetEvent(fenc->hEventW32);
 #else
                 if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
@@ -335,8 +335,8 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
             {
                 // the sync object was signaled within the given timeout period.
 #if 0
-                AfxStoreAtom32(&fenc->m.signaled, 1);
-                //AfxStoreAtom64(&fenc->m.value, fenc->nextValueToSignal);
+                AfxAtomicStore32(&fenc->m.signaled, 1);
+                //AfxAtomicStore64(&fenc->m.value, fenc->nextValueToSignal);
                 SetEvent(fenc->hEventW32);
 #else
                 if ((value >= curVal) || (!(fenc->m.flags & avxFenceFlag_PROGRESSIVE)))
@@ -379,7 +379,7 @@ _ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc, afxUnit64 value)
 _ZGL afxError _ZglResetFence__(zglDpu* dpu, avxFence fenc)
 {
     afxError err = { 0 };
-    AfxStoreAtom32(&fenc->m.signaled, 0);
+    AfxAtomicStore32(&fenc->m.signaled, 0);
     ResetEvent(fenc->hEventW32);
     return err;
 }
@@ -417,7 +417,7 @@ _ZGL afxError _ZglWaitFenc___(afxDrawSystem dsys, afxUnit64 timeout, afxBool wai
             case GL_ALREADY_SIGNALED:
             {
                 // the sync object was signaled before the function was called.
-                AfxStoreAtom32(&fenc->m.signaled, 1);
+                AfxAtomicStore32(&fenc->m.signaled, 1);
                 SetEvent(fenc->hEventW32);
                 break;
             }
@@ -430,7 +430,7 @@ _ZGL afxError _ZglWaitFenc___(afxDrawSystem dsys, afxUnit64 timeout, afxBool wai
             case GL_CONDITION_SATISFIED:
             {
                 // the sync object was signaled within the given timeout period.
-                AfxStoreAtom32(&fenc->m.signaled, 1);
+                AfxAtomicStore32(&fenc->m.signaled, 1);
                 SetEvent(fenc->hEventW32);
                 break;
             }
@@ -484,7 +484,7 @@ _ZGL afxError _ZglFencWaitOnHostCb(avxFence fenc, afxUnit64 value, afxUnit64 tim
     afxBool keep = TRUE;
     while (keep)
     {
-        afxUnit64 curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+        afxUnit64 curVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value);
 
         if (fenc->m.flags & avxFenceFlag_PROGRESSIVE)
         {
@@ -507,7 +507,7 @@ _ZGL afxError _ZglFencWaitOnHostCb(avxFence fenc, afxUnit64 value, afxUnit64 tim
                     
                 }
 
-                curVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value);
+                curVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value);
 
                 if (value > curVal)
                 {
@@ -565,8 +565,8 @@ _ZGL afxError _ZglFencResetOnHostCb(avxFence const fenc)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_FENC, 1, &fenc);
     AfxThrowError();
-    AfxStoreAtom32(&fenc->m.signaled, 0);
-    AfxStoreAtom64(&fenc->m.value, 0);
+    AfxAtomicStore32(&fenc->m.signaled, 0);
+    AfxAtomicStore64(&fenc->m.value, 0);
     ResetEvent(fenc->hEventW32);
 
     return err;
@@ -580,15 +580,15 @@ _ZGL afxError _ZglFencSignalOnHostCb(avxFence fenc, afxUnit64 value)
     */
     afxError err = { 0 };
 #if 0
-    afxUnit64 oldVal = (afxUnit64)AfxExchangeAtom64(&fenc->m.value, value);
+    afxUnit64 oldVal = (afxUnit64)AfxAtomicExchange64(&fenc->m.value, value);
     AFX_ASSERT(oldVal <= value);
     if (value > oldVal)
     {
-        AfxStoreAtom32(&fenc->m.signaled, 1);
+        AfxAtomicStore32(&fenc->m.signaled, 1);
         SetEvent(fenc->hEventW32);
     }
 #endif
-    //AfxIncAtom64(&fenc->m.value);
+    //AfxAtomicInc64(&fenc->m.value);
     _AvxFencSW_SignalCb(fenc, value);
     SetEvent(fenc->hEventW32);
 

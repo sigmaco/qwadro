@@ -1198,12 +1198,12 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
 
         for (i = 0; i < AfxGetArrayPop(&fdrop.files); i++)
         {
-            AfxReportMessage("%s", *(afxChar const**)AfxGetArrayUnit(&fdrop.files, i));
+            AfxReportMessage("%s", *(afxChar const**)AfxGetAtArray(&fdrop.files, i));
         }
 
         for (i = 0; i < AfxGetArrayPop(&fdrop.files); i++)
         {
-            AfxDeallocate(mmu, *(afxChar**)AfxGetArrayUnit(&fdrop.files, i));
+            AfxDeallocate(mmu, *(afxChar**)AfxGetAtArray(&fdrop.files, i));
         }
 
         AfxEmptyArray(&fdrop.files, FALSE, FALSE);

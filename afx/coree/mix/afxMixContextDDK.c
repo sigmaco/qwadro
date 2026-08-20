@@ -45,12 +45,12 @@ _AMX afxError _AmxMctxExhaustCb(afxMixContext mctx, afxBool freeMem)
             AFX_ASSERT(aux->state != amxContextState_RECORDING);
             AFX_ASSERT(aux->state != amxContextState_PENDING);
 #if 0
-            while (AfxLoadAtom32(&aux->submCnt))
+            while (AfxAtomicLoad32(&aux->submCnt))
             {
                 AfxYield();
             }
 #else
-            if (AfxLoadAtom32(&aux->submCnt))
+            if (AfxAtomicLoad32(&aux->submCnt))
             {
                 ++leftCnt;
                 continue;
@@ -129,12 +129,12 @@ _AMX afxError _AmxMctxRecycleCb(afxMixContext mctx, afxBool freeRes)
     // Should wait or return?
     // On the next roll, it should be recycled anyway.
 #if 0
-    while (AfxLoadAtom32(&cmdb->submCnt))
+    while (AfxAtomicLoad32(&cmdb->submCnt))
     {
         AfxYield();
     }
 #else
-    if (AfxLoadAtom32(&mctx->submCnt))
+    if (AfxAtomicLoad32(&mctx->submCnt))
     {
         AfxThrowError();
         return afxError_BUSY;

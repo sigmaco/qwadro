@@ -253,12 +253,12 @@ _AFX afxError _AfxCtxExhaustCb(afxIoContext ctx, afxBool freeMem)
             AFX_ASSERT(aux->state != afxContextState_RECORDING);
             AFX_ASSERT(aux->state != afxContextState_PENDING);
 #if 0
-            while (AfxLoadAtom32(&aux->submCnt))
+            while (AfxAtomicLoad32(&aux->submCnt))
             {
                 AfxYield();
             }
 #else
-            if (AfxLoadAtom32(&aux->submCnt))
+            if (AfxAtomicLoad32(&aux->submCnt))
             {
                 ++leftCnt;
                 continue;
@@ -333,12 +333,12 @@ _AFX afxError _AfxCtxRecycleCb(afxIoContext ctx, afxBool freeRes)
     // Should wait or return?
     // On the next roll, it should be recycled anyway.
 #if 0
-    while (AfxLoadAtom32(&cmdb->submCnt))
+    while (AfxAtomicLoad32(&cmdb->submCnt))
     {
         AfxYield();
     }
 #else
-    if (AfxLoadAtom32(&ctx->submCnt))
+    if (AfxAtomicLoad32(&ctx->submCnt))
     {
         AfxThrowError();
         return afxError_BUSY;
@@ -582,7 +582,7 @@ _AFX afxError AfxAcquireIoContexts(afxIoSystem iom, afxIoContext pool, afxContex
 
             AfxMakeChain(&aux->commands, aux);
 
-            AFX_ASSERT(AfxLoadAtom32(&aux->submCnt) == 0);
+            AFX_ASSERT(AfxAtomicLoad32(&aux->submCnt) == 0);
             aux->submCnt = 0;
             aux->submQueMask = NIL;
 

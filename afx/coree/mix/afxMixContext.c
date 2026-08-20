@@ -358,7 +358,7 @@ _AMX afxError AmxAcquireMixContexts(afxMixSystem msys, afxMixContext pool, amxCo
 
             AfxMakeChain(&aux->commands, aux);
 
-            AFX_ASSERT(AfxLoadAtom32(&aux->submCnt) == 0);
+            AFX_ASSERT(AfxAtomicLoad32(&aux->submCnt) == 0);
             aux->submCnt = 0;
             aux->submQueMask = NIL;
 

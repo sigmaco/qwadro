@@ -269,7 +269,7 @@ _AVX afxError AvxOpenTxd(afxDrawSystem dsys, afxUri const* url, avxTxd* dict)
 
         for (afxUnit i = 0; i < files.pop; i++)
         {
-            afxString32* str = AfxGetArrayUnit(&files, i);
+            afxString32* str = AfxGetAtArray(&files, i);
             AvxAddTextures(txd, 1, &str->s);
         }
 

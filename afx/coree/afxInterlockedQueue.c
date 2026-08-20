@@ -49,7 +49,7 @@ _AFXINL afxError AfxMakeInterlockedQueue(afxInterlockedQueue* ique, afxUnit unit
     for (afxUnit i = 0; i < cap; ++i)
     {
         //ique->entries[i].value = TDEFAULT;
-        AfxStoreAtom32(&ique->entrySeqIdx[i], i);
+        AfxAtomicStore32(&ique->entrySeqIdx[i], i);
     }
 
     if (AfxAllocate(AfxHere(), cap * unitSiz, 0, (void**)&ique->entryValue)) AfxThrowError();
@@ -98,24 +98,24 @@ _AFXINL afxBool AfxPushInterlockedQueue(afxInterlockedQueue* ique, void* src)
     AFX_ASSERT(src);
 
     afxUnit32 const queIdxMask = ique->queIdxMask;
-    afxInt32 writePosn = AfxLoadAtom32(&ique->writePosn);
+    afxInt32 writePosn = AfxAtomicLoad32(&ique->writePosn);
     afxInt32 seqDelta;
 
     while (1)
     {
         // Checks if the current write slot is available (seqDelta == 0).
         // See where we are in the sequence, relative to where we can write data.
-        seqDelta = AfxLoadAtom32(&ique->entrySeqIdx[writePosn & queIdxMask]) - writePosn;
+        seqDelta = AfxAtomicLoad32(&ique->entrySeqIdx[writePosn & queIdxMask]) - writePosn;
         
         if (0 != seqDelta) 
         {
             if (seqDelta < 0)
                 return FALSE; // FULL; we would have over-enqueued if we tried to write the position in. Return false.
             
-            writePosn = AfxLoadAtom32(&ique->writePosn); // RETRY: if it didn't work, reload writePos: someone else must have written to the sequence and we need to get caught up
+            writePosn = AfxAtomicLoad32(&ique->writePosn); // RETRY: if it didn't work, reload writePos: someone else must have written to the sequence and we need to get caught up
         }
         // CAS ensures only one producer advances the writePosn.
-        else if (AfxCasAtom32(&ique->writePosn, &writePosn, writePosn + 1))
+        else if (AfxAtomicCas32(&ique->writePosn, &writePosn, writePosn + 1))
             break; // if we're in the right spot, and we can successfully write an updated write position, break out and write the handle into the queue
     }
 
@@ -124,7 +124,7 @@ _AFXINL afxBool AfxPushInterlockedQueue(afxInterlockedQueue* ique, void* src)
     // Slot is marked with entrySeqIdx = writePosn + 1.
     // Advance the sequence by one so that it can be dequeued
     AfxCopy(&ique->entryValue[(writePosn & queIdxMask) * ique->unitSiz], src, ique->unitSiz);
-    AfxStoreAtom32(&ique->entrySeqIdx[writePosn & queIdxMask], writePosn + 1);
+    AfxAtomicStore32(&ique->entrySeqIdx[writePosn & queIdxMask], writePosn + 1);
     return TRUE;
 }
 
@@ -135,23 +135,23 @@ _AFXINL afxBool AfxPopInterlockedQueue(afxInterlockedQueue* ique, void* dst)
     AFX_ASSERT(dst);
 
     afxInt32 const queIdxMask = ique->queIdxMask;
-    afxInt32 readPosn = AfxLoadAtom32(&ique->readPosn);
+    afxInt32 readPosn = AfxAtomicLoad32(&ique->readPosn);
     afxInt32 seqDelta;
 
     while (1)
     {
         // Waits for the slot to be ready for reading (seqDelta == 0).
         // See where we are in the sequence relative to where we can write data.
-        seqDelta = AfxLoadAtom32(&ique->entrySeqIdx[readPosn & queIdxMask]) - (readPosn + 1);
+        seqDelta = AfxAtomicLoad32(&ique->entrySeqIdx[readPosn & queIdxMask]) - (readPosn + 1);
 
         if (0 != seqDelta)
         {
             if (seqDelta < 0)
                 return FALSE; // EMPTY: if an entry has yet to be written, bail out.
             
-            readPosn = AfxLoadAtom32(&ique->readPosn); // RETRY: if it didn't work, reload readPos
+            readPosn = AfxAtomicLoad32(&ique->readPosn); // RETRY: if it didn't work, reload readPos
         }
-        else if (AfxCasAtom32(&ique->readPosn, &readPosn, readPosn + 1)) 
+        else if (AfxAtomicCas32(&ique->readPosn, &readPosn, readPosn + 1)) 
             break; // if we're in the right spot, and we can successfully write an updated read position, break out and read the entry
     }
 
@@ -159,7 +159,7 @@ _AFXINL afxBool AfxPopInterlockedQueue(afxInterlockedQueue* ique, void* dst)
     // Marks the slot as reusable by setting entrySeqIdx = readPosn + queIdxMask + 1.
     // Update the acceptable sequence value for this entry
     AfxCopy(dst, &ique->entryValue[(readPosn & queIdxMask) * ique->unitSiz], ique->unitSiz);
-    AfxStoreAtom32(&ique->entrySeqIdx[readPosn & queIdxMask], readPosn + ique->queIdxMask + 1);
+    AfxAtomicStore32(&ique->entrySeqIdx[readPosn & queIdxMask], readPosn + ique->queIdxMask + 1);
     return TRUE;
 }
 
@@ -167,8 +167,8 @@ _AFXINL afxBool AfxIsInterlockedQueueEmpty(afxInterlockedQueue* ique)
 {
     afxError err = { 0 };
     AFX_ASSERT(ique);
-    afxInt32 readPosn = AfxLoadAtom32(&ique->readPosn);
-    afxInt32 seqDelta = AfxLoadAtom32(&ique->entrySeqIdx[readPosn & ique->queIdxMask]) - (readPosn + 1);
+    afxInt32 readPosn = AfxAtomicLoad32(&ique->readPosn);
+    afxInt32 seqDelta = AfxAtomicLoad32(&ique->entrySeqIdx[readPosn & ique->queIdxMask]) - (readPosn + 1);
     // Returns TRUE if the next read slot is not yet ready.
     return seqDelta < 0;
 }

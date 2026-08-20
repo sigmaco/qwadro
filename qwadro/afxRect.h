@@ -114,12 +114,12 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRect)
     // the rectangle origin.
     //avxOrigin2 origin;
     // the X and Y origins, respectively.
-    afxInt x, y;
+    afxInt32 x, y;
     
     // the rectangle extent.
     //avxRange2 extent;
     // The width and height of the represented area, respectively.
-    afxUnit w, h;
+    afxUnit32 w, h;
 };
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxLayeredRect)
@@ -136,8 +136,10 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxLayeredRect)
 };
 
 #define AFX_RECT(x_, y_, w_, h_) \
-    (afxRect){  .x = (afxInt)(x_), .y = (afxInt)(y_), \
-                .w = (afxUnit)(w_), .h = (afxUnit)(h_) }
+    (afxRect){  .x = (afxInt32)(x_), \
+                .y = (afxInt32)(y_), \
+                .w = (afxUnit32)(w_), \
+                .h = (afxUnit32)(h_) }
 
 #define AFX_RECT_ZERO \
     AFX_RECT(0, 0, 0, 0)
@@ -149,9 +151,12 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxLayeredRect)
     AFX_RECT(AFX_I32_MAX, AFX_I32_MAX, AFX_U32_MAX, AFX_U32_MAX)
 
 #define AFX_LAYERED_RECT(x_, y_, w_, h_, z_, d_) \
-    (afxLayeredRect){   .area.x = (afxInt)(x_), .area.y = (afxInt)(y_), \
-                        .area.w = (afxUnit)(w_), .area.h = (afxUnit)(h_), \
-                        .baseLayer = (z_), .layerCnt = (d_) }
+    (afxLayeredRect){   .area.x = (afxInt32)(x_), \
+                        .area.y = (afxInt32)(y_), \
+                        .area.w = (afxUnit32)(w_), \
+                        .area.h = (afxUnit32)(h_), \
+                        .baseLayer = (afxUnit32)(z_), \
+                        .layerCnt = (afxUnit32)(d_) }
 
 #define AFX_LAYERED_RECT_ZERO \
     AFX_LAYERED_RECT(0, 0, 0, 0, 0, 0)

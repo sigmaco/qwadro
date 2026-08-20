@@ -694,14 +694,14 @@ _AMX afxError _AmxMpuRollMixContexts(amxMpu* mpu, afxMixContext mctx)
     {
     case amxContextState_PENDING:
     {
-        AfxIncAtom32(&mctx->submCnt);
+        AfxAtomicInc32(&mctx->submCnt);
         mctx->state = amxContextState_INTERNAL_EXECUTING;
         break;
     }
     case amxContextState_INTERNAL_EXECUTING:
     {
         AFX_ASSERT((mctx->cmdFlags & avxCmdFlag_CONCURRENT));
-        AfxIncAtom32(&mctx->submCnt);
+        AfxAtomicInc32(&mctx->submCnt);
         break;
     }
     default:
@@ -764,7 +764,7 @@ _AMX afxError _AmxMpuRollMixContexts(amxMpu* mpu, afxMixContext mctx)
     {
     case amxContextState_INTERNAL_EXECUTING:
     {
-        if (0 == AfxDecAtom32(&mctx->submCnt))
+        if (0 == AfxAtomicDec32(&mctx->submCnt))
         {
             if (mctx->cmdFlags & amxCmdFlag_ONCE)
             {

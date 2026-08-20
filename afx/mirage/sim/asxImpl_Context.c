@@ -119,7 +119,7 @@ _ASX afxError _AsxSpuRollContext(asxSpu* spu, arxContext ctx)
         ctx->state = asxContextState_EXECUTABLE;
     }
 
-    AfxDecAtom32(&ctx->submCnt);
+    AfxAtomicDec32(&ctx->submCnt);
 #if 0
     if (err || ctx->disposable)
     {

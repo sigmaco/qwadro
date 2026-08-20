@@ -401,7 +401,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRema
                 iorp->Remap.mapOps[i].placeholder = map->placeholder;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }
@@ -431,7 +431,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRema
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }

@@ -39,7 +39,7 @@ _AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresent
         afxSurface dout = pres->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-        AfxIncAtom32(&dout->submCnt);
+        AfxAtomicInc32(&dout->submCnt);
 
 #if 0
         if (pres->waitOnDpu && pres->dout->ddi->presOnDpuCb)
@@ -93,7 +93,7 @@ _AVX afxError _AvxDquePresentSurfaces(afxDrawQueue dque, afxUnit cnt, avxPresent
             _AvxDoutSwUnlockBufCb(dout, pres->bufIdx);
         }
 
-        AfxDecAtom32(&dout->submCnt);
+        AfxAtomicDec32(&dout->submCnt);
     }
     return err;
 }
@@ -109,7 +109,7 @@ _AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption co
         afxSurface dout = cap->dout;
         AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
 
-        AfxIncAtom32(&dout->submCnt);
+        AfxAtomicInc32(&dout->submCnt);
 #if 0
         if (pres->waitOnDpu && pres->dout->ddi->presOnDpuCb)
         {
@@ -162,7 +162,7 @@ _AVX afxError _AvxDqueScanSurfaces(afxDrawQueue dque, afxUnit cnt, avxCaption co
             _AvxDoutSwUnlockBufCb(dout, cap->bufIdx);
         }
 
-        AfxDecAtom32(&dout->submCnt);
+        AfxAtomicDec32(&dout->submCnt);
     }
     return err;
 }

@@ -764,7 +764,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
         buf->m.storage[0].mapRange = 0;
         buf->m.storage[0].mapFlags = NIL;
     }
-    //AFX_ASSERT(!AfxLoadAtom32(&buf->m.pendingRemap));
+    //AFX_ASSERT(!AfxAtomicLoad32(&buf->m.pendingRemap));
 
     return err;
 }
@@ -1245,7 +1245,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             AFX_ASSERT(buf->m.storage[0].mapRefCnt == 1);
             --buf->m.storage[0].mapRefCnt;
 
-            AfxDecAtom32(&buf->m.storage[0].pendingRemap);
+            AfxAtomicDec32(&buf->m.storage[0].pendingRemap);
             AfxDisposeObjects(1, &buf);
         }
     }
@@ -1313,7 +1313,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             AFX_ASSERT(buf->m.storage[0].mapRefCnt == 0);
             ++buf->m.storage[0].mapRefCnt;
 
-            AfxDecAtom32(&buf->m.storage[0].pendingRemap);
+            AfxAtomicDec32(&buf->m.storage[0].pendingRemap);
             AfxDisposeObjects(1, &buf);
         }
     }

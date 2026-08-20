@@ -314,19 +314,24 @@ _AVX afxError AvxSubmitDrawCommands(afxDrawQueue dque, afxUnit cnt, avxSubmissio
             iorp->Execute.cmdbCnt = 1;
 
             afxDrawContext dctx = subms[i].dctx;
+
+            if (!dctx) continue;
             AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-            AfxReacquireObjects(1, &dctx);
+
             AFX_ASSERT(!(dctx->cmdFlags & avxCmdFlag_INCURRENT));
             
-            if (dctx->state != avxContextState_INTERNAL_EXECUTING)
+            if ((dctx->state != avxContextState_INTERNAL_EXECUTING))
             {
-                if (dctx->state = avxContextState_EXECUTABLE)
+                if (dctx->state == avxContextState_EXECUTABLE)
                     dctx->state = avxContextState_PENDING;
             }
             else
             {
                 AFX_ASSERT(dctx->cmdFlags & avxCmdFlag_CONCURRENT);
             }
+
+            AfxReacquireObjects(1, &dctx);
+            AfxAtomicInc32(&dctx->submCnt);
 
             iorp->Execute.cmdbs[i].dctx = dctx;
 
@@ -550,7 +555,7 @@ _AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufRem
                 iorp->Remap.mapOps[i].placeholder = map->placeholder;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }
@@ -580,7 +585,7 @@ _AVX afxError _AvxDqueRemapBuffers(afxDrawQueue dque, afxUnit mapCnt, _avxBufRem
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }

@@ -37,14 +37,14 @@ _ACX afxError _AcxSpuRollWarpContexts(acxSpu* spu, afxWarpContext sctx)
     {
     case acxContextState_PENDING:
     {
-        AfxIncAtom32(&sctx->submCnt);
+        AfxAtomicInc32(&sctx->submCnt);
         sctx->state = acxContextState_INTERNAL_EXECUTING;
         break;
     }
     case acxContextState_INTERNAL_EXECUTING:
     {
         AFX_ASSERT((sctx->cmdFlags & acxCmdFlag_SHARED));
-        AfxIncAtom32(&sctx->submCnt);
+        AfxAtomicInc32(&sctx->submCnt);
         break;
     }
     default:
@@ -90,7 +90,7 @@ _ACX afxError _AcxSpuRollWarpContexts(acxSpu* spu, afxWarpContext sctx)
     {
     case acxContextState_INTERNAL_EXECUTING:
     {
-        if (0 == AfxDecAtom32(&sctx->submCnt))
+        if (0 == AfxAtomicDec32(&sctx->submCnt))
         {
             if (sctx->cmdFlags & acxCmdFlag_ONCE)
             {

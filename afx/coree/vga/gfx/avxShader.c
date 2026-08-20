@@ -385,7 +385,7 @@ _AVX afxError AvxRecompileShader(avxShader shd, afxUnit crate, afxString const* 
 
         for (afxUnit j = 0; j < slot->resDeclCnt; j++)
         {
-            avxShaderResource const *decl = AfxGetArrayUnit(&fResources, j);
+            avxShaderResource const *decl = AfxGetAtArray(&fResources, j);
             slot->resDecls[j].set = decl->set;
             AFX_ASSERT(AVX_MAX_LIGAMENT_SETS > slot->resDecls[j].set);
             slot->resDecls[j].binding = decl->binding;
@@ -398,14 +398,14 @@ _AVX afxError AvxRecompileShader(avxShader shd, afxUnit crate, afxString const* 
 
         for (afxUnit i = 0; i < slot->inCnt; i++)
         {
-            avxShaderIoChannel* ioBp = AfxGetArrayUnit(&fIns, i);
+            avxShaderIoChannel* ioBp = AfxGetAtArray(&fIns, i);
             slot->ins[i] = *ioBp;
             AfxMakeString16(&slot->ins[i].semantic, &ioBp->semantic.s);
         }
 
         for (afxUnit i = 0; i < slot->outCnt; i++)
         {
-            avxShaderIoChannel* ioBp = AfxGetArrayUnit(&fOuts, i);
+            avxShaderIoChannel* ioBp = AfxGetAtArray(&fOuts, i);
             slot->outs[i] = *ioBp;
             AfxMakeString16(&slot->outs[i].semantic, &ioBp->semantic.s);
         }

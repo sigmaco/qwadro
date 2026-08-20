@@ -41,12 +41,12 @@ _ACX afxError _AcxSctxExhaustCb(afxWarpContext sctx, afxBool freeMem)
             AFX_ASSERT(aux->state != acxContextState_RECORDING);
             AFX_ASSERT(aux->state != acxContextState_PENDING);
 #if 0
-            while (AfxLoadAtom32(&aux->submCnt))
+            while (AfxAtomicLoad32(&aux->submCnt))
             {
                 AfxYield();
             }
 #else
-            if (AfxLoadAtom32(&aux->submCnt))
+            if (AfxAtomicLoad32(&aux->submCnt))
             {
                 ++leftCnt;
                 continue;
@@ -125,12 +125,12 @@ _ACX afxError _AcxSctxRecycleCb(afxWarpContext sctx, afxBool freeRes)
     // Should wait or return?
     // On the next roll, it should be recycled anyway.
 #if 0
-    while (AfxLoadAtom32(&cmdb->submCnt))
+    while (AfxAtomicLoad32(&cmdb->submCnt))
     {
         AfxYield();
     }
 #else
-    if (AfxLoadAtom32(&sctx->submCnt))
+    if (AfxAtomicLoad32(&sctx->submCnt))
     {
         AfxThrowError();
         return afxError_BUSY;

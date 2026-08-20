@@ -303,7 +303,7 @@ _ACX afxError AcxAcquireWarpContexts(afxWarpSystem ssys, afxWarpContext pool, ac
 
             AfxMakeChain(&aux->commands, aux);
 
-            AFX_ASSERT(AfxLoadAtom32(&aux->submCnt) == 0);
+            AFX_ASSERT(AfxAtomicLoad32(&aux->submCnt) == 0);
             aux->submCnt = 0;
             aux->submQueMask = NIL;
 

@@ -52,25 +52,50 @@
 #include "qwadro/afxSystem.h"
 
 #ifndef __e2targa__
-#   ifdef _DEBUG
-#       define AVX DLLIMPORT extern 
-#       define AVXINL DLLIMPORT EMBED
-#   else
-#       define AVX DLLIMPORT extern 
-#       define AVXINL DLLIMPORT EMBED
-#   endif
+#   ifndef AVX
+#       ifdef _DEBUG
+#           define AVX DLLIMPORT extern 
+#       else//_DEBUG
+#           define AVX DLLIMPORT extern 
+#       endif//_DEBUG
+#   endif//AVX
+#   ifndef AVXINL
+#       ifdef _DEBUG
+#           define AVXINL DLLIMPORT EMBED 
+#       else//_DEBUG
+#           define AVXINL DLLIMPORT EMBED 
+#       endif//_DEBUG
+#   endif//AVXINL
+
 #else
-#   ifdef _DEBUG
-#       define _AVX DLLEXPORT
-#       define AVX DLLEXPORT extern 
-#       define _AVXINL DLLEXPORT INLINE
-#       define AVXINL DLLEXPORT EMBED
-#   else
-#       define _AVX DLLEXPORT
-#       define AVX DLLEXPORT extern 
-#       define _AVXINL DLLEXPORT INLINE
-#       define AVXINL DLLEXPORT EMBED
-#   endif
+#   ifndef _AVX
+#       ifdef _DEBUG
+#           define _AVX DLLEXPORT 
+#       else//_DEBUG
+#           define _AVX DLLEXPORT 
+#       endif//_DEBUG
+#   endif//_AVX
+#   ifndef AVX
+#       ifdef _DEBUG
+#           define AVX DLLEXPORT extern 
+#       else//_DEBUG
+#           define AVX DLLEXPORT extern 
+#       endif//_DEBUG
+#   endif//AVX
+#   ifndef _AVXINL
+#       ifdef _DEBUG
+#           define _AVXINL DLLEXPORT INLINE 
+#       else//_DEBUG
+#           define _AVXINL DLLEXPORT INLINE 
+#       endif//_DEBUG
+#   endif//_AVXINL
+#   ifndef AVXINL
+#       ifdef _DEBUG
+#           define AVXINL DLLEXPORT EMBED 
+#       else//_DEBUG
+#           define AVXINL DLLEXPORT EMBED 
+#       endif//_DEBUG
+#   endif//AVXINL
 #endif//__e2draw__
 
 typedef enum avxTopology

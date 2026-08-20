@@ -1192,8 +1192,8 @@ _ARXINL afxUnit ArxAddVertexBiases(arxTriangulation* mshb, afxUnit cnt, afxUnit 
     for (afxUnit i = 0; i < cnt; i++)
     {
         AFX_ASSERT(weight && 1.f >= weight[i]);
-        AfxUpdateArray(&mshb->biases, baseBiasIdx + i, 1, 0, (const arxVertexBias[]) { { .pivotIdx = jntIdx ? jntIdx[i] : 0, .weight = weight ? weight[i] : 1.f } }, sizeof(arxVertexBias));
-        AFX_ASSERT_RANGE(mshb->artCnt, ((arxVertexBias const*)AfxGetArrayUnit(&mshb->biases, baseBiasIdx + i))->pivotIdx, 1);
+        AfxUpdateAtArray(&mshb->biases, baseBiasIdx + i, 1, 0, (const arxVertexBias[]) { { .pivotIdx = jntIdx ? jntIdx[i] : 0, .weight = weight ? weight[i] : 1.f } }, sizeof(arxVertexBias));
+        AFX_ASSERT_RANGE(mshb->artCnt, ((arxVertexBias const*)AfxGetAtArray(&mshb->biases, baseBiasIdx + i))->pivotIdx, 1);
     }
     return baseBiasIdx;
 }

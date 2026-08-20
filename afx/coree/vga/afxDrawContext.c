@@ -101,6 +101,40 @@ _AVX avxService AvxGetCommandAptitude(afxDrawContext dctx, avxService caps)
     return caps ? (dctx->caps & caps) : dctx->caps;
 }
 
+
+_AVXINL afxBool _AvxDctxIsRecurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    return (dctx->cmdFlags & avxCmdFlag_RECURRENT);
+}
+
+_AVXINL afxBool _AvxDctxIsIncurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    return (dctx->cmdFlags & avxCmdFlag_INCURRENT);
+}
+
+_AVXINL afxBool _AvxDctxIsConcurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    return (dctx->cmdFlags & avxCmdFlag_CONCURRENT);
+}
+
 _AVX afxDrawContext AvxGetCommandPool(afxDrawContext dctx)
 {
     afxError err = { 0 };
@@ -261,12 +295,12 @@ _AVX afxError _AvxDctxExhaustCb(afxDrawContext dctx, afxBool freeMem)
             AFX_ASSERT(aux->state != avxContextState_RECORDING);
             AFX_ASSERT(aux->state != avxContextState_PENDING);
 #if 0
-            while (AfxLoadAtom32(&aux->submCnt))
+            while (AfxAtomicLoad32(&aux->submCnt))
             {
                 AfxYield();
             }
 #else
-            if (AfxLoadAtom32(&aux->submCnt))
+            if (AfxAtomicLoad32(&aux->submCnt))
             {
                 ++leftCnt;
                 continue;
@@ -341,12 +375,12 @@ _AVX afxError _AvxDctxRecycleCb(afxDrawContext dctx, afxBool freeRes)
     // Should wait or return?
     // On the next roll, it should be recycled anyway.
 #if 0
-    while (AfxLoadAtom32(&cmdb->submCnt))
+    while (AfxAtomicLoad32(&cmdb->submCnt))
     {
         AfxYield();
     }
 #else
-    if (AfxLoadAtom32(&dctx->submCnt))
+    if (AfxAtomicLoad32(&dctx->submCnt))
     {
         AfxThrowError();
         return afxError_BUSY;
@@ -590,7 +624,7 @@ _AVX afxError AvxAcquireDrawContexts(afxDrawSystem dsys, afxDrawContext pool, av
 
             AfxMakeChain(&aux->commands, aux);
 
-            AFX_ASSERT(AfxLoadAtom32(&aux->submCnt) == 0);
+            AFX_ASSERT(AfxAtomicLoad32(&aux->submCnt) == 0);
             aux->submCnt = 0;
             aux->submQueMask = NIL;
 
@@ -627,6 +661,25 @@ _AVX afxError AvxAcquireDrawContexts(afxDrawSystem dsys, afxDrawContext pool, av
     return err;
 }
 
+_AVX afxError AvxRecycleDrawContext(afxDrawContext dctx, afxBool freeRes)
+{
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
+    AFX_ASSERT(dctx->state != avxContextState_PENDING);
+
+    AFX_ASSERT(dctx->ddi->recycle);
+    if (dctx->ddi->recycle(dctx, freeRes))
+    {
+        AfxThrowError();
+    }
+    else
+    {
+        AFX_ASSERT(dctx->state == avxContextState_INITIAL);
+        AFX_ASSERT(AfxIsChainEmpty(&dctx->commands));
+    }
+    return err;
+}
+
 _AVX afxError AvxRecycleDrawContexts(afxBool freeRes, afxUnit cnt, afxDrawContext contexts[])
 {
     afxError err = { 0 };
@@ -636,18 +689,9 @@ _AVX afxError AvxRecycleDrawContexts(afxBool freeRes, afxUnit cnt, afxDrawContex
         afxDrawContext dctx = contexts[iter];
         if (!dctx) continue;
         AFX_ASSERT_OBJECTS(afxFcc_DCTX, 1, &dctx);
-        AFX_ASSERT(dctx->state != avxContextState_PENDING);
 
-        AFX_ASSERT(dctx->ddi->recycle);
-        if (dctx->ddi->recycle(dctx, freeRes))
-        {
+        if (AfxFailed(AvxRecycleDrawContext(dctx, freeRes)))
             AfxThrowError();
-        }
-        else
-        {
-            AFX_ASSERT(dctx->state == avxContextState_INITIAL);
-            AFX_ASSERT(AfxIsChainEmpty(&dctx->commands));
-        }
     }
     return err;
 }
