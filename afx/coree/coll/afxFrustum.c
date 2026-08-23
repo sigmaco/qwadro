@@ -25,19 +25,19 @@
 #include "qwadro/math/afxInterpolation.h"
 #include "qwadro/math/afxMultiplication.h"
 
-_AFXINL void AfxGetFrustumCorners(afxFrustum* f, afxV3d vertices[AFX_NUM_BOX_CORNERS])
+_AFXINL void AfxGetFrustumCorners(afxFrustum const f, afxV3d vertices[AFX_NUM_BOX_CORNERS])
 {
     afxError err = { 0 };
     AFX_ASSERT(vertices);
-    AFX_ASSERT(f);
-    AfxCopy(vertices, f->corners, sizeof(f->corners));
+
+    for (afxUnit i = 0; i < AFX_NUM_BOX_CORNERS; i++)
+        vertices[i] = f.corners[i].v3;
 }
 
-_AFXINL void AfxGetFrustumEdges(afxFrustum* f, afxV3d vertices[AFX_NUM_BOX_CORNERS], afxUnit indices[AFX_NUM_BOX_EDGE_VERTICES])
+_AFXINL void AfxGetFrustumEdges(afxFrustum const f, afxV3d vertices[AFX_NUM_BOX_CORNERS], afxUnit indices[AFX_NUM_BOX_EDGE_VERTICES])
 {
     afxError err = { 0 };
     AFX_ASSERT(vertices);
-    AFX_ASSERT(f);
 
     if (vertices)
         AfxGetFrustumCorners(f, vertices);
@@ -56,42 +56,89 @@ _AFXINL void AfxGetFrustumEdges(afxFrustum* f, afxV3d vertices[AFX_NUM_BOX_CORNE
     // 24 indices (12 edges * 2 vertices per edge).
 }
 
-_AFXINL void AfxCopyFrustum(afxFrustum* f, afxFrustum const* in)
+_AFXINL afxBool AfxFrustumCullsSphere(afxFrustum const f, afxSphere const sph)
 {
     afxError err = { 0 };
-    AFX_ASSERT(f);
-    AFX_ASSERT(in);
-    afxUnit i;
 
-    AfxV4dCopy(f->origin, in->origin);
+    for (afxUnit j = 0; j < afxCubeFace_TOTAL; ++j)
+        if (!AfxPlaneTestSphere(f.planes[j], sph))
+            return FALSE;
 
-    AfxCopyPlanes(afxCubeFace_TOTAL, in->planes, f->planes);
-
-    for (i = 0; i < afxCubeCorner_TOTAL; i++)
-        AfxV4dCopy(f->corners[i], in->corners[i]);
+    return TRUE;
 }
 
-_AFXINL afxBool AfxDoesFrustumCullSpheres(afxFrustum const* f, afxUnit cnt, afxSphere const spheres[])
+_AFXINL afxBool AfxFrustumCullsSpheres(afxFrustum const f, afxUnit cnt, afxSphere const spheres[])
 {
     afxError err = { 0 };
     AFX_ASSERT(!cnt || spheres);
-    AFX_ASSERT(f);
 
     for (afxUnit i = 0; i < cnt; ++i)
     {
-        afxSphere const* sph = &spheres[i];
+        afxSphere const sph = spheres[i];
 
         for (afxUnit j = 0; j < afxCubeFace_TOTAL; ++j)
-            if (!AfxPlaneTestSpheres(&f->planes[i], 1, sph))
+            if (!AfxPlaneTestSphere(f.planes[j], sph))
                 return FALSE;
     }
     return TRUE;
 }
 
-_AFXINL afxResult AfxAabbTestPlanes(afxBox const* aabb, afxUnit cnt, afxPlane const planes[])
+_AFXINL afxResult AfxAabbTestPlane(afxBox const aabb, afxPlane const p)
 {
     afxError err = { 0 };
-    AFX_ASSERT2(aabb, planes);
+
+    afxReal minD;
+    afxReal maxD;
+
+    if (p.uvwd.v[0] > 0.0f)
+    {
+        minD = p.uvwd.v[0] * aabb.min.v[0];
+        maxD = p.uvwd.v[0] * aabb.max.v[0];
+    }
+    else
+    {
+        minD = p.uvwd.v[0] * aabb.max.v[0];
+        maxD = p.uvwd.v[0] * aabb.min.v[0];
+    }
+
+    if (p.uvwd.v[1] > 0.0f)
+    {
+        minD += p.uvwd.v[1] * aabb.min.v[1];
+        maxD += p.uvwd.v[1] * aabb.max.v[1];
+    }
+    else
+    {
+        minD += p.uvwd.v[1] * aabb.max.v[1];;
+        maxD += p.uvwd.v[1] * aabb.min.v[1];
+    }
+
+    if (p.uvwd.v[2] > 0.0f)
+    {
+        minD += p.uvwd.v[2] * aabb.min.v[2];
+        maxD += p.uvwd.v[2] * aabb.max.v[2];
+    }
+    else
+    {
+        minD += p.uvwd.v[2] * aabb.max.v[2];
+        maxD += p.uvwd.v[2] * aabb.min.v[2];
+    }
+
+    // What side of the plane
+
+    if (minD >= -p.uvwd.v[AFX_PLANE_DIST])
+        return +1;
+
+    if (maxD <= -p.uvwd.v[AFX_PLANE_DIST])
+        return -1;
+
+    //Intersection
+    return 0;
+}
+
+_AFXINL afxResult AfxAabbTestPlanes(afxBox const aabb, afxUnit cnt, afxPlane const planes[])
+{
+    afxError err = { 0 };
+    AFX_ASSERT(planes);
 
     for (afxUnit i = 0; i < cnt; i++)
     {
@@ -100,60 +147,69 @@ _AFXINL afxResult AfxAabbTestPlanes(afxBox const* aabb, afxUnit cnt, afxPlane co
 
         afxPlane const* p = &planes[i];
 
-        if (p->uvwd[0] > 0.0f)
+        if (p->uvwd.v[0] > 0.0f)
         {
-            minD = p->uvwd[0] * aabb->min[0];
-            maxD = p->uvwd[0] * aabb->max[0];
+            minD = p->uvwd.v[0] * aabb.min.v[0];
+            maxD = p->uvwd.v[0] * aabb.max.v[0];
         }
         else
         {
-            minD = p->uvwd[0] * aabb->max[0];
-            maxD = p->uvwd[0] * aabb->min[0];
+            minD = p->uvwd.v[0] * aabb.max.v[0];
+            maxD = p->uvwd.v[0] * aabb.min.v[0];
         }
 
-        if (p->uvwd[1] > 0.0f)
+        if (p->uvwd.v[1] > 0.0f)
         {
-            minD += p->uvwd[1] * aabb->min[1];
-            maxD += p->uvwd[1] * aabb->max[1];
+            minD += p->uvwd.v[1] * aabb.min.v[1];
+            maxD += p->uvwd.v[1] * aabb.max.v[1];
         }
         else
         {
-            minD += p->uvwd[1] * aabb->max[1];;
-            maxD += p->uvwd[1] * aabb->min[1];
+            minD += p->uvwd.v[1] * aabb.max.v[1];;
+            maxD += p->uvwd.v[1] * aabb.min.v[1];
         }
 
-        if (p->uvwd[2] > 0.0f)
+        if (p->uvwd.v[2] > 0.0f)
         {
-            minD += p->uvwd[2] * aabb->min[2];
-            maxD += p->uvwd[2] * aabb->max[2];
+            minD += p->uvwd.v[2] * aabb.min.v[2];
+            maxD += p->uvwd.v[2] * aabb.max.v[2];
         }
         else
         {
-            minD += p->uvwd[2] * aabb->max[2];
-            maxD += p->uvwd[2] * aabb->min[2];
+            minD += p->uvwd.v[2] * aabb.max.v[2];
+            maxD += p->uvwd.v[2] * aabb.min.v[2];
         }
 
         // What side of the plane
 
-        if (minD >= -p->uvwd[AFX_PLANE_DIST])
+        if (minD >= -p->uvwd.v[AFX_PLANE_DIST])
             return +1;
 
-        if (maxD <= -p->uvwd[AFX_PLANE_DIST])
+        if (maxD <= -p->uvwd.v[AFX_PLANE_DIST])
             return -1;
     }
     //Intersection
     return 0;
 }
 
-_AFXINL afxBool AfxDoesFrustumCullAabbs(afxFrustum const* f, afxUnit cnt, afxBox const aabb[])
+_AFXINL afxBool AfxFrustumCullsAabb(afxFrustum const f, afxBox const aabb)
 {
     afxError err = { 0 };
-    AFX_ASSERT(f);
+
+    if (AfxAabbTestPlanes(aabb, afxCubeFace_TOTAL, f.planes) == -1)
+        return FALSE;
+
+    return TRUE;
+}
+
+_AFXINL afxBool AfxFrustumCullsAabbs(afxFrustum const f, afxUnit cnt, afxBox const aabb[])
+{
+    afxError err = { 0 };
     AFX_ASSERT(aabb);
 
     for (afxUnit i = 0; i < cnt; ++i)
     {
-        if (AfxAabbTestPlanes(&aabb[i], afxCubeFace_TOTAL, f->planes) == -1)
+        if (AfxAabbTestPlanes(aabb[i], afxCubeFace_TOTAL, f.planes) == -1)
             return FALSE;
     }
     return TRUE;
@@ -218,23 +274,45 @@ _AFXINL afxBool AfxDoesFrustumCullAabbs(afxFrustum const* f, afxUnit cnt, afxBox
 #endif
 }
 
-_AFXINL afxBool AfxDoesFrustumCullFrustums(afxFrustum const* f, afxUnit cnt, afxFrustum const others[])
+_AFXINL afxBool AfxFrustumCullsFrustum(afxFrustum const f, afxFrustum const other)
+{
+    afxError err = { 0 };
+
+    afxBool allOut = TRUE;
+
+    for (afxUnit j = 0; j < afxCubeFace_TOTAL; ++j)
+    {
+        for (afxUnit k = 0; k < afxCubeCorner_TOTAL; ++k)
+        {
+            if (AfxFindPlaneDistance(f.planes[j], other.corners[k].v3) < 0)
+            {
+                allOut = FALSE;
+                break;
+            }
+        }
+
+        if (!allOut)
+            break;
+    }
+    return allOut;
+}
+
+_AFXINL afxBool AfxFrustumCullsFrustums(afxFrustum const f, afxUnit cnt, afxFrustum const others[])
 {
     afxError err = { 0 };
     AFX_ASSERT(!cnt || others);
-    AFX_ASSERT(f);
 
     afxBool allOut = TRUE;
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxFrustum const* o = &others[i];
+        afxFrustum const o = others[i];
 
         for (afxUnit j = 0; j < afxCubeFace_TOTAL; ++j)
         {
             for (afxUnit k = 0; k < afxCubeCorner_TOTAL; ++k)
             {
-                if (AfxFindPlaneDistance(&f->planes[j], o->corners[k]) < 0)
+                if (AfxFindPlaneDistance(f.planes[j], o.corners[k].v3) < 0)
                 {
                     allOut = FALSE;
                     break;
@@ -248,19 +326,15 @@ _AFXINL afxBool AfxDoesFrustumCullFrustums(afxFrustum const* f, afxUnit cnt, afx
     return allOut;
 }
 
-_AFXINL void AfxEmboxFrustum(afxBox* aabb, afxFrustum const* f)
+_AFXINL afxBox AfxEmboxFrustum(afxBox aabb, afxFrustum const f)
 {
     afxError err = { 0 };
-    AFX_ASSERT(f);
-    AFX_ASSERT(aabb);
-    AfxEmboxPoints(aabb, afxCubeCorner_TOTAL, f->corners);
+    return AfxEmboxPoints(aabb, afxCubeCorner_TOTAL, f.corners);
 }
 
-_AFXINL void AfxMakeFrustum(afxFrustum* f, afxM4d const pv, afxM4d const ipv)
+_AFXINL afxFrustum AfxMakeFrustum(afxM4d const pv, afxM4d const ipv)
 {
     afxError err = { 0 };
-    AFX_ASSERT(f);
-    AFX_ASSERT(pv);
 
     /*
         Planes in camera space (using PV matrix)
@@ -275,18 +349,20 @@ _AFXINL void AfxMakeFrustum(afxFrustum* f, afxM4d const pv, afxM4d const ipv)
 
     // Calculate frustum planes from the view-projection matrix.
 
+    afxFrustum f = { 0 };
+
     // Left plane
-    AfxMakePlane(&f->planes[afxCubeFace_L], AFX_V3D(pv[0][3] + pv[0][0], pv[1][3] + pv[1][0], pv[2][3] + pv[2][0]), pv[3][3] + pv[3][0]);
+    f.planes[afxCubeFace_L] = AfxMakePlane(AFX_V3D(pv.m[0][3] + pv.m[0][0], pv.m[1][3] + pv.m[1][0], pv.m[2][3] + pv.m[2][0]), pv.m[3][3] + pv.m[3][0]);
     // Right plane
-    AfxMakePlane(&f->planes[afxCubeFace_R], AFX_V3D(pv[0][3] - pv[0][0], pv[1][3] - pv[1][0], pv[2][3] - pv[2][0]), pv[3][3] - pv[3][0]);
+    f.planes[afxCubeFace_R] = AfxMakePlane(AFX_V3D(pv.m[0][3] - pv.m[0][0], pv.m[1][3] - pv.m[1][0], pv.m[2][3] - pv.m[2][0]), pv.m[3][3] - pv.m[3][0]);
     // Bottom plane
-    AfxMakePlane(&f->planes[afxCubeFace_B], AFX_V3D(pv[0][3] + pv[0][1], pv[1][3] + pv[1][1], pv[2][3] + pv[2][1]), pv[3][3] + pv[3][1]);
+    f.planes[afxCubeFace_B] = AfxMakePlane(AFX_V3D(pv.m[0][3] + pv.m[0][1], pv.m[1][3] + pv.m[1][1], pv.m[2][3] + pv.m[2][1]), pv.m[3][3] + pv.m[3][1]);
     // Top plane
-    AfxMakePlane(&f->planes[afxCubeFace_T], AFX_V3D(pv[0][3] - pv[0][1], pv[1][3] - pv[1][1], pv[2][3] - pv[2][1]), pv[3][3] - pv[3][1]);
+    f.planes[afxCubeFace_T] = AfxMakePlane(AFX_V3D(pv.m[0][3] - pv.m[0][1], pv.m[1][3] - pv.m[1][1], pv.m[2][3] - pv.m[2][1]), pv.m[3][3] - pv.m[3][1]);
     // Near plane
-    AfxMakePlane(&f->planes[afxCubeFace_N], AFX_V3D(pv[0][3] + pv[0][2], pv[1][3] + pv[1][2], pv[2][3] + pv[2][2]), pv[3][3] + pv[3][2]);
+    f.planes[afxCubeFace_N] = AfxMakePlane(AFX_V3D(pv.m[0][3] + pv.m[0][2], pv.m[1][3] + pv.m[1][2], pv.m[2][3] + pv.m[2][2]), pv.m[3][3] + pv.m[3][2]);
     // Far plane
-    AfxMakePlane(&f->planes[afxCubeFace_F], AFX_V3D(pv[0][3] - pv[0][2], pv[1][3] - pv[1][2], pv[2][3] - pv[2][2]), pv[3][3] - pv[3][2]);
+    f.planes[afxCubeFace_F] = AfxMakePlane(AFX_V3D(pv.m[0][3] - pv.m[0][2], pv.m[1][3] - pv.m[1][2], pv.m[2][3] - pv.m[2][2]), pv.m[3][3] - pv.m[3][2]);
 
     /*
         Corners in world space (using inverse of projection-view matrix)
@@ -310,12 +386,12 @@ _AFXINL void AfxMakeFrustum(afxFrustum* f, afxM4d const pv, afxM4d const ipv)
     };
 
     // Transform the corners from NDC to world space by multiplying with the inverse projection-view matrix.
-    AfxM4dPostMultiplyV4d(ipv, ARRAY_SIZE(ndcCorners), ndcCorners, f->corners);
+    AfxM4dPostMultiplyV4d(ipv, ARRAY_SIZE(ndcCorners), ndcCorners, f.corners);
     for (afxUnit i = 0; i < ARRAY_SIZE(ndcCorners); i++)
     {
         // Perform the perspective divide to normalize (divide by w)
-        AfxV3dDiv(f->corners[i], f->corners[i], AFX_V3D(f->corners[i][3], f->corners[i][3], f->corners[i][3]));
+        f.corners[i].v3 = AfxV3dDiv(f.corners[i].v3, AFX_V3D(f.corners[i].v[3], f.corners[i].v[3], f.corners[i].v[3]));
         // Homogeneous coordinate after perspective divide
-        f->corners[i][3] = 1.f;
+        f.corners[i].v[3] = 1.f;
     }
 }

@@ -733,20 +733,20 @@ _AUX afxError _AuxAdjustWindowFromNdc(afxWindow wnd, afxDisplay disp, afxUnit dp
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    AFX_ASSERT(extent);
+    //AFX_ASSERT(extent);
 
     afxDesktop* dwm = wnd->dwm;
     afxRect rc = { 0 };
 
-    if (offset)
+    //if (offset)
     {
-        rc.x = (afxUnit)AfxUnndcf(offset[0], dwm->res.x - 1);
-        rc.y = (afxUnit)AfxUnndcf(offset[1], dwm->res.y - 1);
+        rc.x = (afxUnit)AfxUnndcf(offset.v[0], dwm->res.x - 1);
+        rc.y = (afxUnit)AfxUnndcf(offset.v[1], dwm->res.y - 1);
     }
 
-    AFX_ASSERT(extent);
-    rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-    rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+    //AFX_ASSERT(extent);
+    rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+    rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
 
     if (AfxAdjustWindow(wnd, disp, dport, anchor, &rc))
         AfxThrowError();
@@ -762,15 +762,15 @@ _AUX afxError _AuxAdjustWindowSurfaceFromNdc(afxWindow wnd, afxDisplay disp, afx
     afxDesktop* dwm = wnd->dwm;
     afxRect rc = { 0 };
 
-    if (offset)
+    //if (offset)
     {
-        rc.x = (afxUnit)AfxUnndcf(offset[0], wnd->frameRc.w - 1);
-        rc.y = (afxUnit)AfxUnndcf(offset[1], wnd->frameRc.h - 1);
+        rc.x = (afxUnit)AfxUnndcf(offset.v[0], wnd->frameRc.w - 1);
+        rc.y = (afxUnit)AfxUnndcf(offset.v[1], wnd->frameRc.h - 1);
     }
 
-    AFX_ASSERT(extent);
-    rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-    rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+    //AFX_ASSERT(extent);
+    rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+    rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
 
     if (AfxAdjustWindow(wnd, disp, dport, anchor, &rc))
         AfxThrowError();
@@ -917,16 +917,16 @@ _AUX afxError _AuxWndSwCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
     wnd->alwaysOnTop = FALSE;
     wnd->active = FALSE;
     wnd->focused = FALSE;
-    AfxV2dZero(wnd->cursPos);
-    AfxV2dZero(wnd->cursMove);
-    AfxV2dZero(wnd->cursPosNdc);
-    AfxV2dZero(wnd->cursMoveNdc);
+    wnd->cursPos = AFX_V2D_ZERO;
+    wnd->cursMove = AFX_V2D_ZERO;
+    wnd->cursPosNdc = AFX_V2D_ZERO;
+    wnd->cursMoveNdc = AFX_V2D_ZERO;
 
     AfxGetClock(&wnd->startClock);
     wnd->lastClock = wnd->startClock;
 
-    AfxV2dZero(wnd->grabPoint);
-    AfxV2dZero(wnd->hoveredPoint);
+    wnd->grabPoint = AFX_V2D_ZERO;
+    wnd->hoveredPoint = AFX_V2D_ZERO;
 
     wnd->grabbedWidg = NIL;
     wnd->hoveredWidg = NIL;
@@ -994,16 +994,16 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
     afxDesktop* dwm = &env->dwm;
     afxRect rc = { .w = cfg2.dout.ccfg.extent.w,.h = cfg2.dout.ccfg.extent.h };
 
-    if (origin)
+    //if (origin)
     {
-        rc.x = (afxUnit)AfxUnndcf(origin[0], dwm->res.x - 1);
-        rc.y = (afxUnit)AfxUnndcf(origin[1], dwm->res.y - 1);
+        rc.x = (afxUnit)AfxUnndcf(origin.v[0], dwm->res.x - 1);
+        rc.y = (afxUnit)AfxUnndcf(origin.v[1], dwm->res.y - 1);
     }
 
-    if (extent)
+    if (extent.v[0] * extent.v[1])
     {
-        rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-        rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+        rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+        rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
     }
     else
     {

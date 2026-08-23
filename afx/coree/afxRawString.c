@@ -1851,6 +1851,7 @@ _AFXINL afxChar* AfxStrncpySSE(afxChar* dst, afxChar const* src, afxSize len)
     {
         dst[i] = '\0';
     }
+    return dst;
 }
 
 _AFXINL afxChar* AfxStrncpy(afxChar* dst, afxChar const* src, afxSize len)

@@ -79,13 +79,13 @@ _AVX afxUnit AvxClipCanvas_(avxCanvas canv, afxRect const* rc, afxBool flipY, av
     if (flipY)
         rcClip = AfxGetFlippedRect(&rcClip, extent.h);
 
-    vp->origin[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
-    vp->origin[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
-    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
-    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
+    vp->origin.v[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
+    vp->origin.v[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
+    vp->extent.v[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
+    vp->extent.v[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
     vp->minDepth = 0;
     vp->maxDepth = 1;
-    return (vp->extent[0] * vp->extent[1]);
+    return (vp->extent.v[0] * vp->extent.v[1]);
 }
 
 _AVX afxUnit AvxClipCanvas2_(avxCanvas canv, afxRect const* rc, afxBool flipY, avxViewport* vp)
@@ -107,13 +107,13 @@ _AVX afxUnit AvxClipCanvas2_(avxCanvas canv, afxRect const* rc, afxBool flipY, a
     if (flipY)
         rcClip = AfxGetFlippedRect(&rcClip, extent.h);
 
-    vp->origin[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
-    vp->origin[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
-    vp->extent[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
-    vp->extent[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
+    vp->origin.v[0] = AFX_MIN(rc->x, (afxInt)extent.w - 1);
+    vp->origin.v[1] = AFX_MIN(rc->y, (afxInt)extent.h - 1);
+    vp->extent.v[0] = AFX_MAX(rc->w, AFX_MIN(rc->x, (afxInt)extent.w - 1));
+    vp->extent.v[1] = AFX_MAX(rc->h, AFX_MIN(rc->y, (afxInt)extent.h - 1));
     vp->minDepth = 0;
     vp->maxDepth = 1;
-    return (vp->extent[0] * vp->extent[1]);
+    return (vp->extent.v[0] * vp->extent.v[1]);
 }
 
 _AVX avxExtent AvxGetCanvasExtentNdc(avxCanvas canv, afxV2d const origin, afxV2d const extent)
@@ -122,10 +122,9 @@ _AVX avxExtent AvxGetCanvasExtentNdc(avxCanvas canv, afxV2d const origin, afxV2d
     // @canv must be a valid avxCanvas handle.
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
-    afxV2d at, ran;
-    AfxV2dNdc(at, origin, AFX_V2D(canv->extent.w, canv->extent.h));
-    AfxV2dNdc(ran, extent, AFX_V2D(canv->extent.w, canv->extent.h));
-    return AVX_EXTENT(ran[0], ran[1], canv->extent.d);
+    afxV2d at = AfxV2dNdc(origin, AFX_V2D(canv->extent.w, canv->extent.h));
+    afxV2d ran = AfxV2dNdc(extent, AFX_V2D(canv->extent.w, canv->extent.h));
+    return AVX_EXTENT(ran.v[0], ran.v[1], canv->extent.d);
 }
 
 _AVX afxUnit AvxQueryCanvasRigs(avxCanvas canv, afxUnit* colRigCnt, afxUnit* dRigIdx, afxUnit* sRigIdx)

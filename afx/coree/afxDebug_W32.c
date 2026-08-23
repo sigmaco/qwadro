@@ -155,6 +155,11 @@ _AFX void AfxResetDebugOutputChannel(afxUnit ch, afxBool echo, afxBool dump)
     dbgChannels[ch].dump = dump;
 }
 
+_AFX void AfxBreak(void)
+{
+    int a = 1;
+}
+
 _AFX void AfxBeep(afxUnit freq, afxUnit dur)
 {
     // Ah, the good old motherboard speaker beep.

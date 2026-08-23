@@ -81,7 +81,7 @@ int main(int argc, char const* argv[])
     wcfg.dout.ccfg.rigCnt = 2;
     wcfg.dout.ccfg.rigs[0].fmt = avxFormat_BGRA8v;
     wcfg.dout.ccfg.rigs[1].fmt = avxFormat_D32f;
-    AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
+    AfxConfigureWindow(env, &wcfg, AFX_V2D_ZERO, AFX_V2D(0.5, 0.5));
     if (AfxAcquireWindow(env, &wcfg, &wnd))
         AfxThrowError();
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);

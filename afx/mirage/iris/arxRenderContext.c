@@ -51,9 +51,9 @@ _ARX afxError ArxEruptIndexedTriangleVertices
         afxUnit ib = indices2[i * ARX_INDICES_PER_TRI + 1];
         afxUnit ic = indices2[i * ARX_INDICES_PER_TRI + 2];
 
-        AfxV3dCopy(vtxDst[i * ARX_INDICES_PER_TRI], vertices[ia]);
-        AfxV3dCopy(vtxDst[i * ARX_INDICES_PER_TRI], vertices[ib]);
-        AfxV3dCopy(vtxDst[i * ARX_INDICES_PER_TRI], vertices[ic]);
+        vtxDst[i * ARX_INDICES_PER_TRI] = vertices[ia];
+        vtxDst[i * ARX_INDICES_PER_TRI] = vertices[ib];
+        vtxDst[i * ARX_INDICES_PER_TRI] = vertices[ic];
     }
     return err;
 }
@@ -69,10 +69,11 @@ _ARX afxError ArxGenerateTriangleIdentityBarycentrics
 
     for (afxUnit i = 0; i < triCnt; i++)
     {
-        AfxV3dCopy(barycentrics[i * ARX_INDICES_PER_TRI], AFX_V3D_X);
-        AfxV3dCopy(barycentrics[i * ARX_INDICES_PER_TRI], AFX_V3D_Y);
-        AfxV3dCopy(barycentrics[i * ARX_INDICES_PER_TRI], AFX_V3D_Z);
+        barycentrics[i * ARX_INDICES_PER_TRI] = AFX_V3D_X;
+        barycentrics[i * ARX_INDICES_PER_TRI] = AFX_V3D_Y;
+        barycentrics[i * ARX_INDICES_PER_TRI] = AFX_V3D_Z;
     }
+    return err;
 }
 
 _ARX afxDrawSystem ArxGetRenderDrawSystem(arxRenderContext rctx)
@@ -330,49 +331,45 @@ _ARX void ArxGetRenderingClipSpaceInfo(arxRenderContext rctx, avxClipSpaceDepth*
         *nonRhcs = rctx->nonRhcs;
 }
 
-_ARX void ArxComputeLookToMatrices(arxRenderContext rctx, afxV3d const eye, afxV3d const dir, afxM4d v, afxM4d iv)
+_ARX void ArxComputeLookToMatrices(arxRenderContext rctx, afxV3d const eye, afxV3d const dir, afxM4d* v, afxM4d* iv)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
-    AFX_ASSERT(dir);
     AFX_ASSERT(!AfxV3dIsZero(dir));
     AFX_ASSERT(!AfxV3dIsInfinite(dir));
     AFX_ASSERT(v);
-    AfxComputeLookToMatrix(v, eye, dir, AFX_V4D_Y, rctx->nonRhcs);
+    *v = AfxComputeLookToMatrix(eye, dir, AFX_V3D_Y, rctx->nonRhcs);
 
     if (iv)
-        AfxM4dInvert(iv, v);
+        *iv = AfxM4dInvert(*v, NIL);
 }
 
-_ARX void ArxComputeLookAtMatrices(arxRenderContext rctx, afxV3d const eye, afxV3d const target, afxM4d v, afxM4d iv)
+_ARX void ArxComputeLookAtMatrices(arxRenderContext rctx, afxV3d const eye, afxV3d const target, afxM4d* v, afxM4d* iv)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
-    AFX_ASSERT(target);
-    AFX_ASSERT(eye);
     AFX_ASSERT(v);
-    AfxComputeLookAtMatrix(v, eye, target, AFX_V4D_Y, rctx->nonRhcs);
+    *v = AfxComputeLookAtMatrix(eye, target, AFX_V3D_Y, rctx->nonRhcs);
 
     if (iv)
-        AfxM4dInvert(iv, v);
+        *iv = AfxM4dInvert(*v, NIL);
 }
 
-_ARX void ArxComputeOrthographicMatrices(arxRenderContext rctx, afxV2d const extent, afxReal near, afxReal far, afxM4d p, afxM4d ip)
+_ARX void ArxComputeOrthographicMatrices(arxRenderContext rctx, afxV2d const extent, afxReal near, afxReal far, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
-    AFX_ASSERT(extent);
-    AFX_ASSERT(!AfxRealIsEqual(extent[0], 0.0f, 0.00001f));
-    AFX_ASSERT(!AfxRealIsEqual(extent[1], 0.0f, 0.00001f));
+    AFX_ASSERT(!AfxRealIsEqual(extent.v[0], 0.0f, 0.00001f));
+    AFX_ASSERT(!AfxRealIsEqual(extent.v[1], 0.0f, 0.00001f));
     AFX_ASSERT(!AfxRealIsEqual(far, near, 0.00001f));
     AFX_ASSERT(p);
-    AfxComputeOrthographicMatrix(p, extent, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeOrthographicMatrix(extent, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeOffcenterOrthographicMatrices(arxRenderContext rctx, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxM4d p, afxM4d ip)
+_ARX void ArxComputeOffcenterOrthographicMatrices(arxRenderContext rctx, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
@@ -380,53 +377,52 @@ _ARX void ArxComputeOffcenterOrthographicMatrices(arxRenderContext rctx, afxReal
     AFX_ASSERT(!AfxRealIsEqual(top, bottom, 0.00001f));
     AFX_ASSERT(!AfxRealIsEqual(far, near, 0.00001f));
     AFX_ASSERT(p);
-    AfxComputeOffcenterOrthographicMatrix(p, left, right, bottom, top, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeOffcenterOrthographicMatrix(left, right, bottom, top, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeBoundingOrthographicMatrices(arxRenderContext rctx, afxBox const aabb, afxM4d p, afxM4d ip)
+_ARX void ArxComputeBoundingOrthographicMatrices(arxRenderContext rctx, afxBox const aabb, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
     //AFX_ASSERT(aabb); // afxBox deve estar no view space.
     AFX_ASSERT(p);
-    AfxComputeBoundingOrthographicMatrix(p, aabb, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeBoundingOrthographicMatrix(aabb, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeBasicOrthographicMatrices(arxRenderContext rctx, afxReal aspectRatio, afxReal scale, afxReal range, afxM4d p, afxM4d ip)
+_ARX void ArxComputeBasicOrthographicMatrices(arxRenderContext rctx, afxReal aspectRatio, afxReal scale, afxReal range, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
     AFX_ASSERT(aspectRatio); // w/h
     AFX_ASSERT(p);
-    AfxComputeBasicOrthographicMatrix(p, aspectRatio, scale, range, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeBasicOrthographicMatrix(aspectRatio, scale, range, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputePerspectiveMatrices(arxRenderContext rctx, afxV2d const extent, afxReal near, afxReal far, afxM4d p, afxM4d ip)
+_ARX void ArxComputePerspectiveMatrices(arxRenderContext rctx, afxV2d const extent, afxReal near, afxReal far, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
-    AFX_ASSERT(extent);
-    AFX_ASSERT(!AfxRealIsEqual(extent[0], 0.0f, 0.00001f));
-    AFX_ASSERT(!AfxRealIsEqual(extent[1], 0.0f, 0.00001f));
+    AFX_ASSERT(!AfxRealIsEqual(extent.v[0], 0.0f, 0.00001f));
+    AFX_ASSERT(!AfxRealIsEqual(extent.v[1], 0.0f, 0.00001f));
     AFX_ASSERT(!AfxRealIsEqual(far, near, 0.00001f));
     AFX_ASSERT(near > 0.f && far > 0.f);
     AFX_ASSERT(p);
-    AfxComputePerspectiveMatrix(p, extent, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputePerspectiveMatrix(extent, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeFovMatrices(arxRenderContext rctx, afxReal fovY, afxReal aspectRatio, afxReal near, afxReal far, afxM4d p, afxM4d ip)
+_ARX void ArxComputeFovMatrices(arxRenderContext rctx, afxReal fovY, afxReal aspectRatio, afxReal near, afxReal far, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
@@ -435,13 +431,13 @@ _ARX void ArxComputeFovMatrices(arxRenderContext rctx, afxReal fovY, afxReal asp
     AFX_ASSERT(!AfxRealIsEqual(far, near, 0.00001f));
     AFX_ASSERT(near > 0.f && far > 0.f);
     AFX_ASSERT(p);
-    AfxComputeFovPerspectiveMatrix(p, fovY, aspectRatio, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeFovPerspectiveMatrix(fovY, aspectRatio, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeFrustrumMatrices(arxRenderContext rctx, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxM4d p, afxM4d ip)
+_ARX void ArxComputeFrustrumMatrices(arxRenderContext rctx, afxReal left, afxReal right, afxReal bottom, afxReal top, afxReal near, afxReal far, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
@@ -450,26 +446,26 @@ _ARX void ArxComputeFrustrumMatrices(arxRenderContext rctx, afxReal left, afxRea
     AFX_ASSERT(!AfxRealIsEqual(far, near, 0.00001f));
     AFX_ASSERT(near > 0.f && far > 0.f);
     AFX_ASSERT(p);
-    AfxComputeOffcenterPerspectiveMatrix(p, left, right, bottom, top, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeOffcenterPerspectiveMatrix(left, right, bottom, top, near, far, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
-_ARX void ArxComputeBasicPerspectiveMatrices(arxRenderContext rctx, afxReal aspectRatio, afxReal range, afxM4d p, afxM4d ip)
+_ARX void ArxComputeBasicPerspectiveMatrices(arxRenderContext rctx, afxReal aspectRatio, afxReal range, afxM4d* p, afxM4d* ip)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
     AFX_ASSERT(!AfxRealIsEqual(aspectRatio, 0.0f, 0.00001f));
     AFX_ASSERT(p);
-    AfxComputeBasicPerspectiveMatrix(p, aspectRatio, range, rctx->nonRhcs, rctx->clipSpaceDepth);
+    *p = AfxComputeBasicPerspectiveMatrix(aspectRatio, range, rctx->nonRhcs, rctx->clipSpaceDepth);
 
     if (ip)
-        AfxM4dInvert(ip, p);
+        *ip = AfxM4dInvert(*p, NIL);
 }
 
 
-_ARX afxError ArxStageMaterials(arxRenderContext rctx, arxMtd mtd, afxUnit cnt, afxUnit indices[])
+_ARX afxError ArxStageMaterials(arxRenderContext rctx, arxMtd mtd, afxUnit cnt, afxUnit const indices[])
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
@@ -530,7 +526,7 @@ _ARX afxError ArxStageMaterials(arxRenderContext rctx, arxMtd mtd, afxUnit cnt, 
             if (!ArxEnumerateMaterials(mtd, i, 1, &mtl))
                 continue;
 
-            AfxV3dCopy(mtlDefShd.albedo, mtl->albedo);
+            mtlDefShd.albedo = mtl->albedo;
             mtlDefShd.metallic = mtl->metallic;
             mtlDefShd.roughness = mtl->roughness;
             mtlDefShd.albedoTexIdx = -1;
@@ -608,37 +604,37 @@ _ARX afxError ArxSetOpticalMatrices(arxRenderContext rctx, afxM4d iv, afxM4d v, 
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
-    AFX_ASSERT(p);
-    AFX_ASSERT(v);
+    //AFX_ASSERT(p);
+    //AFX_ASSERT(v);
 
     arxRenderFrame* frame = &rctx->frames[rctx->frameIdx];
     arxViewConstants* viewConsts = &frame->viewConsts;
 
-    AfxM4dCopy(viewConsts->p, p);
+    viewConsts->p = p;
 
-    if (ip)
-        AfxM4dCopy(viewConsts->ip, ip);
-    else
-        AfxM4dInvert(viewConsts->ip, p);
+    //if (ip)
+    viewConsts->ip = ip;
+    //else
+        //AfxM4dInvert(viewConsts->ip, p);
 
-    AfxM4dCopyAtm(viewConsts->v, v);
+    viewConsts->v = AfxM4dFromAtm(v);
 
-    if (iv)
-        AfxM4dCopy(viewConsts->iv, iv);
-    else
-        AfxM4dInvertAtm(viewConsts->iv, v);
+    //if (iv)
+        viewConsts->iv = iv;
+    //else
+        //AfxM4dInvertAtm(viewConsts->iv, v);
 
-    if (pv)
-        AfxM4dCopy(viewConsts->pv, pv);
-    else
-        AfxM4dMultiply(viewConsts->pv, p, v);
+    //if (pv)
+        viewConsts->pv= pv;
+    //else
+        //AfxM4dMultiply(viewConsts->pv, p, v);
 
-    if (ipv)
-        AfxM4dCopy(viewConsts->ipv, ipv);
-    else
-        AfxM4dInvertAtm(viewConsts->ipv, viewConsts->pv);
+    //if (ipv)
+        viewConsts->ipv = ipv;
+    //else
+        //AfxM4dInvertAtm(viewConsts->ipv, viewConsts->pv);
 
-    AfxV4dCopyAtv3d(viewConsts->viewPos, viewConsts->iv[3]);
+    viewConsts->viewPos = AfxV4dFromAtv3d(viewConsts->iv.v4[3].v3);
 
     return err;
 }
@@ -657,26 +653,26 @@ _ARX afxError ArxUseCamera(arxRenderContext rctx, arxCamera cam, afxRect const* 
     {
         //cam = rnd->activeCamera;
 
-        afxV2d extent = { drawArea->w, drawArea->h };
+        afxV2d extent = AFX_V2D(drawArea->w, drawArea->h );
         ArxAdjustCameraAspectRatio(cam, AfxFindPhysicalAspectRatio(drawArea->w, drawArea->h), extent, extent);
 
-        viewConsts->viewExtent[0] = drawArea->w;
-        viewConsts->viewExtent[1] = drawArea->h;
+        viewConsts->viewExtent.v[0] = drawArea->w;
+        viewConsts->viewExtent.v[1] = drawArea->h;
 
         afxV4d viewPos;
-        ArxGetCameraTranslation(cam, viewPos);
-        AfxV4dCopyAtv3d(viewConsts->viewPos, viewPos);
+        viewPos.v3 = ArxGetCameraTranslation(cam);
+        viewConsts->viewPos = AfxV4dFromAtv3d(viewPos.v3);
 
         afxM4d v, iv, p, ip, pv, ipv;
-        ArxGetProjectionMatrices(cam, ip, ipv, pv, p);
-        ArxGetCameraMatrices(cam, iv, v);
+        ArxGetProjectionMatrices(cam, &ip, &ipv, &pv, &p);
+        ArxGetCameraMatrices(cam, &iv, &v);
 
-        AfxM4dCopy(viewConsts->p, p);
-        AfxM4dCopy(viewConsts->ip, ip);
-        AfxM4dCopyAtm(viewConsts->v, v);
-        AfxM4dCopy(viewConsts->iv, iv);
-        AfxM4dCopy(viewConsts->pv, pv);
-        AfxM4dCopy(viewConsts->ipv, ipv);
+        viewConsts->p = p;
+        viewConsts->ip = ip;
+        viewConsts->v = AfxM4dFromAtm(v);
+        viewConsts->iv = iv;
+        viewConsts->pv = pv;
+        viewConsts->ipv = ipv;
     }
 
     AvxCmdUpdateBuffer(frame->transferDctx, frame->viewUbo, 0, sizeof(*viewConsts), viewConsts);

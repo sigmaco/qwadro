@@ -247,12 +247,11 @@ _ARXINL void ArxGetModelDisplacement(arxModel mdl, afxTransform* t)
     AfxCopyTransform(&mdl->displace, t);
 }
 
-_ARXINL void ArxComputeModelDisplacement(arxModel mdl, afxM4d m)
+_ARXINL afxM4d ArxComputeModelDisplacement(arxModel mdl)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDL, 1, &mdl);
-    AFX_ASSERT(m);
-    AfxComputeCompositeTransformM4d(&mdl->displace, m);
+    return AfxComputeCompositeTransformM4d(&mdl->displace);
 }
 
 // MESH RIGGING
@@ -469,7 +468,7 @@ _ARXINL void ArxComputeRiggedMeshMatrices(arxModel mdl, afxUnit rigIdx, arxPostu
     for (afxUnit i = 0; i < biasCnt; i++)
     {
         afxUnit biasIdx = baseBiasIdx + i;
-        AfxM4dMultiplyAtm(matrices[i], iw[biasFromJntMap[i]], w[biasToJntMap[biasIdx]]);
+        matrices[i] = AfxM4dMultiplyAtm(iw[biasFromJntMap[i]], w[biasToJntMap[biasIdx]]);
     }
 }
 
@@ -765,9 +764,6 @@ _ARX afxClassConfig const _ARX_MDL_CLASS_CONFIG =
 _ARX void ArxTransformModels(afxM3d const ltm, afxM3d const iltm, afxReal ltTol, afxV3d const atv, afxReal atTol, afxFlags flags, afxUnit cnt, arxModel models[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(atv);
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
     AFX_ASSERT(cnt);
     AFX_ASSERT(models);
 

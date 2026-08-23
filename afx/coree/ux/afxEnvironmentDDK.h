@@ -99,7 +99,7 @@ AFX_DEFINE_STRUCT(_auxEnvSeat)
     afxUnit         buttonCnt;
     afxUnit         sampleRate;
     afxBool8        mbState[_AUX_SEAT_MB_SWAPS][AFX_MB_TOTAL]; // [ last, prev ][i]
-    afxReal         wheelDelta[_AUX_SEAT_MB_SWAPS]; // [ last, prev ]
+    afxV2d          wheelDelta[_AUX_SEAT_MB_SWAPS]; // [X, Y][ last, prev ]
     afxV2d          motion[_AUX_SEAT_MB_SWAPS]; // [ last, prev ]
     afxV2d          motionVel[_AUX_SEAT_MB_SWAPS]; // Ex.: the cursor is moving 500 px / sec to the right.
     afxV2d          motionAcc[_AUX_SEAT_MB_SWAPS]; // The speed is increasing rapidly; the user is flicking the mouse.

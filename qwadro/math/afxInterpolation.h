@@ -35,16 +35,16 @@
 // Rotating objects in 3D space, interpolating between two orientations (used in quaternions and rotation matrices).
 // v(t) = ((sin((1 - t) * theta)) / sin(theta)) * x + ((sin(t) * theta) / (sin(theta))) * y
 
-AFXINL void     AfxV2dSlerp(afxV2d v, afxV2d x, afxV2d y, afxReal t);
-AFXINL void     AfxV3dSlerp(afxV3d v, afxV3d x, afxV3d y, afxReal t);
-AFXINL void     AfxV4dSlerp(afxV4d v, afxV4d x, afxV4d y, afxReal t);
+AFXINL afxV2d     AfxV2dSlerp(afxV2d x, afxV2d y, afxReal t);
+AFXINL afxV3d     AfxV3dSlerp(afxV3d x, afxV3d y, afxReal t);
+AFXINL afxV4d     AfxV4dSlerp(afxV4d x, afxV4d y, afxReal t);
 
 /// Hermite interpolation
 /// v = (2 * t^3 - 3 * t^2 + 1) * posA + (t^3 - 2 * t^2 + t) * tanA + (-2 * t^3 + 3 * t^2) * posB + (t^3 - t^2) * tanB
 
-AFXINL void     AfxHermiteV2d(afxV2d v, afxV2d const posA, afxV2d const tanA, afxV2d const posB, afxV2d const tanB, afxReal t);
-AFXINL void     AfxHermiteV3d(afxV3d v, afxV3d const posA, afxV3d const tanA, afxV3d const posB, afxV3d const tanB, afxReal t);
-AFXINL void     AfxHermiteV4d(afxV4d v, afxV4d const posA, afxV4d const tanA, afxV4d const posB, afxV4d const tanB, afxReal t);
+AFXINL afxV2d     AfxHermiteV2d(afxV2d const posA, afxV2d const tanA, afxV2d const posB, afxV2d const tanB, afxReal t);
+AFXINL afxV3d     AfxHermiteV3d(afxV3d const posA, afxV3d const tanA, afxV3d const posB, afxV3d const tanB, afxReal t);
+AFXINL afxV4d     AfxHermiteV4d(afxV4d const posA, afxV4d const tanA, afxV4d const posB, afxV4d const tanB, afxReal t);
 
 /// Catmull-Rom splines are a family of cubic interpolating splines formulated such that the tangent at each point Pi is calculated using the previous and next point on the spline, T(Pi + 1 - Pi - 1).
 ///
@@ -55,9 +55,9 @@ AFXINL void     AfxHermiteV4d(afxV4d v, afxV4d const posA, afxV4d const tanA, af
 
 /// v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
 
-AFXINL void     AfxCatmullV2d(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const d, afxReal t);
-AFXINL void     AfxCatmullV3d(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const d, afxReal t);
-AFXINL void     AfxCatmullV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const d, afxReal t);
+AFXINL afxV2d     AfxCatmullV2d(afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const d, afxReal t);
+AFXINL afxV3d     AfxCatmullV3d(afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const d, afxReal t);
+AFXINL afxV4d     AfxCatmullV4d(afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const d, afxReal t);
 
 ////////////////////////////////////////////////////////////////////////////////
 // QUATERNION (aka QWATERNION)                                                //
@@ -96,7 +96,7 @@ AFXINL void     AfxCatmullV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d c
 /// Heres the quick and dirty: Don't mess around with Slerp, even though you think it might be the more "correct" thing to do. It is too expensive, and has too many special cases that need to be considered. 
 /// There are some complicated schemes that try to closely approximate the Slerp function, but it just isn't worth it. Just use NLerp. Especially for computationally strapped code.
 
-AFXINL void AfxQuatLerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal percent);
+AFXINL afxQuat AfxQuatLerp(afxQuat const a, afxQuat const b, afxReal percent);
 
 /// Interpolates between two unit quaternions, using spherical linear interpolation.
 /// When t is 0.0f, the function returns A. When t is 1.0f, the function returns B.
@@ -105,7 +105,7 @@ AFXINL void AfxQuatLerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal per
 /// b = Unit quaternion to interpolate to.
 /// t = Interpolation control factor.
 
-AFXINL void AfxQuatSlerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal t);
+AFXINL afxQuat AfxQuatSlerp(afxQuat const a, afxQuat const b, afxReal t);
 
 ////////////////////////////////////////////////////////////////////////////////
 // MATRIX (aka QWATRIX)                                                       //
@@ -116,25 +116,25 @@ AFXINL void AfxQuatSlerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal t)
 // It is often used in shader programming and graphics.
 // v = x * (1 - t) + y * t
 
-AFXINL void     AfxM2dMix(afxM2d v, afxM2d const x, afxM2d const y, afxReal t);
-AFXINL void     AfxM3dMix(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dMix(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
+AFXINL afxM2d     AfxM2dMix(afxM2d const x, afxM2d const y, afxReal t);
+AFXINL afxM3d     AfxM3dMix(afxM3d const x, afxM3d const y, afxReal t);
+AFXINL afxM4d     AfxM4dMix(afxM4d const x, afxM4d const y, afxReal t);
 
-AFXINL void     AfxM3dMixAtm(afxM3d m, afxM3d const a, afxM3d const b, afxReal t);
-AFXINL void     AfxM4dMixAtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t);
-AFXINL void     AfxM4dMixLtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t);
+AFXINL afxM3d     AfxM3dMixAtm(afxM3d const a, afxM3d const b, afxReal t);
+AFXINL afxM4d     AfxM4dMixAtm(afxM4d const a, afxM4d const b, afxReal t);
+AFXINL afxM4d     AfxM4dMixLtm(afxM4d const a, afxM4d const b, afxReal t);
 
 // Lerp
 // LERP is a method to interpolate linearly between two values. 
 // In the context of 4D vectors, it calculates the intermediate vector between a start and end vector based on a factor t ranging from 0.0 to 1.0.
 // x + t * (y - x)
 
-AFXINL void     AfxM2dLerp(afxM2d v, afxM2d const x, afxM2d const y, afxReal t);
-AFXINL void     AfxM3dLerp(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dLerp(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
+AFXINL afxM2d     AfxM2dLerp(afxM2d const x, afxM2d const y, afxReal t);
+AFXINL afxM3d     AfxM3dLerp(afxM3d const x, afxM3d const y, afxReal t);
+AFXINL afxM4d     AfxM4dLerp(afxM4d const x, afxM4d const y, afxReal t);
 
-AFXINL void     AfxM3dLerpAtm(afxM3d v, afxM3d const x, afxM3d const y, afxReal t);
-AFXINL void     AfxM4dLerpAtm(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
-AFXINL void     AfxM4dLerpLtm(afxM4d v, afxM4d const x, afxM4d const y, afxReal t);
+AFXINL afxM3d     AfxM3dLerpAtm(afxM3d const x, afxM3d const y, afxReal t);
+AFXINL afxM4d     AfxM4dLerpAtm(afxM4d const x, afxM4d const y, afxReal t);
+AFXINL afxM4d     AfxM4dLerpLtm(afxM4d const x, afxM4d const y, afxReal t);
 
 #endif//AFX_INTERPOLATION_H

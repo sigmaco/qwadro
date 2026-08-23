@@ -120,7 +120,7 @@ AFX_DEFINE_STRUCT(zglDpu)
     afxUnit             nextOutCnt;
     avxColorOutput      nextOuts[8];
     afxMask             nextOutUpdMask;
-    afxReal             nextBlendConstants[4]; // [ 0, 0, 0, 1 ]
+    afxV4d              nextBlendConstants; // [ 0, 0, 0, 1 ]
     afxBool             nextLogicOpEnabled; // FALSE
     avxLogicOp          nextLogicOp; // avxLogicOp_NOP
 
@@ -181,7 +181,7 @@ AFX_DEFINE_STRUCT(zglDpu)
     afxMask             outUpdMask;
 
     afxBool             anyBlendEnabled;
-    afxReal             blendConstants[4]; // [ 0, 0, 0, 1 ]
+    afxV4d              blendConstants; // [ 0, 0, 0, 1 ]
     afxBool             logicOpEnabled; // FALSE
     avxLogicOp          logicOp; // avxLogicOp_NOP
 

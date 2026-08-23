@@ -199,7 +199,7 @@ _AMX afxError _AmxMqueSubmitMixCommands(afxMixQueue mque, afxUnit cnt, amxSubmis
 
             if (mctx->state != amxContextState_INTERNAL_EXECUTING)
             {
-                if (mctx->state = amxContextState_EXECUTABLE)
+                if (mctx->state == amxContextState_EXECUTABLE)
                     mctx->state = amxContextState_PENDING;
             }
             else

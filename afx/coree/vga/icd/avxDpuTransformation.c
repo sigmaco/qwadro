@@ -117,10 +117,10 @@ void _AvxFetchVertices(avxVertexInput vtxd, afxUnit vtxCnt, afxUnit instCnt, avx
 }
 
 typedef struct {
-    float position[4];
-    float normal[4];
-    float color[4];
-    float texcoord[2];
+    afxV4d position;
+    afxV4d normal;
+    afxV4d color;
+    afxV2d texcoord;
     // Add more as needed...
 } MyVertexInput; // Custom format expected by your T&L logic
 
@@ -160,37 +160,36 @@ void fetch_vertex(MyVertexInput* out, int vertexIdx, const avxVertexInput layout
         {
         case 0: // POSITION
             //decode_format(attr->fmt, vertexData, out->position);
-            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, out->position, 0);
+            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, &out->position, 0);
             break;
         case 1: // NORMAL
             //decode_format(attr->fmt, vertexData, out->normal);
-            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, out->normal, 0);
+            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, &out->normal, 0);
             break;
         case 2: // COLOR
             //decode_format(attr->fmt, vertexData, out->color);
-            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, out->color, 0);
+            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RGBA32f, &out->color, 0);
             break;
         case 3: // TEXCOORD
             //decode_format(attr->fmt, vertexData, out->texcoord);
-            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RG32f, out->texcoord, 0);
+            AvxConvertFormat(1, 1, vertexData, 0, attr->fmt, avxFormat_RG32f, &out->texcoord, 0);
             break;
         }
     }
 }
 
 typedef struct {
-    float clipPos[4];
-    float color[4];
-    float texcoord[2];
+    afxV4d clipPos;
+    afxV4d color;
+    afxV2d texcoord;
 } MyTransformedVertex;
 
 void transform_vertex(MyVertexInput* in, MyTransformedVertex* out, afxM4d mvp)
 {
-    afxV4d pos;
-    AfxV4dSet(pos, in->position[0], in->position[1], in->position[2], 1.0f);
-    AfxV4dPostMultiplyM4d(out->clipPos, mvp, pos);
-    AfxV4dCopy(out->color, in->color);
-    AfxV2dCopy(out->texcoord, in->texcoord);
+    afxV4d pos = AfxV4dMake(in->position.v[0], in->position.v[1], in->position.v[2], 1.0f);
+    out->clipPos = AfxV4dPostMultiplyM4d(mvp, pos);
+    out->color = in->color;
+    out->texcoord = in->texcoord;
 }
 
 void PerspectiveDivideToNdc(MyTransformedVertex* triangle)
@@ -201,28 +200,28 @@ void PerspectiveDivideToNdc(MyTransformedVertex* triangle)
     for (int i = 0; i < 3; ++i)
     {
         MyTransformedVertex* v = &triangle[i];
-        float invW = 1.0f / v->clipPos[3];
-        v->clipPos[0] *= invW;
-        v->clipPos[1] *= invW;
-        v->clipPos[2] *= invW;
-        // clipPos[3] becomes 1.0 (or keep it if you want for depth)
+        float invW = 1.0f / v->clipPos.v[3];
+        v->clipPos.v[0] *= invW;
+        v->clipPos.v[1] *= invW;
+        v->clipPos.v[2] *= invW;
+        // clipPos.v[3] becomes 1.0 (or keep it if you want for depth)
     }
 
     // Now clipPos holds X/Y/Z in NDC space: [-1, +1].
 }
 
-void ndc_to_screen(float screenPos[2], const float clipPos[4], int screenW, int screenH)
+void ndc_to_screen(afxV2d screenPos, afxV4d const clipPos, int screenW, int screenH)
 {
     // Viewport Transform -> Screen Coordinate
     // Map from NDC to screen
 
-    screenPos[0] = (clipPos[0] * 0.5f + 0.5f) * screenW;
-    screenPos[1] = (1.0f - (clipPos[1] * 0.5f + 0.5f)) * screenH; // Y-flip
+    screenPos.v[0] = (clipPos.v[0] * 0.5f + 0.5f) * screenW;
+    screenPos.v[1] = (1.0f - (clipPos.v[1] * 0.5f + 0.5f)) * screenH; // Y-flip
 
     // Call this for all 3 triangle vertices.
 }
 
-void AvxViewportTransform0(avxViewport const*vp, afxUnit cnt, afxV4d const clipPos[], afxV3d screenPos[])
+void AvxViewportTransform0(avxViewport const vp, afxUnit cnt, afxV4d const clipPos[], afxV3d screenPos[])
 {
     // From NDC to Screen Coordinates
     // You have vertices in NDC space after perspective divide :
@@ -242,16 +241,16 @@ void AvxViewportTransform0(avxViewport const*vp, afxUnit cnt, afxV4d const clipP
     for (afxUnit i = 0; i < cnt; i++)
     {
         // X and Y: [-1, 1] -> screen coordinates
-        screenPos[i][0] = vp->origin[0] + (clipPos[i][0] * 0.5f + 0.5f) * vp->extent[0];
-        screenPos[i][1] = vp->origin[1] + (clipPos[i][1] * 0.5f + 0.5f) * vp->extent[1];
+        screenPos[i].v[0] = vp.origin.v[0] + (clipPos[i].v[0] * 0.5f + 0.5f) * vp.extent.v[0];
+        screenPos[i].v[1] = vp.origin.v[1] + (clipPos[i].v[1] * 0.5f + 0.5f) * vp.extent.v[1];
 
         // Z (depth): [-1, 1] -> [minDepth, maxDepth] (assuming OpenGL-style NDC)
-        afxReal ndcZ = clipPos[i][2];
+        afxReal ndcZ = clipPos[i].v[2];
         afxReal depth = ndcZ * 0.5f + 0.5f; // Map [-1, 1] -> [0, 1]
 
         //  If you're following Vulkan-style NDC where Z is already in [0, 1], skip the ndcZ * 0.5 + 0.5 step.
 
-        screenPos[i][2] = vp->minDepth + depth * (vp->maxDepth - vp->minDepth);
+        screenPos[i].v[2] = vp.minDepth + depth * (vp.maxDepth - vp.minDepth);
     }
 
     /*
@@ -306,13 +305,13 @@ float edge_fn(float x0, float y0, float x1, float y1, float x, float y)
     // Point-In-Triangle (Edge Function).
     return (x - x0) * (y1 - y0) - (y - y0) * (x1 - x0);
 }
-void perspective_divide(float v[4]) {
-    float w = v[3];
+void perspective_divide(afxV4d v) {
+    float w = v.v[3];
     if (w != 0.0f) {
-        v[0] /= w; v[1] /= w; v[2] /= w; v[3] = 1.0f;
+        v.v[0] /= w; v.v[1] /= w; v.v[2] /= w; v.v[3] = 1.0f;
     }
 }
-void rasterize_triangle(MyTransformedVertex tri[3], const avxViewport* vp, uint32_t* framebuffer, int fbWidth, int fbHeight)
+void rasterize_triangle(MyTransformedVertex tri[3], const avxViewport vp, uint32_t* framebuffer, int fbWidth, int fbHeight)
 {
     // Triangle Rasterizer.
 

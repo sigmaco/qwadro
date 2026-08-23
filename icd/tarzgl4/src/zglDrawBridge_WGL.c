@@ -1307,8 +1307,8 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
     dpu->depthTestEnabled = FALSE;
     dpu->depthCompareOp = avxCompareOp_LESS;
     dpu->depthWriteDisabled = FALSE;
-    dpu->depthBounds[0] = 0.f;
-    dpu->depthBounds[1] = 1.f;
+    dpu->depthBounds.v[0] = 0.f;
+    dpu->depthBounds.v[1] = 1.f;
     
     dpu->stencilTestEnabled = FALSE;
     dpu->stencilFront.compareOp = avxCompareOp_ALWAYS;

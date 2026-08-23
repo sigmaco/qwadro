@@ -335,32 +335,24 @@ _ARX afxReal _ArxScioGetAllowedLodErrorFadingFactor(arxScenario scio)
     return scio->allowedLodErrFadingFactor;
 }
 
-_ARX void ArxComputeSimilarity(arxScenario scio, afxReal unitsPerMeter, afxV3d const right, afxV3d const up, afxV3d const back, afxV3d const origin, afxM3d ltm, afxM3d iltm, afxV3d atv)
+_ARX void ArxComputeSimilarity(arxScenario scio, afxReal unitsPerMeter, afxV3d const right, afxV3d const up, afxV3d const back, afxV3d const origin, afxM3d* ltm, afxM3d* iltm, afxV3d* atv)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT(unitsPerMeter);
-    AFX_ASSERT(origin);
-    AFX_ASSERT(right);
-    AFX_ASSERT(back);
-    AFX_ASSERT(up);
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
-    AFX_ASSERT(atv);
 
-    afxM3d srcAxisSys;
-    AfxM3dSetTransposed(srcAxisSys, right, up, back);
+    afxM3d srcAxisSys = AfxM3dMakeTransposed(right, up, back);
 
-    AfxM3dMultiply(ltm, scio->basis, srcAxisSys);
+    *ltm = AfxM3dMultiply(scio->basis, srcAxisSys);
 
     afxReal lambda = scio->unitsPerMeter / unitsPerMeter;
-    AfxV3dScale(ltm[0], ltm[0], lambda);
-    AfxV3dScale(ltm[1], ltm[1], lambda);
-    AfxV3dScale(ltm[2], ltm[2], lambda);
+    ltm->v3[0] = AfxV3dScale(ltm->v3[0], lambda);
+    ltm->v3[1] = AfxV3dScale(ltm->v3[1], lambda);
+    ltm->v3[2] = AfxV3dScale(ltm->v3[2], lambda);
 
-    AfxM3dInvert(iltm, ltm);
+    *iltm = AfxM3dInvert(*ltm, NIL);
 
-    AfxV3dSub(atv, scio->origin, origin);
+    *atv = AfxV3dSub(scio->origin.v3, origin);
 }
 
 _ARX afxError ArxUplinkTxds(arxScenario scio, afxUnit baseSlot, afxUnit slotCnt, afxUri const uris[])
@@ -607,15 +599,15 @@ _ARX afxError _ArxScioCtorCb(arxScenario scio, void** args, afxUnit invokeNo)
     AfxV3dCopy(scio->up, config->up);
     AfxV3dCopy(scio->back, config->back);
 #else
-    AfxM3dReset(scio->basis);
-    AfxV3dSet(scio->right, 1, 0, 0);
-    AfxV3dSet(scio->up, 0, 1, 0);
-    AfxV3dSet(scio->back, 0, 0, 1);
+    scio->basis = AfxM3dIdentity();
+    scio->right.v3 = AfxV3dMake(1, 0, 0);
+    scio->up.v3 = AfxV3dMake(0, 1, 0);
+    scio->back.v3 = AfxV3dMake(0, 0, 1);
 #endif
-    AfxM3dSet(scio->basis, scio->right, scio->up, scio->back);
+    scio->basis = AfxM3dMake(scio->right.v3, scio->up.v3, scio->back.v3);
 
     AfxCopyBoxes(1, &cfg->extent, 0, &scio->extent, 0);
-    AfxV3dCopy(scio->origin, cfg->origin);
+    scio->origin.v3 = cfg->origin;
 
     if (!cfg->unitsPerMeter)
         scio->unitsPerMeter = 1.f;
@@ -660,11 +652,11 @@ _ARX afxError _ArxIcdConfigureScioSW(afxModule arxIcd, arxScenarioConfig* cfg)
     afxDrawSystem dsys = cfg->dsys;
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-    AfxV3dSet(cfg->right, 1, 0, 0);
-    AfxV3dSet(cfg->up, 0, 1, 0);
-    AfxV3dSet(cfg->back, 0, 0, 1);
-    AfxV3dZero(cfg->origin);
-    AfxMakeAabb(&cfg->extent, 2, (afxV3d const[]) { { -1000, -1000, -1000 }, { 1000, 1000, 1000 } });
+    cfg->right = AfxV3dMake(1, 0, 0);
+    cfg->up = AfxV3dMake(0, 1, 0);
+    cfg->back = AfxV3dMake(0, 0, 1);
+    cfg->origin = AfxV3dZero();
+    cfg->extent = AfxMakeAabb(2, (afxV3d const[]) { AFX_V3D(-1000, -1000, -1000 ), AFX_V3D(1000, 1000, 1000 ) });
     cfg->unitsPerMeter = 1.f;
     cfg->allowedLodErrFadingFactor = 0.80000001;
 
@@ -712,10 +704,10 @@ _ARX afxError _ArxIcdAcquireScioSW(afxModule arxIcd, arxScenarioConfig const* cf
     cfg2.allowedLodErrFadingFactor = cfg->allowedLodErrFadingFactor;
     cfg2.unitsPerMeter = cfg->unitsPerMeter;
 
-    AfxV3dCopy(cfg2.right, cfg->right);
-    AfxV3dCopy(cfg2.up, cfg->up);
-    AfxV3dCopy(cfg2.back, cfg->back);
-    AfxV3dCopy(cfg2.origin, cfg->origin);
+    cfg2.right = cfg->right;
+    cfg2.up = cfg->up;
+    cfg2.back = cfg->back;
+    cfg2.origin = cfg->origin;
     AfxCopyBoxes(1, &cfg->extent, 0, &cfg2.extent, 0);
 
     afxClass* scioCls = (afxClass*)_ArxIcdGetScioClass(arxIcd);

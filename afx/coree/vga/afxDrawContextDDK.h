@@ -586,7 +586,7 @@ AFX_DEFINE_UNION(_avxCmd)
     {
         _avxCmdHdr hdr;
 
-        afxV2d blendContants;
+        afxV4d blendContants;
     } SetBlendConstants;
     struct
     {

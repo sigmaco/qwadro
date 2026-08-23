@@ -183,7 +183,7 @@ AVX afxError _AvxDoutSwLockBufCb(afxSurface dout, afxMask exuMask, avxFence sign
 AVX afxError _AvxDoutSwUnlockBufCb(afxSurface dout, afxUnit bufIdx);
 
 AVX afxError _AvxAdjustSurfaceNormalized(afxSurface dout, afxV3d const whd);
-AVX void _AvxGetSurfaceExtentNormalized(afxSurface dout, afxV3d whd); // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
+AVX afxV3d _AvxGetSurfaceExtentNormalized(afxSurface dout); // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
 
 AVX afxError _AvxDpySwConfigureDoutCb(afxDisplay dpy, afxSurfaceConfig* cfg);
 AVX afxError _AvxDpySwOpenDoutCb(afxDisplay dpy, afxSurfaceConfig const* cfg, afxSurface* output);

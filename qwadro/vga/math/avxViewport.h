@@ -155,8 +155,8 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, avxViewport)
 #define AVX_VIEWPORT(   x_, y_, \
                         w_, h_, \
                         minDepth_, maxDepth_) \
-    (avxViewport) { .origin = { (afxReal)(x_), (afxReal)(y_) }, \
-                    .extent = { (afxReal)(w_), (afxReal)(h_) }, \
+    (avxViewport) { .origin = AFX_V2D( (afxReal)(x_), (afxReal)(y_) ), \
+                    .extent = AFX_V2D( (afxReal)(w_), (afxReal)(h_) ), \
                     .minDepth = (afxReal)(minDepth_), \
                     .maxDepth = (afxReal)(maxDepth_) }
 

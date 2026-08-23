@@ -358,23 +358,21 @@ void _XsHidRmbIsPressed(xssVm vm)
 void _XsHidGetMotionX(xssVm vm)
 {
     afxUnit port = XssPullNat(vm, 1);
-    afxV2d delta;
-    AfxGetMouseMotion(port, delta, NIL, NIL);
-    XssPushReal(vm, 0, delta[0]);
+    afxV2d delta = AfxGetMouseMotion(port);
+    XssPushReal(vm, 0, delta.v[0]);
 }
 
 void _XsHidGetMotionY(xssVm vm)
 {
     afxUnit port = XssPullNat(vm, 1);
-    afxV2d delta;
-    AfxGetMouseMotion(port, delta, NIL, NIL);
-    XssPushReal(vm, 0, delta[1]);
+    afxV2d delta = AfxGetMouseMotion(port);
+    XssPushReal(vm, 0, delta.v [1]);
 }
 
 void _XsHidGetWheelDelta(xssVm vm)
 {
     afxUnit port = XssPullNat(vm, 1);
-    XssPushReal(vm, 0, AfxGetMouseWheelDelta(port));
+    XssPushReal(vm, 0, AfxGetMouseWheelDelta(port).y);
 }
 
 afxString const hidVmtNames[] =

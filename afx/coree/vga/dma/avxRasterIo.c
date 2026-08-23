@@ -46,7 +46,7 @@ _AVXINL avxRasterIo _AvxGetSanitizedRasterIo(avxRaster ras, afxSize bufCap, avxR
     */
 
     avxRasterIo rio = { 0 };
-    rio.rgn = _AvxGetSanitizedRasterRegion(ras, op);
+    rio.rgn = _AvxGetSanitizedRasterRegion(ras, &op->rgn);
 
     AFX_ASSERT_CAPACITY(bufCap, op->offset);
     rio.offset = AFX_MIN(op->offset, bufCap - 1);

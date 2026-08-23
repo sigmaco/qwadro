@@ -144,11 +144,11 @@ ARX void ArxComputeSimilarity
 
     afxV3d const origin, 
 
-    afxM3d ltm, 
+    afxM3d* ltm, 
 
-    afxM3d iltm, 
+    afxM3d* iltm, 
 
-    afxV3d atv
+    afxV3d* atv
 );
 
 ARX afxUnit ArxRecenterAllPulleyClocks

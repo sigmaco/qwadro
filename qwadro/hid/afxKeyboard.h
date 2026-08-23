@@ -246,14 +246,17 @@ AUX afxMask         AfxIsMousePressed2(afxMask seats, afxMouseButton mb);
 AUX afxMask         AfxWasMousePressed2(afxMask seats, afxMouseButton mb);
 AUX afxMask         AfxWasMouseReleased2(afxMask seats, afxMouseButton mb);
 
-AUX void            AfxGetMouseMotion(afxUnit seat, afxV2d motion, afxV2d vel, afxV2d accel);
+AUX afxV2d          AfxGetMouseMotion(afxUnit seat);
+AUX afxV2d          AfxGetMouseVelocity(afxUnit seat);
+AUX afxV2d          AfxGetMouseAcceleration(afxUnit seat);
+
 AUX afxBool         AfxTestMouseMotionX(afxUnit seat, afxInt tolerance);
 AUX afxBool         AfxTestMouseMotionZ(afxUnit seat, afxInt tolerance);
 
-AUX afxReal         AfxGetMouseWheelDelta(afxUnit seat);
+AUX afxV2d          AfxGetMouseWheelDelta(afxUnit seat);
 
 AUX afxError        AfxEmulateMouseMotion(afxUnit seat, afxV2d const motion);
-AUX afxError        AfxEmulateMouseWheelAction(afxUnit seat, afxReal delta);
+AUX afxError        AfxEmulateMouseWheelAction(afxUnit seat, afxV2d const delta);
 AUX afxError        AfxEmulateMouseButtonActions(afxUnit seat, afxUnit cnt, afxMouseButton const butt[], afxBool const pressed[]);
 AUX afxError        AfxReleaseMouseButtons(afxUnit seat);
 

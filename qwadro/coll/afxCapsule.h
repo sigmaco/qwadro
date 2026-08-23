@@ -47,9 +47,11 @@ AFX_DEFINE_STRUCT(afxCapsule)
     // Center of capsule (often midpoint between ends).
     // The center point of the entire capsule --- typically located at the midpoint of the cylindrical part.
     afxV3d origin;
+
     // Radius of the capsule's hemispherical ends (and the cylinder).
     // Radius of the hemispherical ends and the cylinder's circular cross-section.
     afxReal radius;
+
     // Length of the cylindrical part of the capsule (excluding hemispheres).
     // This is only the length of the cylindrical middle part, not counting the hemispherical caps.
     afxReal length;
@@ -64,10 +66,10 @@ AFXINL afxReal AfxGetCapsuleHeight(afxCapsule const cap);
 
 // Compute Endpoints of the Capsule
 // Get the Y-aligned end points of the capsule’s internal segment (cylinder)
-AFXINL afxReal AfxGetCapsuleEndpoints(afxCapsule const cap, afxV3d outA, afxV3d outB);
+AFXINL afxReal AfxGetCapsuleEndpoints(afxCapsule const cap, afxV3d* outA, afxV3d* outB);
 
 // Compute Axis-Aligned Bounding Box (AABB)
-AFXINL void AfxGetCapsuleAabb(afxCapsule const cap, afxAabb* aabb);
+AFXINL afxAabb AfxGetCapsuleAabb(afxCapsule const cap);
 
 // Distance from Point to Capsule
 AFXINL afxReal AfxDistanceFromCapsule(afxCapsule const cap, afxV3d const point);

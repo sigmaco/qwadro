@@ -20,6 +20,8 @@
 
 #define _ARX_CAMERA_C
 #include "arxIcd.h"
+#include "qwadro/math/afxTrigonometry.h"
+#include "qwadro/math/afxArithmetic2.h"
 
 _ARX afxReal64 ArxFindAllowedLodErrorForCamera(afxReal64 errInPixels, afxInt vpHeightInPixels, afxReal64 fovY, afxReal64 distanceFromCam)
 {
@@ -41,79 +43,80 @@ _ARXINL void ArxAdjustCameraAspectRatio(arxCamera cam, afxReal physAspectRatio, 
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(screenExtent);
-    AFX_ASSERT(windowExtent);
+    //AFX_ASSERT(screenExtent);
+    //AFX_ASSERT(windowExtent);
     cam->wpOverHp = physAspectRatio ? physAspectRatio : 1;
-    cam->wrOverHr = AFX_MAX(1, screenExtent[0]) / AFX_MAX(1, screenExtent[1]);
-    cam->wwOverHw = AFX_MAX(1, windowExtent[0]) / AFX_MAX(1, windowExtent[1]);
+    cam->wrOverHr = AFX_MAX(1, screenExtent.v[0]) / AFX_MAX(1, screenExtent.v[1]);
+    cam->wwOverHw = AFX_MAX(1, windowExtent.v[0]) / AFX_MAX(1, windowExtent.v[1]);
     cam->shouldSyncP = TRUE;
 }
 
-_ARXINL void _ArxComputeCameraMatrices(arxCamera cam, afxM4d v, afxM4d iv)
+_ARXINL void _ArxComputeCameraMatrices(arxCamera cam, afxM4d* pV, afxM4d* pIv)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(v);
-    AFX_ASSERT(iv);
+    //AFX_ASSERT(v);
+    //AFX_ASSERT(iv);
 
     afxM3d a, b, c;
 
     if (!cam->useQuatOrient)
-        AfxM3dCopy(a, cam->orientM3d);
+        a = cam->orientM3d;
     else
-        AfxM3dRotationQuat(a, cam->orient);
+        a = AfxM3dRotationQuat(cam->orient);
 
-    afxV3d cosv, sinv;
-    AfxCosV3d(cosv, cam->elevAzimRoll);
-    AfxSinV3d(sinv, cam->elevAzimRoll);
+    afxV3d cosv = AfxV3dCos(cam->elevAzimRoll);
+    afxV3d sinv = AfxV3dSin(cam->elevAzimRoll);
 
-    b[0][0] = cosv[1];
-    b[0][1] = 0.f;
-    b[0][2] = sinv[1];
-    b[1][0] = 0.f;
-    b[1][1] = 1.f;
-    b[1][2] = 0.f;
-    b[2][0] = -sinv[1];
-    b[2][1] = 0.f;
-    b[2][2] = cosv[1];
-    AfxM3dMultiply(c, a, b);
-    b[0][0] = 1.f;
-    b[0][1] = 0.f;
-    b[0][2] = 0.f;
-    b[1][0] = 0.f;
-    b[1][1] = cosv[0];
-    b[1][2] = -sinv[0];
-    b[2][0] = 0.f;
-    b[2][1] = sinv[0];
-    b[2][2] = cosv[0];
-    AfxM3dMultiply(a, c, b);
-    b[0][0] = cosv[2];
-    b[0][1] = -sinv[2];
-    b[0][2] = 0.f;
-    b[1][0] = sinv[2];
-    b[1][1] = cosv[2];
-    b[1][2] = 0.f;
-    b[2][0] = 0.f;
-    b[2][1] = 0.f;
-    b[2][2] = 1.f;
-    AfxM3dMultiply(c, a, b);
+    b.m[0][0] = cosv.v[1];
+    b.m[0][1] = 0.f;
+    b.m[0][2] = sinv.v[1];
+    b.m[1][0] = 0.f;
+    b.m[1][1] = 1.f;
+    b.m[1][2] = 0.f;
+    b.m[2][0] = -sinv.v[1];
+    b.m[2][1] = 0.f;
+    b.m[2][2] = cosv.v[1];
+    c = AfxM3dMultiply(a, b);
+    b.m[0][0] = 1.f;
+    b.m[0][1] = 0.f;
+    b.m[0][2] = 0.f;
+    b.m[1][0] = 0.f;
+    b.m[1][1] = cosv.v[0];
+    b.m[1][2] = -sinv.v[0];
+    b.m[2][0] = 0.f;
+    b.m[2][1] = sinv.v[0];
+    b.m[2][2] = cosv.v[0];
+    a = AfxM3dMultiply(c, b);
+    b.m[0][0] = cosv.v[2];
+    b.m[0][1] = -sinv.v[2];
+    b.m[0][2] = 0.f;
+    b.m[1][0] = sinv.v[2];
+    b.m[1][1] = cosv.v[2];
+    b.m[1][2] = 0.f;
+    b.m[2][0] = 0.f;
+    b.m[2][1] = 0.f;
+    b.m[2][2] = 1.f;
+    c = AfxM3dMultiply(a, b);
 
     afxV4d at;
-    AfxV3dPreMultiplyM3d(at, cam->pos, c);
-    at[0] = -(at[0] + cam->displace[0]);
-    at[1] = -(at[1] + cam->displace[1]);
-    at[2] = -(at[2] + cam->displace[2]);
-    at[3] = 1.f;
-    AfxM4dCopyM3d(v, c, at);
-    AfxM4dCopyAtmTransposed(iv, v);
-    AfxM4dEnsureAffine(iv);
-    AfxV3dPostMultiplyM3d(at, c, cam->displace);
-    AfxV3dAdd(iv[3], at, cam->pos);
-    iv[3][3] = 1.f;
+    at.v3 = AfxV3dPreMultiplyM3d(cam->pos, c);
+    at.v[0] = -(at.v[0] + cam->displace.v[0]);
+    at.v[1] = -(at.v[1] + cam->displace.v[1]);
+    at.v[2] = -(at.v[2] + cam->displace.v[2]);
+    at.v[3] = 1.f;
+    afxM4d v = AfxM4dFromM3d(c, at);
+    afxM4d iv = AfxM4dTransposeAtm(v);
+    iv = AfxM4dFromAtm(iv);
+    at.v3 = AfxV3dPostMultiplyM3d(c, cam->displace);
+    iv.v4[3].v3 = AfxV3dAdd(at.v3, cam->pos);
+    iv.m[3][3] = 1.f;
     cam->shouldSyncV = FALSE;
+    *pV = v;
+    *pIv = iv;
 }
 
-_ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
+_ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d* pP, afxM4d* pIp)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
@@ -122,20 +125,21 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
     afxReal half = AfxSinf(cam->fovY * 0.5f) / AfxCosf(cam->fovY * 0.5f);
     // The initial projection matrix is set up based on the camera’s field of view and aspect ratio. 
     // This is common for perspective projections.
-    p[0][0] = cam->wrOverHr / (cam->wwOverHw * cam->wpOverHp * half);
-    p[0][1] = 0.f;
-    p[0][2] = 0.f;
-    p[0][3] = 0.f;
-    p[1][0] = 0.f;
-    p[1][1] = 1.f / half;
-    p[1][2] = 0.f;
-    p[1][3] = 0.f;
-    p[2][0] = 0.f;
-    p[2][1] = 0.f;
-    p[2][3] = -1.f;
-    p[3][0] = 0.f;
-    p[3][1] = 0.f;
-    p[3][3] = 0.f;
+    afxM4d p;
+    p.m[0][0] = cam->wrOverHr / (cam->wwOverHw * cam->wpOverHp * half);
+    p.m[0][1] = 0.f;
+    p.m[0][2] = 0.f;
+    p.m[0][3] = 0.f;
+    p.m[1][0] = 0.f;
+    p.m[1][1] = 1.f / half;
+    p.m[1][2] = 0.f;
+    p.m[1][3] = 0.f;
+    p.m[2][0] = 0.f;
+    p.m[2][1] = 0.f;
+    p.m[2][3] = -1.f;
+    p.m[3][0] = 0.f;
+    p.m[3][1] = 0.f;
+    p.m[3][3] = 0.f;
 
     // far and near represent the distance to the far and near clip planes, respectively. 
     // epsilon is used to prevent division by zero or other small-precision issues.
@@ -167,13 +171,13 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
         if (far == 0.f)
         {
             // This ensures the depth mapping does not result in NaN or undefined values when there is no far plane.
-            p[2][2] = epsilon - 1.f;
-            p[3][2] = (epsilon - 2.f) * near;
+            p.m[2][2] = epsilon - 1.f;
+            p.m[3][2] = (epsilon - 2.f) * near;
         }
         else
         {
-            p[2][2] = (near + far) * nearMinFarRecip;
-            p[3][2] = nearMinFarRecip * nearTimesFar + nearMinFarRecip * nearTimesFar;
+            p.m[2][2] = (near + far) * nearMinFarRecip;
+            p.m[3][2] = nearMinFarRecip * nearTimesFar + nearMinFarRecip * nearTimesFar;
         }
         break;
     }
@@ -186,13 +190,13 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
 
         if (far == 0.f)
         {
-            p[2][2] = epsilon - 1.f;
-            p[3][2] = (epsilon - 1.f) * near;
+            p.m[2][2] = epsilon - 1.f;
+            p.m[3][2] = (epsilon - 1.f) * near;
         }
         else
         {
-            p[2][2] = nearMinFarRecip * far;
-            p[3][2] = nearMinFarRecip * nearTimesFar;
+            p.m[2][2] = nearMinFarRecip * far;
+            p.m[3][2] = nearMinFarRecip * nearTimesFar;
         }
         break;
     }
@@ -230,8 +234,8 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
 
         if (far != 0.f)
         {
-            p[2][2] = nearMinFarRecip * near;
-            p[3][2] = nearMinFarRecip * nearTimesFar;
+            p.m[2][2] = nearMinFarRecip * near;
+            p.m[3][2] = nearMinFarRecip * nearTimesFar;
         }
         else
         {
@@ -239,8 +243,8 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
             // Apply some small epsilon correction
             // Using the epsilon correction when far == 0.f to avoid division by zero and keep the projection matrix valid. 
             // This keeps the behavior consistent with the reversed Z approach.
-            p[2][2] = epsilon - 1.f;
-            p[3][2] = (epsilon - 1.f) * near;
+            p.m[2][2] = epsilon - 1.f;
+            p.m[3][2] = (epsilon - 1.f) * near;
         }
         break;
     }
@@ -251,23 +255,27 @@ _ARXINL void _ArxComputeProjectionMatrices(arxCamera cam, afxM4d p, afxM4d ip)
     // This is common in graphics to transform coordinates back from clip space to view space. 
     // The inversion is done by manually calculating the appropriate inverse for the 4x4 matrix, 
     // which is necessary for certain calculations (like unprojection).
-    ip[0][0] = 1.f / p[0][0];
-    ip[0][1] = 0.f;
-    ip[0][2] = 0.f;
-    ip[0][3] = 0.f;
-    ip[1][0] = 0.f;
-    ip[1][1] = 1.f / p[1][1];
-    ip[1][2] = 0.f;
-    ip[1][3] = 0.f;
-    ip[2][0] = 0.f;
-    ip[2][1] = 0.f;
-    ip[2][2] = 0.f;
-    ip[2][3] = 1.f / p[3][2];
-    ip[3][0] = 0.f;
-    ip[3][1] = 0.f;
-    ip[3][2] = 1.f / p[2][3];
-    ip[3][3] = -(p[2][2] / (p[3][2] * p[2][3]));
+    afxM4d ip;
+    ip.m[0][0] = 1.f / p.m[0][0];
+    ip.m[0][1] = 0.f;
+    ip.m[0][2] = 0.f;
+    ip.m[0][3] = 0.f;
+    ip.m[1][0] = 0.f;
+    ip.m[1][1] = 1.f / p.m[1][1];
+    ip.m[1][2] = 0.f;
+    ip.m[1][3] = 0.f;
+    ip.m[2][0] = 0.f;
+    ip.m[2][1] = 0.f;
+    ip.m[2][2] = 0.f;
+    ip.m[2][3] = 1.f / p.m[3][2];
+    ip.m[3][0] = 0.f;
+    ip.m[3][1] = 0.f;
+    ip.m[3][2] = 1.f / p.m[2][3];
+    ip.m[3][3] = -(p.m[2][2] / (p.m[3][2] * p.m[2][3]));
     cam->shouldSyncP = FALSE;
+
+    *pP = p;
+    *pIp = ip;
 }
 
 _ARXINL void _ArxRecomputeCameraMatrices(arxCamera cam)
@@ -278,39 +286,39 @@ _ARXINL void _ArxRecomputeCameraMatrices(arxCamera cam)
     afxBool syncP = cam->shouldSyncP;
 
     if (syncV)
-        _ArxComputeCameraMatrices(cam, cam->v, cam->iv);
+        _ArxComputeCameraMatrices(cam, &cam->v, &cam->iv);
 
     if (syncP)
-        _ArxComputeProjectionMatrices(cam, cam->p, cam->ip);
+        _ArxComputeProjectionMatrices(cam, &cam->p, &cam->ip);
 
     if (syncP || syncV)
     {
-        AfxM4dMultiply(cam->pv, cam->p, cam->v);
-        AfxM4dMultiply(cam->ipv, cam->ip, cam->iv);
-        AfxMakeFrustum(&cam->frustum, cam->pv, cam->ipv);
+        cam->pv = AfxM4dMultiply(cam->p, cam->v);
+        cam->ipv = AfxM4dMultiply(cam->ip, cam->iv);
+        cam->frustum = AfxMakeFrustum(cam->pv, cam->ipv);
     }
 }
 
-_ARXINL void ArxGetCameraMatrices(arxCamera cam, afxM4d iv, afxM4d v)
+_ARXINL void ArxGetCameraMatrices(arxCamera cam, afxM4d* iv, afxM4d* v)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AFX_ASSERT(v || iv);
     _ArxRecomputeCameraMatrices(cam);
-    if (v) AfxM4dCopy(v, cam->v);
-    if (iv) AfxM4dCopy(iv, cam->iv);
+    if (v) *v = cam->v;
+    if (iv) *iv = cam->iv;
 }
 
-_ARXINL void ArxGetProjectionMatrices(arxCamera cam, afxM4d ip, afxM4d ipv, afxM4d pv, afxM4d p)
+_ARXINL void ArxGetProjectionMatrices(arxCamera cam, afxM4d* ip, afxM4d* ipv, afxM4d* pv, afxM4d* p)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AFX_ASSERT(p || ip || pv || ipv);
     _ArxRecomputeCameraMatrices(cam);
-    if (p) AfxM4dCopy(p, cam->p);
-    if (ip) AfxM4dCopy(ip, cam->ip);
-    if (pv) AfxM4dCopy(pv, cam->pv);
-    if (ipv) AfxM4dCopy(ipv, cam->ipv);
+    if (p) *p = cam->p;
+    if (ip) *ip = cam->ip;
+    if (pv) *pv = cam->pv;
+    if (ipv) *ipv = cam->ipv;
 }
 
 _ARXINL afxReal ArxGetCameraFov(arxCamera cam, afxReal* fovX)
@@ -362,7 +370,7 @@ _ARXINL void ArxGetCameraFrustum(arxCamera cam, afxReal* nearClipPlane, afxReal*
     if (frustum)
     {
         _ArxRecomputeCameraMatrices(cam);
-        AfxCopyFrustum(frustum, &cam->frustum);
+        *frustum = cam->frustum;
     }
 }
 
@@ -374,13 +382,13 @@ _ARXINL avxClipSpaceDepth ArxGetCameraDepthRange(arxCamera cam, afxReal* epsilon
     return cam->depthRange;
 }
 
-_ARXINL void ArxGetCameraDisplacement(arxCamera cam, afxV3d displace)
+_ARXINL afxV3d ArxGetCameraDisplacement(arxCamera cam/*, afxV3d displace*/)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(displace);
+    //AFX_ASSERT(displace);
     // displace[2] is distance from target.
-    AfxV3dCopy(displace, cam->displace);
+    return cam->displace;
 }
 
 _ARXINL void ArxDisplaceCamera(arxCamera cam, afxV3d const displace)
@@ -388,10 +396,10 @@ _ARXINL void ArxDisplaceCamera(arxCamera cam, afxV3d const displace)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     
-    if (!displace)
-        AfxV3dCopy(cam->displace, AFX_V4D_IDENTITY);
-    else
-        AfxV3dCopy(cam->displace, displace);
+    //if (!displace)
+        //AfxV3dCopy(cam->displace, AFX_V4D_IDENTITY);
+    //else
+        cam->displace = displace;
 
     cam->shouldSyncV = TRUE;
 }
@@ -400,23 +408,23 @@ _ARXINL afxReal ArxGetCameraDistance(arxCamera cam)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    return cam->displace[2];
+    return cam->displace.v[2];
 }
 
 _ARXINL void ArxSetCameraDistance(arxCamera cam, afxReal distance)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    cam->displace[2] = distance;
+    cam->displace.v[2] = distance;
     cam->shouldSyncV = TRUE;
 }
 
-_ARXINL void ArxGetCameraOrbit(arxCamera cam, afxV3d elevAzimRoll)
+_ARXINL afxV3d ArxGetCameraOrbit(arxCamera cam/*, afxV3d elevAzimRoll*/)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(elevAzimRoll);
-    AfxV3dCopy(elevAzimRoll, cam->elevAzimRoll);
+    //AFX_ASSERT(elevAzimRoll);
+    return cam->elevAzimRoll;
 }
 
 _ARXINL void ArxOrbitCamera(arxCamera cam, afxV3d const elevAzimRoll)
@@ -424,51 +432,51 @@ _ARXINL void ArxOrbitCamera(arxCamera cam, afxV3d const elevAzimRoll)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
 
-    if (!elevAzimRoll)
-        AfxV3dCopy(cam->elevAzimRoll, AFX_V4D_IDENTITY);
-    else
-        AfxV3dCopy(cam->elevAzimRoll, elevAzimRoll);
+    //if (!elevAzimRoll)
+        //AfxV3dCopy(cam->elevAzimRoll, AFX_V4D_IDENTITY);
+    //else
+        cam->elevAzimRoll = elevAzimRoll;
 
     cam->shouldSyncV = TRUE;
 }
 
-_ARXINL void ArxGetCameraDirectionX(arxCamera cam, afxV3d left, afxV3d right)
+_ARXINL void ArxGetCameraDirectionX(arxCamera cam, afxV3d* left, afxV3d* right)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AFX_ASSERT2(left || right, left != right);
     _ArxRecomputeCameraMatrices(cam);
-    if (left) AfxV3dNeg(left, cam->iv[0]);
-    if (right) AfxV3dCopy(right, cam->iv[0]);
+    if (left) *left = AfxV3dNeg(cam->iv.v4[0].v3);
+    if (right) *right = cam->iv.v4[0].v3;
 }
 
-_ARXINL void ArxGetCameraDirectionY(arxCamera cam, afxV3d down, afxV3d up)
+_ARXINL void ArxGetCameraDirectionY(arxCamera cam, afxV3d* down, afxV3d* up)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AFX_ASSERT2(down || up, down != up);
     _ArxRecomputeCameraMatrices(cam);
-    if (down) AfxV3dNeg(down, cam->iv[1]);
-    if (up) AfxV3dCopy(up, cam->iv[1]);
+    if (down) *down = AfxV3dNeg(cam->iv.v4[1].v3);
+    if (up) *up = cam->iv.v4[1].v3;
 }
 
-_ARXINL void ArxGetCameraDirectionZ(arxCamera cam, afxV3d near, afxV3d far)
+_ARXINL void ArxGetCameraDirectionZ(arxCamera cam, afxV3d* near, afxV3d* far)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     AFX_ASSERT2(far || near, far != near);
     _ArxRecomputeCameraMatrices(cam);
-    if (near) AfxV3dCopy(near, cam->iv[2]);
-    if (far) AfxV3dNeg(far, cam->iv[2]);
+    if (near) *near = cam->iv.v4[2].v3;
+    if (far) *far = AfxV3dNeg(cam->iv.v4[2].v3);
 }
 
-_ARXINL void ArxGetCameraTranslation(arxCamera cam, afxV3d point)
+_ARXINL afxV3d ArxGetCameraTranslation(arxCamera cam/*, afxV3d point*/)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(point);
+    //AFX_ASSERT(point);
     _ArxRecomputeCameraMatrices(cam);
-    AfxV3dCopy(point, cam->iv[3]);
+    return cam->iv.v4[3].v3;
 }
 
 _ARXINL void ArxSetCameraOrigin(arxCamera cam, afxV3d const point)
@@ -476,10 +484,10 @@ _ARXINL void ArxSetCameraOrigin(arxCamera cam, afxV3d const point)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
     
-    if (!point)
-        AfxV3dZero(cam->pos);
-    else
-        AfxV3dCopy(cam->pos, point);
+    //if (!point)
+        //AfxV3dZero(cam->pos);
+    //else
+        cam->pos = point;
 
     cam->shouldSyncV = TRUE;
 }
@@ -488,7 +496,7 @@ _ARXINL void ArxTranslateCamera(arxCamera cam, afxV3d const motion)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(motion);
+    //AFX_ASSERT(motion);
 
     _ArxRecomputeCameraMatrices(cam);
 
@@ -501,138 +509,138 @@ _ARXINL void ArxTranslateCamera(arxCamera cam, afxV3d const motion)
     };
     AfxV3dAdd(cam->pos, cam->pos, offset);
 #else
-    cam->pos[0] = motion[0] * cam->iv[0][0] + cam->pos[0];
-    cam->pos[1] = motion[0] * cam->iv[0][1] + cam->pos[1];
-    cam->pos[2] = motion[0] * cam->iv[0][2] + cam->pos[2];
+    cam->pos.v[0] = motion.v[0] * cam->iv.m[0][0] + cam->pos.v[0];
+    cam->pos.v[1] = motion.v[0] * cam->iv.m[0][1] + cam->pos.v[1];
+    cam->pos.v[2] = motion.v[0] * cam->iv.m[0][2] + cam->pos.v[2];
 
-    cam->pos[0] = motion[1] * cam->iv[1][0] + cam->pos[0];
-    cam->pos[1] = motion[1] * cam->iv[1][1] + cam->pos[1];
-    cam->pos[2] = motion[1] * cam->iv[1][2] + cam->pos[2];
+    cam->pos.v[0] = motion.v[1] * cam->iv.m[1][0] + cam->pos.v[0];
+    cam->pos.v[1] = motion.v[1] * cam->iv.m[1][1] + cam->pos.v[1];
+    cam->pos.v[2] = motion.v[1] * cam->iv.m[1][2] + cam->pos.v[2];
 
-    cam->pos[0] = motion[2] * cam->iv[2][0] + cam->pos[0];
-    cam->pos[1] = motion[2] * cam->iv[2][1] + cam->pos[1];
-    cam->pos[2] = motion[2] * cam->iv[2][2] + cam->pos[2];
+    cam->pos.v[0] = motion.v[2] * cam->iv.m[2][0] + cam->pos.v[0];
+    cam->pos.v[1] = motion.v[2] * cam->iv.m[2][1] + cam->pos.v[1];
+    cam->pos.v[2] = motion.v[2] * cam->iv.m[2][2] + cam->pos.v[2];
 #endif
     cam->shouldSyncV = TRUE;
 }
 
-_ARXINL void ArxFindWorldCoordinates(arxCamera cam, afxV2d const wh, afxV3d const screenPoint, afxV4d worldPoint)
+_ARXINL afxV4d ArxFindWorldCoordinates(arxCamera cam, afxV2d const wh, afxV3d const screenPoint/*, afxV4d worldPoint*/)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(wh);
-    AFX_ASSERT(screenPoint);
-    AFX_ASSERT(worldPoint);
+    //AFX_ASSERT(wh);
+    //AFX_ASSERT(screenPoint);
+    //AFX_ASSERT(worldPoint);
 
-    afxV4d v =
-    {
-        ((screenPoint[0] + screenPoint[0]) - wh[0]) / wh[0],
-        ( screenPoint[1] + screenPoint[1]  - wh[1]) / wh[1],
-        ((screenPoint[2] + screenPoint[2] - 1.f - -1.f) * 0.5f),
+    afxV4d v = AFX_V4D(
+        ((screenPoint.v[0] + screenPoint.v[0]) - wh.v[0]) / wh.v[0],
+        ( screenPoint.v[1] + screenPoint.v[1]  - wh.v[1]) / wh.v[1],
+        ((screenPoint.v[2] + screenPoint.v[2] - 1.f - -1.f) * 0.5f),
         1.f
-    };
+    );
 
     _ArxRecomputeCameraMatrices(cam);
 
-    afxV4d v2;
-    AfxV4dPreMultiplyM4d(v2, v, cam->ip);
-    AfxV4dPreMultiplyM4d(v, v2, cam->iv);
-    AfxV3dScale(worldPoint, v, 1.f / v[3]);
-    worldPoint[3] = 1.f;
+    afxV4d v2 = AfxV4dPreMultiplyM4d(v, cam->ip);
+    v = AfxV4dPreMultiplyM4d(v2, cam->iv);
+    afxV4d worldPoint;
+    worldPoint.v3 = AfxV3dScale(v.v3, 1.f / v.v[3]);
+    worldPoint.v[3] = 1.f;
+    return worldPoint;
 }
 
-_ARXINL void ArxFindScreenCoordinates(arxCamera cam, afxV2d const wh, afxV4d const worldPoint, afxV3d screenPoint)
+_ARXINL afxV3d ArxFindScreenCoordinates(arxCamera cam, afxV2d const wh, afxV4d const worldPoint/*, afxV3d screenPoint*/)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(wh);
-    AFX_ASSERT(worldPoint);
-    AFX_ASSERT(worldPoint[3] == 1.f);
-    AFX_ASSERT(screenPoint);
+    //AFX_ASSERT(wh);
+    //AFX_ASSERT(worldPoint);
+    AFX_ASSERT(worldPoint.v[3] == 1.f);
+    //AFX_ASSERT(screenPoint);
 
     _ArxRecomputeCameraMatrices(cam);
 
-    afxV4d v, v2;
-    AfxV4dPreMultiplyM4d(v, worldPoint, cam->v);
-    AfxV4dPreMultiplyM4d(v2, v, cam->p);
-    AfxV3dScale(v, v2, 1.f / v2[3]);
+    afxV4d v = AfxV4dPreMultiplyM4d(worldPoint, cam->v);
+    afxV4d v2 = AfxV4dPreMultiplyM4d(v, cam->p);
+    v.v3 = AfxV3dScale(v2.v3, 1.f / v2.v[3]);
 
     if (cam->depthRange == avxClipSpaceDepth_NEG_ONE_TO_ONE)
-        v[2] = v[2] + v[2] - 1.f;
+        v.v[2] = v.v[2] + v.v[2] - 1.f;
 
-    AfxV3dSet(screenPoint, (v[0] + 1.f) * wh[0] * 0.5f, (v[1] + 1.f) * wh[1] * 0.5f, v[2]);
+    return AfxV3dMake((v.v[0] + 1.f) * wh.v[0] * 0.5f, (v.v[1] + 1.f) * wh.v[1] * 0.5f, v.v[2]);
 }
 
-_ARXINL void ArxGetCameraPickingRay(arxCamera cam, afxV2d const wh, afxV2d const cursor, afxV4d origin, afxV3d normal)
+_ARXINL void ArxGetCameraPickingRay(arxCamera cam, afxV2d const wh, afxV2d const cursor, afxV4d* origin, afxV3d* normal)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(wh);
-    AFX_ASSERT(cursor);
+    //AFX_ASSERT(wh);
+    //AFX_ASSERT(cursor);
     AFX_ASSERT(origin);
     AFX_ASSERT(normal);
 
     _ArxRecomputeCameraMatrices(cam);
 
-    ArxGetCameraTranslation(cam, origin);
-    afxV4d v =
-    {
-        (cursor[0] + cursor[0] - wh[0]) / wh[0], 
-        (cursor[1] + cursor[1] - wh[1]) / wh[1], 
+    origin->v3 = ArxGetCameraTranslation(cam);
+    origin->w = 1;
+
+    afxV4d v = AFX_V4D(
+        (cursor.v[0] + cursor.v[0] - wh.v[0]) / wh.v[0],
+        (cursor.v[1] + cursor.v[1] - wh.v[1]) / wh.v[1],
         -1.f, 
         1.f
-    };
+    );
 
-    afxV4d v2;
-    AfxV4dPreMultiplyM4d(v2, v, cam->ip);
-    v2[3] = 0.0;
-    AfxV4dPreMultiplyM4d(v, v2, cam->iv);
+    afxV4d v2 = AfxV4dPreMultiplyM4d(v, cam->ip);
+    v2.v[3] = 0.0;
+    v = AfxV4dPreMultiplyM4d(v2, cam->iv);
     
     // should normalize or zero
-    afxReal len = AfxV3dMag(v);
+    afxReal len = AfxV3dMag(v.v3);
 
     if (len <= 0.0000099999997f)
-        AfxV3dZero(normal);
+        *normal = AfxV3dZero();
     else
-        AfxV3dScale(normal, v, 1.f / len);
+        *normal = AfxV3dScale(v.v3, 1.f / len);
 }
 
-_ARXINL void ArxComputeCameraRelativePlanarBases(arxCamera cam, afxBool screenOrthogonal, afxV3d const planeNormal, afxV4d const pointOnPlane, afxV3d xBasis, afxV3d yBasis)
+_ARXINL void ArxComputeCameraRelativePlanarBases(arxCamera cam, afxBool screenOrthogonal, afxV3d const planeNormal, afxV4d const pointOnPlane, afxV3d* xBasis, afxV3d* yBasis)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CAM, 1, &cam);
-    AFX_ASSERT(planeNormal);
-    AFX_ASSERT(pointOnPlane);
+    //AFX_ASSERT(planeNormal);
+    //AFX_ASSERT(pointOnPlane);
     AFX_ASSERT(xBasis);
     AFX_ASSERT(yBasis);
 
     ArxGetCameraDirectionX(cam, NIL, xBasis);
     afxV3d v;
 
-    if (!screenOrthogonal) AfxV3dCopy(v, xBasis);
+    if (!screenOrthogonal) v = *xBasis;
     else
     {
         afxV3d up;
         afxV4d origin, camToPoint;
-        ArxGetCameraTranslation(cam, origin);
-        ArxGetCameraDirectionY(cam, NIL, up);
-        AfxV4dSub(camToPoint, pointOnPlane, origin);
-        v[0] = up[2] * camToPoint[1] - up[1] * camToPoint[2];
-        v[1] = up[0] * camToPoint[2] - up[2] * camToPoint[0];
-        v[2] = up[1] * camToPoint[0] - up[0] * camToPoint[1];
+        origin.v3 = ArxGetCameraTranslation(cam);
+        origin.w = 1;
+        ArxGetCameraDirectionY(cam, NIL, &up);
+        camToPoint = AfxV4dSub(pointOnPlane, origin);
+        v.v[0] = up.v[2] * camToPoint.v[1] - up.v[1] * camToPoint.v[2];
+        v.v[1] = up.v[0] * camToPoint.v[2] - up.v[2] * camToPoint.v[0];
+        v.v[2] = up.v[1] * camToPoint.v[0] - up.v[0] * camToPoint.v[1];
     }
 
-    yBasis[0] = (v[2] * planeNormal[1]) - (v[1] * planeNormal[2]);
-    yBasis[1] = (v[0] * planeNormal[2]) - (v[2] * planeNormal[0]);
-    yBasis[2] = (v[1] * planeNormal[0]) - (v[0] * planeNormal[1]);
+    yBasis->v[0] = (v.v[2] * planeNormal.v[1]) - (v.v[1] * planeNormal.v[2]);
+    yBasis->v[1] = (v.v[0] * planeNormal.v[2]) - (v.v[2] * planeNormal.v[0]);
+    yBasis->v[2] = (v.v[1] * planeNormal.v[0]) - (v.v[0] * planeNormal.v[1]);
 
     // should normalize or zero
-    afxReal len = AfxV3dMag(yBasis);
+    afxReal len = AfxV3dMag(*yBasis);
     
     if (len <= 0.0000099999997f)
-        AfxV3dZero(yBasis);
+        *yBasis = AfxV3dZero();
     else
-        AfxV3dScale(yBasis, yBasis, AfxRecip(len));
+        *yBasis = AfxV3dScale(*yBasis, AfxRecip(len));
 }
 
 #if 0
@@ -786,11 +794,11 @@ _ARXINL void ArxRestoreCamera(arxCamera cam)
     //cam->depthRangeEpsilon = AFX_EPSILON;
 
     cam->useQuatOrient = TRUE;
-    AfxV3dZero(cam->pos);
-    AfxQuatReset(cam->orient);
-    AfxM3dReset(cam->orientM3d);
-    AfxV3dZero(cam->elevAzimRoll);
-    AfxV3dZero(cam->displace);
+    cam->pos = AfxV3dZero();
+    cam->orient = AfxQuatIdentity();
+    cam->orientM3d = AfxM3dIdentity();
+    cam->elevAzimRoll = AfxV3dZero();
+    cam->displace = AfxV3dZero();
     cam->shouldSyncP = TRUE;
     cam->shouldSyncV = TRUE;
     _ArxRecomputeCameraMatrices(cam);
@@ -849,10 +857,9 @@ _ARX afxError _ArxCamCtorCb(arxCamera cam, void** args, afxUnit invokeNo)
 
     cam->perspective = TRUE;
 
-    afxM4d m, m2;
-    AfxM4dReset(m);
-    AfxM4dReset(m2);
-    AfxMakeFrustum(&cam->frustum, m, m2);
+    afxM4d m = AfxM4dIdentity();
+    afxM4d m2 = AfxM4dIdentity();
+    cam->frustum = AfxMakeFrustum(m, m2);
     
     ArxRestoreCamera(cam);
 

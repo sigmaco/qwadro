@@ -77,8 +77,8 @@ _AFXINL afxBool AfxCopyRigidTransform(afxTransform *t, afxTransform const* in)
     afxTransformFlags dstRigidFlags = (t->flags & afxTransformFlag_RIGID);
     afxTransformFlags srcRigidFlags = (in->flags & afxTransformFlag_RIGID);
     t->flags |= srcRigidFlags;
-    AfxV3dCopy(t->pv, in->pv);
-    AfxQuatCopy(t->oq, in->oq);
+    t->pv = in->pv;
+    t->oq = in->oq;
     //AfxM3dReset(t->ssm);
     return (srcRigidFlags || dstRigidFlags); // if has diff
 }
@@ -105,11 +105,9 @@ _AFXINL afxBool AfxMakeTransform(afxTransform* t, afxV3d const pv, afxQuat const
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(oq);
-    AFX_ASSERT(ssm);
-    AfxV3dCopy(t->pv, pv);
-    AfxQuatCopy(t->oq, oq);
-    AfxM3dCopy(t->ssm, ssm);
+    t->pv = pv;
+    t->oq = oq;
+    t->ssm = ssm;
 
     afxTransformFlags srcFlags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
 
@@ -139,25 +137,25 @@ _AFXINL afxBool AfxMakeRigidTransform(afxTransform* t, afxV3d const pos, afxQuat
     afxTransformFlags srcFlags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
     t->flags = NIL;
 
-    if (!pos) AfxV3dZero(t->pv);
-    else
+    //if (!pos) AfxV3dZero(t->pv);
+    //else
     {
-        AfxV3dCopy(t->pv, pos);
+        t->pv = pos;
 
         if (!check || !AfxV3dIsZero(pos))
             t->flags |= afxTransformFlag_T;
     }
 
-    if (!orient) AfxQuatReset(t->oq);
-    else
+    //if (!orient) AfxQuatReset(t->oq);
+    //else
     {
-        AfxQuatCopy(t->oq, orient);
+        t->oq = orient;
 
         if (!check || !AfxQuatIsIdentity(orient))
             t->flags |= afxTransformFlag_R;
     }
 
-    AfxM3dCopy(t->ssm, AFX_M3D_IDENTITY);
+    t->ssm = AFX_M3D_IDENTITY;
 
     return (srcFlags || t->flags); // if has diff
 }
@@ -177,19 +175,28 @@ _AFXINL afxBool AfxMakeRigidTransformScaled(afxTransform* t, afxV3d const pos, a
     return (srcFlags || t->flags); // if has diff
 }
 
+_AFXINL void AfxResetOrientation(afxTransform* t)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+    t->oq = AfxQuatIdentity();
+    t->flags &= ~afxTransformFlag_R;
+}
+
 _AFXINL afxBool AfxSetOrientation(afxTransform* t, afxQuat const orient, afxBool check)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-
+#if 0
     if (!orient)
     {
         AfxQuatReset(t->oq);
         t->flags &= ~afxTransformFlag_R;
     }
     else
+#endif
     {
-        AfxQuatCopy(t->oq, orient);
+        t->oq = orient;
 
         if (!check || !AfxQuatIsIdentity(orient))
         {
@@ -200,19 +207,28 @@ _AFXINL afxBool AfxSetOrientation(afxTransform* t, afxQuat const orient, afxBool
     return FALSE;
 }
 
+_AFXINL void AfxResetPosition(afxTransform* t)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+    t->pv = AfxV3dZero();
+    t->flags &= ~afxTransformFlag_T;
+}
+
 _AFXINL afxBool AfxSetPosition(afxTransform* t, afxV3d const pos, afxBool check)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-
+#if 0
     if (!pos)
     {
         AfxV3dZero(t->pv);
         t->flags &= ~afxTransformFlag_T;
     }
     else
+#endif
     {
-        AfxV3dCopy(t->pv, pos);
+        t->pv = pos;
 
         if (!check || !AfxV3dIsZero(pos))
         {
@@ -223,19 +239,28 @@ _AFXINL afxBool AfxSetPosition(afxTransform* t, afxV3d const pos, afxBool check)
     return FALSE;
 }
 
+_AFXINL void AfxResetScale(afxTransform* t)
+{
+    afxError err = { 0 };
+    AFX_ASSERT(t);
+    t->ssm = AfxM3dIdentity();
+    t->flags &= ~afxTransformFlag_S;
+}
+
 _AFXINL afxBool AfxSetScale(afxTransform* t, afxV3d const scale, afxBool check)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-
+#if 0
     if (!scale)
     {
         AfxM3dReset(t->ssm);
         t->flags &= ~afxTransformFlag_S;
     }
     else
+#endif
     {
-        AfxM3dScaling(t->ssm, scale);
+        t->ssm = AfxM3dScaling(scale);
 
         if (!check || !AfxM3dIsIdentity(t->ssm))
         {
@@ -250,15 +275,16 @@ _AFXINL afxBool AfxSetScaleShearing(afxTransform* t, afxM3d const ssm, afxBool c
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-
+#if 0
     if (!ssm)
     {
         AfxM3dReset(t->ssm);
         t->flags &= ~afxTransformFlag_S;
     }
     else
+#endif
     {
-        AfxM3dCopy(t->ssm, ssm);
+        t->ssm = ssm;
 
         if (!check || !(AfxM3dIsIdentity(ssm)))
         {
@@ -293,17 +319,15 @@ _AFXINL void AfxMultiplyTransform(afxTransform *t, afxTransform const* a, afxTra
     t->flags = b->flags | a->flags;
 #endif
 
-    afxM3d am, bm, tmp;
-    AfxM3dRotationQuat(am, a->oq);
-    AfxM3dRotationQuat(bm, b->oq);
-    AfxM3dMultiply(t->ssm, bm, b->ssm);
-    AfxM3dMultiply(tmp, a->ssm, t->ssm);    
-    TransposeMatrixMultiply3x3(t->ssm, bm, tmp);
-    afxV3d pos;
-    AfxV3dPostMultiplyM3d(pos, a->ssm, b->pv);
-    AfxV3dPostMultiplyM3d(t->pv, am, pos);
-    AfxV3dAdd(t->pv, a->pv, t->pv);
-    AfxQuatMultiply(t->oq, a->oq, b->oq);
+    afxM3d am = AfxM3dRotationQuat(a->oq);
+    afxM3d bm = AfxM3dRotationQuat(b->oq);
+    t->ssm = AfxM3dMultiply(bm, b->ssm);
+    afxM3d tmp = AfxM3dMultiply(a->ssm, t->ssm);
+    t->ssm = TransposeMatrixMultiply3x3(t->ssm, bm, tmp);
+    afxV3d pos = AfxV3dPostMultiplyM3d(a->ssm, b->pv);
+    t->pv = AfxV3dPostMultiplyM3d(am, pos);
+    t->pv = AfxV3dAdd(a->pv, t->pv);
+    t->oq = AfxQuatMultiply(a->oq, b->oq);
     t->flags = b->flags | a->flags;
 }
 
@@ -335,23 +359,23 @@ _AFXINL void AfxMixTransform(afxTransform *t, afxTransform const* a, afxTransfor
     afxTransformFlags flags = b->flags | a->flags;
     t->flags = flags;
 
-    if (!(flags & afxTransformFlag_T)) AfxV3dZero(t->pv);
+    if (!(flags & afxTransformFlag_T)) t->pv = AfxV3dZero();
     else
     {
-        AfxV3dMix(t->pv, a->pv, b->pv, time);
+        t->pv = AfxV3dMix(a->pv, b->pv, time);
     }
 
-    if (!(flags & afxTransformFlag_R)) AfxQuatReset(t->oq);
+    if (!(flags & afxTransformFlag_R)) t->oq = AfxQuatIdentity();
     else
     {
-        AfxV4dMix(t->oq, a->oq, b->oq, time);
-        AfxQuatNormalize(t->oq, t->oq);
+        t->oq = AfxV4dMix(a->oq, b->oq, time);
+        t->oq = AfxQuatNormalize(t->oq, NIL);
     }
 
-    if (!(flags & afxTransformFlag_S)) AfxM3dReset(t->ssm);
+    if (!(flags & afxTransformFlag_S)) t->ssm = AfxM3dIdentity();
     else
     {
-        AfxM3dMix(t->ssm, a->ssm, b->ssm, time);
+        t->ssm = AfxM3dMix(a->ssm, b->ssm, time);
     }
 }
 
@@ -371,166 +395,116 @@ _AFXINL afxBool AfxInvertTransform(afxTransform const* in, afxTransform* t)
 
     afxQuat q;
     if (flags & afxTransformFlag_R)
-        AfxQuatConj(q, in->oq);
+        q = AfxQuatConj(in->oq);
     else
-        AfxQuatReset(q);
+        q = AfxQuatIdentity();
     
     if (!(flags & (afxTransformFlag_T | afxTransformFlag_S)))
-        return AfxMakeRigidTransform(t, NIL, q, TRUE);
+        return AfxMakeRigidTransform(t, AFX_V3D_ZERO, q, TRUE);
 
-    afxM3d iqm, ss, tmp;
-    AfxM3dRotationQuat(iqm, q);
-    AfxM3dInvert(ss, in->ssm);
-    AfxM3dMultiply(tmp, ss, iqm);
-    TransposeMatrixMultiply3x3(ss, iqm, tmp);
+    afxM3d iqm = AfxM3dRotationQuat(q);
+    afxM3d ss = AfxM3dInvert(in->ssm, NIL);
+    afxM3d tmp = AfxM3dMultiply(ss, iqm);
+    ss = TransposeMatrixMultiply3x3(ss, iqm, tmp);
 
-    afxV4d ip, ip2, ip3;
-    AfxV3dNeg(ip, in->pv);
-    AfxV3dPostMultiplyM3d(ip2, ss, ip);
-    AfxV3dPostMultiplyM3d(ip3, iqm, ip2);
+    afxV3d ip = AfxV3dNeg(in->pv);
+    afxV3d ip2 = AfxV3dPostMultiplyM3d(ss, ip);
+    afxV3d ip3 = AfxV3dPostMultiplyM3d(iqm, ip2);
     return AfxMakeTransform(t, ip3, q, ss, TRUE);
 }
 
-_AFXINL afxDof AfxV3dEnforceDofs(afxV3d pos, afxDof allowedDofs)
+_AFXINL afxV3d AfxV3dEnforceDofs(afxV3d const pv, afxDof allowedDofs)
 {
     afxError err = { 0 };
-    AFX_ASSERT(pos);
+
     allowedDofs = (allowedDofs & afxDof_T);
 
-    if (!allowedDofs) AfxV4dReset(pos);
-    else
+    if (!allowedDofs)
+        return AFX_V3D_ZERO;
+
+    afxV3d pos = pv;
+
+    switch (allowedDofs)
     {
-        switch (allowedDofs)
-        {
-        case afxDof_T_XY:
-            //pos[0] = 0;
-            //pos[1] = 0;
-            pos[2] = 0;
-            break;
-        case afxDof_T_XZ:
-            //pos[0] = 0;
-            pos[1] = 0;
-            //pos[2] = 0;
-            break;
-        case afxDof_T_YZ:
-            pos[0] = 0;
-            //pos[1] = 0;
-            //pos[2] = 0;
-            break;
-        case afxDof_T_X:
-            //pos[0] = 0;
-            pos[1] = 0;
-            pos[2] = 0;
-            break;
-        case afxDof_T_Y:
-            pos[0] = 0;
-            //pos[1] = 0;
-            pos[2] = 0;
-            break;
-        case afxDof_T_Z:
-            pos[0] = 0;
-            pos[1] = 0;
-            //pos[2] = 0;
-            break;
-        default: break;
-        }
+    case afxDof_T_XY:
+        //pos.v[0] = 0;
+        //pos.v[1] = 0;
+        pos.v[2] = 0;
+        break;
+    case afxDof_T_XZ:
+        //pos.v[0] = 0;
+        pos.v[1] = 0;
+        //pos.v[2] = 0;
+        break;
+    case afxDof_T_YZ:
+        pos.v[0] = 0;
+        //pos.v[1] = 0;
+        //pos.v[2] = 0;
+        break;
+    case afxDof_T_X:
+        //pos.v[0] = 0;
+        pos.v[1] = 0;
+        pos.v[2] = 0;
+        break;
+    case afxDof_T_Y:
+        pos.v[0] = 0;
+        //pos.v[1] = 0;
+        pos.v[2] = 0;
+        break;
+    case afxDof_T_Z:
+        pos.v[0] = 0;
+        pos.v[1] = 0;
+        //pos.v[2] = 0;
+        break;
+    default: pos = pv; break;
     }
-    return allowedDofs;
+    return pos;
 }
 
-_AFXINL afxDof AfxQuatEnforceDofs(afxQuat rot, afxDof allowedDofs)
+_AFXINL afxQuat AfxQuatEnforceDofs(afxQuat const oq, afxDof allowedDofs)
 {
     afxError err = { 0 };
-    AFX_ASSERT(rot);
+
     allowedDofs = (allowedDofs & afxDof_R);
 
-    if (!allowedDofs) AfxQuatReset(rot);
-    else
+    if (!allowedDofs)
+        return AFX_QUAT_IDENTITY;
+    
+    afxQuat rot;
+
+    switch (allowedDofs)
     {
-        switch (allowedDofs)
-        {
-        case afxDof_R_XY:
-            //rot[0] = 0;
-            //rot[1] = 0;
-            rot[2] = 0;
-            break;
-        case afxDof_R_XZ:
-            //rot[0] = 0;
-            rot[1] = 0;
-            //rot[2] = 0;
-            break;
-        case afxDof_R_YZ:
-            rot[0] = 0;
-            //rot[1] = 0;
-            //rot[2] = 0;
-            break;
-        case afxDof_R_X:
-            //rot[0] = 0;
-            rot[1] = 0;
-            rot[2] = 0;
-            break;
-        case afxDof_R_Y:
-            rot[0] = 0;
-            //rot[1] = 0;
-            rot[2] = 0;
-            break;
-        case afxDof_R_Z:
-            rot[0] = 0;
-            rot[1] = 0;
-            //rot[2] = 0;
-            break;        
-        default: break;
-        }
-        AfxQuatNormalize(rot, rot);
+    case afxDof_R_XY: rot = AfxQuatDofXY(oq); break;
+    case afxDof_R_XZ: rot = AfxQuatDofXZ(oq); break;
+    case afxDof_R_YZ: rot = AfxQuatDofYZ(oq); break;
+    case afxDof_R_X: rot = AfxQuatDofX(oq); break;
+    case afxDof_R_Y: rot = AfxQuatDofY(oq); break;
+    case afxDof_R_Z: rot = AfxQuatDofZ(oq); break;
+    default: rot = oq; break;
     }
-    return allowedDofs;
+    return AfxQuatNormalize(rot, NIL);
 }
 
-_AFXINL afxDof AfxM3dEnforceDofs(afxM3d ssm, afxDof allowedDofs)
+_AFXINL afxM3d AfxM3dEnforceDofs(afxM3d const ssm, afxDof allowedDofs)
 {
     afxError err = { 0 };
-    AFX_ASSERT(ssm);
+
     allowedDofs = (allowedDofs & afxDof_S);
 
-    if (!allowedDofs) AfxM3dReset(ssm);
-    else
+    if (!allowedDofs)
+        return AFX_M3D_IDENTITY;
+
+    switch (allowedDofs)
     {
-        switch (allowedDofs)
-        {
-        case afxDof_S_XY:
-            //AfxV3dSet(ssm[0], 1, 0, 0);
-            //AfxV3dSet(ssm[1], 0, 1, 0);
-            AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        case afxDof_S_XZ:
-            //AfxV3dSet(ssm[0], 1, 0, 0);
-            AfxV3dSet(ssm[1], 0, 1, 0);
-            //AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        case afxDof_S_YZ:
-            AfxV3dSet(ssm[0], 1, 0, 0);
-            //AfxV3dSet(ssm[1], 0, 1, 0);
-            //AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        case afxDof_S_X:
-            //AfxV3dSet(ssm[0], 1, 0, 0);
-            AfxV3dSet(ssm[1], 0, 1, 0);
-            AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        case afxDof_S_Y:
-            AfxV3dSet(ssm[0], 1, 0, 0);
-            //AfxV3dSet(ssm[1], 0, 1, 0);
-            AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        case afxDof_S_Z:
-            AfxV3dSet(ssm[0], 1, 0, 0);
-            AfxV3dSet(ssm[1], 0, 1, 0);
-            //AfxV3dSet(ssm[2], 0, 0, 1);
-            break;
-        default: break;
-        }
+    case afxDof_S_XY: return AfxM3dDofXY(ssm);
+    case afxDof_S_XZ: return AfxM3dDofXZ(ssm);
+    case afxDof_S_YZ: return AfxM3dDofYZ(ssm);
+    case afxDof_S_X: return AfxM3dDofX(ssm);
+    case afxDof_S_Y: return AfxM3dDofY(ssm);
+    case afxDof_S_Z: return AfxM3dDofZ(ssm);
+    default: break;
     }
-    return allowedDofs;
+    return ssm;
 }
 
 _AFXINL void AfxEnforceTransformDofs(afxTransform* t, afxDof allowedDofs)
@@ -541,94 +515,90 @@ _AFXINL void AfxEnforceTransformDofs(afxTransform* t, afxDof allowedDofs)
     AFX_ASSERT(t);
     AFX_ASSERT(allowedDofs);
 
-    if (!(AfxQuatEnforceDofs(t->oq, allowedDofs) & afxDof_R))
+    t->oq = AfxQuatEnforceDofs(t->oq, allowedDofs);
+    if (!(allowedDofs & afxDof_R))
         t->flags &= ~afxTransformFlag_R;
 
-    if (!(AfxV3dEnforceDofs(t->pv, allowedDofs) & afxDof_T))
+    t->pv = AfxV3dEnforceDofs(t->pv, allowedDofs);
+    if (!(allowedDofs & afxDof_T))
         t->flags &= ~afxTransformFlag_T;
 
-    if (!(AfxM3dEnforceDofs(t->ssm, allowedDofs) & afxDof_S))
+    t->ssm = AfxM3dEnforceDofs(t->ssm, allowedDofs);
+    if (!(allowedDofs & afxDof_S))
         t->flags &= ~afxTransformFlag_S;
 }
 
-_AFX void AfxComputeCompositeTransformM3d(afxTransform const* t, afxM3d m)
+_AFX afxM3d AfxComputeCompositeTransformM3d(afxTransform const* t)
 {
     // Based on AfxComputeCompositeTransformM4d
 
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(m);
 
     if (t->flags & afxTransformFlag_S)
     {
-        afxM3d tmp, tmp2;
-        AfxM3dRotationQuat(tmp2, t->oq);
-        AfxM3dMultiply(tmp, tmp2, t->ssm);
-        AfxM3dCopyTransposed(m, tmp);
+        afxM3d tmp2 = AfxM3dRotationQuat(t->oq);
+        afxM3d tmp = AfxM3dMultiply(tmp2, t->ssm);
+        return AfxM3dTranspose(tmp);
     }
     else
     {
-        afxM3d tmp;
-        AfxM3dRotationQuat(tmp, t->oq);
-        AfxM3dCopyTransposed(m, tmp);
+        afxM3d tmp = AfxM3dRotationQuat(t->oq);
+        return AfxM3dTranspose(tmp);
     }
 }
 
-_AFXINL void AfxComputeCompositeTransformM4d(afxTransform const* t, afxM4d m)
+_AFXINL afxM4d AfxComputeCompositeTransformM4d(afxTransform const* t)
 {
     // Should be compatible with void BuildCompositeTransform4x4
 
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(m);
 
     if (t->flags & afxTransformFlag_S)
     {
-        afxM3d tmp, tmp2;
-        AfxM3dRotationQuat(tmp2, t->oq);
-        AfxM3dMultiply(tmp, tmp2, t->ssm);
-        AfxM4dCopyM3dTransposed(m, tmp, t->pv);
+        afxM3d tmp2 = AfxM3dRotationQuat(t->oq);
+        afxM3d tmp = AfxM3dMultiply(tmp2, t->ssm);
+        return AfxM4dTransposeM3d(tmp, AfxV4dFromV3d(t->pv));
     }
     else
     {
-        afxM3d tmp;
-        AfxM3dRotationQuat(tmp, t->oq);
-        AfxM4dCopyM3dTransposed(m, tmp, t->pv);
+        afxM3d tmp = AfxM3dRotationQuat(t->oq);
+        return AfxM4dTransposeM3d(tmp, AfxV4dFromV3d(t->pv));
     }
 }
 
-_AFXINL void AfxComputeCompositeTransformM4dc(afxTransform const* t, afxV3d4 m)
+_AFXINL afxM43d AfxComputeCompositeTransformM4dc(afxTransform const* t)
 {
     // Should be compatible with void BuildCompositeTransform4x3
 
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(m);
 
     if (t->flags & afxTransformFlag_S)
     {
-        afxM3d tmp;
-        AfxM3dRotationQuat(tmp, t->oq);
-        AfxM3dMultiply(m, tmp, t->ssm);
-        AfxV3dCopy(m[3], t->pv);
+        afxM3d tmp = AfxM3dRotationQuat(t->oq);
+        afxM43d m = AfxM43dFromM3d(AfxM3dMultiply(tmp, t->ssm));
+        m.w = t->pv;
+        return m;
     }
     else
     {
-        AfxM3dRotationQuat(m, t->oq);
-        AfxV3dCopy(m[3], t->pv);
+        afxM43d m = AfxM43dFromM3d(AfxM3dRotationQuat(t->oq));
+        m.w = t->pv;
+        return m;
     }
 }
 
-_AFXINL void AfxTransformAtv3d(afxTransform const* t, afxV3d const in, afxV3d out)
+_AFXINL afxV3d AfxTransformAtv3d(afxTransform const* t, afxV3d const in)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(in);
-    AFX_ASSERT(out);
 
-    AfxV3dPostMultiplyM3d(out, t->ssm, in);
-    AfxV3dRotate(out, out, t->oq);
-    AfxV3dAdd(out, t->pv, out);
+    afxV3d out = AfxV3dPostMultiplyM3d(t->ssm, in);
+    out = AfxV3dRotate(out, t->oq);
+    out = AfxV3dAdd(t->pv, out);
+    return out;
 }
 
 _AFXINL void AfxTransformArrayedAtv3d(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[])
@@ -643,20 +613,19 @@ _AFXINL void AfxTransformArrayedAtv3d(afxTransform const* t, afxUnit cnt, afxV3d
     AfxQuatRotateV3d(t->oq, cnt, out, out);
 
     for (afxUnit i = 0; i < cnt; i++)
-        AfxV3dAdd(out[i], t->pv, out[i]);
+        out[i] = AfxV3dAdd(t->pv, out[i]);
 }
 
-_AFXINL void AfxTransformLtv3d(afxTransform const* t, afxV3d const in, afxV3d out)
+_AFXINL afxV3d AfxTransformLtv3d(afxTransform const* t, afxV3d const in)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(in);
-    AFX_ASSERT(out);
 
     // Compatible with TransformVectorInPlace()
 
-    AfxV3dPostMultiplyM3d(out, t->ssm, in);
-    AfxV3dRotate(out, out, t->oq);
+    afxV3d out = AfxV3dPostMultiplyM3d(t->ssm, in);
+    out = AfxV3dRotate(out, t->oq);
+    return out;
 }
 
 _AFXINL void AfxTransformArrayedLtv3d(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[])
@@ -673,19 +642,17 @@ _AFXINL void AfxTransformArrayedLtv3d(afxTransform const* t, afxUnit cnt, afxV3d
     AfxQuatRotateV3d(t->oq, cnt, out, out);
 }
 
-_AFXINL void AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const in, afxV3d out)
+_AFXINL afxV3d AfxTransformLtv3dTransposed(afxTransform const* t, afxV3d const in)
 {
     afxError err = { 0 };
     AFX_ASSERT(t);
-    AFX_ASSERT(in);
-    AFX_ASSERT(out);
 
     // Compatible with TransformVectorInPlaceTransposed(in/out, t)
 
-    afxQuat iq;
-    AfxQuatConj(iq, t->oq);
-    AfxV3dRotate(out, in, iq);
-    AfxV3dPreMultiplyM3d(out, out, t->ssm);
+    afxQuat iq = AfxQuatConj(t->oq);
+    afxV3d out = AfxV3dRotate(in, iq);
+    out = AfxV3dPreMultiplyM3d(out, t->ssm);
+    return out;
 }
 
 _AFXINL void AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUnit cnt, afxV3d const in[], afxV3d out[])
@@ -698,145 +665,156 @@ _AFXINL void AfxTransformArrayedLtv3dTransposed(afxTransform const* t, afxUnit c
 
     // Compatible with TransformVectorInPlaceTransposed(in/out, t)
 
-    afxQuat iq;
-    AfxQuatConj(iq, t->oq);
+    afxQuat iq = AfxQuatConj(t->oq);
     AfxQuatRotateV3d(iq, cnt, in, out);
     AfxM3dPreMultiplyV3d(t->ssm, cnt, out, out);
 }
 
-static inline void BuildIdentityWorldPoseOnly_Generic(afxM4d const ParentMatrix, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildIdentityWorldPoseOnly_Generic(afxM4d const ParentMatrix/*, afxM4d ResultWorldMatrix*/)
 {
-    AfxM4dCopy(ResultWorldMatrix, ParentMatrix);
+    afxM4d ResultWorldMatrix = ParentMatrix;
+    return ResultWorldMatrix;
 }
 
-static inline void BuildPositionWorldPoseOnly_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildPositionWorldPoseOnly_Generic(afxV3d const Position, afxM4d const ParentMatrix/*, afxM4d ResultWorldMatrix*/)
 {
-    AfxM4dCopy(ResultWorldMatrix, ParentMatrix);
-    AfxV3dPreMultiplyAtm4d(ResultWorldMatrix[3], Position, ParentMatrix);
+    afxM4d ResultWorldMatrix = ParentMatrix;
+    ResultWorldMatrix.w = AfxV4dFromAtv3d(AfxV3dPreMultiplyAtm4d(Position, ParentMatrix));
+    return ResultWorldMatrix;
 }
 
-static inline void BuildFullWorldPoseOnly_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildFullWorldPoseOnly_Generic(afxTransform const* t, afxM4d const ParentMatrix/*, afxM4d ResultWorldMatrix*/)
 {
-    afxM4d m;
-    AfxComputeCompositeTransformM4d(t, m);
-    AfxM4dMultiplyAtm(ResultWorldMatrix, m, ParentMatrix);
+    afxM4d m = AfxComputeCompositeTransformM4d(t);
+    afxM4d ResultWorldMatrix = AfxM4dMultiplyAtm(m, ParentMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BuildSingleCompositeFromWorldPose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxM4d ResultComposite)
+static inline afxM4d BuildSingleCompositeFromWorldPose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix/*, afxM4d ResultComposite*/)
 {
-    AfxM4dMultiplyAtm(ResultComposite, InverseWorld4x4, WorldMatrix);
+    afxM4d ResultComposite = AfxM4dMultiplyAtm(InverseWorld4x4, WorldMatrix);
+    return ResultComposite;
 }
 
-static inline void BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix, afxV3d4 ResultComposite3x4)
+static inline afxM43d BuildSingleCompositeFromWorldPoseTranspose_Generic(afxM4d const InverseWorld4x4, afxM4d const WorldMatrix/*, afxM43d ResultComposite3x4*/)
 {
     //ColumnMatrixMultiply4x3Transpose(ResultComposite3x4, InverseWorld4x4, WorldMatrix);
     // 0 4 8 12
-    ResultComposite3x4[0][0] = InverseWorld4x4[0][0] * WorldMatrix[0][0] + InverseWorld4x4[0][1] * WorldMatrix[1][0] + InverseWorld4x4[0][2] * WorldMatrix[2][0];
-    ResultComposite3x4[0][1] = InverseWorld4x4[1][0] * WorldMatrix[0][0] + InverseWorld4x4[1][1] * WorldMatrix[1][0] + InverseWorld4x4[1][2] * WorldMatrix[2][0];
-    ResultComposite3x4[0][2] = InverseWorld4x4[2][0] * WorldMatrix[0][0] + InverseWorld4x4[2][1] * WorldMatrix[1][0] + InverseWorld4x4[2][2] * WorldMatrix[2][0];
+    afxM43d ResultComposite3x4;
+    ResultComposite3x4.m[0][0] = InverseWorld4x4.m[0][0] * WorldMatrix.m[0][0] + InverseWorld4x4.m[0][1] * WorldMatrix.m[1][0] + InverseWorld4x4.m[0][2] * WorldMatrix.m[2][0];
+    ResultComposite3x4.m[0][1] = InverseWorld4x4.m[1][0] * WorldMatrix.m[0][0] + InverseWorld4x4.m[1][1] * WorldMatrix.m[1][0] + InverseWorld4x4.m[1][2] * WorldMatrix.m[2][0];
+    ResultComposite3x4.m[0][2] = InverseWorld4x4.m[2][0] * WorldMatrix.m[0][0] + InverseWorld4x4.m[2][1] * WorldMatrix.m[1][0] + InverseWorld4x4.m[2][2] * WorldMatrix.m[2][0];
 
-    ResultComposite3x4[1][0] = InverseWorld4x4[3][2] * WorldMatrix[2][0] + InverseWorld4x4[3][1] * WorldMatrix[1][0] + InverseWorld4x4[3][0] * WorldMatrix[0][0] + WorldMatrix[3][0];
-    ResultComposite3x4[1][1] = InverseWorld4x4[0][0] * WorldMatrix[0][1] + InverseWorld4x4[0][1] * WorldMatrix[1][1] + InverseWorld4x4[0][2] * WorldMatrix[2][1];
-    ResultComposite3x4[1][2] = InverseWorld4x4[1][2] * WorldMatrix[2][1] + InverseWorld4x4[1][0] * WorldMatrix[0][1] + InverseWorld4x4[1][1] * WorldMatrix[1][1];
+    ResultComposite3x4.m[1][0] = InverseWorld4x4.m[3][2] * WorldMatrix.m[2][0] + InverseWorld4x4.m[3][1] * WorldMatrix.m[1][0] + InverseWorld4x4.m[3][0] * WorldMatrix.m[0][0] + WorldMatrix.m[3][0];
+    ResultComposite3x4.m[1][1] = InverseWorld4x4.m[0][0] * WorldMatrix.m[0][1] + InverseWorld4x4.m[0][1] * WorldMatrix.m[1][1] + InverseWorld4x4.m[0][2] * WorldMatrix.m[2][1];
+    ResultComposite3x4.m[1][2] = InverseWorld4x4.m[1][2] * WorldMatrix.m[2][1] + InverseWorld4x4.m[1][0] * WorldMatrix.m[0][1] + InverseWorld4x4.m[1][1] * WorldMatrix.m[1][1];
     
-    ResultComposite3x4[2][0] = InverseWorld4x4[2][1] * WorldMatrix[1][1] + InverseWorld4x4[2][2] * WorldMatrix[2][1] + InverseWorld4x4[2][0] * WorldMatrix[0][1];
-    ResultComposite3x4[2][1] = InverseWorld4x4[3][1] * WorldMatrix[1][1] + InverseWorld4x4[3][2] * WorldMatrix[2][1] + InverseWorld4x4[3][0] * WorldMatrix[0][1] + WorldMatrix[3][1];
-    ResultComposite3x4[2][2] = InverseWorld4x4[0][0] * WorldMatrix[0][2] + InverseWorld4x4[0][1] * WorldMatrix[1][2] + InverseWorld4x4[0][2] * WorldMatrix[2][2];
+    ResultComposite3x4.m[2][0] = InverseWorld4x4.m[2][1] * WorldMatrix.m[1][1] + InverseWorld4x4.m[2][2] * WorldMatrix.m[2][1] + InverseWorld4x4.m[2][0] * WorldMatrix.m[0][1];
+    ResultComposite3x4.m[2][1] = InverseWorld4x4.m[3][1] * WorldMatrix.m[1][1] + InverseWorld4x4.m[3][2] * WorldMatrix.m[2][1] + InverseWorld4x4.m[3][0] * WorldMatrix.m[0][1] + WorldMatrix.m[3][1];
+    ResultComposite3x4.m[2][2] = InverseWorld4x4.m[0][0] * WorldMatrix.m[0][2] + InverseWorld4x4.m[0][1] * WorldMatrix.m[1][2] + InverseWorld4x4.m[0][2] * WorldMatrix.m[2][2];
     
-    ResultComposite3x4[3][0] = InverseWorld4x4[1][2] * WorldMatrix[2][2] + InverseWorld4x4[1][0] * WorldMatrix[0][2] + InverseWorld4x4[1][1] * WorldMatrix[1][2];
-    ResultComposite3x4[3][1] = InverseWorld4x4[2][1] * WorldMatrix[1][2] + InverseWorld4x4[2][2] * WorldMatrix[2][2] + InverseWorld4x4[2][0] * WorldMatrix[0][2];
-    ResultComposite3x4[3][2] = InverseWorld4x4[3][1] * WorldMatrix[1][2] + InverseWorld4x4[3][2] * WorldMatrix[2][2] + InverseWorld4x4[3][0] * WorldMatrix[0][2] + WorldMatrix[3][2];
+    ResultComposite3x4.m[3][0] = InverseWorld4x4.m[1][2] * WorldMatrix.m[2][2] + InverseWorld4x4.m[1][0] * WorldMatrix.m[0][2] + InverseWorld4x4.m[1][1] * WorldMatrix.m[1][2];
+    ResultComposite3x4.m[3][1] = InverseWorld4x4.m[2][1] * WorldMatrix.m[1][2] + InverseWorld4x4.m[2][2] * WorldMatrix.m[2][2] + InverseWorld4x4.m[2][0] * WorldMatrix.m[0][2];
+    ResultComposite3x4.m[3][2] = InverseWorld4x4.m[3][1] * WorldMatrix.m[1][2] + InverseWorld4x4.m[3][2] * WorldMatrix.m[2][2] + InverseWorld4x4.m[3][0] * WorldMatrix.m[0][2] + WorldMatrix.m[3][2];
+    
+    return ResultComposite3x4;
 }
 
-static inline void BuildIdentityWorldPoseComposite_Generic(afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildIdentityWorldPoseComposite_Generic(afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d* ResultComposite/*, afxM4d ResultWorldMatrix*/)
 {
-    BuildIdentityWorldPoseOnly_Generic(ParentMatrix, ResultWorldMatrix);
-    BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix, ResultComposite);
+    afxM4d ResultWorldMatrix = BuildIdentityWorldPoseOnly_Generic(ParentMatrix);
+    *ResultComposite = BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BuildPositionWorldPoseComposite_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildPositionWorldPoseComposite_Generic(afxV3d const Position, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d* ResultComposite/*, afxM4d ResultWorldMatrix*/)
 {
-    BuildPositionWorldPoseOnly_Generic(Position, ParentMatrix, ResultWorldMatrix);
-    BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix, ResultComposite);
+    afxM4d ResultWorldMatrix = BuildPositionWorldPoseOnly_Generic(Position, ParentMatrix);
+    *ResultComposite = BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BuildFullWorldPoseComposite_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildFullWorldPoseComposite_Generic(afxTransform const* t, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d* ResultComposite/*, afxM4d ResultWorldMatrix*/)
 {
-    BuildFullWorldPoseOnly_Generic(t, ParentMatrix, ResultWorldMatrix);
-    BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix, ResultComposite);
+    afxM4d ResultWorldMatrix = BuildFullWorldPoseOnly_Generic(t, ParentMatrix);
+    *ResultComposite = BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BuildPositionOrientationWorldPoseOnly_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildPositionOrientationWorldPoseOnly_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix/*, afxM4d ResultWorldMatrix*/)
 {
     afxTransform t = { 0 };
     t.flags = afxTransformFlag_T | afxTransformFlag_R;
-    AfxQuatCopy(t.oq, Orientation);
-    AfxV3dCopy(t.pv, Position);
-    BuildFullWorldPoseOnly_Generic(&t, ParentMatrix, ResultWorldMatrix);
+    t.oq =  Orientation;
+    t.pv = Position;
+    afxM4d ResultWorldMatrix = BuildFullWorldPoseOnly_Generic(&t, ParentMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BuildPositionOrientationWorldPoseComposite_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d ResultComposite, afxM4d ResultWorldMatrix)
+static inline afxM4d BuildPositionOrientationWorldPoseComposite_Generic(afxV3d const Position, afxQuat const Orientation, afxM4d const ParentMatrix, afxM4d const InverseWorld4x4, afxM4d* ResultComposite/*, afxM4d ResultWorldMatrix*/)
 {
-    BuildPositionOrientationWorldPoseOnly_Generic(Position, Orientation, ParentMatrix, ResultWorldMatrix);
-    BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix, ResultComposite);
+    afxM4d ResultWorldMatrix = BuildPositionOrientationWorldPoseOnly_Generic(Position, Orientation, ParentMatrix);
+    *ResultComposite = BuildSingleCompositeFromWorldPose_Generic(InverseWorld4x4, ResultWorldMatrix);
+    return ResultWorldMatrix;
 }
 
-static inline void BWP_Dispatch(afxTransform const* t, afxM4d const InverseWorld4x4, afxM4d Composite, afxM4d World, afxM4d const ParentWorld)
-{
-    afxTransformFlags flags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
-
-    if (!flags)
-    {
-        BuildIdentityWorldPoseComposite_Generic(ParentWorld, InverseWorld4x4, Composite, World);
-        return;
-    }
-
-    if (flags == afxTransformFlag_T)
-    {
-        BuildPositionWorldPoseComposite_Generic(t->pv, ParentWorld, InverseWorld4x4, Composite, World);
-    }
-    else if (flags == afxTransformFlag_RIGID)
-    {
-        BuildPositionOrientationWorldPoseComposite_Generic(t->pv, t->oq, ParentWorld, InverseWorld4x4, Composite, World);
-    }
-    else if (flags & afxTransformFlag_S)
-    {
-        BuildFullWorldPoseComposite_Generic(t, ParentWorld, InverseWorld4x4, Composite, World);
-    }
-}
-
-static inline void BWPNC_Dispatch(afxTransform const* t, afxM4d const ParentWorld, afxM4d World)
+static inline afxM4d BWP_Dispatch(afxTransform const* t, afxM4d const InverseWorld4x4, afxM4d* Composite/*, afxM4d World*/, afxM4d const ParentWorld)
 {
     afxTransformFlags flags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
 
     if (!flags)
     {
-        BuildIdentityWorldPoseOnly_Generic(ParentWorld, World);
-        return;
+        return BuildIdentityWorldPoseComposite_Generic(ParentWorld, InverseWorld4x4, Composite);
     }
 
     if (flags == afxTransformFlag_T)
     {
-        BuildPositionWorldPoseOnly_Generic(t->pv, ParentWorld, World);
+        return BuildPositionWorldPoseComposite_Generic(t->pv, ParentWorld, InverseWorld4x4, Composite);
     }
     else if (flags == afxTransformFlag_RIGID)
     {
-        BuildPositionOrientationWorldPoseOnly_Generic(t->pv, t->oq, ParentWorld, World);
+        return BuildPositionOrientationWorldPoseComposite_Generic(t->pv, t->oq, ParentWorld, InverseWorld4x4, Composite);
     }
     else if (flags & afxTransformFlag_S)
     {
-        BuildFullWorldPoseOnly_Generic(t, ParentWorld, World);
+        return BuildFullWorldPoseComposite_Generic(t, ParentWorld, InverseWorld4x4, Composite);
     }
+
+    // added due to the need for return.
+    return ParentWorld;
+}
+
+static inline afxM4d BWPNC_Dispatch(afxTransform const* t, afxM4d const ParentWorld)
+{
+    afxTransformFlags flags = (t->flags & (afxTransformFlag_RIGID | afxTransformFlag_S));
+
+    if (!flags)
+    {
+        return BuildIdentityWorldPoseOnly_Generic(ParentWorld);
+    }
+
+    if (flags == afxTransformFlag_T)
+    {
+        return BuildPositionWorldPoseOnly_Generic(t->pv, ParentWorld);
+    }
+    else if (flags == afxTransformFlag_RIGID)
+    {
+        return BuildPositionOrientationWorldPoseOnly_Generic(t->pv, t->oq, ParentWorld);
+    }
+    else if (flags & afxTransformFlag_S)
+    {
+        return BuildFullWorldPoseOnly_Generic(t, ParentWorld);
+    }
+
+    // added due to the need for return.
+    return ParentWorld;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxAssimilateTransforms(afxM3d const ltm, afxM3d const iltm, afxV4d const atv, afxUnit cnt, afxTransform const in[], afxTransform out[])
+_AFXINL void AfxAssimilateTransforms(afxM3d const ltm, afxM3d const iltm, afxV3d const atv, afxUnit cnt, afxTransform const in[], afxTransform out[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
-    AFX_ASSERT(atv);
     AFX_ASSERT(cnt);
     AFX_ASSERT(in);
     AFX_ASSERT(out);

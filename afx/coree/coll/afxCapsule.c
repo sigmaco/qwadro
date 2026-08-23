@@ -31,56 +31,57 @@ _AFXINL afxReal AfxGetCapsuleHeight(afxCapsule const cap)
 
 // Compute Endpoints of the Capsule
 // Get the Y-aligned end points of the capsule’s internal segment (cylinder)
-_AFXINL afxReal AfxGetCapsuleEndpoints(afxCapsule const cap, afxV3d outA, afxV3d outB)
+_AFXINL afxReal AfxGetCapsuleEndpoints(afxCapsule const cap, afxV3d* outA, afxV3d* outB)
 {
     afxError err;
     //AFX_ASSERT(cap);
     AFX_ASSERT(outA);
     AFX_ASSERT(outB);
 
-    AfxV3dCopy(outA, cap.origin);
-    AfxV3dCopy(outB, cap.origin);
+    *outA = cap.origin;
+    *outB = cap.origin;
     afxReal seg = cap.length / 2.0f;
     // Endpoint A = origin - offset (bottom hemisphere center)
     // Endpoint B = origin + offset (top hemisphere center)
-    outA[1] -= seg;
-    outB[1] += seg;
+    outA->v[1] -= seg;
+    outB->v[1] += seg;
     return seg;
 }
 
 // Compute Axis-Aligned Bounding Box (AABB)
-_AFXINL void AfxGetCapsuleAabb(afxCapsule const cap, afxAabb* aabb)
+_AFXINL afxAabb AfxGetCapsuleAabb(afxCapsule const cap)
 {
     afxError err;
     //AFX_ASSERT(cap);
-    AFX_ASSERT(aabb);
 
     afxReal halfHeight = (cap.length / 2.0f) + cap.radius;
 
-    aabb->min[0] = cap.origin[0] - cap.radius;
-    aabb->min[1] = cap.origin[1] - halfHeight;
-    aabb->min[2] = cap.origin[2] - cap.radius;
+    afxAabb bb;
 
-    aabb->max[0] = cap.origin[0] + cap.radius;
-    aabb->max[1] = cap.origin[1] + halfHeight;
-    aabb->max[2] = cap.origin[2] + cap.radius;
+    bb.min.v[0] = cap.origin.v[0] - cap.radius;
+    bb.min.v[1] = cap.origin.v[1] - halfHeight;
+    bb.min.v[2] = cap.origin.v[2] - cap.radius;
+
+    bb.max.v[0] = cap.origin.v[0] + cap.radius;
+    bb.max.v[1] = cap.origin.v[1] + halfHeight;
+    bb.max.v[2] = cap.origin.v[2] + cap.radius;
+    return bb;
 }
 
 // Distance from Point to Capsule
 _AFXINL afxReal AfxDistanceFromCapsule(afxCapsule const cap, afxV3d const point)
 {
     afxError err;
-    AFX_ASSERT(point);
 
     afxV3d a, b;
-    AfxGetCapsuleEndpoints(cap, a, b);
+    AfxGetCapsuleEndpoints(cap, &a, &b);
 
     // Compute vector projection of point onto line segment
-    afxV3d ab = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
-    afxV3d ap = { point[0] - a[0], point[1] - a[1], point[2] - a[2] };
+    afxV3d ab = { b.v[0] - a.v[0], b.v[1] - a.v[1], b.v[2] - a.v[2] };
+    afxV3d ap = { point.v[0] - a.v[0], point.v[1] - a.v[1], point.v[2] - a.v[2] };
 
-    afxReal ab_len2 = ab[0] * ab[0] + ab[1] * ab[1] + ab[2] * ab[2];
-    afxReal t = (ap[0] * ab[0] + ap[1] * ab[1] + ap[2] * ab[2]) / ab_len2;
+    afxReal ab_len2 = ab.v[0] * ab.v[0] + ab.v[1] * ab.v[1] + ab.v[2] * ab.v[2];
+    afxReal t = (ap.v[0] * ab.v[0] + ap.v[1] * ab.v[1] + ap.v[2] * ab.v[2]) / ab_len2;
 
     // Clamp t to [0,1]
     if (t < 0.0f) t = 0.0f;
@@ -88,14 +89,14 @@ _AFXINL afxReal AfxDistanceFromCapsule(afxCapsule const cap, afxV3d const point)
 
     afxV3d closest =
     {
-        a[0] + ab[0] * t,
-        a[1] + ab[1] * t,
-        a[2] + ab[2] * t
+        a.v[0] + ab.v[0] * t,
+        a.v[1] + ab.v[1] * t,
+        a.v[2] + ab.v[2] * t
     };
 
-    afxReal dx = point[0] - closest[0];
-    afxReal dy = point[1] - closest[1];
-    afxReal dz = point[2] - closest[2];
+    afxReal dx = point.v[0] - closest.v[0];
+    afxReal dy = point.v[1] - closest.v[1];
+    afxReal dz = point.v[2] - closest.v[2];
     afxReal dist2 = dx * dx + dy * dy + dz * dz;
     afxReal dist = AfxSqrtf(dist2);
     return dist - cap.radius; // Subtract radius for surface distance
@@ -109,14 +110,14 @@ _AFXINL afxBool AfxIsPointInsideCapsule(afxCapsule const cap, afxV3d const point
     //AFX_ASSERT(point);
 
     afxV3d a, b;
-    AfxGetCapsuleEndpoints(cap, a, b);
+    AfxGetCapsuleEndpoints(cap, &a, &b);
 
     // Vector from A to B
-    afxV3d ab = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
-    afxV3d ap = { point[0] - a[0], point[1] - a[1], point[2] - a[2] };
+    afxV3d ab = { b.v[0] - a.v[0], b.v[1] - a.v[1], b.v[2] - a.v[2] };
+    afxV3d ap = { point.v[0] - a.v[0], point.v[1] - a.v[1], point.v[2] - a.v[2] };
 
-    afxReal ab_len2 = ab[0] * ab[0] + ab[1] * ab[1] + ab[2] * ab[2];
-    afxReal t = (ap[0] * ab[0] + ap[1] * ab[1] + ap[2] * ab[2]) / ab_len2;
+    afxReal ab_len2 = ab.v[0] * ab.v[0] + ab.v[1] * ab.v[1] + ab.v[2] * ab.v[2];
+    afxReal t = (ap.v[0] * ab.v[0] + ap.v[1] * ab.v[1] + ap.v[2] * ab.v[2]) / ab_len2;
 
     // Clamp t to [0,1]
     if (t < 0.0f) t = 0.0f;
@@ -125,15 +126,15 @@ _AFXINL afxBool AfxIsPointInsideCapsule(afxCapsule const cap, afxV3d const point
     // Closest point on the segment
     afxV3d closest =
     {
-        a[0] + ab[0] * t,
-        a[1] + ab[1] * t,
-        a[2] + ab[2] * t
+        a.v[0] + ab.v[0] * t,
+        a.v[1] + ab.v[1] * t,
+        a.v[2] + ab.v[2] * t
     };
 
     // Distance squared from point to closest point
-    afxReal dx = point[0] - closest[0];
-    afxReal dy = point[1] - closest[1];
-    afxReal dz = point[2] - closest[2];
+    afxReal dx = point.v[0] - closest.v[0];
+    afxReal dy = point.v[1] - closest.v[1];
+    afxReal dz = point.v[2] - closest.v[2];
     afxReal dist2 = dx * dx + dy * dy + dz * dz;
 
     return dist2 <= (cap.radius * cap.radius);

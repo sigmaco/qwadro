@@ -44,7 +44,7 @@
 
 #include <math.h>
 #include "qwadro/afxDebug.h"
-#include "qwadro/afxSimd.h"
+//#include "qwadro/afxSimd.h"
 //#include <stdalign.h>
 
 #ifdef AFX_OS_WINDOWS
@@ -100,32 +100,119 @@
 // The value returned by this function is (180 / pi) * radians.
 #define AFX_DEGREES(radians_) ((radians_) * AFX_180_OVER_PI)
 
+//typedef  afxUnit afxWarp[3];
+
 #ifndef MFX_ALIGN_ALL
-typedef afxReal afxV2d[2];
-typedef afxReal afxV3d[3];
-typedef afxV3d  afxM3d[3]; // 3D Linear Transform (3x3 Matrix)
-typedef afxV3d  afxV3d4[4]; // A 4x3 matrix has 4 rows and 3 columns.
+AFX_DEFINE_STRUCT(afxV2d)
 #else
-typedef afxReal AFX_SIMD afxV2d[2];
-typedef afxReal AFX_SIMD afxV3d[3];
-typedef afxV3d  AFX_SIMD afxM3d[3]; // 3D Linear Transform (3x3 Matrix)
-typedef afxV3d  AFX_SIMD afxV3d4[4]; // A 4x3 matrix has 4 rows and 3 columns.
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxV2d)
 #endif
+{
+    union
+    {
+        afxReal v[2];
+        struct { afxReal x, y; };
+    };
+};
 
-typedef afxReal AFX_SIMD afxV4d[4];
-typedef afxV2d  AFX_SIMD afxM2d[2]; // 2D Linear Transform (2x2 Matrix)
-typedef afxV4d  AFX_SIMD afxM4d[4]; // 4x4
+#ifndef MFX_ALIGN_ALL
+AFX_DEFINE_STRUCT(afxV3d)
+#else
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxV3d)
+#endif
+{
+    union
+    {
+        afxReal v[3];
+        struct { afxReal x, y, z; };
+        struct { afxV2d v2; afxReal v2z; };
+        struct { afxV2d xy; afxReal xy_z; };
+    };
+};
 
-typedef afxV4d  AFX_SIMD afxV4d3[3]; // A 3x4 matrix has 3 rows and 4 columns.
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxV4d)
+{
+    union
+    {
+        afxReal v[4];
+        struct { afxReal x, y, z, w; };
+        struct { afxV3d v3; afxReal v3w; };
+        struct { afxV3d xyz; afxReal xyz_w; };
+        struct { afxV2d v2; afxV2d v2zw; };
+        struct { afxV2d xy; afxV2d zw; };
+    };
+};
 
-typedef afxV4d  AFX_SIMD afxQuat; // 0,1,2 = imaginary, 3 = real
-typedef afxV4d  AFX_SIMD afxRotor; // 0,1,2 = imaginary, 3 = real
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxM2d)
+// 2D Linear Transform (2x2 Matrix)
+{
+    union
+    {
+        afxReal m[2][2]; // 2 arrays of 2 floats
+        struct { afxV2d x, y; };
+        afxV2d v2[2]; // 2 arrays of 2 floats
+        afxV4d v4; // 1 arrays of 4 floats
+    };
+};
+
+#ifndef MFX_ALIGN_ALL
+AFX_DEFINE_STRUCT(afxM3d)
+#else
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxM3d)
+#endif
+// 3D Linear Transform (3x3 Matrix)
+{
+    union
+    {
+        afxReal m[3][3]; // 3 arrays of 3 floats
+        struct { afxV3d x, y, z; };
+        afxV3d v3[3]; // 3 arrays of 3 floats
+    };
+};
+
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxM34d)
+// A 3x4 matrix has 3 rows and 4 columns.
+{
+    union
+    {
+        afxReal m[3][4]; // 3 arrays of 4 floats
+        struct { afxV4d x, y, z; };
+        afxV4d v4[3]; // 3 arrays of 4 floats
+    };
+};
+
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxM4d)
+// 4x4
+{
+    union
+    {
+        afxReal m[4][4]; // 4 arrays of 4 floats
+        struct { afxV4d x, y, z, w; };
+        afxV4d v4[4]; // 4 arrays of 4 floats
+    };
+};
+
+#ifndef MFX_ALIGN_ALL
+AFX_DEFINE_STRUCT(afxM43d)
+#else
+AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxM43d)
+#endif
+// A 4x3 matrix has 4 rows and 3 columns.
+{
+    union
+    {
+        afxReal m[4][3]; // 4 arrays of 3 floats
+        struct { afxV3d x, y, z, w; };
+        afxV3d v3[4]; // 4 arrays of 3 floats
+    };
+};
+
 typedef afxV4d  AFX_SIMD afxVector;
+typedef afxV4d  AFX_SIMD afxRotor; // 0,1,2 = imaginary, 3 = real
+typedef afxV4d  AFX_SIMD afxQuat; // 0,1,2 = imaginary, 3 = real
 typedef afxV4d  AFX_SIMD afxPoint;
 typedef afxM4d  AFX_SIMD afxMatrix;
 typedef afxQuat AFX_SIMD afxQuaternion;
-
-//typedef  afxUnit afxWarp[3];
 
 #ifdef MFX_ALIGN_ALL
 AFX_STATIC_ASSERT(__alignof(afxV2d) == AFX_SIMD_ALIGNMENT, "");
@@ -143,7 +230,7 @@ AFX_STATIC_ASSERT(__alignof(afxMatrix) == AFX_SIMD_ALIGNMENT, "");
 #define MFX_USE_RW_MATH // use RenderWare over Qwadro conventions
 //#define MFX_ALIGN_ALL // force SIMD alignment to afxV3d and other types.
 
-AFXINL void         AfxV2dNdc(afxV2d v, afxV2d const b, afxV2d const total);
-AFXINL void         AfxV2dUnndc(afxV2d v, afxV2d const b, afxV2d const total);
+AFXINL afxV2d         AfxV2dNdc(afxV2d const b, afxV2d const total);
+AFXINL afxV2d         AfxV2dUnndc(afxV2d const b, afxV2d const total);
 
 #endif//AFX_MATH_DEFS_H

@@ -263,8 +263,8 @@ static afxError _AfxXmlParseAttribs(afxXml* xml, afxXmlNode* elem, struct xml_pa
                 {
                     if (sscanf(token, "%[^=]", str_name, str_content) != 1)
                     {
-                        AfxDeallocate((void**)&str_name, AfxHere());
-                        AfxDeallocate((void**)&str_content, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&str_name);
+                        AfxDeallocate(AfxHere(), (void**)&str_content);
                         continue;
                     }
                     else *str_content = '\0';

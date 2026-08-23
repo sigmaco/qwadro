@@ -65,8 +65,8 @@ ARX void ArxQuadrantMergeChildBounds(asxQuadrant* q, afxUnit idx, afxBox const* 
 
 ARX void ArxQuadrantSetChildBounds(asxQuadrant* q, afxUnit idx, afxBox const* bounds);
 
-ARX void ArxQuadrantGetChildBounds(asxQuadrant* q, afxUnit idx, afxBox* bounds);
+ARX afxBox ArxQuadrantGetChildBounds(asxQuadrant* q, afxUnit idx);
 
-ARX void ArxQuadrantGetBounds(asxQuadrant* q, afxBox* bounds);
+ARX afxBox ArxQuadrantGetBounds(asxQuadrant* q);
 
 #endif//ASX_QUADTREE_H

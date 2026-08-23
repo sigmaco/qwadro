@@ -124,9 +124,9 @@ _AFX afxReal64 XssPullReal64(xssVm vm, afxUnit slot)
 
 _AFX void XssPullReal3(xssVm vm, afxUnit slot, afxV3d v)
 {
-    v[0] = (afxReal)xssGetSlotDouble(vm, slot);
-    v[1] = (afxReal)xssGetSlotDouble(vm, slot + 1);
-    v[2] = (afxReal)xssGetSlotDouble(vm, slot + 2);
+    v.v[0] = (afxReal)xssGetSlotDouble(vm, slot);
+    v.v[1] = (afxReal)xssGetSlotDouble(vm, slot + 1);
+    v.v[2] = (afxReal)xssGetSlotDouble(vm, slot + 2);
 }
 
 _AFX afxInt XssPullInt(xssVm vm, afxUnit slot)

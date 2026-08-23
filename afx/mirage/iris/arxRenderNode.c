@@ -49,8 +49,7 @@ _ARX afxError ArxCmdRenderNode(arxRenderContext rctx, afxUnit cnt, arxNode nodes
             if (!pup) continue;
             AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
 
-            afxM4d w;
-            ArxGetNodeMatrix(nod, w);
+            afxM4d w = ArxGetNodeMatrix(nod);
             ArxCmdRenderPuppets(rctx, w, 1, &pup);
         }
     }

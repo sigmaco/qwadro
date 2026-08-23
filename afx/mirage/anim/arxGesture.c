@@ -43,12 +43,11 @@ _ARX afxMask ArxGetGestureFlags(arxGesture ges)
     return ges->flags;
 }
 
-_ARXINL void ArxComputeGestureDisplacement(arxGesture ges, afxM4d m)
+_ARXINL afxM4d ArxComputeGestureDisplacement(arxGesture ges)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_GES, 1, &ges);
-    AFX_ASSERT(m);
-    AfxComputeCompositeTransformM4d(&ges->displacement, m);
+    return AfxComputeCompositeTransformM4d(&ges->displacement);
 }
 
 _ARXINL afxBool _ArxGesFindTransformCb(arxGesture ges, afxString const* seqId, afxUnit *seqIdx)
@@ -291,7 +290,7 @@ _ARX afxError _ArxGesCtorCb(arxGesture ges, void** args, afxUnit invokeNo)
     ges->flags = 2;
     ges->periodicLoop = 0;
     ges->root = NIL;
-    AfxV3dZero(ges->loopTranslation);
+    ges->loopTranslation = AfxV3dZero();
 
 #if !0
     // echo

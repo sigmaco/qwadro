@@ -1029,10 +1029,10 @@ void packClearPixel(
         case avxFormatType_F:
             switch (fmtDesc->bpc[i]) {
             case 16:
-                *(uint16_t*)dst = float32_to_float16(clearVal->rgba[i]); // you'd need a float16 conversion function
+                *(uint16_t*)dst = float32_to_float16(clearVal->rgba.v[i]); // you'd need a float16 conversion function
                 break;
             case 32:
-                *(float*)dst = (float)clearVal->rgba[i];
+                *(float*)dst = (float)clearVal->rgba.v[i];
                 break;
             }
             break;

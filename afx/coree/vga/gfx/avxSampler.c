@@ -21,7 +21,7 @@
 #define _AVX_SAMPLER_C
 #include "../icd/avxIcd.h"
 
-void sample_bilinear(avxColor texture[], int width, int height, afxReal u, afxReal v, avxColor rslt)
+avxColor sample_bilinear(avxColor const texture[], int width, int height, afxReal u, afxReal v)
 {
     /*
         Bilinear Filtering
@@ -44,25 +44,19 @@ void sample_bilinear(avxColor texture[], int width, int height, afxReal u, afxRe
     x1 = x1 < 0 ? 0 : (x1 >= width ? width - 1 : x1);
     y1 = y1 < 0 ? 0 : (y1 >= height ? height - 1 : y1);
 
-    avxColor c00;
-    AfxV4dCopy(c00, &texture[y0][x0]);
-    avxColor c10;
-    AfxV4dCopy(c10, &texture[y0][x1]);
-    avxColor c01;
-    AfxV4dCopy(c01, &texture[y1][x0]);
-    avxColor c11;
-    AfxV4dCopy(c11, &texture[y1][x1]);
+    avxColor c00 = texture[y0*x0];
+    avxColor c10 = texture[y0*x1];
+    avxColor c01 = texture[y1*x0];
+    avxColor c11 = texture[y1*x1];
 
     // Linear interpolation (lerp)
-    avxColor c0;
-    AfxV4dMix(c0, c00, c10, tx);
-    avxColor c1;
-    AfxV4dMix(c1, c01, c11, tx);
+    avxColor c0 = AfxV4dMix(c00, c10, tx);
+    avxColor c1 = AfxV4dMix(c01, c11, tx);
     // result.r = a.r * (1 - t) + b.r * t;
-    AfxV4dMix(rslt, c0, c1, ty);
+    return AfxV4dMix(c0, c1, ty);
 }
 
-void sample_trilinear(avxColor texture0[], int w0, int h0, avxColor texture1[], int w1, int h1, afxReal u, afxReal v, afxReal lambda, avxColor rslt)
+avxColor sample_trilinear(avxColor const texture0[], int w0, int h0, avxColor const texture1[], int w1, int h1, afxReal u, afxReal v, afxReal lambda)
 {
     /*
         Trilinear Filtering
@@ -73,14 +67,12 @@ void sample_trilinear(avxColor texture0[], int w0, int h0, avxColor texture1[], 
             A mipmap level interpolation factor lambda
     */
 
-    avxColor c0;
-    sample_bilinear(texture0, w0, h0, u, v, c0);
-    avxColor c1;
-    sample_bilinear(texture1, w1, h1, u, v, c1);
-    AfxV4dMix(rslt, c0, c1, lambda);
+    avxColor c0 = sample_bilinear(texture0, w0, h0, u, v);
+    avxColor c1 = sample_bilinear(texture1, w1, h1, u, v);
+    return AfxV4dMix(c0, c1, lambda);
 }
 
-void sample_anisotropic(avxColor texture[], int width, int height, afxReal u, afxReal v, afxReal du_dx, afxReal dv_dx, afxReal du_dy, afxReal dv_dy, avxColor rslt)
+avxColor sample_anisotropic(avxColor const texture[], int width, int height, afxReal u, afxReal v, afxReal du_dx, afxReal dv_dx, afxReal du_dy, afxReal dv_dy)
 {
     /*
         Anisotropic filtering is possible to simulate in C, but it's complex because it typically involves sampling along an elliptical 
@@ -120,6 +112,8 @@ void sample_anisotropic(avxColor texture[], int width, int height, afxReal u, af
     if (num_samples < 1) num_samples = 1;
     if (num_samples > MAX_SAMPLES) num_samples = MAX_SAMPLES;
 
+    avxColor rslt = { 0 };
+
     // Sample along the dominant direction
     for (afxUnit i = 0; i < num_samples; ++i)
     {
@@ -129,22 +123,22 @@ void sample_anisotropic(avxColor texture[], int width, int height, afxReal u, af
         afxReal sample_u = u + offset * du_dx;
         afxReal sample_v = v + offset * dv_dx;
 
-        avxColor c;
-        sample_bilinear(texture, width, height, sample_u, sample_v, c);
-        rslt[0] += c[0];
-        rslt[1] += c[1];
-        rslt[2] += c[2];
-        rslt[3] += c[3];
+        avxColor c = sample_bilinear(texture, width, height, sample_u, sample_v);
+        rslt.v[0] += c.v[0];
+        rslt.v[1] += c.v[1];
+        rslt.v[2] += c.v[2];
+        rslt.v[3] += c.v[3];
     }
 
     // Average
-    rslt[0] /= num_samples;
-    rslt[1] /= num_samples;
-    rslt[2] /= num_samples;
-    rslt[3] /= num_samples;
+    rslt.v[0] /= num_samples;
+    rslt.v[1] /= num_samples;
+    rslt.v[2] /= num_samples;
+    rslt.v[3] /= num_samples;
+    return rslt;
 }
 
-_AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset, afxBool fullRange, afxM4d m)
+_AVX afxM4d AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset, afxBool fullRange)
 {
     /*
         This function is designed to return a 4×4 color conversion matrix for a given color matrix type (like avxColorMatrix_YUV709, 
@@ -160,13 +154,12 @@ _AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset
     */
 
     afxError err = { 0 };
-    AFX_ASSERT(m);
 
     // yOffset = 0.0f;
     // uvOffset = 128.0f;
 
     // For homogeneous coordinates.
-    AfxM4dReset(m);
+    afxM4d m = AFX_M4D_IDENTITY;
 
     switch (cm)
     {
@@ -174,42 +167,42 @@ _AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset
     case avxColorMatrix_RGB: break;
     case avxColorMatrix_YUV:
         // No model conversion, but you might scale or shift here
-        m[0][0] = 1.0f;
-        m[1][1] = 1.0f;
-        m[2][2] = 1.0f;
+        m.m[0][0] = 1.0f;
+        m.m[1][1] = 1.0f;
+        m.m[2][2] = 1.0f;
         break;
 
     case avxColorMatrix_YUV601:
     {
         if (fullRange)
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.402f;
-            m[0][3] = -1.402f * uvOffset;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.402f;
+            m.m[0][3] = -1.402f * uvOffset;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.344136f;
-            m[1][2] = -0.714136f;
-            m[1][3] = (0.344136f + 0.714136f) * uvOffset;
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.344136f;
+            m.m[1][2] = -0.714136f;
+            m.m[1][3] = (0.344136f + 0.714136f) * uvOffset;
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.772f;
-            m[2][3] = -1.772f * uvOffset;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.772f;
+            m.m[2][3] = -1.772f * uvOffset;
         }
         else
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.402f;
-            m[0][3] = -uvOffset * 1.402f;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.402f;
+            m.m[0][3] = -uvOffset * 1.402f;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.344136f;
-            m[1][2] = -0.714136f;
-            m[1][3] = uvOffset * (0.344136f + 0.714136f);
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.344136f;
+            m.m[1][2] = -0.714136f;
+            m.m[1][3] = uvOffset * (0.344136f + 0.714136f);
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.772f;
-            m[2][3] = -uvOffset * 1.772f;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.772f;
+            m.m[2][3] = -uvOffset * 1.772f;
         }
         break;
     }
@@ -217,33 +210,33 @@ _AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset
     {
         if (fullRange)
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.5748f;
-            m[0][3] = -1.5748f * uvOffset;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.5748f;
+            m.m[0][3] = -1.5748f * uvOffset;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.187324f;
-            m[1][2] = -0.468124f;
-            m[1][3] = (0.187324f + 0.468124f) * uvOffset;
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.187324f;
+            m.m[1][2] = -0.468124f;
+            m.m[1][3] = (0.187324f + 0.468124f) * uvOffset;
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.8556f;
-            m[2][3] = -1.8556f * uvOffset;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.8556f;
+            m.m[2][3] = -1.8556f * uvOffset;
         }
         else
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.5748f;
-            m[0][3] = -uvOffset * 1.5748f;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.5748f;
+            m.m[0][3] = -uvOffset * 1.5748f;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.187324f;
-            m[1][2] = -0.468124f;
-            m[1][3] = uvOffset * (0.187324f + 0.468124f);
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.187324f;
+            m.m[1][2] = -0.468124f;
+            m.m[1][3] = uvOffset * (0.187324f + 0.468124f);
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.8556f;
-            m[2][3] = -uvOffset * 1.8556f;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.8556f;
+            m.m[2][3] = -uvOffset * 1.8556f;
         }
         break;
     }
@@ -251,33 +244,33 @@ _AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset
     {
         if (fullRange)
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.4746f;
-            m[0][3] = -1.4746f * uvOffset;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.4746f;
+            m.m[0][3] = -1.4746f * uvOffset;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.16455f;
-            m[1][2] = -0.57135f;
-            m[1][3] = (0.16455f + 0.57135f) * uvOffset;
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.16455f;
+            m.m[1][2] = -0.57135f;
+            m.m[1][3] = (0.16455f + 0.57135f) * uvOffset;
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.8814f;
-            m[2][3] = -1.8814f * uvOffset;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.8814f;
+            m.m[2][3] = -1.8814f * uvOffset;
         }
         else
         {
-            m[0][0] = 1.0f;
-            m[0][2] = 1.4746f;
-            m[0][3] = -uvOffset * 1.4746f;
+            m.m[0][0] = 1.0f;
+            m.m[0][2] = 1.4746f;
+            m.m[0][3] = -uvOffset * 1.4746f;
 
-            m[1][0] = 1.0f;
-            m[1][1] = -0.16455f;
-            m[1][2] = -0.57135f;
-            m[1][3] = uvOffset * (0.16455f + 0.57135f);
+            m.m[1][0] = 1.0f;
+            m.m[1][1] = -0.16455f;
+            m.m[1][2] = -0.57135f;
+            m.m[1][3] = uvOffset * (0.16455f + 0.57135f);
 
-            m[2][0] = 1.0f;
-            m[2][1] = 1.8814f;
-            m[2][3] = -uvOffset * 1.8814f;
+            m.m[2][0] = 1.0f;
+            m.m[2][1] = 1.8814f;
+            m.m[2][3] = -uvOffset * 1.8814f;
         }
         break;
     }
@@ -287,9 +280,10 @@ _AVX void AvxGetColorMatrix(avxColorMatrix cm, afxReal yOffset, afxReal uvOffset
         break;
     }
     }
+    return m;
 }
 
-_AVX void AvxComputeColorConversionMatrix(avxColorMatrix from, avxColorMatrix to, afxBool fullRange, afxM4d m)
+_AVX afxM4d AvxComputeColorConversionMatrix(avxColorMatrix from, avxColorMatrix to, afxBool fullRange)
 {
     /*
         AvxComputeColorConversionMatrix(from, to, m) is an abstraction over individual model matrices, 
@@ -303,10 +297,10 @@ _AVX void AvxComputeColorConversionMatrix(avxColorMatrix from, avxColorMatrix to
     afxM4d m_to;
     afxM4d m_to_inv;
 
-    AvxGetColorMatrix(from, 0.0, 128.0, fullRange, m_from); // from -> RGB
-    AvxGetColorMatrix(to, 0.0, 128.0, fullRange, m_to); // to -> RGB
-    AfxM4dInvert(m_to_inv, m_to); // RGB -> to
-    AfxM4dMultiply(m, m_to_inv, m_from); // from -> RGB -> to
+    m_from = AvxGetColorMatrix(from, 0.0, 128.0, fullRange); // from -> RGB
+    m_to = AvxGetColorMatrix(to, 0.0, 128.0, fullRange); // to -> RGB
+    m_to_inv = AfxM4dInvert(m_to, NIL); // RGB -> to
+    return AfxM4dMultiply(m_to_inv, m_from); // from -> RGB -> to
 }
 
 _AVX afxDrawSystem AvxGetSamplerHost(avxSampler samp)

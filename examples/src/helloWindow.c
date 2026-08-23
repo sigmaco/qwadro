@@ -76,7 +76,7 @@ int main(int argc, char const* argv[])
     afxWindowConfig wcfg = { 0 };
     wcfg.dout.dsys = dsys;
     //wcfg.dout.bins[0].fmt = avxFormat_BGRA4un;
-    AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
+    AfxConfigureWindow(env, &wcfg, AFX_V2D_ZERO, AFX_V2D(0.5, 0.5));
     AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 

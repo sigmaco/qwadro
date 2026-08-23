@@ -22,22 +22,16 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxV2dNdc(afxV2d v, afxV2d const from, afxV2d const total)
+_AFXINL afxV2d AfxV2dNdc(afxV2d const from, afxV2d const total)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(from);
-    AFX_ASSERT(total);
-    v[0] = AfxNdcf(from[0], total[0]);
-    v[1] = AfxNdcf(from[1], total[1]);
+    return AFX_V2D( AfxNdcf(from.v[0], total.v[0]),
+                    AfxNdcf(from.v[1], total.v[1]));
 }
 
-_AFXINL void AfxV2dUnndc(afxV2d v, afxV2d const from, afxV2d const total)
+_AFXINL afxV2d AfxV2dUnndc(afxV2d const from, afxV2d const total)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(from);
-    AFX_ASSERT(total);
-    v[0] = AfxUnndcf(from[0], total[0]);
-    v[1] = AfxUnndcf(from[1], total[1]);
+    return AFX_V2D( AfxUnndcf(from.v[0], total.v[0]),
+                    AfxUnndcf(from.v[1], total.v[1]));
 }

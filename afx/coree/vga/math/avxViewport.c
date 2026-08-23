@@ -218,10 +218,10 @@ _AVXINL avxViewport AvxGetFlippedViewport(avxViewport const vp, afxBool swapDept
     avxViewport flipped = vp;
 
     // Shift origin.y by height to move origin to top-left of original viewport
-    flipped.origin[1] = vp.origin[1] + vp.extent[1];
+    flipped.origin.v[1] = vp.origin.v[1] + vp.extent.v[1];
 
     // Negate the height to flip vertically
-    flipped.extent[1] = -vp.extent[1];
+    flipped.extent.v[1] = -vp.extent.v[1];
 
     // Optionally swap minDepth and maxDepth if your depth range needs flipping:
     if (swapDepthRange)
@@ -245,13 +245,13 @@ _AVXINL void AvxViewportTransform(avxViewport const vp, avxViewportFlags flags, 
     dstStride = AFX_OR(dstStride, sizeof(afxV3d));
     afxUnit srcStep = srcStride / sizeof(afxReal);
     afxUnit dstStep = dstStride / sizeof(afxReal);
-    afxReal const* ndcPos2 = &ndcPos[0][0];
-    afxReal* canvPos2 = &canvPos[0][0];
+    afxReal const* ndcPos2 = &ndcPos[0].v[0];
+    afxReal* canvPos2 = &canvPos[0].v[0];
 
-    afxReal vpX = vp.origin[0];
-    afxReal vpY = vp.origin[1];
-    afxReal vpW = vp.extent[0];
-    afxReal vpH = vp.extent[1];
+    afxReal vpX = vp.origin.v[0];
+    afxReal vpY = vp.origin.v[1];
+    afxReal vpW = vp.extent.v[0];
+    afxReal vpH = vp.extent.v[1];
     afxReal minDepth = vp.minDepth;
     afxReal depthDiff = (vp.maxDepth - vp.minDepth);
 

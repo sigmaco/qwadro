@@ -20,6 +20,7 @@
 #include "qwadro/math/afxMatrix.h"
 #include "qwadro/math/afxScalar.h"
 #include "qwadro/math/afxVector.h"
+#include "qwadro/math/afxTrigonometry.h"
 #include "qwadro/coll/afxPlane.h"
 #include "qwadro/afxStream.h"
 
@@ -31,10 +32,10 @@
 // Function to perform Spherical Linear Interpolation (SLERP) between two quaternions
 // v(t) = ((sin((1 - t) * theta)) / sin(theta)) * x + ((sin(t) * theta) / (sin(theta))) * y
 
-_AFXINL void AfxV2dSlerp(afxV2d v, afxV2d x, afxV2d y, afxReal t)
+_AFXINL afxV2d AfxV2dSlerp(afxV2d x, afxV2d y, afxReal t)
 {
-    AfxV2dNormalize(x, x);
-    AfxV2dNormalize(y, y);
+    x = AfxV2dNormalize(x, NIL);
+    y = AfxV2dNormalize(y, NIL);
 
     afxReal dotProd = AFX_MAX(AFX_MIN(AfxV2dDot(x, y), 1.0f), -1.0f);
 
@@ -45,19 +46,19 @@ _AFXINL void AfxV2dSlerp(afxV2d v, afxV2d x, afxV2d y, afxReal t)
 
     afxV2d tmp =
     {
-        y[0] - x[0] * dotProd,
-        y[1] - x[1] * dotProd
+        y.x - x.x * dotProd,
+        y.y - x.y * dotProd
     };
-    AfxV2dNormalize(tmp, tmp);
+    tmp = AfxV2dNormalize(tmp, NIL);
 
-    v[0] = x[0] * thetaCos + tmp[0] * thetaSin;
-    v[1] = x[1] * thetaCos + tmp[1] * thetaSin;
+    return AFX_V2D( x.x * thetaCos + tmp.x * thetaSin,
+                    x.y * thetaCos + tmp.y * thetaSin);
 }
 
-_AFXINL void AfxV3dSlerp(afxV3d v, afxV3d x, afxV3d y, afxReal t)
+_AFXINL afxV3d AfxV3dSlerp(afxV3d x, afxV3d y, afxReal t)
 {
-    AfxV3dNormalize(x, x);
-    AfxV3dNormalize(y, y);
+    x = AfxV3dNormalize(x, NIL);
+    y = AfxV3dNormalize(y, NIL);
 
     afxReal dotProd = AFX_MAX(AFX_MIN(AfxV3dDot(x, y), 1.0f), -1.0f);
 
@@ -68,21 +69,21 @@ _AFXINL void AfxV3dSlerp(afxV3d v, afxV3d x, afxV3d y, afxReal t)
 
     afxV3d tmp =
     {
-        y[0] - x[0] * dotProd,
-        y[1] - x[1] * dotProd,
-        y[2] - x[2] * dotProd
+        y.x - x.x * dotProd,
+        y.y - x.y * dotProd,
+        y.z - x.z * dotProd
     };
-    AfxV3dNormalize(tmp, tmp);
+    tmp = AfxV3dNormalize(tmp, NIL);
 
-    v[0] = x[0] * thetaCos + tmp[0] * thetaSin;
-    v[1] = x[1] * thetaCos + tmp[1] * thetaSin;
-    v[2] = x[2] * thetaCos + tmp[2] * thetaSin;
+    return AFX_V3D( x.x * thetaCos + tmp.x * thetaSin,
+                    x.y * thetaCos + tmp.y * thetaSin,
+                    x.z * thetaCos + tmp.z * thetaSin);
 }
 
-_AFXINL void AfxV4dSlerp(afxV4d v, afxV4d x, afxV4d y, afxReal t)
+_AFXINL afxV4d AfxV4dSlerp(afxV4d x, afxV4d y, afxReal t)
 {
-    AfxV4dNormalize(x, x);
-    AfxV4dNormalize(y, y);
+    x = AfxV4dNormalize(x, NIL);
+    y = AfxV4dNormalize(y, NIL);
 
     afxReal dotProd = AFX_MAX(AFX_MIN(AfxV4dDot(x, y), 1.0f), -1.0f);
 
@@ -93,91 +94,74 @@ _AFXINL void AfxV4dSlerp(afxV4d v, afxV4d x, afxV4d y, afxReal t)
 
     afxV4d tmp =
     {
-        y[0] - x[0] * dotProd,
-        y[1] - x[1] * dotProd,
-        y[2] - x[2] * dotProd,
-        y[3] - x[3] * dotProd
+        y.x - x.x * dotProd,
+        y.y - x.y * dotProd,
+        y.z - x.z * dotProd,
+        y.w - x.w * dotProd
     };
-    AfxV4dNormalize(tmp, tmp);
+    tmp = AfxV4dNormalize(tmp, NIL);
 
-    v[0] = x[0] * thetaCos + tmp[0] * thetaSin;
-    v[1] = x[1] * thetaCos + tmp[1] * thetaSin;
-    v[2] = x[2] * thetaCos + tmp[2] * thetaSin;
-    v[3] = x[3] * thetaCos + tmp[3] * thetaSin;
+    return AFX_V4D( x.x * thetaCos + tmp.x * thetaSin,
+                    x.y * thetaCos + tmp.y * thetaSin,
+                    x.z * thetaCos + tmp.z * thetaSin,
+                    x.w * thetaCos + tmp.w * thetaSin);
 }
 
 // Hermite
 
-_AFXINL void AfxHermiteV2d(afxV2d v, afxV2d const posA, afxV2d const tanA, afxV2d const posB, afxV2d const tanB, afxReal t)
+_AFXINL afxV2d AfxV2dHermite(afxV2d const posA, afxV2d const tanA, afxV2d const posB, afxV2d const tanB, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
 
     // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV2d pa, ta, pb, tb;
-    AfxV2dFill(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxV2dFill(ta, t3 - 2.f * t2 + t);
-    AfxV2dFill(pb, -2.f * t3 + 3.f * t2);
-    AfxV2dFill(tb, t3 - t2);
+    pa = AfxV2dFill(2.f * t3 - 3.f * t2 + 1.f);
+    ta = AfxV2dFill(t3 - 2.f * t2 + t);
+    pb = AfxV2dFill(-2.f * t3 + 3.f * t2);
+    tb = AfxV2dFill(t3 - t2);
 
-    AfxV2dMultiply(v, pa, posA);
-    AfxV2dMad(v, v, ta, ta);
-    AfxV2dMad(v, v, pb, pb);
-    AfxV2dMad(v, v, tb, tb);
+    afxV2d v = AfxV2dMultiply(pa, posA);
+    v = AfxV2dMad(v, ta, ta);
+    v = AfxV2dMad(v, pb, pb);
+    return AfxV2dMad(v, tb, tb);
 }
 
-_AFXINL void AfxHermiteV3d(afxV3d v, afxV3d const posA, afxV3d const tanA, afxV3d const posB, afxV3d const tanB, afxReal t)
+_AFXINL afxV3d AfxV3dHermite(afxV3d const posA, afxV3d const tanA, afxV3d const posB, afxV3d const tanB, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
-
     // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV3d pa, ta, pb, tb;
-    AfxV3dFill(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxV3dFill(ta, t3 - 2.f * t2 + t);
-    AfxV3dFill(pb, -2.f * t3 + 3.f * t2);
-    AfxV3dFill(tb, t3 - t2);
+    pa = AfxV3dFill(2.f * t3 - 3.f * t2 + 1.f);
+    ta = AfxV3dFill(t3 - 2.f * t2 + t);
+    pb = AfxV3dFill(-2.f * t3 + 3.f * t2);
+    tb = AfxV3dFill(t3 - t2);
 
-    AfxV3dMultiply(v, pa, posA);
-    AfxV3dMad(v, v, ta, ta);
-    AfxV3dMad(v, v, pb, pb);
-    AfxV3dMad(v, v, tb, tb);
+    afxV3d v = AfxV3dMultiply(pa, posA);
+    v = AfxV3dMad(v, ta, ta);
+    v = AfxV3dMad(v, pb, pb);
+    return AfxV3dMad(v, tb, tb);
 }
 
-_AFXINL void AfxHermiteV4d(afxV4d v, afxV4d const posA, afxV4d const tanA, afxV4d const posB, afxV4d const tanB, afxReal t)
+_AFXINL afxV4d AfxV4dHermite(afxV4d const posA, afxV4d const tanA, afxV4d const posB, afxV4d const tanB, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(posA);
-    AFX_ASSERT(tanA);
-    AFX_ASSERT(posB);
-    AFX_ASSERT(tanB);
-
     // Result = (2 * t^3 - 3 * t^2 + 1) * Pos0 + (t^3 - 2 * t^2 + t) * Tan0 + (-2 * t^3 + 3 * t^2) * Pos1 + (t^3 - t^2) * Tan1
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV4d pa, ta, pb, tb;
-    AfxV4dFill(pa, 2.f * t3 - 3.f * t2 + 1.f);
-    AfxV4dFill(ta, t3 - 2.f * t2 + t);
-    AfxV4dFill(pb, -2.f * t3 + 3.f * t2);
-    AfxV4dFill(tb, t3 - t2);
+    pa = AfxV4dFill(2.f * t3 - 3.f * t2 + 1.f);
+    ta = AfxV4dFill(t3 - 2.f * t2 + t);
+    pb = AfxV4dFill(-2.f * t3 + 3.f * t2);
+    tb = AfxV4dFill(t3 - t2);
 
-    AfxV4dMultiply(v, pa, posA);
-    AfxV4dMad(v, v, ta, ta);
-    AfxV4dMad(v, v, pb, pb);
-    AfxV4dMad(v, v, tb, tb);
+    afxV4d v = AfxV4dMultiply(pa, posA);
+    v = AfxV4dMad(v, ta, ta);
+    v = AfxV4dMad(v, pb, pb);
+    return AfxV4dMad(v, tb, tb);
 }
 
 /// Catmull-Rom splines are a family of cubic interpolating splines formulated such that the tangent at each point Pi is calculated using the previous and next point on the spline, T(Pi + 1 - Pi - 1).
@@ -185,156 +169,133 @@ _AFXINL void AfxHermiteV4d(afxV4d v, afxV4d const posA, afxV4d const tanA, afxV4
 
 // CatmullRom
 
-_AFXINL void AfxCatmullV2d(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const d, afxReal t)
+_AFXINL afxV2d AfxV2dCatmull(afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const d, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
     // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV2d pa, pb, pc, pd;
-    AfxV2dFill(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxV2dFill(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxV2dFill(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxV2dFill(pd, (t3 - t2) * 0.5f);
+    pa = AfxV2dFill((-t3 + 2.0f * t2 - t) * 0.5f);
+    pb = AfxV2dFill((3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
+    pc = AfxV2dFill((-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
+    pd = AfxV2dFill((t3 - t2) * 0.5f);
 
-    AfxV2dMultiply(v, pa, a);
-    AfxV2dMad(v, v, pb, b);
-    AfxV2dMad(v, v, pc, c);
-    AfxV2dMad(v, v, pd, d);
+    afxV2d v = AfxV2dMultiply(pa, a);
+    v = AfxV2dMad(v, pb, b);
+    v = AfxV2dMad(v, pc, c);
+    return AfxV2dMad(v, pd, d);
 }
 
-_AFXINL void AfxCatmullV3d(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const d, afxReal t)
+_AFXINL afxV3d AfxV3dCatmull(afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const d, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
     // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV3d pa, pb, pc, pd;
-    AfxV3dFill(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxV3dFill(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxV3dFill(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxV3dFill(pd, (t3 - t2) * 0.5f);
+    pa = AfxV3dFill((-t3 + 2.0f * t2 - t) * 0.5f);
+    pb = AfxV3dFill((3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
+    pc = AfxV3dFill((-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
+    pd = AfxV3dFill((t3 - t2) * 0.5f);
 
-    AfxV3dMultiply(v, pa, a);
-    AfxV3dMad(v, v, pb, b);
-    AfxV3dMad(v, v, pc, c);
-    AfxV3dMad(v, v, pd, d);
+    afxV3d v = AfxV3dMultiply(pa, a);
+    v = AfxV3dMad(v, pb, b);
+    v = AfxV3dMad(v, pc, c);
+    return AfxV3dMad(v, pd, d);
 }
 
-_AFXINL void AfxCatmullV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const d, afxReal t)
+_AFXINL afxV4d AfxV4dCatmull(afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const d, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT(v);
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(c);
-    AFX_ASSERT(d);
-
     // v = ((-t^3 + 2 * t^2 - t) * a + (3 * t^3 - 5 * t^2 + 2) * b + (-3 * t^3 + 4 * t^2 + t) * c + (t^3 - t^2) * d) * 0.5
 
     afxReal t2 = t * t, t3 = t * t2;
     afxV4d pa, pb, pc, pd;
-    AfxV4dFill(pa, (-t3 + 2.0f * t2 - t) * 0.5f);
-    AfxV4dFill(pb, (3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
-    AfxV4dFill(pc, (-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
-    AfxV4dFill(pd, (t3 - t2) * 0.5f);
+    pa = AfxV4dFill((-t3 + 2.0f * t2 - t) * 0.5f);
+    pb = AfxV4dFill((3.0f * t3 - 5.0f * t2 + 2.0f) * 0.5f);
+    pc = AfxV4dFill((-3.0f * t3 + 4.0f * t2 + t) * 0.5f);
+    pd = AfxV4dFill((t3 - t2) * 0.5f);
 
-    AfxV4dMultiply(v, pa, a);
-    AfxV4dMad(v, v, pb, b);
-    AfxV4dMad(v, v, pc, c);
-    AfxV4dMad(v, v, pd, d);
+    afxV4d v = AfxV4dMultiply(pa, a);
+    v = AfxV4dMad(v, pb, b);
+    v = AfxV4dMad(v, pc, c);
+    return AfxV4dMad(v, pd, d);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // QUATERNION (aka QWATERNION)                                                //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatLerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal percent)
+_AFXINL afxQuat AfxQuatLerp(afxQuat const a, afxQuat const b, afxReal percent)
 {
     // Should be compatible with physicsforgames.blogspot.com/2010/02/quaternions.html
 
     afxError err = { 0 };
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(q);
 
     afxReal f = AFX_REAL(1) - percent;
 
+    afxQuat q;
+
     if (AfxQuatDot(a, b) < 0.f)
     {
-        q[3] = f * a[3] + percent * -b[3];
-        q[0] = f * a[0] + percent * -b[0];
-        q[1] = f * a[1] + percent * -b[1];
-        q[2] = f * a[2] + percent * -b[2];
+        q.w = f * a.w + percent * -b.w;
+        q.x = f * a.x + percent * -b.x;
+        q.y = f * a.y + percent * -b.y;
+        q.z = f * a.z + percent * -b.z;
     }
     else
     {
         // mul & add
-        q[3] = f * a[3] + percent * b[3];
-        q[0] = f * a[0] + percent * b[0];
-        q[1] = f * a[1] + percent * b[1];
-        q[2] = f * a[2] + percent * b[2];
+        q.w = f * a.w + percent * b.w;
+        q.x = f * a.x + percent * b.x;
+        q.y = f * a.y + percent * b.y;
+        q.z = f * a.z + percent * b.z;
     }
-    AfxQuatNormalize(q, q);
+    return AfxQuatNormalize(q, NIL);
 }
 
-_AFXINL void AfxQuatSlerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal percent)
+_AFXINL afxQuat AfxQuatSlerp(afxQuat const a, afxQuat const b, afxReal percent)
 {
     afxError err = { 0 };
-    AFX_ASSERT(a);
-    AFX_ASSERT(b);
-    AFX_ASSERT(q);
 
-    if (AfxRealIsEquivalent(percent, AFX_REAL(0))) AfxQuatCopy(q, a);
+    if (AfxRealIsEquivalent(percent, AFX_REAL(0)))
+        return a;
+
+    if (AfxRealIsEquivalent(percent, AFX_REAL(1)))
+        return b;
+
+    // if they are close q parallel, use LERP, This avoids div/0. At small angles, the slerp a lerp are the same.
+    afxReal dot = AfxQuatDot(a, b);
+
+    if (AfxRealIsEquivalent(dot, AFX_REAL(1)))
+        return AfxQuatLerp(a, b, percent);
+
+    afxQuat q;
+
+    // if dot is negative, they are "pointing" away from one another, use the shortest arc instead (reverse end a start)
+    // This has the effect of changing the direction of travel around the sphere beginning with "end" a going the b way around the sphere.
+
+    if (dot < AFX_REAL(0))
+    {
+        afxQuat neg = AfxQuatNeg(a);
+        q = AfxQuatSlerp(a, neg, percent);
+        q = AfxQuatNeg(q);
+    }
     else
     {
-        if (AfxRealIsEquivalent(percent, AFX_REAL(1))) AfxQuatCopy(q, b);
-        else
-        {
-            // if they are close q parallel, use LERP, This avoids div/0. At small angles, the slerp a lerp are the same.
-            afxReal dot = AfxQuatDot(a, b);
+        // keep the dot product in the range that acos canv handle (shouldn't get here)
+        dot = AfxClampd(dot, AFX_REAL(-1), AFX_REAL(1));
+        afxReal theta = AfxAcosf(dot); // the angle between start a end in radians
+        afxReal s = AfxSinf(theta), f1 = AfxSinf((AFX_REAL(1) - percent) * theta) / s, f2 = AfxSinf(percent * theta) / s; // compute negative a positive
 
-            if (AfxRealIsEquivalent(dot, AFX_REAL(1))) AfxQuatLerp(q, a, q, percent);
-            else
-            {
-                // if dot is negative, they are "pointing" away from one another, use the shortest arc instead (reverse end a start)
-                // This has the effect of changing the direction of travel around the sphere beginning with "end" a going the b way around the sphere.
-
-                if (dot < AFX_REAL(0))
-                {
-                    afxQuat neg;
-                    AfxQuatNeg(neg, a);
-                    AfxQuatSlerp(q, a, neg, percent);
-                    AfxQuatNeg(q, q);
-                }
-                else
-                {
-                    // keep the dot product in the range that acos canv handle (shouldn't get here)
-                    dot = AfxClampd(dot, AFX_REAL(-1), AFX_REAL(1));
-                    afxReal theta = AfxAcosf(dot); // the angle between start a end in radians
-                    afxReal s = AfxSinf(theta), f1 = AfxSinf((AFX_REAL(1) - percent) * theta) / s, f2 = AfxSinf(percent * theta) / s; // compute negative a positive
-
-                    // mul & add
-                    q[3] = f1 * a[3] + f2 * b[3];
-                    q[0] = f1 * a[0] + f2 * b[0];
-                    q[1] = f1 * a[1] + f2 * b[1];
-                    q[2] = f1 * a[2] + f2 * b[2];
-                }
-            }
-        }
+        // mul & add
+        q.w = f1 * a.w + f2 * b.w;
+        q.x = f1 * a.x + f2 * b.x;
+        q.y = f1 * a.y + f2 * b.y;
+        q.z = f1 * a.z + f2 * b.z; 
     }
+    return q;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -346,140 +307,138 @@ _AFXINL void AfxQuatSlerp(afxQuat q, afxQuat const a, afxQuat const b, afxReal p
 // It is often used in shader programming and graphics.
 // v = x * (1 - t) + y * t
 
-_AFXINL void AfxM2dMix(afxM2d m, afxM2d const a, afxM2d const b, afxReal t)
+_AFXINL afxM2d AfxM2dMix(afxM2d const a, afxM2d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
+    afxM2d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
 
-    m[3][0] = a[3][0] * (1.f - t) + b[3][0] * t;
-    m[3][1] = a[3][1] * (1.f - t) + b[3][1] * t;
+    return m;
 }
 
-_AFXINL void AfxM3dMix(afxM3d m, afxM3d const a, afxM3d const b, afxReal t)
+_AFXINL afxM3d AfxM3dMix(afxM3d const a, afxM3d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
-    m[0][2] = a[0][2] * (1.f - t) + b[0][2] * t;
+    afxM3d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
-    m[1][2] = a[1][2] * (1.f - t) + b[1][2] * t;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
+    m.m[0][2] = a.m[0][2] * (1.f - t) + b.m[0][2] * t;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
-    m[2][2] = a[2][2] * (1.f - t) + b[2][2] * t;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
+    m.m[1][2] = a.m[1][2] * (1.f - t) + b.m[1][2] * t;
 
-    m[3][0] = a[3][0] * (1.f - t) + b[3][0] * t;
-    m[3][1] = a[3][1] * (1.f - t) + b[3][1] * t;
-    m[3][2] = a[3][2] * (1.f - t) + b[3][2] * t;
+    m.m[2][0] = a.m[2][0] * (1.f - t) + b.m[2][0] * t;
+    m.m[2][1] = a.m[2][1] * (1.f - t) + b.m[2][1] * t;
+    m.m[2][2] = a.m[2][2] * (1.f - t) + b.m[2][2] * t;
 }
 
-_AFXINL void AfxM4dMix(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dMix(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
-    m[0][2] = a[0][2] * (1.f - t) + b[0][2] * t;
-    m[0][3] = a[0][3] * (1.f - t) + b[0][3] * t;
+    afxM4d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
-    m[1][2] = a[1][2] * (1.f - t) + b[1][2] * t;
-    m[1][3] = a[1][3] * (1.f - t) + b[1][3] * t;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
+    m.m[0][2] = a.m[0][2] * (1.f - t) + b.m[0][2] * t;
+    m.m[0][3] = a.m[0][3] * (1.f - t) + b.m[0][3] * t;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
-    m[2][2] = a[2][2] * (1.f - t) + b[2][2] * t;
-    m[2][3] = a[2][3] * (1.f - t) + b[2][3] * t;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
+    m.m[1][2] = a.m[1][2] * (1.f - t) + b.m[1][2] * t;
+    m.m[1][3] = a.m[1][3] * (1.f - t) + b.m[1][3] * t;
 
-    m[3][0] = a[3][0] * (1.f - t) + b[3][0] * t;
-    m[3][1] = a[3][1] * (1.f - t) + b[3][1] * t;
-    m[3][2] = a[3][2] * (1.f - t) + b[3][2] * t;
-    m[3][3] = a[3][3] * (1.f - t) + b[3][3] * t;
+    m.m[2][0] = a.m[2][0] * (1.f - t) + b.m[2][0] * t;
+    m.m[2][1] = a.m[2][1] * (1.f - t) + b.m[2][1] * t;
+    m.m[2][2] = a.m[2][2] * (1.f - t) + b.m[2][2] * t;
+    m.m[2][3] = a.m[2][3] * (1.f - t) + b.m[2][3] * t;
+
+    m.m[3][0] = a.m[3][0] * (1.f - t) + b.m[3][0] * t;
+    m.m[3][1] = a.m[3][1] * (1.f - t) + b.m[3][1] * t;
+    m.m[3][2] = a.m[3][2] * (1.f - t) + b.m[3][2] * t;
+    m.m[3][3] = a.m[3][3] * (1.f - t) + b.m[3][3] * t;
 }
 
-_AFXINL void AfxM3dMixAtm(afxM3d m, afxM3d const a, afxM3d const b, afxReal t)
+_AFXINL afxM3d AfxM3dMixAtm(afxM3d const a, afxM3d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
-    m[0][2] = 0.f;
+    afxM3d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
-    m[1][2] = 0.f;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
+    m.m[0][2] = 0.f;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
-    m[2][2] = 1.f;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
+    m.m[1][2] = 0.f;
+
+    m.m[2][0] = a.m[2][0] * (1.f - t) + b.m[2][0] * t;
+    m.m[2][1] = a.m[2][1] * (1.f - t) + b.m[2][1] * t;
+    m.m[2][2] = 1.f;
 }
 
-_AFXINL void AfxM4dMixAtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dMixAtm(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
-    m[0][2] = a[0][2] * (1.f - t) + b[0][2] * t;
-    m[0][3] = 0.f;
+    afxM4d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
-    m[1][2] = a[1][2] * (1.f - t) + b[1][2] * t;
-    m[1][3] = 0.f;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
+    m.m[0][2] = a.m[0][2] * (1.f - t) + b.m[0][2] * t;
+    m.m[0][3] = 0.f;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
-    m[2][2] = a[2][2] * (1.f - t) + b[2][2] * t;
-    m[2][3] = 0.f;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
+    m.m[1][2] = a.m[1][2] * (1.f - t) + b.m[1][2] * t;
+    m.m[1][3] = 0.f;
 
-    m[3][0] = a[3][0] * (1.f - t) + b[3][0] * t;
-    m[3][1] = a[3][1] * (1.f - t) + b[3][1] * t;
-    m[3][2] = a[3][2] * (1.f - t) + b[3][2] * t;
-    m[3][3] = 1.f;
+    m.m[2][0] = a.m[2][0] * (1.f - t) + b.m[2][0] * t;
+    m.m[2][1] = a.m[2][1] * (1.f - t) + b.m[2][1] * t;
+    m.m[2][2] = a.m[2][2] * (1.f - t) + b.m[2][2] * t;
+    m.m[2][3] = 0.f;
+
+    m.m[3][0] = a.m[3][0] * (1.f - t) + b.m[3][0] * t;
+    m.m[3][1] = a.m[3][1] * (1.f - t) + b.m[3][1] * t;
+    m.m[3][2] = a.m[3][2] * (1.f - t) + b.m[3][2] * t;
+    m.m[3][3] = 1.f;
 }
 
-_AFXINL void AfxM4dMixLtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dMixLtm(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] * (1.f - t) + b[0][0] * t;
-    m[0][1] = a[0][1] * (1.f - t) + b[0][1] * t;
-    m[0][2] = a[0][2] * (1.f - t) + b[0][2] * t;
-    m[0][3] = 0.f;
+    afxM4d m;
 
-    m[1][0] = a[1][0] * (1.f - t) + b[1][0] * t;
-    m[1][1] = a[1][1] * (1.f - t) + b[1][1] * t;
-    m[1][2] = a[1][2] * (1.f - t) + b[1][2] * t;
-    m[1][3] = 0.f;
+    m.m[0][0] = a.m[0][0] * (1.f - t) + b.m[0][0] * t;
+    m.m[0][1] = a.m[0][1] * (1.f - t) + b.m[0][1] * t;
+    m.m[0][2] = a.m[0][2] * (1.f - t) + b.m[0][2] * t;
+    m.m[0][3] = 0.f;
 
-    m[2][0] = a[2][0] * (1.f - t) + b[2][0] * t;
-    m[2][1] = a[2][1] * (1.f - t) + b[2][1] * t;
-    m[2][2] = a[2][2] * (1.f - t) + b[2][2] * t;
-    m[2][3] = 0.f;
+    m.m[1][0] = a.m[1][0] * (1.f - t) + b.m[1][0] * t;
+    m.m[1][1] = a.m[1][1] * (1.f - t) + b.m[1][1] * t;
+    m.m[1][2] = a.m[1][2] * (1.f - t) + b.m[1][2] * t;
+    m.m[1][3] = 0.f;
 
-    m[3][0] = 0.f;
-    m[3][1] = 0.f;
-    m[3][2] = 0.f;
-    m[3][3] = 1.f;
+    m.m[2][0] = a.m[2][0] * (1.f - t) + b.m[2][0] * t;
+    m.m[2][1] = a.m[2][1] * (1.f - t) + b.m[2][1] * t;
+    m.m[2][2] = a.m[2][2] * (1.f - t) + b.m[2][2] * t;
+    m.m[2][3] = 0.f;
+
+    m.m[3][0] = 0.f;
+    m.m[3][1] = 0.f;
+    m.m[3][2] = 0.f;
+    m.m[3][3] = 1.f;
 }
 
 // Lerp
@@ -487,138 +446,134 @@ _AFXINL void AfxM4dMixLtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
 // In the context of 4D vectors, it calculates the intermediate vector between a start and end vector based on a factor t ranging from 0.0 to 1.0.
 // x + t * (y - x)
 
-_AFXINL void AfxM2dLerp(afxM2d m, afxM2d const a, afxM2d const b, afxReal t)
+_AFXINL afxM2d AfxM2dLerp(afxM2d const a, afxM2d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
+    afxM2d m;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-
-    m[3][0] = a[3][0] + t * (b[3][0] - a[3][0]);
-    m[3][1] = a[3][1] + t * (b[3][1] - a[3][1]);
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
 }
 
-_AFXINL void AfxM3dLerp(afxM3d m, afxM3d const a, afxM3d const b, afxReal t)
+_AFXINL afxM3d AfxM3dLerp(afxM3d const a, afxM3d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
-    m[0][2] = a[0][2] + t * (b[0][2] - a[0][2]);
+    afxM3d m;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
-    m[1][2] = a[1][2] + t * (b[1][2] - a[1][2]);
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
+    m.m[0][2] = a.m[0][2] + t * (b.m[0][2] - a.m[0][2]);
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-    m[2][2] = a[2][2] + t * (b[2][2] - a[2][2]);
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
+    m.m[1][2] = a.m[1][2] + t * (b.m[1][2] - a.m[1][2]);
 
-    m[3][0] = a[3][0] + t * (b[3][0] - a[3][0]);
-    m[3][1] = a[3][1] + t * (b[3][1] - a[3][1]);
-    m[3][2] = a[3][2] + t * (b[3][2] - a[3][2]);
+    m.m[2][0] = a.m[2][0] + t * (b.m[2][0] - a.m[2][0]);
+    m.m[2][1] = a.m[2][1] + t * (b.m[2][1] - a.m[2][1]);
+    m.m[2][2] = a.m[2][2] + t * (b.m[2][2] - a.m[2][2]);
 }
 
-_AFXINL void AfxM4dLerp(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dLerp(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
-    m[0][2] = a[0][2] + t * (b[0][2] - a[0][2]);
-    m[0][3] = a[0][3] + t * (b[0][3] - a[0][3]);
+    afxM4d m;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
-    m[1][2] = a[1][2] + t * (b[1][2] - a[1][2]);
-    m[1][3] = a[1][3] + t * (b[1][3] - a[1][3]);
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
+    m.m[0][2] = a.m[0][2] + t * (b.m[0][2] - a.m[0][2]);
+    m.m[0][3] = a.m[0][3] + t * (b.m[0][3] - a.m[0][3]);
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-    m[2][2] = a[2][2] + t * (b[2][2] - a[2][2]);
-    m[2][3] = a[2][3] + t * (b[2][3] - a[2][3]);
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
+    m.m[1][2] = a.m[1][2] + t * (b.m[1][2] - a.m[1][2]);
+    m.m[1][3] = a.m[1][3] + t * (b.m[1][3] - a.m[1][3]);
 
-    m[3][0] = a[3][0] + t * (b[3][0] - a[3][0]);
-    m[3][1] = a[3][1] + t * (b[3][1] - a[3][1]);
-    m[3][2] = a[3][2] + t * (b[3][2] - a[3][2]);
-    m[3][3] = a[3][3] + t * (b[3][3] - a[3][3]);
+    m.m[2][0] = a.m[2][0] + t * (b.m[2][0] - a.m[2][0]);
+    m.m[2][1] = a.m[2][1] + t * (b.m[2][1] - a.m[2][1]);
+    m.m[2][2] = a.m[2][2] + t * (b.m[2][2] - a.m[2][2]);
+    m.m[2][3] = a.m[2][3] + t * (b.m[2][3] - a.m[2][3]);
+
+    m.m[3][0] = a.m[3][0] + t * (b.m[3][0] - a.m[3][0]);
+    m.m[3][1] = a.m[3][1] + t * (b.m[3][1] - a.m[3][1]);
+    m.m[3][2] = a.m[3][2] + t * (b.m[3][2] - a.m[3][2]);
+    m.m[3][3] = a.m[3][3] + t * (b.m[3][3] - a.m[3][3]);
 }
 
-_AFXINL void AfxM3dLerpAtm(afxM3d m, afxM3d const a, afxM3d const b, afxReal t)
+_AFXINL afxM3d AfxM3dLerpAtm(afxM3d const a, afxM3d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
+    
+    afxM3d m;
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
-    m[0][2] = 0.f;
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
+    m.m[0][2] = 0.f;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
-    m[1][2] = 0.f;
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
+    m.m[1][2] = 0.f;
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-    m[2][2] = 1.f;
+    m.m[2][0] = a.m[2][0] + t * (b.m[2][0] - a.m[2][0]);
+    m.m[2][1] = a.m[2][1] + t * (b.m[2][1] - a.m[2][1]);
+    m.m[2][2] = 1.f;
 }
 
-_AFXINL void AfxM4dLerpAtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dLerpAtm(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
-    m[0][2] = a[0][2] + t * (b[0][2] - a[0][2]);
-    m[0][3] = 0.f;
+    afxM4d m;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
-    m[1][2] = a[1][2] + t * (b[1][2] - a[1][2]);
-    m[1][3] = 0.f;
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
+    m.m[0][2] = a.m[0][2] + t * (b.m[0][2] - a.m[0][2]);
+    m.m[0][3] = 0.f;
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-    m[2][2] = a[2][2] + t * (b[2][2] - a[2][2]);
-    m[2][3] = 0.f;
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
+    m.m[1][2] = a.m[1][2] + t * (b.m[1][2] - a.m[1][2]);
+    m.m[1][3] = 0.f;
 
-    m[3][0] = a[3][0] + t * (b[3][0] - a[3][0]);
-    m[3][1] = a[3][1] + t * (b[3][1] - a[3][1]);
-    m[3][2] = a[3][2] + t * (b[3][2] - a[3][2]);
-    m[3][3] = 1.f;
+    m.m[2][0] = a.m[2][0] + t * (b.m[2][0] - a.m[2][0]);
+    m.m[2][1] = a.m[2][1] + t * (b.m[2][1] - a.m[2][1]);
+    m.m[2][2] = a.m[2][2] + t * (b.m[2][2] - a.m[2][2]);
+    m.m[2][3] = 0.f;
+
+    m.m[3][0] = a.m[3][0] + t * (b.m[3][0] - a.m[3][0]);
+    m.m[3][1] = a.m[3][1] + t * (b.m[3][1] - a.m[3][1]);
+    m.m[3][2] = a.m[3][2] + t * (b.m[3][2] - a.m[3][2]);
+    m.m[3][3] = 1.f;
 }
 
-_AFXINL void AfxM4dLerpLtm(afxM4d m, afxM4d const a, afxM4d const b, afxReal t)
+_AFXINL afxM4d AfxM4dLerpLtm(afxM4d const a, afxM4d const b, afxReal t)
 {
     afxError err = { 0 };
-    AFX_ASSERT3(m, a, b);
 
-    m[0][0] = a[0][0] + t * (b[0][0] - a[0][0]);
-    m[0][1] = a[0][1] + t * (b[0][1] - a[0][1]);
-    m[0][2] = a[0][2] + t * (b[0][2] - a[0][2]);
-    m[0][3] = 0.f;
+    afxM4d m;
 
-    m[1][0] = a[1][0] + t * (b[1][0] - a[1][0]);
-    m[1][1] = a[1][1] + t * (b[1][1] - a[1][1]);
-    m[1][2] = a[1][2] + t * (b[1][2] - a[1][2]);
-    m[1][3] = 0.f;
+    m.m[0][0] = a.m[0][0] + t * (b.m[0][0] - a.m[0][0]);
+    m.m[0][1] = a.m[0][1] + t * (b.m[0][1] - a.m[0][1]);
+    m.m[0][2] = a.m[0][2] + t * (b.m[0][2] - a.m[0][2]);
+    m.m[0][3] = 0.f;
 
-    m[2][0] = a[2][0] + t * (b[2][0] - a[2][0]);
-    m[2][1] = a[2][1] + t * (b[2][1] - a[2][1]);
-    m[2][2] = a[2][2] + t * (b[2][2] - a[2][2]);
-    m[2][3] = 0.f;
+    m.m[1][0] = a.m[1][0] + t * (b.m[1][0] - a.m[1][0]);
+    m.m[1][1] = a.m[1][1] + t * (b.m[1][1] - a.m[1][1]);
+    m.m[1][2] = a.m[1][2] + t * (b.m[1][2] - a.m[1][2]);
+    m.m[1][3] = 0.f;
 
-    m[3][0] = 0.f;
-    m[3][1] = 0.f;
-    m[3][2] = 0.f;
-    m[3][3] = 1.f;
+    m.m[2][0] = a.m[2][0] + t * (b.m[2][0] - a.m[2][0]);
+    m.m[2][1] = a.m[2][1] + t * (b.m[2][1] - a.m[2][1]);
+    m.m[2][2] = a.m[2][2] + t * (b.m[2][2] - a.m[2][2]);
+    m.m[2][3] = 0.f;
+
+    m.m[3][0] = 0.f;
+    m.m[3][1] = 0.f;
+    m.m[3][2] = 0.f;
+    m.m[3][3] = 1.f;
 }

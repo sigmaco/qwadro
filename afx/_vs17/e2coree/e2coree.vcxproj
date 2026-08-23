@@ -281,7 +281,6 @@
     <ClInclude Include="..\..\..\qwadro\math\afxMultiplication.h" />
     <ClInclude Include="..\..\..\qwadro\math\afxQuaternion.h" />
     <ClInclude Include="..\..\..\qwadro\math\afxReal16.h" />
-    <ClInclude Include="..\..\..\qwadro\math\afxRotor.h" />
     <ClInclude Include="..\..\..\qwadro\math\afxScalar.h" />
     <ClInclude Include="..\..\..\qwadro\math\afxSpace.h" />
     <ClInclude Include="..\..\..\qwadro\math\afxTransform.h" />
@@ -443,7 +442,6 @@
     <ClCompile Include="..\..\coree\afxRawString.c" />
     <ClCompile Include="..\..\coree\math\afxReal16.c" />
     <ClCompile Include="..\..\coree\afxRect.c" />
-    <ClCompile Include="..\..\coree\math\afxRotor.c" />
     <ClCompile Include="..\..\coree\math\afxScalar.c" />
     <ClCompile Include="..\..\coree\afxSimd.c" />
     <ClCompile Include="..\..\coree\afxString.c" />

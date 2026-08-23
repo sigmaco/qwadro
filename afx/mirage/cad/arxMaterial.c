@@ -104,7 +104,7 @@ _ARX void ArxUpdateMaterial(arxMaterial mtl, arxMaterialInfo const* info)
     mtl->restitution = info->restitution;
     mtl->density = info->density;
     
-    AfxV3dCopy(mtl->albedo, info->albedo);
+    mtl->albedo = info->albedo;
     mtl->metallic = info->metallic;
     mtl->roughness = info->roughness;
 }
@@ -132,7 +132,7 @@ _ARX afxError _ArxMtlCtorCb(arxMaterial mtl, void** args, afxUnit invokeNo)
 
     mtl->roughness = 0;
     mtl->metallic = 0;
-    AfxV3dSet(mtl->albedo, 1, 1, 1);
+    mtl->albedo = AfxV3dMake(1, 1, 1);
     mtl->albedoMapId = -1;
     
     return err;

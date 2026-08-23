@@ -215,8 +215,7 @@ _AVX afxError AvxRequestSurfaceMode(afxSurface dout, avxModeSetting const* mode)
     avxExtent resolution = mode->resolution;
     afxBool exclusive = mode->exclusive;
 
-    afxV3d whdNdc;
-    _AvxGetSurfaceExtentNormalized(dout, whdNdc);
+    afxV3d whdNdc = _AvxGetSurfaceExtentNormalized(dout);
     
     if (AvxDotRange(resolution, resolution))
     {
@@ -295,16 +294,15 @@ _AVX afxReal64 AvxGetSurfaceArea(afxSurface dout, afxRect* area)
     return dout->wwOverHw;
 }
 
-_AVX void _AvxGetSurfaceExtentNormalized(afxSurface dout, afxV3d whd)
+_AVX afxV3d _AvxGetSurfaceExtentNormalized(afxSurface dout)
 // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-    AFX_ASSERT(whd);
     afxRect whd2;
     AvxGetSurfaceArea(dout, &whd2);
-    AfxV3dSet(whd, AfxNdcf(whd2.w, dout->resolution.w), AfxNdcf(whd2.h, dout->resolution.h), (afxReal)1);
+    return AfxV3dMake(AfxNdcf(whd2.w, dout->resolution.w), AfxNdcf(whd2.h, dout->resolution.h), (afxReal)1);
 }
 
 _AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool fse)
@@ -358,9 +356,8 @@ _AVX afxError AvxAdjustSurface(afxSurface dout, afxRect const* area)
 
     if (!err)
     {
-        afxV2d ndc;
         AvxGetSurfaceArea(dout, &rc);
-        AfxV2dNdc(ndc, AFX_V2D(rc.w, rc.h), AFX_V2D(dout->resolution.w, dout->resolution.h));
+        afxV2d ndc = AfxV2dNdc(AFX_V2D(rc.w, rc.h), AFX_V2D(dout->resolution.w, dout->resolution.h));
 #ifdef _AFX_DOUT_LOGS
         AfxReportMessage("Draw output %03u adjusted. %ux%u %ux%u %.3fx%.3f %f", AfxGetObjectId(dout), whd2.w, whd2.h, dout->resolution.w, dout->resolution.h, ndc[0], ndc[1], dout->wwOverHw);
 #endif
@@ -377,14 +374,14 @@ _AVX afxError _AvxAdjustSurfaceNormalized(afxSurface dout, afxV3d const whd)
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-    AFX_ASSERT4(whd, whd[0], whd[1], whd[2]);
+    AFX_ASSERT3(whd.v[0], whd.v[1], whd.v[2]);
 
     afxRect const whd2 =
     {
         .x = dout->area.x,
         .y = dout->area.y,
-        .w = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[0]), dout->resolution.w),
-        .h = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[1]), dout->resolution.h)
+        .w = (afxUnit)AfxUnndcf(AFX_MAX(1, whd.v[0]), dout->resolution.w),
+        .h = (afxUnit)AfxUnndcf(AFX_MAX(1, whd.v[1]), dout->resolution.h)
     };
     return AvxAdjustSurface(dout, &whd2);
 }

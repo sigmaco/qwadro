@@ -1224,7 +1224,7 @@ static inline avxClearValue decode_component(avxFormatDescription const* fmtd, c
             break;
         }
         case avxFormatType_F:
-            out.rgba[i] = *(float*)&ptr[offset];
+            out.rgba.v[i] = *(float*)&ptr[offset];
             break;
         case avxFormatType_U:
             out.rgban[i] = (bpc == 8) ? *(uint8_t*)&ptr[offset] : (bpc == 16) ? *(uint16_t*)&ptr[offset] : *(uint32_t*)&ptr[offset];
@@ -1258,7 +1258,7 @@ static void encode_component(avxFormatDescription const* fmtd, afxByte* dst, avx
         {
         case avxFormatType_UN:
         {
-            float f = norm ? fminf(fmaxf(val.rgba[i], 0.0f), 1.0f) : val.rgba[i];
+            float f = norm ? fminf(fmaxf(val.rgba.v[i], 0.0f), 1.0f) : val.rgba.v[i];
             uint32_t u = (uint32_t)(f * ((1u << bpc) - 1) + 0.5f);
 
             if (bpc == 8)      *(uint8_t*)&dst[offset] = (uint8_t)u;
@@ -1268,7 +1268,7 @@ static void encode_component(avxFormatDescription const* fmtd, afxByte* dst, avx
         }
         case avxFormatType_SN:
         {
-            float f = norm ? fminf(fmaxf(val.rgba[i], -1.0f), 1.0f) : val.rgba[i];
+            float f = norm ? fminf(fmaxf(val.rgba.v[i], -1.0f), 1.0f) : val.rgba.v[i];
             int32_t i = (int32_t)(f * ((1 << (bpc - 1)) - 1) + 0.5f);
 
             if (bpc == 8)      *(int8_t*)&dst[offset] = (int8_t)i;
@@ -1277,7 +1277,7 @@ static void encode_component(avxFormatDescription const* fmtd, afxByte* dst, avx
             break;
         }
         case avxFormatType_F:
-            *(float*)dst = val.rgba[i];
+            *(float*)dst = val.rgba.v[i];
             break;
         case avxFormatType_U:
             if (bpc == 8)      *(uint8_t*)&dst[offset] = (uint8_t)val.rgban[i];

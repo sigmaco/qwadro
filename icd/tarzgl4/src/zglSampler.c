@@ -136,7 +136,7 @@ _ZGL afxError _DpuBindAndSyncSamp(zglDpu* dpu, afxUnit glUnit, avxSampler samp)
                     of the valid area of the texture. When this this edge mode is used, a border color must be set by setting 
                     the GL_TEXTURE_BORDER_COLOR parameter.
                 */
-                gl->SamplerParameterfv(glHandle, GL_TEXTURE_BORDER_COLOR, (void*)samp->m.cfg.borderColor.rgba); _ZglThrowErrorOccuried();
+                gl->SamplerParameterfv(glHandle, GL_TEXTURE_BORDER_COLOR, (void*)samp->m.cfg.borderColor.rgba.v); _ZglThrowErrorOccuried();
             }
 
 #if 0

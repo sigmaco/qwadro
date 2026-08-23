@@ -476,16 +476,16 @@ _AVX afxError AvxCmdAdjustViewports(afxDrawContext dctx, afxUnit baseIdx, afxUni
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        avxViewport const* vp = &viewports[i];
+        avxViewport const vp = viewports[i];
 #if AVX_VALIDATION_ENABLED
 #if AVX_LIMIT_VALIDATION_ENABLED
-        AFX_ASSERT_RANGE(dctx->devLimits->maxVpDimensions[0], vp->origin[0], vp->extent[0]);
-        AFX_ASSERT_RANGE(dctx->devLimits->maxVpDimensions[1], vp->origin[1], vp->extent[1]);
-        AFX_ASSERT(dctx->devLimits->vpBoundsRange[0] <= vp->minDepth);
-        AFX_ASSERT(dctx->devLimits->vpBoundsRange[1] >= vp->maxDepth);
+        AFX_ASSERT_RANGE(dctx->devLimits->maxVpDimensions[0], vp.origin.v[0], vp.extent.v[0]);
+        AFX_ASSERT_RANGE(dctx->devLimits->maxVpDimensions[1], vp.origin.v[1], vp.extent.v[1]);
+        AFX_ASSERT(dctx->devLimits->vpBoundsRange.v[0] <= vp.minDepth);
+        AFX_ASSERT(dctx->devLimits->vpBoundsRange.v[1] >= vp.maxDepth);
 #endif
 #endif
-        cmd->AdjustViewports.viewports[i] = *vp;
+        cmd->AdjustViewports.viewports[i] = vp;
     }
     return err;
 }

@@ -56,13 +56,13 @@ _ARX void ArxQuadrantMergeChildBounds(asxQuadrant* q, afxUnit idx, afxBox const*
     afxError err = { 0 };
     AFX_ASSERT(q);
 
-    q->maxZ[idx] = AFX_MIN(q->maxZ[idx], bounds->max[2]);
-    q->maxY[idx] = AFX_MIN(q->maxY[idx], bounds->max[1]);
-    q->maxX[idx] = AFX_MIN(q->maxX[idx], bounds->max[0]);
+    q->maxZ[idx] = AFX_MIN(q->maxZ[idx], bounds->max.v[2]);
+    q->maxY[idx] = AFX_MIN(q->maxY[idx], bounds->max.v[1]);
+    q->maxX[idx] = AFX_MIN(q->maxX[idx], bounds->max.v[0]);
 
-    q->minZ[idx] = AFX_MIN(q->minZ[idx], bounds->min[2]);
-    q->minY[idx] = AFX_MIN(q->minY[idx], bounds->min[1]);
-    q->minX[idx] = AFX_MIN(q->minX[idx], bounds->min[0]);
+    q->minZ[idx] = AFX_MIN(q->minZ[idx], bounds->min.v[2]);
+    q->minY[idx] = AFX_MIN(q->minY[idx], bounds->min.v[1]);
+    q->minX[idx] = AFX_MIN(q->minX[idx], bounds->min.v[0]);
 
 }
 
@@ -70,48 +70,48 @@ _ARX void ArxQuadrantSetChildBounds(asxQuadrant* q, afxUnit idx, afxBox const* b
 {
     afxError err = { 0 };
     AFX_ASSERT(q);
-    AFX_ASSERT(bounds->min[0] >= -AFX_R32_MAX && bounds->min[0] <= AFX_R32_MAX
-            && bounds->min[1] >= -AFX_R32_MAX && bounds->min[1] <= AFX_R32_MAX
-            && bounds->min[2] >= -AFX_R32_MAX && bounds->min[2] <= AFX_R32_MAX
-            && bounds->max[0] >= -AFX_R32_MAX && bounds->max[0] <= AFX_R32_MAX
-            && bounds->max[1] >= -AFX_R32_MAX && bounds->max[1] <= AFX_R32_MAX
-            && bounds->max[2] >= -AFX_R32_MAX && bounds->max[2] <= AFX_R32_MAX);
+    AFX_ASSERT(bounds->min.v[0] >= -AFX_R32_MAX && bounds->min.v[0] <= AFX_R32_MAX
+            && bounds->min.v[1] >= -AFX_R32_MAX && bounds->min.v[1] <= AFX_R32_MAX
+            && bounds->min.v[2] >= -AFX_R32_MAX && bounds->min.v[2] <= AFX_R32_MAX
+            && bounds->max.v[0] >= -AFX_R32_MAX && bounds->max.v[0] <= AFX_R32_MAX
+            && bounds->max.v[1] >= -AFX_R32_MAX && bounds->max.v[1] <= AFX_R32_MAX
+            && bounds->max.v[2] >= -AFX_R32_MAX && bounds->max.v[2] <= AFX_R32_MAX);
 
     // Intentionally reversed in order.
     // By setting the max first, we keep the bounds invalid for reading threads.
-    q->maxZ[idx] = bounds->max[2];
-    q->maxY[idx] = bounds->max[1];
-    q->maxX[idx] = bounds->max[0];
+    q->maxZ[idx] = bounds->max.v[2];
+    q->maxY[idx] = bounds->max.v[1];
+    q->maxX[idx] = bounds->max.v[0];
 
-    q->minZ[idx] = bounds->min[2];
-    q->minY[idx] = bounds->min[1];
-    q->minX[idx] = bounds->min[0];
+    q->minZ[idx] = bounds->min.v[2];
+    q->minY[idx] = bounds->min.v[1];
+    q->minX[idx] = bounds->min.v[0];
 
 }
 
-_ARX void ArxQuadrantGetChildBounds(asxQuadrant* q, afxUnit idx, afxBox* bounds)
+_ARX afxBox ArxQuadrantGetChildBounds(asxQuadrant* q, afxUnit idx)
 {
     afxError err = { 0 };
     AFX_ASSERT(q);
 
     // Read bounding box in order min -> max
-    AfxMakeAabb(bounds, 2, (afxV3d[]) { { q->minX[idx], q->minY[idx], q->minZ[idx] },
-                                        { q->maxX[idx], q->maxY[idx], q->maxZ[idx] } });
+    return AfxMakeAabb(2, (afxV3d[]) {  AFX_V3D(q->minX[idx], q->minY[idx], q->minZ[idx]),
+                                        AFX_V3D(q->maxX[idx], q->maxY[idx], q->maxZ[idx]) });
 }
 
-_ARX void ArxQuadrantGetBounds(asxQuadrant* q, afxBox* bounds)
+_ARX afxBox ArxQuadrantGetBounds(asxQuadrant* q)
 {
     afxError err = { 0 };
     AFX_ASSERT(q);
 
-    ArxQuadrantGetChildBounds(q, 0, bounds);
+    afxBox bounds = ArxQuadrantGetChildBounds(q, 0);
 
     for (afxUnit i = 1; i < AFX_QUADTREE_QUADRANTS; i++)
     {
-        afxBox aabb;
-        ArxQuadrantGetChildBounds(q, i, &aabb);
-        AfxEmboxAabbs(bounds, 1, &aabb);
+        afxBox aabb = ArxQuadrantGetChildBounds(q, i);
+        bounds = AfxEmboxAabbs(bounds, 1, &aabb);
     }
+    return bounds;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

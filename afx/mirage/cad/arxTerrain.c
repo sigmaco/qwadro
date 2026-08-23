@@ -30,31 +30,31 @@
 */
 
 // Function to check if a point is in front of a plane
-afxBool isPointInFrontOfPlane(afxPlane const*plane, float const point[3])
+afxBool isPointInFrontOfPlane(afxPlane const plane, afxV3d const point)
 {
-    return (plane->uvwd[0] * point[0] +
-        plane->uvwd[1] * point[1] +
-        plane->uvwd[2] * point[2] + plane->uvwd[AFX_PLANE_DIST]) >= 0.0f;
+    return (plane.uvwd.v[0] * point.v[0] +
+        plane.uvwd.v[1] * point.v[1] +
+        plane.uvwd.v[2] * point.v[2] + plane.uvwd.v[AFX_PLANE_DIST]) >= 0.0f;
 }
 
 // Function to check if the AABB is in front of all frustum planes
-afxBool isBoxCulled(const afxBox *box, const afxFrustum *frustum)
+afxBool isBoxCulled(const afxBox box, const afxFrustum frustum)
 {
     // Check all planes of the frustum
     for (int i = 0; i < afxCubeFace_TOTAL; ++i)
     {
-        afxPlane const* plane = &frustum->planes[i];
+        afxPlane const plane = frustum.planes[i];
 
         // Check the 8 corners of the AABB
         afxBool isBehindPlane = TRUE;
         for (int j = 0; j < 8; ++j)
         {
             // Generate the 8 corners of the AABB
-            float corner[3] = {
-                (j & 1) ? box->max[0] : box->min[0],
-                (j & 2) ? box->max[1] : box->min[1],
-                (j & 4) ? box->max[2] : box->min[2]
-            };
+            afxV3d corner = AFX_V3D(
+                (j & 1) ? box.max.v[0] : box.min.v[0],
+                (j & 2) ? box.max.v[1] : box.min.v[1],
+                (j & 4) ? box.max.v[2] : box.min.v[2]
+            );
 
             // If any corner is in front of the plane, the AABB is not culled
             if (isPointInFrontOfPlane(plane, corner))
@@ -74,38 +74,38 @@ afxBool isBoxCulled(const afxBox *box, const afxFrustum *frustum)
 }
 
 // New function to check an array of AABBs
-void cullAABBs(const afxBox *boxes, size_t numBoxes, const afxFrustum *frustum, afxBool *culledResults)
+void cullAABBs(const afxBox *boxes, size_t numBoxes, const afxFrustum frustum, afxBool *culledResults)
 {
     for (size_t i = 0; i < numBoxes; ++i)
     {
         // Cull each box and store the result in the array
-        culledResults[i] = isBoxCulled(&boxes[i], frustum);
+        culledResults[i] = isBoxCulled(boxes[i], frustum);
     }
 }
 
 // Optimized function to check if the AABB is in front of all frustum planes
-void cullAABBs2(const afxBox *boxes, size_t numBoxes, const afxFrustum *frustum, afxBool *culledResults)
+void cullAABBs2(const afxBox *boxes, size_t numBoxes, const afxFrustum frustum, afxBool *culledResults)
 {
     for (size_t i = 0; i < numBoxes; ++i)
     {
-        const afxBox *box = &boxes[i];
+        const afxBox box = boxes[i];
         afxBool isCulled = FALSE;
 
         // Check all planes of the frustum
         for (int planeIndex = 0; planeIndex < afxCubeFace_TOTAL; ++planeIndex)
         {
-            const afxPlane *plane = &frustum->planes[planeIndex];
+            const afxPlane plane = frustum.planes[planeIndex];
 
             // Check the 8 corners of the AABB
             afxBool isBehindPlane = TRUE;
             for (int j = 0; j < 8; ++j)
             {
                 // Generate the 8 corners of the AABB
-                float corner[3] = {
-                    (j & 1) ? box->max[0] : box->min[0],
-                    (j & 2) ? box->max[1] : box->min[1],
-                    (j & 4) ? box->max[2] : box->min[2]
-                };
+                afxV3d corner = AFX_V3D(
+                    (j & 1) ? box.max.v[0] : box.min.v[0],
+                    (j & 2) ? box.max.v[1] : box.min.v[1],
+                    (j & 4) ? box.max.v[2] : box.min.v[2]
+                );
 
                 // If any corner is in front of the plane, the AABB is not culled
                 if (isPointInFrontOfPlane(plane, corner))
@@ -136,39 +136,39 @@ afxBool CheckHeightOfTriangle(float x, float z, float* height, afxV3d v0, afxV3d
 
 
     // Starting position of the ray that is being cast.
-    startVector[0] = x;
-    startVector[1] = 0.0f;
-    startVector[2] = z;
+    startVector.v[0] = x;
+    startVector.v[1] = 0.0f;
+    startVector.v[2] = z;
 
     // The direction the ray is being cast.
-    directionVector[0] = 0.0f;
-    directionVector[1] = -1.0f;
-    directionVector[2] = 0.0f;
+    directionVector.v[0] = 0.0f;
+    directionVector.v[1] = -1.0f;
+    directionVector.v[2] = 0.0f;
 
     // Calculate the two edges from the three points given.
-    edge1[0] = v1[0] - v0[0];
-    edge1[1] = v1[1] - v0[1];
-    edge1[2] = v1[2] - v0[2];
+    edge1.v[0] = v1.v[0] - v0.v[0];
+    edge1.v[1] = v1.v[1] - v0.v[1];
+    edge1.v[2] = v1.v[2] - v0.v[2];
 
-    edge2[0] = v2[0] - v0[0];
-    edge2[1] = v2[1] - v0[1];
-    edge2[2] = v2[2] - v0[2];
+    edge2.v[0] = v2.v[0] - v0.v[0];
+    edge2.v[1] = v2.v[1] - v0.v[1];
+    edge2.v[2] = v2.v[2] - v0.v[2];
 
     // Calculate the normal of the triangle from the two edges.
-    normal[0] = (edge1[1] * edge2[2]) - (edge1[2] * edge2[1]);
-    normal[1] = (edge1[2] * edge2[0]) - (edge1[0] * edge2[2]);
-    normal[2] = (edge1[0] * edge2[1]) - (edge1[1] * edge2[0]);
+    normal.v[0] = (edge1.v[1] * edge2.v[2]) - (edge1.v[2] * edge2.v[1]);
+    normal.v[1] = (edge1.v[2] * edge2.v[0]) - (edge1.v[0] * edge2.v[2]);
+    normal.v[2] = (edge1.v[0] * edge2.v[1]) - (edge1.v[1] * edge2.v[0]);
 
-    magnitude = (float)sqrt((normal[0] * normal[0]) + (normal[1] * normal[1]) + (normal[2] * normal[2]));
-    normal[0] = normal[0] / magnitude;
-    normal[1] = normal[1] / magnitude;
-    normal[2] = normal[2] / magnitude;
+    magnitude = (float)sqrt((normal.v[0] * normal.v[0]) + (normal.v[1] * normal.v[1]) + (normal.v[2] * normal.v[2]));
+    normal.v[0] = normal.v[0] / magnitude;
+    normal.v[1] = normal.v[1] / magnitude;
+    normal.v[2] = normal.v[2] / magnitude;
 
     // Find the distance from the origin to the plane.
-    D = ((-normal[0] * v0[0]) + (-normal[1] * v0[1]) + (-normal[2] * v0[2]));
+    D = ((-normal.v[0] * v0.v[0]) + (-normal.v[1] * v0.v[1]) + (-normal.v[2] * v0.v[2]));
 
     // Get the denominator of the equation.
-    denominator = ((normal[0] * directionVector[0]) + (normal[1] * directionVector[1]) + (normal[2] * directionVector[2]));
+    denominator = ((normal.v[0] * directionVector.v[0]) + (normal.v[1] * directionVector.v[1]) + (normal.v[2] * directionVector.v[2]));
 
     // Make sure the result doesn't get too close to zero to prevent divide by zero.
     if (fabs(denominator) < 0.0001f)
@@ -177,40 +177,40 @@ afxBool CheckHeightOfTriangle(float x, float z, float* height, afxV3d v0, afxV3d
     }
 
     // Get the numerator of the equation.
-    numerator = -1.0f * (((normal[0] * startVector[0]) + (normal[1] * startVector[1]) + (normal[2] * startVector[2])) + D);
+    numerator = -1.0f * (((normal.v[0] * startVector.v[0]) + (normal.v[1] * startVector.v[1]) + (normal.v[2] * startVector.v[2])) + D);
 
     // Calculate where we intersect the triangle.
     t = numerator / denominator;
 
     // Find the intersection vector.
-    Q[0] = startVector[0] + (directionVector[0] * t);
-    Q[1] = startVector[1] + (directionVector[1] * t);
-    Q[2] = startVector[2] + (directionVector[2] * t);
+    Q.v[0] = startVector.v[0] + (directionVector.v[0] * t);
+    Q.v[1] = startVector.v[1] + (directionVector.v[1] * t);
+    Q.v[2] = startVector.v[2] + (directionVector.v[2] * t);
 
     // Find the three edges of the triangle.
-    e1[0] = v1[0] - v0[0];
-    e1[1] = v1[1] - v0[1];
-    e1[2] = v1[2] - v0[2];
+    e1.v[0] = v1.v[0] - v0.v[0];
+    e1.v[1] = v1.v[1] - v0.v[1];
+    e1.v[2] = v1.v[2] - v0.v[2];
 
-    e2[0] = v2[0] - v1[0];
-    e2[1] = v2[1] - v1[1];
-    e2[2] = v2[2] - v1[2];
+    e2.v[0] = v2.v[0] - v1.v[0];
+    e2.v[1] = v2.v[1] - v1.v[1];
+    e2.v[2] = v2.v[2] - v1.v[2];
 
-    e3[0] = v0[0] - v2[0];
-    e3[1] = v0[1] - v2[1];
-    e3[2] = v0[2] - v2[2];
+    e3.v[0] = v0.v[0] - v2.v[0];
+    e3.v[1] = v0.v[1] - v2.v[1];
+    e3.v[2] = v0.v[2] - v2.v[2];
 
     // Calculate the normal for the first edge.
-    edgeNormal[0] = (e1[1] * normal[2]) - (e1[2] * normal[1]);
-    edgeNormal[1] = (e1[2] * normal[0]) - (e1[0] * normal[2]);
-    edgeNormal[2] = (e1[0] * normal[1]) - (e1[1] * normal[0]);
+    edgeNormal.v[0] = (e1.v[1] * normal.v[2]) - (e1.v[2] * normal.v[1]);
+    edgeNormal.v[1] = (e1.v[2] * normal.v[0]) - (e1.v[0] * normal.v[2]);
+    edgeNormal.v[2] = (e1.v[0] * normal.v[1]) - (e1.v[1] * normal.v[0]);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v0[0];
-    temp[1] = Q[1] - v0[1];
-    temp[2] = Q[2] - v0[2];
+    temp.v[0] = Q.v[0] - v0.v[0];
+    temp.v[1] = Q.v[1] - v0.v[1];
+    temp.v[2] = Q.v[2] - v0.v[2];
 
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+    determinant = ((edgeNormal.v[0] * temp.v[0]) + (edgeNormal.v[1] * temp.v[1]) + (edgeNormal.v[2] * temp.v[2]));
 
     // Check if it is outside.
     if (determinant > 0.001f)
@@ -219,16 +219,16 @@ afxBool CheckHeightOfTriangle(float x, float z, float* height, afxV3d v0, afxV3d
     }
 
     // Calculate the normal for the second edge.
-    edgeNormal[0] = (e2[1] * normal[2]) - (e2[2] * normal[1]);
-    edgeNormal[1] = (e2[2] * normal[0]) - (e2[0] * normal[2]);
-    edgeNormal[2] = (e2[0] * normal[1]) - (e2[1] * normal[0]);
+    edgeNormal.v[0] = (e2.v[1] * normal.v[2]) - (e2.v[2] * normal.v[1]);
+    edgeNormal.v[1] = (e2.v[2] * normal.v[0]) - (e2.v[0] * normal.v[2]);
+    edgeNormal.v[2] = (e2.v[0] * normal.v[1]) - (e2.v[1] * normal.v[0]);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v1[0];
-    temp[1] = Q[1] - v1[1];
-    temp[2] = Q[2] - v1[2];
+    temp.v[0] = Q.v[0] - v1.v[0];
+    temp.v[1] = Q.v[1] - v1.v[1];
+    temp.v[2] = Q.v[2] - v1.v[2];
 
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+    determinant = ((edgeNormal.v[0] * temp.v[0]) + (edgeNormal.v[1] * temp.v[1]) + (edgeNormal.v[2] * temp.v[2]));
 
     // Check if it is outside.
     if (determinant > 0.001f)
@@ -237,16 +237,16 @@ afxBool CheckHeightOfTriangle(float x, float z, float* height, afxV3d v0, afxV3d
     }
 
     // Calculate the normal for the third edge.
-    edgeNormal[0] = (e3[1] * normal[2]) - (e3[2] * normal[1]);
-    edgeNormal[1] = (e3[2] * normal[0]) - (e3[0] * normal[2]);
-    edgeNormal[2] = (e3[0] * normal[1]) - (e3[1] * normal[0]);
+    edgeNormal.v[0] = (e3.v[1] * normal.v[2]) - (e3.v[2] * normal.v[1]);
+    edgeNormal.v[1] = (e3.v[2] * normal.v[0]) - (e3.v[0] * normal.v[2]);
+    edgeNormal.v[2] = (e3.v[0] * normal.v[1]) - (e3.v[1] * normal.v[0]);
 
     // Calculate the determinant to see if it is on the inside, outside, or directly on the edge.
-    temp[0] = Q[0] - v2[0];
-    temp[1] = Q[1] - v2[1];
-    temp[2] = Q[2] - v2[2];
+    temp.v[0] = Q.v[0] - v2.v[0];
+    temp.v[1] = Q.v[1] - v2.v[1];
+    temp.v[2] = Q.v[2] - v2.v[2];
 
-    determinant = ((edgeNormal[0] * temp[0]) + (edgeNormal[1] * temp[1]) + (edgeNormal[2] * temp[2]));
+    determinant = ((edgeNormal.v[0] * temp.v[0]) + (edgeNormal.v[1] * temp.v[1]) + (edgeNormal.v[2] * temp.v[2]));
 
     // Check if it is outside.
     if (determinant > 0.001f)
@@ -255,7 +255,7 @@ afxBool CheckHeightOfTriangle(float x, float z, float* height, afxV3d v0, afxV3d
     }
 
     // Now we have our height.
-    *height = Q[1];
+    *height = Q.v[1];
 
     return TRUE;
 }
@@ -265,7 +265,7 @@ afxBool GetHeightAtPosition(arxTerrain ter, float inputX, float inputZ, float* h
     float vertex1[3], vertex2[3], vertex3[3];
     afxBool foundHeight;
 
-    afxV3d v = { inputX, 0, inputZ };
+    afxV3d v = AFX_V3D(inputX, 0, inputZ );
 
     // Loop through all of the terrain cells to find out which one the inputX and inputZ would be inside.
     afxUnit cellId = -1;
@@ -275,7 +275,7 @@ afxBool GetHeightAtPosition(arxTerrain ter, float inputX, float inputZ, float* h
         afxBox aabb = ter->sectors[i].aabb;
 
         // Check to see if the positions are in this cell.
-        if (AfxDoesAabbIncludeAtv3d(&aabb, 1, &v))
+        if (AfxAabbIncludesAtv3d(aabb, 1, &v))
         {
             cellId = i;
             break;
@@ -352,7 +352,7 @@ _ARX afxError ArxLoadHeighmap(arxTerrain ter, afxUnit secIdx, afxUri const* uri)
             unsigned char y = texel[0];
 
             // vertex
-            AfxV3dSet(pos[i * j + j], -tga.height / 2.0f + i, (int)y * yScale - yShift, -tga.width / 2.0f + j);
+            pos[i * j + j] = AfxV3dMake(-tga.height / 2.0f + i, (int)y * yScale - yShift, -tga.width / 2.0f + j);
         }
     }
 
@@ -455,46 +455,43 @@ _ARX afxBool getHeightInSector(arxTerrain ter, afxUnit secIdx, afxReal worldX, a
         ic = bottomRight;
     }
 
-    afxV3d const v0 =
-    {
-        s->collVtx[ia][0],
-        s->collVtx[ia][1],
-        s->collVtx[ia][2],
-    };
-    afxV3d const v1 =
-    {
-        s->collVtx[ib][0],
-        s->collVtx[ib][1],
-        s->collVtx[ib][2],
-    };
-    afxV3d const v2 =
-    {
-        s->collVtx[ic][0],
-        s->collVtx[ic][1],
-        s->collVtx[ic][2],
-    };
+    afxV3d const v0 = AFX_V3D(
+        s->collVtx[ia].v[0],
+        s->collVtx[ia].v[1],
+        s->collVtx[ia].v[2]
+    );
+    afxV3d const v1 = AFX_V3D(
+        s->collVtx[ib].v[0],
+        s->collVtx[ib].v[1],
+        s->collVtx[ib].v[2]
+    );
+    afxV3d const v2 = AFX_V3D(
+        s->collVtx[ic].v[0],
+        s->collVtx[ic].v[1],
+        s->collVtx[ic].v[2]
+    );
 
     // Barycentric interpolation
     // This is the denominator of a barycentric coordinate equation - it's based on the 2D positions of the triangle's vertices. 
     // It is using a mix of x and z (assuming the triangle lies in xz-plane for interpolation).
-    afxReal denom = (v1[2] - v2[2]) * (v0[0] - v2[0]) + (v2[0] - v1[0]) * (v0[2] - v2[2]);
+    afxReal denom = (v1.v[2] - v2.v[2]) * (v0.v[0] - v2.v[0]) + (v2.v[0] - v1.v[0]) * (v0.v[2] - v2.v[2]);
     
     // This checks if the triangle is degenerate - meaning, it has near-zero area (the points are colinear or very close to it).
     // A floating point tolerance check is used to avoid division by nearly-zero, which could cause instability or garbage results.
     if (fabsf(denom) < 1e-6f)
     {
-        *worldY = v0[1];
+        *worldY = v0.v[1];
         return FALSE;
     }
 
     // After checking that the triangle isn't degenerate (that denom isn't near-zero), we are computing barycentric coordinates 
     // of a point (worldX, worldZ) relative to a triangle defined by three vertices v0, v1, v2.
 
-    afxReal lambda1 = ((v1[2] - v2[2]) * (worldX - v2[0]) + (v2[0] - v1[0]) * (worldZ - v2[2])) / denom;
-    afxReal lambda2 = ((v2[2] - v0[2]) * (worldX - v2[0]) + (v0[0] - v2[0]) * (worldZ - v2[2])) / denom;
+    afxReal lambda1 = ((v1.v[2] - v2.v[2]) * (worldX - v2.v[0]) + (v2.v[0] - v1.v[0]) * (worldZ - v2.v[2])) / denom;
+    afxReal lambda2 = ((v2.v[2] - v0.v[2]) * (worldX - v2.v[0]) + (v0.v[0] - v2.v[0]) * (worldZ - v2.v[2])) / denom;
     afxReal lambda3 = 1.0f - lambda1 - lambda2;
 
-    *worldY = lambda1 * v0[1] + lambda2 * v1[1] + lambda3 * v2[1];
+    *worldY = lambda1 * v0.v[1] + lambda2 * v1.v[1] + lambda3 * v2.v[1];
     return TRUE;
 }
 
@@ -547,9 +544,9 @@ _ARX afxError _ArxBuildTerrainCollideShape(arxTerrain ter, afxUnit baseSecIdx, a
                 int i1 = sec->visuVtxMap[i * 3 + 1];
                 int i2 = sec->visuVtxMap[i * 3 + 2];
 
-                AfxV3dCopy(sec->collVtx[i * 3 + 0], sec->visuVtxPos[i0]);
-                AfxV3dCopy(sec->collVtx[i * 3 + 1], sec->visuVtxPos[i1]);
-                AfxV3dCopy(sec->collVtx[i * 3 + 2], sec->visuVtxPos[i2]);
+                sec->collVtx[i * 3 + 0] = sec->visuVtxPos[i0];
+                sec->collVtx[i * 3 + 1] = sec->visuVtxPos[i1];
+                sec->collVtx[i * 3 + 2] = sec->visuVtxPos[i2];
             }
         }
     }
@@ -599,7 +596,7 @@ _ARX afxError _ArxBuildTerrainVisualShape(arxTerrain ter, afxUnit baseSecIdx, af
                 afxReal worldZ = (afxReal)(sec->vtxStartZ + z);
                 afxReal y = 0;// getHeight(worldX, worldZ, ter->heightScale);
 
-                AfxV3dSet(vertices[idx], worldX, y, worldZ);
+                vertices[idx] = AfxV3dMake(worldX, y, worldZ);
             }
         }
 
@@ -630,8 +627,8 @@ _ARX afxError _ArxBuildTerrainVisualShape(arxTerrain ter, afxUnit baseSecIdx, af
         AFX_ASSERT(sec->vtxIdxCnt == idx);
         sec->visuVtxMap = indices;
 
-        AfxMakeAabb(&ter->secAabb[secIdx], 0, NIL);
-        AfxEmboxTriangles(&ter->secAabb[secIdx], sec->vtxIdxCnt / 3, vertices, (afxUnit const*)indices, sizeof(indices[0]));
+        ter->secAabb[secIdx] = AfxMakeAabb(0, NIL);
+        ter->secAabb[secIdx] = AfxEmboxTriangles(ter->secAabb[secIdx], sec->vtxIdxCnt / 3, vertices, (afxUnit const*)indices, sizeof(indices[0]));
         sec->aabb = ter->secAabb[secIdx];
     }
     return err;
@@ -731,8 +728,8 @@ _ARX afxError _ArxTerCtorCb(arxTerrain ter, void** args, afxUnit invokeNo)
     //ter->heightScale = AFX_MAX(16, cfg->heightScale);
     ter->heightmap = (afxUri) { 0 };// cfg->heightmap;
 
-    AfxV3dCopy(ter->displace, cfg->displace);
-    AfxV3dCopy(ter->scale, cfg->scale);
+    ter->displace = cfg->displace;
+    ter->scale = cfg->scale;
     //AFX_ASSERT(AfxV3dMag(cfg->scale));
 
     // Set the height and width of each terrain cell to a fixed 33x33 vertex array.
@@ -923,7 +920,7 @@ _ARX afxError ArxGenerateTerrain(arxScenario scio, afxWarp const whd, arxTerrain
     //msh = AfxBuildPlaneMesh(sim->scio, 256, 256, 256, 256);
     //msh = AfxBuildParallelepipedMesh(sim->scio, AfxWhd(10, 10, 10), 10, 10);
     //msh = AfxBuildCubeMesh(sim->scio, 10, 1);
-    ArxBuildGridMesh(scio, 100, 100, 1000, 1000, NIL, &msh);
+    ArxBuildGridMesh(scio, 100, 100, 1000, 1000, AFX_V3D_ZERO, &msh);
     //msh = AfxBuildGridMesh(sim->scio, 10, 10, 10, 10);
     //msh = AfxBuildDiscMesh(sim->scio, 10, 10);
     //AfxInvertMeshTopology(msh);
@@ -969,7 +966,7 @@ _ARX afxError ArxGenerateHeightmappedTerrain(arxScenario scio, afxUri const* uri
     //tga.width = tga.width, tga.height = tga.height / 8;
 
     arxMesh msh;
-    ArxBuildGridMesh(scio, tga.width, tga.height, tga.width * 10, tga.height * 10, NIL, &msh);
+    ArxBuildGridMesh(scio, tga.width, tga.height, tga.width * 10, tga.height * 10, AFX_V3D_ZERO, &msh);
 
     arxTerrain ter;
     arxTerrainConfig terc = {0};
@@ -1007,7 +1004,7 @@ _ARX afxError ArxGenerateHeightmappedTerrain(arxScenario scio, afxUri const* uri
                 (-tga.height / 2.0f + tga.height * i / (float)tga.height));   // vz
 #endif
 #endif
-            pos[(j + tga.width * i)][1] = ((afxReal)y * yScale - yShift);
+            pos[(j + tga.width * i)].v[1] = ((afxReal)y * yScale - yShift);
 
         }
     }

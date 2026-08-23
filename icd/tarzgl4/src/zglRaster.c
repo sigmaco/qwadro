@@ -2070,7 +2070,7 @@ _ZGL afxError _ZglDpuClearRaster(zglDpu* dpu, avxRaster ras, avxClearValue const
                 }
                 default:
                 {
-                    afxReal const* rgba = clearVal->rgba;
+                    afxReal const* rgba = clearVal->rgba.v;
                     GLint dbi = GL_COLOR_ATTACHMENT0;
                     gl->ClearNamedFramebufferfv(fboOpDst, GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                     break;
@@ -2101,7 +2101,7 @@ _ZGL afxError _ZglDpuClearRaster(zglDpu* dpu, avxRaster ras, avxClearValue const
                 }
                 default:
                 {
-                    afxReal const* rgba = clearVal->rgba;
+                    afxReal const* rgba = clearVal->rgba.v;
                     GLint dbi = GL_COLOR_ATTACHMENT0;
                     gl->ClearBufferfv(GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                     break;

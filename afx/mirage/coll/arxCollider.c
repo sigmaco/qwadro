@@ -27,46 +27,40 @@ afxBox triangle_compute_aabb(arxCollTriangle const* tri)
 {
     // To compute the AABB, we need the 3 actual vertices.
 
-    afxV3d v1;
-    AfxV3dAdd(v1, tri->v0, tri->e1);
-    afxV3d v2;
-    AfxV3dAdd(v2, tri->v0, tri->e2);
+    afxV3d v1 = AfxV3dAdd(tri->v0, tri->e1);
+    afxV3d v2 = AfxV3dAdd(tri->v0, tri->e2);
 
     afxBox box;
-    box.min[0] = fminf(fminf(tri->v0[0], v1[0]), v2[0]);
-    box.min[1] = fminf(fminf(tri->v0[1], v1[1]), v2[1]);
-    box.min[2] = fminf(fminf(tri->v0[2], v1[2]), v2[2]);
+    box.min.v[0] = fminf(fminf(tri->v0.v[0], v1.v[0]), v2.v[0]);
+    box.min.v[1] = fminf(fminf(tri->v0.v[1], v1.v[1]), v2.v[1]);
+    box.min.v[2] = fminf(fminf(tri->v0.v[2], v1.v[2]), v2.v[2]);
 
-    box.max[0] = fmaxf(fmaxf(tri->v0[0], v1[0]), v2[0]);
-    box.max[1] = fmaxf(fmaxf(tri->v0[1], v1[1]), v2[1]);
-    box.max[2] = fmaxf(fmaxf(tri->v0[2], v1[2]), v2[2]);
+    box.max.v[0] = fmaxf(fmaxf(tri->v0.v[0], v1.v[0]), v2.v[0]);
+    box.max.v[1] = fmaxf(fmaxf(tri->v0.v[1], v1.v[1]), v2.v[1]);
+    box.max.v[2] = fmaxf(fmaxf(tri->v0.v[2], v1.v[2]), v2.v[2]);
 
     return box;
 }
 
-void triangle_center(afxV3d c, arxCollTriangle const* tri)
+afxV3d triangle_center(arxCollTriangle const* tri)
 {
     // To compute the centroid of a triangle during BVH partitioning.
 
-    afxV3d v1;
-    AfxV3dAdd(v1, tri->v0, tri->e1);
-    afxV3d v2;
-    AfxV3dAdd(v2, tri->v0, tri->e2);
-    afxV3d sum, v01;
-    AfxV3dAdd(v01, tri->v0, v1);
-    AfxV3dAdd(sum, v01, v2);
-    AfxV3dScale(c, sum, 1.0f / 3.0f);
+    afxV3d v1 = AfxV3dAdd(tri->v0, tri->e1);
+    afxV3d v2 = AfxV3dAdd(tri->v0, tri->e2);
+    afxV3d v01 = AfxV3dAdd(tri->v0, v1);
+    afxV3d sum = AfxV3dAdd(v01, v2);
+    return AfxV3dScale(sum, 1.0f / 3.0f);
 }
 
 // Triangle construction
 inline void compute_triangle(arxCollTriangle* tri, afxV3d const v0, afxV3d const v1, afxV3d const v2)
 {
-    AfxV3dCopy(tri->v0, v0);
-    AfxV3dSub(tri->e1, v1, v0);
-    AfxV3dSub(tri->e2, v2, v0);
-    afxV3d c;
-    AfxV3dCross(c, tri->e1, tri->e2);
-    AfxV3dNormalize(tri->nrm, c);
+    tri->v0 = v0;
+    tri->e1 = AfxV3dSub(v1, v0);
+    tri->e2 = AfxV3dSub(v2, v0);
+    afxV3d c = AfxV3dCross(tri->e1, tri->e2);
+    tri->nrm = AfxV3dNormalize(c, NIL);
 }
 
 // Triangle construction
@@ -83,7 +77,7 @@ void ArxComputeCollidableTriangles(afxV3d const vertices[], afxUnit vtxStride, a
             afxUnit32 ia = i + 0;
             afxUnit32 ib = i + 1;
             afxUnit32 ic = i + 2;
-            compute_triangle(&tri[i], (afxReal const*)&vertices2[ia * vtxStride], (afxReal const*)&vertices2[ib * vtxStride], (afxReal const*)&vertices2[ic * vtxStride]);
+            compute_triangle(&tri[i], *(afxV3d const*)&vertices2[ia * vtxStride], *(afxV3d const*)&vertices2[ib * vtxStride], *(afxV3d const*)&vertices2[ic * vtxStride]);
         }
     }
     else
@@ -99,7 +93,7 @@ void ArxComputeCollidableTriangles(afxV3d const vertices[], afxUnit vtxStride, a
                 afxUnit32 ia = indices32[i + 0];
                 afxUnit32 ib = indices32[i + 1];
                 afxUnit32 ic = indices32[i + 2];
-                compute_triangle(&tri[i], (afxReal const*)&vertices2[ia * vtxStride], (afxReal const*)&vertices2[ib * vtxStride], (afxReal const*)&vertices2[ic * vtxStride]);
+                compute_triangle(&tri[i], *(afxV3d const*)&vertices2[ia * vtxStride], *(afxV3d const*)&vertices2[ib * vtxStride], *(afxV3d const*)&vertices2[ic * vtxStride]);
             }
             break;
         }
@@ -112,7 +106,7 @@ void ArxComputeCollidableTriangles(afxV3d const vertices[], afxUnit vtxStride, a
                 afxUnit16 ia = indices32[i + 0];
                 afxUnit16 ib = indices32[i + 1];
                 afxUnit16 ic = indices32[i + 2];
-                compute_triangle(&tri[i], (afxReal const*)&vertices2[ia * vtxStride], (afxReal const*)&vertices2[ib * vtxStride], (afxReal const*)&vertices2[ic * vtxStride]);
+                compute_triangle(&tri[i], *(afxV3d const*)&vertices2[ia * vtxStride], *(afxV3d const*)&vertices2[ib * vtxStride], *(afxV3d const*)&vertices2[ic * vtxStride]);
             }
             break;
         }
@@ -125,7 +119,7 @@ void ArxComputeCollidableTriangles(afxV3d const vertices[], afxUnit vtxStride, a
                 afxUnit8 ia = indices32[i + 0];
                 afxUnit8 ib = indices32[i + 1];
                 afxUnit8 ic = indices32[i + 2];
-                compute_triangle(&tri[i], (afxReal const*)&vertices2[ia * vtxStride], (afxReal const*)&vertices2[ib * vtxStride], (afxReal const*)&vertices2[ic * vtxStride]);
+                compute_triangle(&tri[i], *(afxV3d const*)&vertices2[ia * vtxStride], *(afxV3d const*)&vertices2[ib * vtxStride], *(afxV3d const*)&vertices2[ic * vtxStride]);
             }
             break;
         }
@@ -142,19 +136,16 @@ int ray_intersects_triangle2(afxRay const* ray, arxCollTriangle const* tri, floa
 
     //const afxReal EPSILON = 1e-6f;
 
-    afxV3d pvec;
-    AfxV3dCross(pvec, ray->normal, tri->e2);
+    afxV3d pvec = AfxV3dCross(ray->normal, tri->e2);
     afxReal det = AfxV3dDot(tri->e1, pvec);
     if (fabsf(det) < AFX_EPSILON) return 0;
 
     afxReal invDet = 1.0f / det;
-    afxV3d tvec;
-    AfxV3dSub(tvec, ray->origin, tri->v0);
+    afxV3d tvec = AfxV3dSub(ray->origin, tri->v0);
     afxReal u = AfxV3dDot(tvec, pvec) * invDet;
     if (u < 0.0f || u > 1.0f) return 0;
 
-    afxV3d qvec;
-    AfxV3dCross(qvec, tvec, tri->e1);
+    afxV3d qvec = AfxV3dCross(tvec, tri->e1);
     afxReal v = AfxV3dDot(ray->normal, qvec) * invDet;
     if (v < 0.0f || u + v > 1.0f) return 0;
 

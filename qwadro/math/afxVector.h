@@ -28,17 +28,17 @@
 #define AFX_VECTOR_H
 
 #include "qwadro/math/afxScalar.h"
-#include "qwadro/math/afxArithmetic.h"
-#include "qwadro/math/afxLogarithmic.h"
-#include "qwadro/math/afxArithmetic2.h"
-#include "qwadro/math/afxTrigonometry.h"
+//#include "qwadro/math/afxArithmetic.h"
+//#include "qwadro/math/afxLogarithmic.h"
+//#include "qwadro/math/afxArithmetic2.h"
+//#include "qwadro/math/afxTrigonometry.h"
 
-#define AFX_V2D(x_, y_) (afxV2d){ (afxReal)(x_), (afxReal)(y_) } 
-#define AFX_V3D(x_, y_, z_) (afxV3d){ (afxReal)(x_), (afxReal)(y_), (afxReal)(z_) } 
-#define AFX_V4D(x_, y_, z_, w_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)(z_), (afxReal)(w_) } 
-#define AFX_ATV3D(x_, y_) (afxV3d){ (afxReal)(x_), (afxReal)(y_), (afxReal)1 } 
-#define AFX_ATV4D(x_, y_, z_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)1 } 
-#define AFX_LTV4D(x_, y_, z_) (afxV4d){ (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)0 } 
+#define AFX_V2D(x_, y_) (afxV2d){ { { (afxReal)(x_), (afxReal)(y_) } } }
+#define AFX_V3D(x_, y_, z_) (afxV3d){ { { (afxReal)(x_), (afxReal)(y_), (afxReal)(z_) } } }
+#define AFX_V4D(x_, y_, z_, w_) (afxV4d){ { { (afxReal)(x_), (afxReal)(y_), (afxReal)(z_), (afxReal)(w_) } } }
+#define AFX_ATV3D(x_, y_) (afxV3d){ { { (afxReal)(x_), (afxReal)(y_), (afxReal)1 } } }
+#define AFX_ATV4D(x_, y_, z_) (afxV4d){ { { (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)1 } } }
+#define AFX_LTV4D(x_, y_, z_) (afxV4d){ { { (afxReal)(x_), (afxReal)(y_), (afxReal)z_), (afxReal)0 } } }
 
 #define AFX_V2D_S(x_) (afxV2d){ (afxReal)(x_), (afxReal)(x_) } 
 #define AFX_V3D_S(x_) (afxV3d){ (afxReal)(x_), (afxReal)(x_), (afxReal)(x_) } 
@@ -137,18 +137,19 @@
 // Initialization                                                             //
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void     AfxV2dZero(afxV2d v);
-AFXINL void     AfxV3dZero(afxV3d v);
-AFXINL void     AfxV4dZero(afxV4d v);
-AFXINL void     AfxV4dReset(afxV4d v);
+AFXINL afxV2d   AfxV2dZero(void);
+AFXINL afxV3d   AfxV3dZero(void);
+AFXINL afxV4d   AfxV4dZero(void);
 
-AFXINL void     AfxV2dFill(afxV2d v, afxReal value);
-AFXINL void     AfxV3dFill(afxV3d v, afxReal value);
-AFXINL void     AfxV4dFill(afxV4d v, afxReal value);
+AFXINL afxV4d   AfxV4dIdentity(void);
 
-AFXINL void     AfxV2dSet(afxV2d v, afxReal x, afxReal y);
-AFXINL void     AfxV3dSet(afxV3d v, afxReal x, afxReal y, afxReal z);
-AFXINL void     AfxV4dSet(afxV4d v, afxReal x, afxReal y, afxReal z, afxReal w);
+AFXINL afxV2d   AfxV2dFill(afxReal value);
+AFXINL afxV3d   AfxV3dFill(afxReal value);
+AFXINL afxV4d   AfxV4dFill(afxReal value);
+
+AFXINL afxV2d   AfxV2dMake(afxReal x, afxReal y);
+AFXINL afxV3d   AfxV3dMake(afxReal x, afxReal y, afxReal z);
+AFXINL afxV4d   AfxV4dMake(afxReal x, afxReal y, afxReal z, afxReal w);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Logic                                                                      //
@@ -198,32 +199,32 @@ AFXINL afxBool AfxV3dIsNormalized(afxV3d const v);
 // Transferance                                                               //
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void     AfxV2dCopy(afxV2d v, afxV2d const in);
-AFXINL void     AfxV3dCopy(afxV3d v, afxV3d const in);
-AFXINL void     AfxV4dCopy(afxV4d v, afxV4d const in);
+// 2D linear transformation vector. Z is 0.
+AFXINL afxV3d AfxV3dFromV2d(afxV2d const in);
 
-AFXINL void     AfxV3dCopyV2d(afxV3d v, afxV2d const in); // 2D linear transformation vector. Z is 0.
-AFXINL void     AfxV4dCopyV2d(afxV4d v, afxV2d const in);
-AFXINL void     AfxV4dCopyV3d(afxV4d v, afxV3d const in);
-AFXINL void     AfxV3dCopyAtv2d(afxV3d v, afxV2d const in); // 2D affine transfomartion vector. Z is 1.
-AFXINL void     AfxV4dCopyAtv3d(afxV4d v, afxV3d const in); // 3D affine transformation vector. W is 1.
+// 2D affine transfomartion vector. Z is 1.
+AFXINL afxV3d AfxV3dFromAtv2d(afxV2d const in);
+AFXINL afxV3d AfxV3dFromV4d(afxV4d const in);
 
-AFXINL void     AfxV2dSwap(afxV2d v, afxV2d other);
-AFXINL void     AfxV3dSwap(afxV3d v, afxV3d other);
-AFXINL void     AfxV4dSwap(afxV4d v, afxV4d other);
+AFXINL afxV4d AfxV4dFromV2d(afxV2d const in);
+AFXINL afxV4d AfxV4dFromV3d(afxV3d const in);
+
+// 3D affine transformation vector. W is 1.
+AFXINL afxV4d AfxV4dFromAtv3d(afxV3d const in);
 
 // Normalizing a vector scales it so that its length becomes 1 (unit vector), preserving its direction.
 // Ensuring a vector has a unit length for operations like lighting calculations, physics simulations, etc.
 
-AFXINL afxReal  AfxV2dNormalize(afxV2d v, afxV2d const in);
-AFXINL afxReal  AfxV3dNormalize(afxV3d v, afxV3d const in);
-AFXINL afxReal  AfxV4dNormalize(afxV4d v, afxV4d const in);
-AFXINL afxReal  AfxV4dNormalizeV3d(afxV4d v, afxV3d const in);
-AFXINL afxReal  AfxV3dNormalizeV4d(afxV3d v, afxV4d const in);
+AFXINL afxV2d  AfxV2dNormalize(afxV2d const in, afxReal* length);
+AFXINL afxV3d  AfxV3dNormalize(afxV3d const in, afxReal* length);
+AFXINL afxV4d  AfxV4dNormalize(afxV4d const in, afxReal* length);
 
-AFXINL afxReal  AfxV2dNormalizeEstimated(afxV2d v, afxV2d const in);
-AFXINL afxReal  AfxV3dNormalizeEstimated(afxV3d v, afxV3d const in);
-AFXINL afxReal  AfxV4dNormalizeEstimated(afxV4d v, afxV4d const in);
+AFXINL afxV4d  AfxV4dNormalizeFromV3d(afxV3d const in, afxReal* length);
+AFXINL afxV3d  AfxV3dNormalizeFromV4d(afxV4d const in, afxReal* length);
+
+AFXINL afxV2d  AfxV2dNormalizeEstimated(afxV2d const in, afxReal* length);
+AFXINL afxV3d  AfxV3dNormalizeEstimated(afxV3d const in, afxReal* length);
+AFXINL afxV4d  AfxV4dNormalizeEstimated(afxV4d const in, afxReal* length);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Algebra                                                                    //
@@ -273,9 +274,9 @@ AFXINL afxReal  AfxV4dMagRecip(afxV4d const v);
 // If both the input vectors are orthogonal dst each other as well, a cross product would result in 3 orthogonal vectors; this will prove useful in the upcoming chapters.
 // The following image shows what this looks like in 3D space:
 
-AFXINL void     AfxV2dCross(afxV2d v, afxV2d const a, afxV2d const b);
-AFXINL void     AfxV3dCross(afxV3d v, afxV3d const a, afxV3d const b);
-AFXINL void     AfxV4dCross(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c);
+AFXINL afxV2d   AfxV2dCross(afxV2d const a, afxV2d const b);
+AFXINL afxV3d   AfxV3dCross(afxV3d const a, afxV3d const b);
+AFXINL afxV4d   AfxV4dCross(afxV4d const a, afxV4d const b, afxV4d const c);
 
 AFXINL void     AfxCopyArrayedV2d(afxUnit cnt, afxV2d const in[], afxV2d out[]);
 AFXINL void     AfxCopyArrayedV3d(afxUnit cnt, afxV3d const in[], afxV3d out[]);

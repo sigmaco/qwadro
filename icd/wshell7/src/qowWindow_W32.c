@@ -539,15 +539,15 @@ _QOW LRESULT WINAPI _QowWndHndlngPrcW32Callback(HWND hWnd, UINT message, WPARAM 
 
         POINTS points = MAKEPOINTS(lParam);
 
-        afxV2d curr = { AFX_REAL(points.x), AFX_REAL(points.y) };
+        afxV2d curr = AFX_V2D( AFX_REAL(points.x), AFX_REAL(points.y) );
 
-        AfxV2dSub(wnd->m.cursMove, wnd->m.cursPos, curr);
-        AfxV2dCopy(wnd->m.cursPos, curr);
+        wnd->m.cursMove = AfxV2dSub(wnd->m.cursPos, curr);
+        wnd->m.cursPos = curr;
 
-        afxV2d screen = { AFX_REAL(wnd->m.frameRc.w), AFX_REAL(wnd->m.frameRc.h) };
+        afxV2d screen = AFX_V2D( AFX_REAL(wnd->m.frameRc.w), AFX_REAL(wnd->m.frameRc.h) );
 
-        AfxV2dNdc(wnd->m.cursPosNdc, wnd->m.cursPos, screen);
-        AfxV2dNdc(wnd->m.cursMoveNdc, wnd->m.cursMove, screen);
+        wnd->m.cursPosNdc = AfxV2dNdc(wnd->m.cursPos, screen);
+        wnd->m.cursMoveNdc = AfxV2dNdc(wnd->m.cursMove, screen);
 
         auxEvent ev = { 0 };
         ev.ev.id = afxEvent_UX;

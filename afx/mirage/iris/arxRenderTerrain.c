@@ -121,13 +121,13 @@ afxBool RenderCells(arxRenderContext rctx, afxDrawContext dctx, avxVertexInput v
         afxUnit16* indices = ArxPostVertexIndices(rctx, ter->secCnt * 24, sizeof(afxUnit16), NIL, 0);
         AfxGenerateIndexedLinesForAabbs(ter->secCnt, ter->secAabb, vertices, sizeof(vertices[0]), indices, sizeof(indices[0]));
 
-        afxReal* color = ArxPostUniform(rctx, 1, 1, 1, sizeof(afxV4d), NIL, 0);
-        AfxV4dSet(color, 0, 0.3, 0.3, 1);
+        afxV4d* color = ArxPostUniform(rctx, 1, 1, 1, sizeof(afxV4d), NIL, 0);
+        *color = AfxV4dMake(0, 0.3, 0.3, 1);
         //AvxCmdPushConstants(dctx, 0, sizeof(pvm), pvm);
         afxM4d* pvm = ArxPostUniform(rctx, 0, 0, 3, sizeof(afxM4d), NIL, 0);
-        AfxM4dCopy(pvm[0], frame->viewConsts.p);
-        AfxM4dCopy(pvm[1], frame->viewConsts.v);
-        AfxM4dCopy(pvm[2], AFX_M4D_IDENTITY);
+        pvm[0] = frame->viewConsts.p;
+        pvm[1] = frame->viewConsts.v;
+        pvm[2] = AFX_M4D_IDENTITY;
         avxBufferedStream stream = { 0 };
         stream.buf = ter->dbgLinesVbo;
         stream.offset = 0;

@@ -820,10 +820,7 @@ _AVX afxError AvxCmdCommenceDebugScope(afxDrawContext dctx, afxString const* nam
 
     AfxMakeString2048(&cmd->CommenceDebugScope.label, name);
 
-    if (color)
-        AvxCopyColor(cmd->CommenceDebugScope.color, color);
-    else
-        AvxResetColor(cmd->CommenceDebugScope.color);
+    cmd->CommenceDebugScope.color = color;
 
     return err;
 }
@@ -865,10 +862,7 @@ _AVX afxError AvxCmdMarkDebugMilestone(afxDrawContext dctx, afxString const* nam
 
     AfxMakeString2048(&cmd->MarkDebugMilestone.label, name);
 
-    if (color)
-        AvxCopyColor(cmd->MarkDebugMilestone.color, color);
-    else
-        AvxResetColor(cmd->MarkDebugMilestone.color);
+    cmd->MarkDebugMilestone.color = color;
 
     return err;
 }

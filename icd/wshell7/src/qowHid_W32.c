@@ -491,7 +491,7 @@ _QOW afxResult _QowProcessSystemInputMessageWin32(MSG* msg, afxEnvironment env, 
                     {
                         if (rid->data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
                         {
-                            afxReal motion[2] = { rid->data.mouse.lLastX, rid->data.mouse.lLastY };
+                            afxV2d motion = AFX_V2D( rid->data.mouse.lLastX, rid->data.mouse.lLastY );
                             AfxEmulateMouseMotion(0, motion);
                         }
                         else if (rid->data.mouse.usFlags == MOUSE_MOVE_ABSOLUTE)
@@ -516,20 +516,25 @@ _QOW afxResult _QowProcessSystemInputMessageWin32(MSG* msg, afxEnvironment env, 
                             pos.y += (int)((rid->data.mouse.lLastY / 65535.f) * height);
                             ScreenToClient(wnd->hWnd, &pos);
                             
-                            afxReal motion[2] =
-                            {
-                                pos.x - wnd->m.cursPos[0],
-                                pos.y - wnd->m.cursPos[1]
-                            };
+                            afxV2d motion = AFX_V2D(pos.x - wnd->m.cursPos.v[0],
+                                                    pos.y - wnd->m.cursPos.v[1]);
                             AfxEmulateMouseMotion(0, motion);
 
-                            wnd->m.cursPos[0] += motion[0];
-                            wnd->m.cursPos[1] += motion[1];
+                            wnd->m.cursPos.v[0] += motion.v[0];
+                            wnd->m.cursPos.v[1] += motion.v[1];
                         }
 
                         if (RI_MOUSE_WHEEL == (usButtonFlags & RI_MOUSE_WHEEL))
                         {
-                            afxReal wheel = (afxInt16)rid->data.mouse.usButtonData;
+                            afxV2d wheel = AfxGetMouseWheelDelta(0);
+                            wheel.y = (afxInt16)rid->data.mouse.usButtonData;
+                            AfxEmulateMouseWheelAction(0, wheel);
+                        }
+
+                        if (RI_MOUSE_WHEEL == (usButtonFlags & RI_MOUSE_HWHEEL))
+                        {
+                            afxV2d wheel = AfxGetMouseWheelDelta(0);
+                            wheel.x = (afxInt16)rid->data.mouse.usButtonData;
                             AfxEmulateMouseWheelAction(0, wheel);
                         }
                     }

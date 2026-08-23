@@ -194,7 +194,7 @@ _AVX afxError AvxWaitForEmptyDrawQueue(afxDrawQueue dque, afxUnit64 timeout)
                 AfxUnlockMutex(&dque->iorpChnMtx);
             }
         }
-        else if ((timeout == AFX_TIMEOUT_INFINITE))
+        else if (timeout == AFX_TIMEOUT_INFINITE)
         {
             if (AfxLockMutex(&dque->iorpChnMtx))
                 AfxThrowError();

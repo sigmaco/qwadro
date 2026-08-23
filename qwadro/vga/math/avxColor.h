@@ -37,11 +37,14 @@ typedef afxV4d      AFX_SIMD avxColor;
 typedef afxUnit8     AFX_SIMD afxRgb8[3];
 typedef afxUnit8     AFX_SIMD afxRgba8[4];
 
-#define AVX_COLOR(x_, y_, z_, w_) \
-    (avxColor){ (afxReal)(x_), \
-                (afxReal)(y_), \
-                (afxReal)(z_), \
-                (afxReal)(w_) }
+#define AVX_COLOR(r_, g_, b_, a_) AFX_V4D((r_),(g_),(b_),(a_))
+
+#define AVX_COLOR_NIL AVX_COLOR(0, 0, 0, 0)
+#define AVX_COLOR_BLACK AVX_COLOR(0, 0, 0, 1)
+#define AVX_COLOR_WHITE AVX_COLOR(1, 1, 1, 1)
+#define AVX_COLOR_RED AVX_COLOR(1, 0, 0, 1)
+#define AVX_COLOR_GREEN AVX_COLOR(0, 1, 0, 1)
+#define AVX_COLOR_BLUE AVX_COLOR(0, 0, 1, 1)
 
 #define AVX_DEFAULT_BLEND_CONSTANTS \
     AVX_COLOR(0, 0, 0, 0)
@@ -157,35 +160,32 @@ AFX_DEFINE_STRUCT(avxSwizzling)
                         .b = avxColorSwizzle_B, \
                         .a = avxColorSwizzle_A }
 
-AVXINL void     AvxResetColor(avxColor c);
+AVXINL avxColor AvxMakeColor(afxReal r, afxReal g, afxReal b, afxReal a);
+AVXINL avxColor AvxMakeColor8(afxByte r, afxByte g, afxByte b, afxByte a);
 
+AVXINL avxColor AvxMakeColorA(avxColor col, afxReal a);
+AVXINL avxColor AvxMakeColorA8(avxColor col, afxByte a);
 
-AVXINL void     AvxMakeColor(avxColor c, afxReal r, afxReal g, afxReal b, afxReal a);
-AVXINL void     AvxMakeColor8(avxColor col, afxByte r, afxByte g, afxByte b, afxByte a);
+AVXINL avxColor AvxAddColor(avxColor const a, avxColor const b);
+AVXINL avxColor AvxSubColor(avxColor const a, avxColor const b);
 
-AVXINL void     AvxCopyColor(avxColor c, avxColor const src);
-AVXINL void     AvxCopyColorA(avxColor col, avxColor const src, afxReal a);
-AVXINL void     AvxCopyColorA8(avxColor col, avxColor const src, afxByte a);
-
-AVXINL void     AvxAddColor(avxColor c, avxColor const a, avxColor const b);
-AVXINL void     AvxSubColor(avxColor c, avxColor const a, avxColor const b);
-
-AVXINL void     AvxScaleColor(avxColor c, avxColor const from, afxReal lambda);
+AVXINL avxColor AvxScaleColor(avxColor const from, afxReal lambda);
 
 AVXINL afxUnit32 AvxGetColorRgba8(avxColor const c);
 AVXINL afxUnit32 AvxGetColorArgb8(avxColor const c);
-AVXINL void     AvxMakeColorRgba8(avxColor c, afxUnit rgba);
-AVXINL void     AvxMakeColorArgb8(avxColor c, afxUnit argb);
 
-AVXINL void     AvxPremulColorAlpha(avxColor c, avxColor const in);
+AVXINL avxColor AvxMakeColorRgba8(afxUnit rgba);
+AVXINL avxColor AvxMakeColorArgb8(afxUnit argb);
 
-AVXINL void     AvxMixColor(avxColor c, avxColor const c0, avxColor const c1, afxReal u);
+AVXINL avxColor AvxPremulColorAlpha(avxColor const in);
+
+AVXINL avxColor AvxMixColor(avxColor const c0, avxColor const c1, afxReal u);
 
 // HSV (Hue, Saturation, Value) or HSL (Hue, Saturation, Lightness) color model.
 // A hue value of 256 would be 256 degrees on the color wheel.
 
 AVXINL afxReal  AvxSetHue(afxReal h, afxReal m1, afxReal m2);
-AVXINL void     AvxMakeColorHsl(avxColor c, afxReal h, afxReal s, afxReal l);
-AVXINL void     AvxMakeColorHsla(avxColor c, afxReal h, afxReal s, afxReal l, afxByte a);
+AVXINL avxColor     AvxMakeColorHsl(afxReal h, afxReal s, afxReal l);
+AVXINL avxColor     AvxMakeColorHsla(afxReal h, afxReal s, afxReal l, afxByte a);
 
 #endif//AVX_COLOR_H

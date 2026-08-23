@@ -76,8 +76,8 @@ avxLimits const AVX_STD_DRAW_LIMITS =
     .maxVpCnt = 16,
     .maxVpDimensions[0] = 1,
     .maxVpDimensions[1] = 1,
-    .vpBoundsRange[0] = -32768,
-    .vpBoundsRange[1] = 32767,
+    .vpBoundsRange.v[0] = -32768,
+    .vpBoundsRange.v[1] = 32767,
     .vpSubPixelBits = 0,
 
     // geometry shader
@@ -116,11 +116,11 @@ avxLimits const AVX_STD_DRAW_LIMITS =
     .canvasDepthSampleCnts = 0,
     .canvasStencilSampleCnts = 0,
 
-    .pointSizRange[0] = 1,
-    .pointSizRange[1] = 1,
+    .pointSizRange.v[0] = 1,
+    .pointSizRange.v[1] = 1,
     .pointSizGranularity = 1,
-    .lineWidthRange[0] = 1,
-    .lineWidthRange[1] = 1,
+    .lineWidthRange.v[0] = 1,
+    .lineWidthRange.v[1] = 1,
     .lineWidthGranularity = 1,
 
     .maxFragInComps = 128,
@@ -573,8 +573,8 @@ _AVX afxBool _AvxDdevSwIsAcceptableCb(afxDrawDevice ddev, avxFeatures const* fea
             (limits->maxVpCnt > ddev->limits.maxVpCnt) ||
             (limits->maxVpDimensions[0] > ddev->limits.maxVpDimensions[0]) ||
             (limits->maxVpDimensions[1] > ddev->limits.maxVpDimensions[1]) ||
-            (limits->vpBoundsRange[0] > ddev->limits.vpBoundsRange[0]) ||
-            (limits->vpBoundsRange[1] > ddev->limits.vpBoundsRange[1]) ||
+            (limits->vpBoundsRange.v[0] > ddev->limits.vpBoundsRange.v[0]) ||
+            (limits->vpBoundsRange.v[1] > ddev->limits.vpBoundsRange.v[1]) ||
             (limits->vpSubPixelBits > ddev->limits.vpSubPixelBits) ||
             (limits->minBufMapAlign > ddev->limits.minBufMapAlign) ||
             (limits->minTboOffsetAlign > ddev->limits.minTboOffsetAlign) ||
@@ -607,10 +607,10 @@ _AVX afxBool _AvxDdevSwIsAcceptableCb(afxDrawDevice ddev, avxFeatures const* fea
             (limits->maxCullDistances > ddev->limits.maxCullDistances) ||
             (limits->maxCombinedClipAndCullDistances > ddev->limits.maxCombinedClipAndCullDistances) ||
             (limits->discreteQueuePriorities > ddev->limits.discreteQueuePriorities) ||
-            (limits->pointSizRange[0] > ddev->limits.pointSizRange[0]) ||
-            (limits->pointSizRange[1] > ddev->limits.pointSizRange[1]) ||
-            (limits->lineWidthRange[0] > ddev->limits.lineWidthRange[0]) ||
-            (limits->lineWidthRange[1] > ddev->limits.lineWidthRange[1]) ||
+            (limits->pointSizRange.v[0] > ddev->limits.pointSizRange.v[0]) ||
+            (limits->pointSizRange.v[1] > ddev->limits.pointSizRange.v[1]) ||
+            (limits->lineWidthRange.v[0] > ddev->limits.lineWidthRange.v[0]) ||
+            (limits->lineWidthRange.v[1] > ddev->limits.lineWidthRange.v[1]) ||
             (limits->pointSizGranularity > ddev->limits.pointSizGranularity) ||
             (limits->lineWidthGranularity > ddev->limits.lineWidthGranularity) ||
             (limits->strictLines > ddev->limits.strictLines) ||

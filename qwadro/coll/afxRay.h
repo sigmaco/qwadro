@@ -29,19 +29,25 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRay)
 {
     // The position of the ray origin.
     afxV3d  origin;
+
     // The start of ray segment.
     afxReal near; // 0.0
+
     // The normalized direction of the ray
     afxV3d  normal; // (0, 0, 1)
+
     // The end of ray segment (may be clamped to hit distance).
     afxReal far; // AFX_R32_MAX
+
     // The time for the ray (used for motion blur).
     afxReal t; // 0.0
 
     // User-defined flags.
     afxFlags flags;
+
     // User-defined mask.
     afxMask mask;
+
     // User-defined identifier.
     afxUnit id;
 };
@@ -53,14 +59,24 @@ AFX_STATIC_ASSERT(offsetof(afxRay, near) == 12, "");
 AFX_STATIC_ASSERT(offsetof(afxRay, far) == 28, "");
 
 #define AFX_RAY(from, tnear, to, tfar, time, id, mask, flags) \
-    (afxRay){   .origin[0] = from[0], .origin[1] = from[1], .origin[2] = from[2], .near = tnear, \
-                .normal[0] = to[0], .normal[1] = to[1], .normal[2] = to[2], .far = tfar, \
-                .t = time, .id = id, .mask = mask, .flags = flags };
+    (afxRay){   .origin[0] = from[0], \
+                .origin[1] = from[1], \
+                .origin[2] = from[2], \
+                .near = tnear, \
+                .normal[0] = to[0], \
+                .normal[1] = to[1], \
+                .normal[2] = to[2], \
+                .far = tfar, \
+                .t = time, \
+                .id = id, \
+                .mask = mask, \
+                .flags = flags };
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxRayHit)
 {
     // The normalized direction of the geometry.
     afxV3d normal;
+
     // The barycentric coordinate of the hit.
     afxV2d uv;
     
@@ -79,6 +95,6 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxLine)
 // Ray vs. Capsule Intersection
 // Detects if a ray intersects the capsule, and optionally returns the distance to the intersection.
 // Returns true if hit; if 'outT' is non-null, stores distance to hit
-AFXINL afxBool  AfxRaycastCapsule(afxRay const* ray, afxCapsule const cap, afxReal* outT);
+AFXINL afxBool  AfxRaycastCapsule(afxRay const ray, afxCapsule const cap, afxReal* outT);
 
 #endif//AFX_RAY_H

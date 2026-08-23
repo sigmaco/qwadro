@@ -62,18 +62,18 @@ _AMX afxError AmxUpdateAudient(amxSoundscape snds, afxTransform const* placement
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SNDS, 1, &snds);
 
-    if (placement || velocity)
+    if (placement)
     {
         if (placement)
             AfxCopyTransform(&snds->placement, placement);
 
-        if (velocity)
-            AfxV3dCopy(snds->velocity, velocity);
+        //if (velocity)
+            snds->velocity = velocity;
     }
     else
     {
         AfxResetTransform(&snds->placement);
-        AfxV3dZero(snds->velocity);
+        snds->velocity = AfxV3dZero();
     }
     return err;
 }
@@ -136,7 +136,7 @@ _AMX afxError _AmxSndsCtorCb(amxSoundscape snds, void** args, afxUnit invokeNo)
     snds->mix = NIL;
     snds->baseSmixIdx = 1;
     AfxResetTransform(&snds->placement);
-    AfxV3dZero(snds->velocity);
+    snds->velocity = AfxV3dZero();
 
     afxChain* classes = &snds->classes;
     AfxMakeChain(classes, (void*)snds);

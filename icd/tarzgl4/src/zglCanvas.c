@@ -497,7 +497,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
             case avxLoadOp_CLEAR:
             {
                 gl->InvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, (GLenum[]) { GL_BACK }); _ZglThrowErrorOccuried();
-                afxReal const *rgba = dt->clearVal.rgba;
+                afxReal const *rgba = dt->clearVal.rgba.v;
                 gl->ClearColor(rgba[0], rgba[1], rgba[2], rgba[3]); _ZglThrowErrorOccuried();
                 gl->Clear(GL_COLOR_BUFFER_BIT); _ZglThrowErrorOccuried();
                 break;
@@ -738,7 +738,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
             default:
             {
                 dt = &c[i];
-                afxReal const* rgba = dt->clearVal.rgba;
+                afxReal const* rgba = dt->clearVal.rgba.v;
                 GLint dbi = clearBufs[i] - GL_COLOR_ATTACHMENT0;
                 gl->ClearBufferfv(GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                 break;
@@ -917,7 +917,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
                     }
                     default:
                     {
-                        afxReal const* rgba = values[i].rgba;
+                        afxReal const* rgba = values[i].rgba.v;
                         GLint dbi = GL_COLOR_ATTACHMENT0;
                         gl->ClearNamedFramebufferfv(fboOpDst, GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                         break;
@@ -949,7 +949,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
                     }
                     default:
                     {
-                        afxReal const* rgba = values[i].rgba;
+                        afxReal const* rgba = values[i].rgba.v;
                         GLint dbi = GL_COLOR_ATTACHMENT0;
                         gl->ClearBufferfv(GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                         break;
@@ -971,6 +971,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
     {
         gl->BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
+    return err;
 }
 
 _ZGL afxError _ZglDpuResolveCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUnit opCnt, avxRasterCopy const ops[])

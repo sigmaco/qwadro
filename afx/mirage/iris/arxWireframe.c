@@ -159,18 +159,18 @@ static inline void emit_wire_segment(
     arxWireVertex *v = vptr;
 
     // v0 = A
-    AfxV3dCopy(v->pos, A);
-    AfxV3dCopy(v->bary, AFX_V3D_X);
+    v->pos = A;
+    v->bary = AFX_V3D_X;
     ++v;
 
     // v1 = B
-    AfxV3dCopy(v->pos, B);
-    AfxV3dCopy(v->bary, AFX_V3D_Y);
+    v->pos = B;
+    v->bary = AFX_V3D_Y;
     ++v;
 
     // v2 = C (degenerate = A is fine)
-    AfxV3dCopy(v->pos, A);
-    AfxV3dCopy(v->bary, AFX_V3D_ZERO);
+    v->pos = A;
+    v->bary = AFX_V3D_ZERO;
     ++v;
 
     //*vptr = v;
@@ -216,9 +216,9 @@ void SphereDebugDraw_barycentric(arxRenderContext rctx, afxM4d const m, afxReal 
 
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
 
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
@@ -267,9 +267,9 @@ void SphereDebugDraw(arxRenderContext rctx, afxM4d const m, afxReal radius)
     
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
 
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
@@ -294,8 +294,8 @@ void SphereDebugDraw(arxRenderContext rctx, afxM4d const m, afxReal radius)
             v[5] * radius
         };
 
-        AfxV3dCopy(out[i * 2 + 0], A);
-        AfxV3dCopy(out[i * 2 + 1], B);
+        out[i * 2 + 0] = A;
+        out[i * 2 + 1] = B;
 
         // Move to next segment (6 floats per segment)
         v += 6;
@@ -316,9 +316,9 @@ void drawWireSphereLineStrip(arxRenderContext rctx, afxM4d const m, afxReal radi
 
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
 
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
@@ -363,14 +363,14 @@ void drawWireSphereLineStrip(arxRenderContext rctx, afxM4d const m, afxReal radi
                 afxV3d* v = &out[written];
 
                 // top
-                v[0][0] = radius * x * zr0;
-                v[0][1] = radius * y * zr0;
-                v[0][2] = radius * z0;
+                v[0].v[0] = radius * x * zr0;
+                v[0].v[1] = radius * y * zr0;
+                v[0].v[2] = radius * z0;
 
                 // bottom
-                v[1][0] = radius * x * zr1;
-                v[1][1] = radius * y * zr1;
-                v[1][2] = radius * z1;
+                v[1].v[0] = radius * x * zr1;
+                v[1].v[1] = radius * y * zr1;
+                v[1].v[2] = radius * z1;
 
                 written += 2;
             }
@@ -398,14 +398,14 @@ void drawWireSphereLineStrip(arxRenderContext rctx, afxM4d const m, afxReal radi
                 afxV3d* v = &out[written];
 
                 // start
-                v[0][0] = radius * AfxCos(lng0) * zr;
-                v[0][1] = radius * AfxSin(lng0) * zr;
-                v[0][2] = radius * z;
+                v[0].v[0] = radius * AfxCos(lng0) * zr;
+                v[0].v[1] = radius * AfxSin(lng0) * zr;
+                v[0].v[2] = radius * z;
 
                 // end
-                v[1][0] = radius * AfxCos(lng1) * zr;
-                v[1][1] = radius * AfxSin(lng1) * zr;
-                v[1][2] = radius * z;
+                v[1].v[0] = radius * AfxCos(lng1) * zr;
+                v[1].v[1] = radius * AfxSin(lng1) * zr;
+                v[1].v[2] = radius * z;
 
                 written += 2;
             }
@@ -417,9 +417,11 @@ void drawWireSphereLineStrip(arxRenderContext rctx, afxM4d const m, afxReal radi
 
 _ARX afxError ArxSetWireframeConstants(arxRenderContext rctx, afxReal wireThickness, avxColor wireCol, avxColor fillCol)
 {
+    afxError err = { 0 };
     rctx->wireThickness = wireThickness ? wireThickness : 0.02;
-    AvxCopyColor(rctx->wireCol, wireCol ? wireCol : AFX_V3D_ONE);
-    AvxCopyColor(rctx->fillCol, fillCol ? fillCol : AFX_V3D(0.1, 0.1, 0.1));
+    rctx->wireCol = wireCol;
+    rctx->fillCol = fillCol;
+    return err;
 }
 
 _ARX afxError ArxPushTransform(arxRenderContext rctx, afxM4d const m)
@@ -427,9 +429,9 @@ _ARX afxError ArxPushTransform(arxRenderContext rctx, afxM4d const m)
     afxError err = { 0 };
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
 
     ArxPostConstants(rctx, 0, sizeof(push), &push);
     return err;
@@ -453,9 +455,9 @@ void drawWireSphere1(arxRenderContext rctx, afxM4d const m, afxReal radius, afxU
     // --------------------------
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
 
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
@@ -491,7 +493,7 @@ void drawWireSphere1(arxRenderContext rctx, afxM4d const m, afxReal radius, afxU
         for (afxUnit lon = 0; lon <= longs; lon++)
         {
             afxReal phi = (afxReal)lon / (afxReal)longs * 2.0f * AFX_PI;
-            AfxV3dCopy(verts[idx++], AFX_V3D(r * AfxCos(phi), y, r * sin(phi)));
+            verts[idx++] = AFX_V3D(r * AfxCos(phi), y, r * sin(phi));
         }
     }
 
@@ -564,8 +566,8 @@ void ArxDrawLine(arxRenderContext rctx, afxV3d origin, afxV3d target)
     afxDrawContext dctx = rctx->frames[rctx->frameIdx].drawDctx;
 
     afxV3d* verts = ArxPostVertices(rctx, 2, sizeof(afxV3d), NIL, 0);
-    AfxV3dCopy(verts[0], origin);
-    AfxV3dCopy(verts[1], target);
+    verts[0] = origin;
+    verts[1] = target;
 
     AvxCmdDraw(dctx, 2, 1, 0, 0);
 }
@@ -594,7 +596,7 @@ void ArxDrawStrippedLines(arxRenderContext rctx, afxUnit vtxCnt, afxReal const v
 
     if (indexed)
     {
-        afxUnit stride = sizeof(vertices) * vecSiz;
+        afxUnit stride = sizeof(vertices[0]) * vecSiz;
         afxV3d* verts = ArxPostVertices(rctx, vtxCnt, sizeof(afxV3d), vertices, stride);
 
         afxUnit16* indices = ArxPostVertexIndices(rctx, vtxCnt - 1, sizeof(afxUnit16), NIL, 0);
@@ -611,7 +613,7 @@ void ArxDrawStrippedLines(arxRenderContext rctx, afxUnit vtxCnt, afxReal const v
     {
         afxV3d* verts = ArxPostVertices(rctx, vtxCnt, sizeof(afxV3d), NIL, 0);
         
-        afxUnit stride = sizeof(vertices) * vecSiz;
+        afxUnit stride = sizeof(vertices[0]) * vecSiz;
         AfxStream2(vtxCnt, vertices, stride, verts, sizeof(afxV3d));
 
         AvxCmdDraw(dctx, vtxCnt, 1, 0, 0);
@@ -625,9 +627,9 @@ void drawWireSphere(arxRenderContext rctx, afxM4d const m, afxReal radius, afxUn
     // ---- Constants ----
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
     // ---- Default behavior ----
@@ -659,9 +661,9 @@ void drawWireSphere(arxRenderContext rctx, afxM4d const m, afxReal radius, afxUn
                 afxReal u = (afxReal)j / (afxReal)longs;
                 afxReal phi = u * 2.0f * AFX_PI;
 
-                verts[k][0] = r * AfxCos(phi);
-                verts[k][1] = y;
-                verts[k][2] = r * AfxSin(phi);
+                verts[k].v[0] = r * AfxCos(phi);
+                verts[k].v[1] = y;
+                verts[k].v[2] = r * AfxSin(phi);
                 k++;
             }
         }
@@ -727,9 +729,9 @@ void drawWireSphere(arxRenderContext rctx, afxM4d const m, afxReal radius, afxUn
                 afxReal u = (afxReal)s / (afxReal)samples;
                 afxReal phi = u * 2.f * AFX_PI;
 
-                verts[k][0] = r * AfxCos(phi);
-                verts[k][1] = y;
-                verts[k][2] = r * AfxSin(phi);
+                verts[k].v[0] = r * AfxCos(phi);
+                verts[k].v[1] = y;
+                verts[k].v[2] = r * AfxSin(phi);
                 k++;
             }
         }
@@ -782,9 +784,9 @@ void drawWireSphere(arxRenderContext rctx, afxM4d const m, afxReal radius, afxUn
                 afxReal x = 0.0f;
 
                 // rotate around Y
-                verts[k][0] = x * c + z * s;
-                verts[k][1] = y;
-                verts[k][2] = z * c - x * s;
+                verts[k].v[0] = x * c + z * s;
+                verts[k].v[1] = y;
+                verts[k].v[2] = z * c - x * s;
                 k++;
             }
         }
@@ -838,26 +840,27 @@ void drawWireBox(arxRenderContext rctx, afxM4d const m, afxV3d halfExtents)
     // ---- Constants ----
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
-    AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
+    push.uM = AfxM4dFromAtm(m);
     ArxPostConstants(rctx, 0, sizeof(push), &push);
 
-    const float hx = halfExtents[0];
-    const float hy = halfExtents[1];
-    const float hz = halfExtents[2];
+    const float hx = halfExtents.v[0];
+    const float hy = halfExtents.v[1];
+    const float hz = halfExtents.v[2];
 
     // 8 corners
     afxV3d const verts[] =
-    {   {-hx, -hy, -hz },
-        { hx, -hy, -hz },
-        { hx,  hy, -hz },
-        {-hx,  hy, -hz },
+    { 
+        AFX_V3D(-hx, -hy, -hz ),
+        AFX_V3D(hx, -hy, -hz ),
+        AFX_V3D(hx,  hy, -hz ),
+        AFX_V3D(-hx,  hy, -hz ),
 
-        {-hx, -hy,  hz },
-        { hx, -hy,  hz },
-        { hx,  hy,  hz },
-        {-hx,  hy,  hz } };
+        AFX_V3D(-hx, -hy,  hz ),
+        AFX_V3D(hx, -hy,  hz ),
+        AFX_V3D(hx,  hy,  hz ),
+        AFX_V3D(-hx,  hy,  hz ) };
 
     // 12 edges = 24 indices
     afxUnit32 const indices[] =
@@ -883,12 +886,12 @@ void drawWireBox2(arxRenderContext rctx, afxV3d const center, afxQuat const rota
     // ---- Constants ----
     arxWireframePush push;
     push.uWireThickness = rctx->wireThickness;
-    AfxV3dCopy(push.uWireColor, rctx->wireCol);
-    AfxV3dCopy(push.uFillColor, rctx->fillCol);
+    push.uWireColor = rctx->wireCol.v3;
+    push.uFillColor = rctx->fillCol.v3;
     
     //AfxM4dCopyAtm(push.uM, m ? m : AFX_M4D_IDENTITY);
     // Build model matrix
-    AfxM4dComposeAffineTransformation(push.uM, halfExtents, AFX_V3D_ONE, rotation, center);
+    push.uM = AfxM4dComposeAffineTransformation(halfExtents, AFX_V3D_ONE, rotation, center);
     // We scale by halfExtents and not halfExtents * 2, because the unit cube in this version 
     // spans from -1 to + 1, that is already size = 2.
     // Scaling by halfExtents yields: unitCube(-1..1) * halfExt => (-halfExt ... +halfExt)
@@ -899,14 +902,14 @@ void drawWireBox2(arxRenderContext rctx, afxV3d const center, afxQuat const rota
     // 8 corners
     // Unit cube vertices (centered at origin)
     const afxV3d verts[] =
-    {   {-1, -1, -1 },
-        { 1, -1, -1 },
-        { 1,  1, -1 },
-        {-1,  1, -1 },
-        {-1, -1,  1 },
-        { 1, -1,  1 },
-        { 1,  1,  1 },
-        {-1,  1,  1 } };
+    {   AFX_V3D(-1, -1, -1 ),
+        AFX_V3D(1, -1, -1 ),
+        AFX_V3D(1,  1, -1 ),
+        AFX_V3D(-1,  1, -1 ),
+        AFX_V3D(-1, -1,  1 ),
+        AFX_V3D(1, -1,  1 ),
+        AFX_V3D(1,  1,  1 ),
+        AFX_V3D(-1,  1,  1 ) };
 
     // 12 edges = 24 indices
     const afxUnit32 indices[] =

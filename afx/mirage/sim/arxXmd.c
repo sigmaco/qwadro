@@ -55,19 +55,19 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
         case 1: // position
         {
             afxV3d position = { 0 };
-            AfxScanString(&a->content, "%f %f %f", &position[0], &position[1], &position[2]);
+            AfxScanString(&a->content, "%f %f %f", &position.v[0], &position.v[1], &position.v[2]);
             break;
         }
         case 2: // orientation
         {
             afxQuat orientation = { 0 };
-            AfxScanString(&a->content, "%f %f %f %f", &orientation[0], &orientation[1], &orientation[2], &orientation[3]);
+            AfxScanString(&a->content, "%f %f %f %f", &orientation.v[0], &orientation.v[1], &orientation.v[2], &orientation.v[3]);
             break;
         }
         case 3: // scale
         {
-            afxV3d scale = { 1, 1, 1 };
-            AfxScanString(&a->content, "%f %f %f", &scale[0], &scale[1], &scale[2]);
+            afxV3d scale = AFX_V3D(1, 1, 1 );
+            AfxScanString(&a->content, "%f %f %f", &scale.v[0], &scale.v[1], &scale.v[2]);
             break;
         }
         case 4: // lodType
@@ -113,7 +113,7 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
     afxTransform locals[256];
     afxUnit parents[256];
     afxReal lodErrors[256];
-    afxV3d4 iws[256];
+    afxM43d iws[256];
     afxUri meshes[256];
 
     afxXmlNode const* child;
@@ -132,7 +132,7 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
             afxV3d scale = { 1, 1, 1 };
             afxReal lodError = -1.0;
             afxUnit parentIdx = AFX_INVALID_INDEX;
-            afxV3d4 iw = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0 } };
+            afxM43d iw = { .m = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 }, { 0, 0, 0 } } };
             afxString id = { 0 };
 
             AFX_ITERATE_CHAIN_B2F_B(a, elem, &xml->attributes)
@@ -155,17 +155,17 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
                 }
                 case 2: // position
                 {
-                    AfxScanString(&a->content, "%f %f %f", &position[0], &position[1], &position[2]);
+                    AfxScanString(&a->content, "%f %f %f", &position.v[0], &position.v[1], &position.v[2]);
                     break;
                 }
                 case 3: // orientation
                 {
-                    AfxScanString(&a->content, "%f %f %f %f", &orientation[0], &orientation[1], &orientation[2], &orientation[3]);
+                    AfxScanString(&a->content, "%f %f %f %f", &orientation.v[0], &orientation.v[1], &orientation.v[2], &orientation.v[3]);
                     break;
                 }
                 case 4: // scale
                 {
-                    AfxScanString(&a->content, "%f %f %f", &scale[0], &scale[1], &scale[2]);
+                    AfxScanString(&a->content, "%f %f %f", &scale.v[0], &scale.v[1], &scale.v[2]);
                     break;
                 }
                 case 5: // lodError
@@ -175,17 +175,16 @@ _ASX afxError AfxAssembleModelFromXml(arxScenario scio, afxXmlNode const* xml, a
                 }
                 case 6: // iw
                 {
-                    AfxScanString(&a->content, "%f %f %f %f %f %f %f %f %f %f %f %f", &iw[0][0], &iw[0][1], &iw[0][2], &iw[1][0], &iw[1][1], &iw[1][2], &iw[2][0], &iw[2][1], &iw[2][2], &iw[3][0], &iw[3][1], &iw[3][2]);
+                    AfxScanString(&a->content, "%f %f %f %f %f %f %f %f %f %f %f %f", &iw.m[0][0], &iw.m[0][1], &iw.m[0][2], &iw.m[1][0], &iw.m[1][1], &iw.m[1][2], &iw.m[2][0], &iw.m[2][1], &iw.m[2][2], &iw.m[3][0], &iw.m[3][1], &iw.m[3][2]);
                     break;
                 }
                 default: break;
                 }
             }
 
-            afxM3d ss;
-            AfxM3dScaling(ss, scale);
+            afxM3d ss = AfxM3dScaling(scale);
             AfxMakeTransform(&locals[jointCnt], position, orientation, ss, TRUE);
-            AfxV3d4Copy(iws[jointCnt], iw);
+            iws[jointCnt] = iw;
             lodErrors[jointCnt] = lodError;
             parents[jointCnt] = parentIdx;
             joints[jointCnt] = id;

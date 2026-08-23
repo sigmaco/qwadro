@@ -289,7 +289,7 @@ _AVX afxError AvxCmdDelimitDepthBounds(afxDrawContext dctx, afxV2d const bounds)
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(SetDepthBounds), sizeof(cmd->SetDepthBounds), &cmdId);
     AFX_ASSERT(cmd);
-    AfxV2dCopy(cmd->SetDepthBounds.bounds, bounds ? bounds : AFX_V2D(0, 1));
+    cmd->SetDepthBounds.bounds = bounds;
     return err;
 }
 
@@ -306,7 +306,7 @@ _AVX afxError AvxCmdSetBlendConstants(afxDrawContext dctx, afxV4d const blendCon
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(SetBlendConstants), sizeof(cmd->SetBlendConstants), &cmdId);
     AFX_ASSERT(cmd);
-    AfxV4dCopy(cmd->SetBlendConstants.blendContants, blendConstants ? blendConstants : AFX_V4D(1, 1, 1, 1));
+    cmd->SetBlendConstants.blendContants = blendConstants;
     return err;
 }
 

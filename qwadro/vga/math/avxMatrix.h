@@ -158,36 +158,32 @@ typedef enum avxClipSpaceDepth
 
 // Shadow
 
-AVXINL void AfxComputeShadowM4d(afxM4d m, afxPlane const p, afxReal const lightPos[3]);
+AVXINL afxM4d AfxComputeShadowM4d(afxPlane const p, afxV3d const lightPos);
 
 // Cubemap
 
-AVXINL void AfxCubemapMatrix_OpenGL
+AVXINL afxM4d AfxCubemapMatrix_OpenGL
 (
-    afxM4d m, 
     afxUnit face
 );
 
-AVXINL void AfxCubemapMatrix_Direct3D
+AVXINL afxM4d AfxCubemapMatrix_Direct3D
 (
-    afxM4d m, 
     afxUnit face
 );
 
 // View space
 
-AVXINL void AfxComputeLookToMatrix
+AVXINL afxM4d AfxComputeLookToMatrix
 (
-    afxM4d m, 
     afxV3d const eye, 
     afxV3d const dir, 
     afxV3d const up, 
     afxBool nonRhcs
 );
 
-AVXINL void AfxComputeLookAtMatrix
+AVXINL afxM4d AfxComputeLookAtMatrix
 (
-    afxM4d m, 
     afxV3d const eye, 
     afxV3d const target, 
     afxV3d const up, 
@@ -196,9 +192,8 @@ AVXINL void AfxComputeLookAtMatrix
 
 // Orthographic projective space
 
-AVXINL void AfxComputeOrthographicMatrix
+AVXINL afxM4d AfxComputeOrthographicMatrix
 (
-    afxM4d m, 
     afxV2d const extent, 
     afxReal near, 
     afxReal far, 
@@ -206,9 +201,8 @@ AVXINL void AfxComputeOrthographicMatrix
     avxClipSpaceDepth clip
 );
 
-AVXINL void AfxComputeOffcenterOrthographicMatrix
+AVXINL afxM4d AfxComputeOffcenterOrthographicMatrix
 (
-    afxM4d m, 
     afxReal left, 
     afxReal right, 
     afxReal bottom, 
@@ -220,18 +214,16 @@ AVXINL void AfxComputeOffcenterOrthographicMatrix
 );
 
 /// Computa uma afxM4d de projeção ortográfica desde uma afxBox.
-AVXINL void AfxComputeBoundingOrthographicMatrix
+AVXINL afxM4d AfxComputeBoundingOrthographicMatrix
 (
-    afxM4d m, 
     afxBox const aabb, 
     afxBool nonRhcs, 
     avxClipSpaceDepth clip
 );
 
 /// Computa uma afxM4d de projeção ortográfica genérica.
-AVXINL void AfxComputeBasicOrthographicMatrix
+AVXINL afxM4d AfxComputeBasicOrthographicMatrix
 (
-    afxM4d m, 
     afxReal aspectRatio,
     afxReal scale, 
     afxReal range, 
@@ -241,9 +233,8 @@ AVXINL void AfxComputeBasicOrthographicMatrix
 
 // Perspective projective space
 
-AVXINL void AfxComputePerspectiveMatrix
+AVXINL afxM4d AfxComputePerspectiveMatrix
 (
-    afxM4d m, 
     afxV2d const extent, 
     afxReal near, 
     afxReal far, 
@@ -251,9 +242,8 @@ AVXINL void AfxComputePerspectiveMatrix
     avxClipSpaceDepth clip
 );
 
-AVXINL void AfxComputeFovPerspectiveMatrix
+AVXINL afxM4d AfxComputeFovPerspectiveMatrix
 (
-    afxM4d m, 
     afxReal fovY, 
     afxReal aspectRatio, 
     afxReal near, 
@@ -262,9 +252,8 @@ AVXINL void AfxComputeFovPerspectiveMatrix
     avxClipSpaceDepth clip
 );
 
-AVXINL void AfxComputeOffcenterPerspectiveMatrix
+AVXINL afxM4d AfxComputeOffcenterPerspectiveMatrix
 (
-    afxM4d m, 
     afxReal left, 
     afxReal right, 
     afxReal bottom, 
@@ -275,9 +264,8 @@ AVXINL void AfxComputeOffcenterPerspectiveMatrix
     avxClipSpaceDepth clip
 );
 
-AVXINL void AfxComputeBasicPerspectiveMatrix
+AVXINL afxM4d AfxComputeBasicPerspectiveMatrix
 (
-    afxM4d m, 
     afxReal aspectRatio, 
     afxReal range, 
     afxBool nonRhcs, 
@@ -288,7 +276,7 @@ AVXINL void AfxComputeBasicPerspectiveMatrix
 
 AVXINL void AfxDecomposePerspectiveM4d
 (
-    afxM4d m, 
+    afxM4d const m,
     afxV2d const extent, 
     afxReal* near, 
     afxReal* far
@@ -296,7 +284,7 @@ AVXINL void AfxDecomposePerspectiveM4d
 
 AVXINL void AfxDecomposeFovPerspectiveM4d
 (
-    afxM4d m, 
+    afxM4d const m,
     afxReal* fovY, 
     afxReal* aspectRatio, 
     afxReal* near, 
@@ -305,7 +293,7 @@ AVXINL void AfxDecomposeFovPerspectiveM4d
 
 AVXINL void AfxDecomposeOffcenterPerspectiveM4d
 (
-    afxM4d m, 
+    afxM4d const m,
     afxReal* left, 
     afxReal* right, 
     afxReal* top, 
@@ -316,16 +304,14 @@ AVXINL void AfxDecomposeOffcenterPerspectiveM4d
 
 // RW
 
-AVXINL void AfxComputeRenderWareViewM4d
+AVXINL afxM4d AfxComputeRenderWareViewM4d
 (
-    afxM4d m, 
     afxM4d const cam
 );
 
-AVXINL void AfxComputeRenderWareProjectionM4d
+AVXINL afxM4d AfxComputeRenderWareProjectionM4d
 (
-    afxM4d m, 
-    avxViewport const* vp, 
+    avxViewport const vp, 
     afxBool perspective
 );
 

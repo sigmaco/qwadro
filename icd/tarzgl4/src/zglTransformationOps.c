@@ -136,10 +136,10 @@ _ZGL void _ZglFlushTsChanges(zglDpu* dpu)
 
                 dpu->vps[i] = dpu->nextVps[i];
             }
-            v[i][0] = dpu->vps[i].origin[0];
-            v[i][1] = dpu->vps[i].origin[1];
-            v[i][2] = dpu->vps[i].extent[0];
-            v[i][3] = dpu->vps[i].extent[1];
+            v[i][0] = dpu->vps[i].origin.v[0];
+            v[i][1] = dpu->vps[i].origin.v[1];
+            v[i][2] = dpu->vps[i].extent.v[0];
+            v[i][3] = dpu->vps[i].extent.v[1];
             v2[i][0] = dpu->vps[i].minDepth;
             v2[i][1] = dpu->vps[i].maxDepth;
         }

@@ -449,8 +449,8 @@ _ARX afxError ArxDownloadModel(arxModel mdl, afxStream out)
     mdlHdr.fcc[2] = 'd';
     mdlHdr.fcc[3] = '\0';
     mdlHdr.hdrSiz = sizeof(mdlHdr) - sizeof(urdMark);
-    AfxM3dReset(mdlHdr.basis);
-    AfxV3dZero(mdlHdr.origin);
+    mdlHdr.basis = AfxM3dIdentity();
+    mdlHdr.origin = AfxV3dZero();
     mdlHdr.unitsPerMeter = 1.f;
     mdlHdr.lodType = mdl->lodType;
     mdlHdr.boneCnt = mdl->skl->boneCnt;

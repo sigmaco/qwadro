@@ -360,7 +360,7 @@ _ZGL void _DecodeCmdDisableDepthWrite(zglDpu* dpu, _avxCmd const* cmd)
 _ZGL void _DecodeCmdSetBlendConstants(zglDpu* dpu, _avxCmd const* cmd)
 {
     afxError err = { 0 };
-    AfxV4dCopy(dpu->nextBlendConstants, cmd->SetBlendConstants.blendContants);
+    dpu->nextBlendConstants = cmd->SetBlendConstants.blendContants;
     //dpu->nextBlendConstUpd = TRUE;
 }
 

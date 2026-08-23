@@ -60,11 +60,10 @@ _ASX afxCmdId _AsxSpuCmd_ApplyRootMotionVectors(asxSpu* spu, asxCmd const* cmd)
     afxError err = { 0 };
 
     afxTransform* t = ArxGetPoseTransform(cmd->ApplyRootMotionVectors.pose, 0);
-    AfxV3dAdd(t->pv, t->pv, cmd->ApplyRootMotionVectors.translation);
+    t->pv = AfxV3dAdd(t->pv, cmd->ApplyRootMotionVectors.translation);
 
-    afxQuat rot;
-    AfxQuatFromAngularVelocity(rot, cmd->ApplyRootMotionVectors.rotation);
-    AfxQuatMultiply(t->oq, rot, t->oq);
+    afxQuat rot = AfxQuatFromAngularVelocity(cmd->ApplyRootMotionVectors.rotation);
+    t->oq = AfxQuatMultiply(rot, t->oq);
 
     return 0;
 }

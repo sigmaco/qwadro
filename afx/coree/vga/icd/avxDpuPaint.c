@@ -66,7 +66,7 @@ _AVX afxError _AvxDpuClearCanvas(avxDpu* dpu, afxUnit binCnt, afxUnit const bins
             AvxQueryRasterArrangement(ras, &rgn, &lay);
 
             avxColor cache[32];
-            AvxConvertFormat(32, 1, &dstData[lay.offset], 0, fmt, avxFormat_RGBA32f, cache, sizeof(cache[0][0]));
+            AvxConvertFormat(32, 1, &dstData[lay.offset], 0, fmt, avxFormat_RGBA32f, cache, sizeof(cache[0].v[0]));
 
             afxUnit cacheIter = (area->area.w * area->area.h * area->layerCnt) / 32;
             afxUnit cacheLeft = (area->area.w * area->area.h * area->layerCnt) % 32;

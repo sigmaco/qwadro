@@ -181,7 +181,7 @@ _ARX afxError ArxDrawBodies(arxRenderer scn, arxContext sctx, afxDrawContext dct
 
             //AfxM4dCopyAtm(m, m);
             //AfxM4dReset(m);
-            AvxCmdUpdateBuffer(dctx, scn->framesets[scn->frameIdx].objUbo, 0, sizeof(m), m);
+            AvxCmdUpdateBuffer(dctx, scn->framesets[scn->frameIdx].objUbo, 0, sizeof(m), &m);
             AvxCmdUpdateBuffer(dctx, scn->framesets[scn->frameIdx].objUbo, 0, mshi.biasCnt * sizeof(m), scn->framesets[scn->frameIdx].objConstants.m);
             //AvxCmdUpdateBuffer(dctx, scn->framesets[scn->frameIdx].objConstantsBuffer, 128, sizeof(m), m);
 
@@ -420,8 +420,8 @@ _ARX afxError ArxCmdDrawBodies(afxDrawContext dctx, arxRenderer rnd, afxReal dt,
                 ArxBuildRiggedMeshCompositeMatrices(mdl, mshIdx, rnd->wp[rnd->frameIdx], 1, &m);
                 //AfxM4dCopyAtm(m, m);
                 //AfxM4dReset(m);
-                AvxCmdUpdateBuffer(dctx, rnd->framesets[rnd->frameIdx].objUbo, 0, sizeof(m), m);
-                AvxCmdUpdateBuffer(dctx, rnd->framesets[rnd->frameIdx].objUbo, 64, sizeof(m), m);
+                AvxCmdUpdateBuffer(dctx, rnd->framesets[rnd->frameIdx].objUbo, 0, sizeof(m), &m);
+                AvxCmdUpdateBuffer(dctx, rnd->framesets[rnd->frameIdx].objUbo, 64, sizeof(m), &m);
                 //AvxCmdUpdateBuffer(dctx, rnd->framesets[rnd->frameIdx].objConstantsBuffer, 128, sizeof(m), m);
 
                 afxUnit surfCnt = mshi.secCnt;
@@ -436,7 +436,7 @@ _ARX afxError ArxCmdDrawBodies(afxDrawContext dctx, arxRenderer rnd, afxReal dt,
 
                     if (sec.mtlIdx == AFX_INVALID_INDEX)
                     {
-                        AvxMakeColor(mat.Kd, 0.3f, 0.3f, 0.3f, 1.0f);
+                        mat.Kd = AfxV3dFromV4d(AvxMakeColor(0.3f, 0.3f, 0.3f, 1.0f));
                         mat.hasDiffTex = FALSE;
                         //AvxUpdateBuffer(rnd->framesets[rnd->frameIdx].mtlConstantsBuffer, 0, sizeof(mat), &mat);
                     }
@@ -505,9 +505,9 @@ _ARX afxError ArxRendererSetStar(arxRenderer rnd, afxV4d const pos, afxV3d const
 
     arxViewConstants *viewConstants = &rnd->framesets[rnd->frameIdx].viewConstants;
 
-    AfxV4dCopy(viewConstants->starPos, pos);
-    AfxV4dCopy(viewConstants->starDir, dir);
-    AfxV4dCopy(viewConstants->starKd, Kd);
+    viewConstants->starPos = pos;
+    viewConstants->starDir = dir;
+    viewConstants->starKd = Kd;
 
     return err;
 }
@@ -552,28 +552,28 @@ _ARX afxError ArxBeginSceneRendering(arxRenderer rnd, arxCamera cam, afxLayeredR
     {
         //cam = rnd->activeCamera;
 
-        afxV2d extent = { rnd->drawArea.area.w, rnd->drawArea.area.h };
+        afxV2d extent = AFX_V2D(rnd->drawArea.area.w, rnd->drawArea.area.h);
         ArxAdjustCameraAspectRatio(cam, AfxFindPhysicalAspectRatio(rnd->drawArea.area.w, rnd->drawArea.area.h), extent, extent);
 
-        viewConstants->viewExtent[0] = rnd->drawArea.area.w;
-        viewConstants->viewExtent[1] = rnd->drawArea.area.h;
+        viewConstants->viewExtent.v[0] = rnd->drawArea.area.w;
+        viewConstants->viewExtent.v[1] = rnd->drawArea.area.h;
 
         afxV4d viewPos;
-        ArxGetCameraTranslation(cam, viewPos);
-        AfxV4dCopyAtv3d(viewConstants->viewPos, viewPos);
+        viewPos.v3 = ArxGetCameraTranslation(cam);
+        viewConstants->viewPos = AfxV4dFromAtv3d(viewPos.v3);
 
         afxM4d v, iv, p, ip, pv, ipv;
-        ArxGetProjectionMatrices(cam, ip, ipv, pv, p);
-        ArxGetCameraMatrices(cam, iv, v);
+        ArxGetProjectionMatrices(cam, &ip, &ipv, &pv, &p);
+        ArxGetCameraMatrices(cam, &iv, &v);
         
-        AfxM4dCopy(viewConstants->p, p);
-        AfxM4dCopy(viewConstants->ip, ip);
-        AfxM4dCopyAtm(viewConstants->v, v);
-        AfxM4dCopy(viewConstants->iv, iv);
+        viewConstants->p = p;
+        viewConstants->ip = ip;
+        viewConstants->v = AfxM4dFromAtm(v);
+        viewConstants->iv = iv;
         //AfxM4dMultiply(viewConstants->pv, p, v);
-        AfxM4dCopy(viewConstants->pv, pv);
+        viewConstants->pv = pv;
         //AfxM4dInvert(viewConstants->ipv, viewConstants->pv);
-        AfxM4dCopy(viewConstants->ipv, ipv);
+        viewConstants->ipv = ipv;
     }
 
     AvxCmdUpdateBuffer(dctx, rnd->framesets[frameIdx].viewUbo, 0, sizeof(*viewConstants), viewConstants);
@@ -670,10 +670,10 @@ _ARX afxError _ArxRndCtor(arxRenderer rnd, void** args, afxUnit invokeNo)
     {
         afxV3d testVertices[] =
         {
-            { 0.5f,  0.5f, 0.0f },  // top right
-            { 0.5f, -0.5f, 0.0f },  // bottom right
-            {-0.5f, -0.5f, 0.0f },  // bottom left
-            {-0.5f,  0.5f, 0.0f }  // top left 
+            AFX_V3D(0.5f,  0.5f, 0.0f ),  // top right
+            AFX_V3D(0.5f, -0.5f, 0.0f ),  // bottom right
+            AFX_V3D(-0.5f, -0.5f, 0.0f ),  // bottom left
+            AFX_V3D(-0.5f,  0.5f, 0.0f )  // top left 
         };
         afxUnit32 testIndices[] =
         // note that we start from 0!

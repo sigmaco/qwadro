@@ -960,7 +960,9 @@ _ARX afxError ArxCmdBindModel(arxRenderContext rctx, arxModel mdl)
 
 _ARX afxError ArxCmdDrawModel(arxRenderContext rctx, arxModel mdl, afxBool skl)
 {
-
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
+    return err;
 }
 
 _ARX afxError ArxCmdRenderModels(arxRenderContext rctx, afxUnit cnt, arxModel models[])

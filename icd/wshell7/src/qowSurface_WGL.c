@@ -443,6 +443,7 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
         }
     }
 #endif//_NEVER_RESTORE_WGL_CONTEXT
+    return err;
 }
 
 _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl)

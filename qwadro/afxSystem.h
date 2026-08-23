@@ -44,6 +44,8 @@
 #include "qwadro/afxSource.h"
 #include "qwadro/afxStorage.h"
 // math
+#include "qwadro/math/afxTransformation.h"
+#include "qwadro/math/afxTrigonometry.h"
 #include "qwadro/math/afxTransform.h"
 // mem
 #include "qwadro/afxArena.h"

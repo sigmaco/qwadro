@@ -329,7 +329,7 @@ ARX void ArxModulatePose
     environment (e.g., checking for collisions or determining visibility).
 */
 
-ARX void ArxComputeAttachmentWorldMatrix
+ARX afxM4d ArxComputeAttachmentWorldMatrix
 (
     // The pose of the articulated object (e.g., a character or a skeletal structure). 
     // The pose contains the transformations (like position, rotation, and possibly scale) of the individual articulations or bones of the skeleton.
@@ -356,12 +356,12 @@ ARX void ArxComputeAttachmentWorldMatrix
     // This parameter is a displacement matrix. It represents an offset or transformation that needs to be applied to the attachment after computing the world matrix. 
     // For example, if an attachment is offset by a certain amount from the bone to which it is attached (such as an accessory or weapon), 
     // this displacement matrix would apply that transformation to the final world matrix.
-    afxM4d const displace, 
+    afxM4d const displace//, 
 
     // This is the output matrix that will contain the world matrix of the attachment after the computation. 
     // The world matrix represents the final transformation of the attachment in the global/world space, 
     // taking into account the pose, skeleton, and any displacement.
-    afxM4d m
+    //afxM4d m
 );
 
 /*
@@ -390,7 +390,7 @@ ARX void ArxComputeAttachmentWorldMatrix
     the local coordinates of the joint.
 */
 
-ARX void ArxComputeAttachmentOffset
+ARX afxM4d ArxComputeAttachmentOffset
 (
     // The pose of the articulated object (like a character), which holds the transformations (position, rotation, scale) of the individual joints or bones.
     arxPose pose, 
@@ -414,11 +414,11 @@ ARX void ArxComputeAttachmentOffset
     // This is a displacement matrix that represents an additional offset or transformation to be applied to the attachment relative to the 
     // specified joint. For example, this could be used to apply an offset that accounts for the attachment being located at a specific position 
     // relative to the joint (e.g., a weapon held in the hand at a certain distance and orientation).
-    afxM4d const displace, 
+    afxM4d const displace//, 
 
     // This is the output matrix that will store the offset transformation of the attachment relative to the specified joint. 
     // The matrix will represent the final transformation required to place the attachment at the correct position and orientation relative to the joint.
-    afxM4d m
+    //afxM4d m
 );
 
 /*

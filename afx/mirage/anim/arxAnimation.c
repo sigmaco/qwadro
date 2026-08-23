@@ -301,9 +301,6 @@ _ARX afxError ArxAssembleAnimations(arxScenario scio, afxUnit cnt, arxAnimationB
 _ARX void ArxTransformAnimations(afxM3d const ltm, afxM3d const iltm, afxReal linearTol, afxV4d const atv, afxReal affineTol, afxFlags flags, afxUnit cnt, arxAnimation animations[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(atv);
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
     AFX_ASSERT(cnt);
     AFX_ASSERT(animations);
     AfxThrowError();
