@@ -56,7 +56,9 @@ typedef enum afxCubeCorner
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxFrustum)
 {
     afxPlane    planes[afxCubeFace_TOTAL];
+
     afxV4d      corners[afxCubeCorner_TOTAL];
+
     afxV4d      origin;
 };
 
@@ -71,14 +73,22 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxFrustum)
 #define AFX_V4D_LTF AFX_V4D(-1, 1, 1, 1) // left-top-far
 
 // frustrum and matrix must be in same space
-AFXINL void     AfxMakeFrustum(afxFrustum* f, afxM4d const pv, afxM4d const ipv);
+AFXINL afxFrustum     AfxMakeFrustum(afxM4d const pv, afxM4d const ipv);
 
-AFXINL void     AfxCopyFrustum(afxFrustum* f, afxFrustum const* in);
+AFXINL afxBool  AfxFrustumCullsAabb(afxFrustum const f, afxBox const aabb);
+AFXINL afxBool  AfxFrustumCullsAabbs(afxFrustum const f, afxUnit cnt, afxBox const aabb[]);
+AFXINL afxBool  AfxFrustumCullsSphere(afxFrustum const f, afxSphere const sph);
+AFXINL afxBool  AfxFrustumCullsSpheres(afxFrustum const f, afxUnit cnt, afxSphere const spheres[]);
+AFXINL afxBool  AfxFrustumCullsFrustum(afxFrustum const f, afxFrustum const other);
+AFXINL afxBool  AfxFrustumCullsFrustums(afxFrustum const f, afxUnit cnt, afxFrustum const others[]);
 
-AFXINL afxBool  AfxDoesFrustumCullAabbs(afxFrustum const* f, afxUnit cnt, afxBox const aabb[]);
-AFXINL afxBool  AfxDoesFrustumCullSpheres(afxFrustum const* f, afxUnit cnt, afxSphere const spheres[]);
-AFXINL afxBool  AfxDoesFrustumCullFrustums(afxFrustum const* f, afxUnit cnt, afxFrustum const others[]);
+AFXINL afxBox     AfxEmboxFrustum(afxBox aabb, afxFrustum const f);
 
-AFXINL void     AfxEmboxFrustum(afxBox* aabb, afxFrustum const* f);
+AFXINL void AfxGetFrustumCorners(afxFrustum const f, afxV3d vertices[AFX_NUM_BOX_CORNERS]);
+
+AFXINL void AfxGetFrustumEdges(afxFrustum const f, afxV3d vertices[AFX_NUM_BOX_CORNERS], afxUnit indices[AFX_NUM_BOX_EDGE_VERTICES]);
+
+AFXINL afxResult AfxAabbTestPlane(afxBox const aabb, afxPlane const plan);
+AFXINL afxResult AfxAabbTestPlanes(afxBox const aabb, afxUnit cnt, afxPlane const planes[]);
 
 #endif//AFX_FRUSTUM_H

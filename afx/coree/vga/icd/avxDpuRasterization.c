@@ -121,24 +121,27 @@ afxReal calcBlendFactor(afxReal src, afxReal srcAlpha, afxReal dst, afxReal dstA
     return (0.f);
 }
 
-void calcBlendFactorV4d(afxV4d src, afxV4d dst, avxBlendFactor factor, afxV4d ret)
+afxV4d calcBlendFactorV4d(afxV4d const src, afxV4d const dst, avxBlendFactor factor)
 {
+    afxV4d ret;
+
     for (afxUnit i = 0; i < 4; i++)
     {
         switch (factor)
         {
-        case avxBlendFactor_ZERO: ret[i] = (0.f);
-        case avxBlendFactor_ONE: ret[i] = (1.f);
-        case avxBlendFactor_SRC_RGB: ret[i] = src[i];
-        case avxBlendFactor_SRC_A: ret[i] = (src[3]);
-        case avxBlendFactor_DST_RGB: ret[i] = dst[i];
-        case avxBlendFactor_DST_A: ret[i] = (dst[3]);
-        case avxBlendFactor_ONE_MINUS_SRC_RGB: ret[i] = ((1.f) - src[i]);
-        case avxBlendFactor_ONE_MINUS_SRC_A: ret[i] = (1.f - src[3]);
-        case avxBlendFactor_ONE_MINUS_DST_RGB: ret[i] = ((1.f) - dst[i]);
-        case avxBlendFactor_ONE_MINUS_DST_A: ret[i] = (1.f - dst[3]);
+        case avxBlendFactor_ZERO: ret.v[i] = (0.f);
+        case avxBlendFactor_ONE: ret.v[i] = (1.f);
+        case avxBlendFactor_SRC_RGB: ret.v[i] = src.v[i];
+        case avxBlendFactor_SRC_A: ret.v[i] = (src.v[3]);
+        case avxBlendFactor_DST_RGB: ret.v[i] = dst.v[i];
+        case avxBlendFactor_DST_A: ret.v[i] = (dst.v[3]);
+        case avxBlendFactor_ONE_MINUS_SRC_RGB: ret.v[i] = ((1.f) - src.v[i]);
+        case avxBlendFactor_ONE_MINUS_SRC_A: ret.v[i] = (1.f - src.v[3]);
+        case avxBlendFactor_ONE_MINUS_DST_RGB: ret.v[i] = ((1.f) - dst.v[i]);
+        case avxBlendFactor_ONE_MINUS_DST_A: ret.v[i] = (1.f - dst.v[3]);
         }
     }
+    return ret;
 }
 
 afxReal calcBlendFunc(afxReal src, afxReal dst, avxBlendOp op)
@@ -154,43 +157,50 @@ afxReal calcBlendFunc(afxReal src, afxReal dst, avxBlendOp op)
     return src + dst;
 }
 
-void calcBlendFuncV4d(afxV4d src, afxV4d dst, avxBlendOp op, afxV4d ret)
+afxV4d calcBlendFuncV4d(afxV4d const src, afxV4d const dst, avxBlendOp op)
 {
+    afxV4d ret;
+
     for (afxUnit i = 0; i < 4; i++)
     {
         switch (op)
         {
-        case avxBlendOp_ADD: ret[i] = src[i] + dst[i];
-        case avxBlendOp_SUB: ret[i] = src[i] - dst[i];
-        case avxBlendOp_REV_SUB: ret[i] = dst[i] - src[i];
-        case avxBlendOp_MIN: ret[i] = AFX_MIN(src[i], dst[i]);
-        case avxBlendOp_MAX: ret[i] = AFX_MAX(src[i], dst[i]);
+        case avxBlendOp_ADD: ret.v[i] = src.v[i] + dst.v[i];
+        case avxBlendOp_SUB: ret.v[i] = src.v[i] - dst.v[i];
+        case avxBlendOp_REV_SUB: ret.v[i] = dst.v[i] - src.v[i];
+        case avxBlendOp_MIN: ret.v[i] = AFX_MIN(src.v[i], dst.v[i]);
+        case avxBlendOp_MAX: ret.v[i] = AFX_MAX(src.v[i], dst.v[i]);
         }
     }
+    return ret;
 }
 
-void calcBlendColorV4d(afxV4d const src, afxV4d const dst, const avxColorBlend *params, afxV4d ret)
+afxV4d calcBlendColorV4d(afxV4d const src, afxV4d const dst, const avxColorBlend *params)
 {
+    afxV4d ret;
+
     afxV4d srcF =
     {
-        calcBlendFactor(src[0], src[3], dst[0], dst[3], params->rgbSrcFactor),
-        calcBlendFactor(src[1], src[3], dst[1], dst[3], params->rgbSrcFactor),
-        calcBlendFactor(src[2], src[3], dst[2], dst[3], params->rgbSrcFactor),
-        calcBlendFactor(src[3], src[3], dst[3], dst[3], params->aSrcFactor)
+        calcBlendFactor(src.v[0], src.v[3], dst.v[0], dst.v[3], params->rgbSrcFactor),
+        calcBlendFactor(src.v[1], src.v[3], dst.v[1], dst.v[3], params->rgbSrcFactor),
+        calcBlendFactor(src.v[2], src.v[3], dst.v[2], dst.v[3], params->rgbSrcFactor),
+        calcBlendFactor(src.v[3], src.v[3], dst.v[3], dst.v[3], params->aSrcFactor)
     };
 
     afxV4d dstF =
     {
-        calcBlendFactor(dst[0], dst[3], dst[0], dst[3], params->rgbDstFactor),
-        calcBlendFactor(dst[1], dst[3], dst[1], dst[3], params->rgbDstFactor),
-        calcBlendFactor(dst[2], dst[3], dst[2], dst[3], params->rgbDstFactor),
-        calcBlendFactor(dst[3], dst[3], dst[3], dst[3], params->aDstFactor)
+        calcBlendFactor(dst.v[0], dst.v[3], dst.v[0], dst.v[3], params->rgbDstFactor),
+        calcBlendFactor(dst.v[1], dst.v[3], dst.v[1], dst.v[3], params->rgbDstFactor),
+        calcBlendFactor(dst.v[2], dst.v[3], dst.v[2], dst.v[3], params->rgbDstFactor),
+        calcBlendFactor(dst.v[3], dst.v[3], dst.v[3], dst.v[3], params->aDstFactor)
     };
 
-    ret[0] = calcBlendFunc(src[0] * srcF[0], dst[0] * dstF[0], params->rgbBlendOp);
-    ret[1] = calcBlendFunc(src[1] * srcF[1], dst[1] * dstF[1], params->rgbBlendOp);
-    ret[2] = calcBlendFunc(src[2] * srcF[2], dst[2] * dstF[2], params->rgbBlendOp);
-    ret[3] = calcBlendFunc(src[3] * srcF[3], dst[3] * dstF[3], params->aBlendOp);
+    ret.v[0] = calcBlendFunc(src.v[0] * srcF.v[0], dst.v[0] * dstF.v[0], params->rgbBlendOp);
+    ret.v[1] = calcBlendFunc(src.v[1] * srcF.v[1], dst.v[1] * dstF.v[1], params->rgbBlendOp);
+    ret.v[2] = calcBlendFunc(src.v[2] * srcF.v[2], dst.v[2] * dstF.v[2], params->rgbBlendOp);
+    ret.v[3] = calcBlendFunc(src.v[3] * srcF.v[3], dst.v[3] * dstF.v[3], params->aBlendOp);
+
+    return ret;
 }
 
 afxBool DepthTest(afxReal a, afxReal b, avxCompareOp op)
@@ -254,15 +264,15 @@ void GetSampleLocation4X(_avxPixelCtx* ctx, afxV2d loc[4])
 {
     static afxV2d location_4x[4] =
     {
-            {0.375f, 0.875f},
-            {0.875f, 0.625f},
-            {0.125f, 0.375f},
-            {0.625f, 0.125f},
+            AFX_V2D(0.375f, 0.875f),
+            AFX_V2D(0.875f, 0.625f),
+            AFX_V2D(0.125f, 0.375f),
+            AFX_V2D(0.625f, 0.125f),
     };
     //return location_4x;
 
     for (afxUnit i = 0; i < 4; i++)
-        AfxV2dCopy(loc[i], location_4x[i]);
+        loc[i] = location_4x[i];
 }
 
 void PixelCtxInit(_avxPixelCtx* ctx, afxReal x, afxReal y, afxInt sampleCnt)
@@ -282,10 +292,10 @@ void PixelCtxInit(_avxPixelCtx* ctx, afxReal x, afxReal y, afxInt sampleCnt)
         {
             static afxV2d location_4x[4] =
             {
-                    {0.375f, 0.875f},
-                    {0.875f, 0.625f},
-                    {0.125f, 0.375f},
-                    {0.625f, 0.125f},
+                    AFX_V2D(0.375f, 0.875f),
+                    AFX_V2D(0.875f, 0.625f),
+                    AFX_V2D(0.125f, 0.375f),
+                    AFX_V2D(0.625f, 0.125f),
             };
 
             for (int i = 0; i < ctx->sampleCnt; i++)
@@ -293,17 +303,17 @@ void PixelCtxInit(_avxPixelCtx* ctx, afxReal x, afxReal y, afxInt sampleCnt)
                 ctx->samples[i].fboCoord[0] = x;
                 ctx->samples[i].fboCoord[1] = y;
 
-                AfxV2dAdd(ctx->samples[i].position, location_4x[i], AFX_V2D(x, y));
-                ctx->samples[i].position[2] = 0.f;
-                ctx->samples[i].position[3] = 0.f;
+                ctx->samples[i].position.v2 = AfxV2dAdd(location_4x[i], AFX_V2D(x, y));
+                ctx->samples[i].position.v[2] = 0.f;
+                ctx->samples[i].position.v[3] = 0.f;
             }
             // pixel center
             ctx->samples[4].fboCoord[0] = x;
             ctx->samples[4].fboCoord[1] = y;
-            ctx->samples[4].position[0] = x + 0.5f;
-            ctx->samples[4].position[1] = y + 0.5f;
-            ctx->samples[4].position[2] = 0.f;
-            ctx->samples[4].position[3] = 0.f;
+            ctx->samples[4].position.v[0] = x + 0.5f;
+            ctx->samples[4].position.v[1] = y + 0.5f;
+            ctx->samples[4].position.v[2] = 0.f;
+            ctx->samples[4].position.v[3] = 0.f;
             ctx->sampleShading = &ctx->samples[4];
         }
         else
@@ -316,10 +326,10 @@ void PixelCtxInit(_avxPixelCtx* ctx, afxReal x, afxReal y, afxInt sampleCnt)
         ctx->samplesPop = 1;
         ctx->samples[0].fboCoord[0] = x;
         ctx->samples[0].fboCoord[1] = y;
-        ctx->samples[0].position[0] = x + 0.5f;
-        ctx->samples[0].position[1] = y + 0.5f;
-        ctx->samples[0].position[2] = 0.f;
-        ctx->samples[0].position[3] = 0.f;
+        ctx->samples[0].position.v[0] = x + 0.5f;
+        ctx->samples[0].position.v[1] = y + 0.5f;
+        ctx->samples[0].position.v[2] = 0.f;
+        ctx->samples[0].position.v[3] = 0.f;
         ctx->sampleShading = &ctx->samples[0];
     }
 }
@@ -429,48 +439,52 @@ afxBool PixelQuadCtxCheckInside(_avxPixelQuadCtx* ctx)
 }
 
 
-void WrapTexel2(avxTexelWrap mode, afxV2d uv)
+afxV2d WrapTexel2(avxTexelWrap mode)
 {
+    afxV2d uv;
     switch (mode)
     {
     case avxTexelWrap_BORDER:
-        uv[0] = AFX_CLAMP(uv[0], 0.0f, 1.0f);
-        uv[1] = AFX_CLAMP(uv[1], 0.0f, 1.0f);
+        uv.v[0] = AFX_CLAMP(uv.v[0], 0.0f, 1.0f);
+        uv.v[1] = AFX_CLAMP(uv.v[1], 0.0f, 1.0f);
         break;
     case avxTexelWrap_EDGE:
-        uv[0] = AFX_CLAMP(uv[0], 0.0f, 1.0f);
-        uv[1] = AFX_CLAMP(uv[1], 0.0f, 1.0f);
+        uv.v[0] = AFX_CLAMP(uv.v[0], 0.0f, 1.0f);
+        uv.v[1] = AFX_CLAMP(uv.v[1], 0.0f, 1.0f);
         break;
     case avxTexelWrap_REPEAT:
-        if (uv[0] < 0.0f) uv[0] += 1.0f;
-        if (uv[0] > 1.0f) uv[0] -= 1.0f;
-        if (uv[1] < 0.0f) uv[1] += 1.0f;
-        if (uv[1] > 1.0f) uv[1] -= 1.0f;
+        if (uv.v[0] < 0.0f) uv.v[0] += 1.0f;
+        if (uv.v[0] > 1.0f) uv.v[0] -= 1.0f;
+        if (uv.v[1] < 0.0f) uv.v[1] += 1.0f;
+        if (uv.v[1] > 1.0f) uv.v[1] -= 1.0f;
         break;
     }
+    return uv;
 }
 
-void WrapTexel3(avxTexelWrap mode, afxV3d uvw)
+afxV3d WrapTexel3(avxTexelWrap mode)
 {
+    afxV3d uvw;
     switch (mode)
     {
     case avxTexelWrap_BORDER:
-        uvw[0] = AFX_CLAMP(uvw[0], 0.0f, 1.0f);
-        uvw[1] = AFX_CLAMP(uvw[1], 0.0f, 1.0f);
-        uvw[2] = AFX_CLAMP(uvw[2], 0.0f, 1.0f);
+        uvw.v[0] = AFX_CLAMP(uvw.v[0], 0.0f, 1.0f);
+        uvw.v[1] = AFX_CLAMP(uvw.v[1], 0.0f, 1.0f);
+        uvw.v[2] = AFX_CLAMP(uvw.v[2], 0.0f, 1.0f);
         break;
     case avxTexelWrap_EDGE:
-        uvw[0] = AFX_CLAMP(uvw[0], 0.0f, 1.0f);
-        uvw[1] = AFX_CLAMP(uvw[1], 0.0f, 1.0f);
-        uvw[2] = AFX_CLAMP(uvw[2], 0.0f, 1.0f);
+        uvw.v[0] = AFX_CLAMP(uvw.v[0], 0.0f, 1.0f);
+        uvw.v[1] = AFX_CLAMP(uvw.v[1], 0.0f, 1.0f);
+        uvw.v[2] = AFX_CLAMP(uvw.v[2], 0.0f, 1.0f);
         break;
     case avxTexelWrap_REPEAT:
-        if (uvw[0] < 0.0f) uvw[0] += 1.0f;
-        if (uvw[0] > 1.0f) uvw[0] -= 1.0f;
-        if (uvw[1] < 0.0f) uvw[1] += 1.0f;
-        if (uvw[1] > 1.0f) uvw[1] -= 1.0f;
-        if (uvw[2] < 0.0f) uvw[2] += 1.0f;
-        if (uvw[2] > 1.0f) uvw[2] -= 1.0f;
+        if (uvw.v[0] < 0.0f) uvw.v[0] += 1.0f;
+        if (uvw.v[0] > 1.0f) uvw.v[0] -= 1.0f;
+        if (uvw.v[1] < 0.0f) uvw.v[1] += 1.0f;
+        if (uvw.v[1] > 1.0f) uvw.v[1] -= 1.0f;
+        if (uvw.v[2] < 0.0f) uvw.v[2] += 1.0f;
+        if (uvw.v[2] > 1.0f) uvw.v[2] -= 1.0f;
         break;
     }
+    return uvw;
 }

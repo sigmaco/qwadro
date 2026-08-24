@@ -72,17 +72,16 @@
  void _XsEnvGetMouseMotion(xssVm vm)
  {
      afxUnit seat = XssPullNat(vm, 1);
-     afxV2d delta;
-     AfxGetMouseMotion(seat, delta, NIL, NIL);
-     XssPushReal(vm, 0, delta[0]);
-     XssPushReal(vm, 1, delta[1]);
+     afxV2d delta = AfxGetMouseMotion(seat);
+     XssPushReal(vm, 0, delta.x);
+     XssPushReal(vm, 1, delta.y);
  }
 
  void _XsEnvGetMouseWheelDelta(xssVm vm)
  {
      //afxEnvironment env = XssPullInstance(vm, 0);
      afxUnit seat = XssPullNat(vm, 1);
-     XssPushReal(vm, 0, AfxGetMouseWheelDelta(seat));
+     XssPushReal(vm, 0, AfxGetMouseWheelDelta(seat).y);
  }
 
  void _XsWndAcquire(xssVm vm)
@@ -97,9 +96,9 @@
      afxWindowConfig wcfg = { 0 };
      wcfg.x = x;
      wcfg.y = y;
-     wcfg.dout.ccfg.whd.w = w;
-     wcfg.dout.ccfg.whd.h = h;
-     AfxConfigureWindow(env, &wcfg, NIL, NIL);
+     wcfg.dout.ccfg.extent.w = w;
+     wcfg.dout.ccfg.extent.h = h;
+     AfxConfigureWindow(env, &wcfg, AFX_V2D_ZERO, AFX_V2D_ZERO);
      AfxAcquireWindow(env, &wcfg, &wnd);
      XssPushInstance(vm, 0, wnd);
  }

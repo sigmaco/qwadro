@@ -155,7 +155,7 @@ AFX_DEFINE_UNION(avxClearValue)
 };
 
 #define AVX_COLOR_VALUE(r_, g_, b_, a_) (avxClearValue){ \
-    { .rgba = { (r_), (g_), (b_), (a_) } } }
+    { .rgba = AFX_V4D( (r_), (g_), (b_), (a_) ) } }
 
 #define AVX_DEPTH_VALUE(d_, s_) (avxClearValue){ \
     .depth = (d_), .stencil = (s_) } 
@@ -250,7 +250,7 @@ AFX_DEFINE_STRUCT(avxSamplerConfig)
     .borderColor = AVX_DEFAULT_CLEAR_VALUE, \
     .unnormalizedCoords = FALSE, \
     .isYuv = FALSE, \
-    .yuvFmt = avxFormat_UNDEFINED, \
+    .yuvFmt = avxFormat_NIL, \
     .yuvMtx = avxColorMatrix_RGB, \
     .useNarrowRange = FALSE, \
     .yuvSizzle = { \

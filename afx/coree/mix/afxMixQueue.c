@@ -199,7 +199,7 @@ _AMX afxError _AmxMqueSubmitMixCommands(afxMixQueue mque, afxUnit cnt, amxSubmis
 
             if (mctx->state != amxContextState_INTERNAL_EXECUTING)
             {
-                if (mctx->state = amxContextState_EXECUTABLE)
+                if (mctx->state == amxContextState_EXECUTABLE)
                     mctx->state = amxContextState_PENDING;
             }
             else
@@ -401,7 +401,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRema
                 iorp->Remap.mapOps[i].placeholder = map->placeholder;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }
@@ -431,7 +431,7 @@ _AMX afxError _AmxMqueRemapBuffers(afxMixQueue mque, afxUnit mapCnt, _amxBufRema
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }

@@ -99,5 +99,6 @@ _AUX afxError AfxLoadThemes(afxEnvironment env, afxUnit cnt, afxUri const uri[],
     afxUri uri2;
     AfxMakeUri(&uri2, 0, "//./z/video/font-256.tga", 0);
     //AvxLoadRasters(dsys, avxRasterUsage_TEXTURE, NIL, 1, &uri2, &dsys->fntRas);
-
+    
+    return err;
 }

@@ -40,17 +40,17 @@ afxBool ClipTestInside(afxV4d v, int plane)
 
     switch (plane)
     {
-    case 0: return v[0] >= -v[3]; // left
-    case 1: return v[0] <= v[3]; // right
-    case 2: return v[1] >= -v[3]; // bottom
-    case 3: return v[1] <= v[3]; // top
-    case 4: return v[2] >= -v[3]; // near
-    case 5: return v[2] <= v[3]; // far
+    case 0: return v.v[0] >= -v.v[3]; // left
+    case 1: return v.v[0] <= v.v[3]; // right
+    case 2: return v.v[1] >= -v.v[3]; // bottom
+    case 3: return v.v[1] <= v.v[3]; // top
+    case 4: return v.v[2] >= -v.v[3]; // near
+    case 5: return v.v[2] <= v.v[3]; // far
     }
     return FALSE;
 }
 
-void ClipIntersectVertices(afxV4d v, afxV4d a, afxV4d b, int plane)
+afxV4d ClipIntersectVertices(afxV4d a, afxV4d b, int plane)
 {
 
     // Interpolating Between Vertices
@@ -62,16 +62,16 @@ void ClipIntersectVertices(afxV4d v, afxV4d a, afxV4d b, int plane)
 
     switch (plane)
     {
-    case 0: aVal = a[0] + a[3]; bVal = b[0] + b[3]; break; // x >= -w
-    case 1: aVal = a[3] - a[0]; bVal = b[3] - b[0]; break; // x <= +w
-    case 2: aVal = a[1] + a[3]; bVal = b[1] + b[3]; break;
-    case 3: aVal = a[3] - a[1]; bVal = b[3] - b[1]; break;
-    case 4: aVal = a[2] + a[3]; bVal = b[2] + b[3]; break;
-    case 5: aVal = a[3] - a[2]; bVal = b[3] - b[2]; break;
+    case 0: aVal = a.v[0] + a.v[3]; bVal = b.v[0] + b.v[3]; break; // x >= -w
+    case 1: aVal = a.v[3] - a.v[0]; bVal = b.v[3] - b.v[0]; break; // x <= +w
+    case 2: aVal = a.v[1] + a.v[3]; bVal = b.v[1] + b.v[3]; break;
+    case 3: aVal = a.v[3] - a.v[1]; bVal = b.v[3] - b.v[1]; break;
+    case 4: aVal = a.v[2] + a.v[3]; bVal = b.v[2] + b.v[3]; break;
+    case 5: aVal = a.v[3] - a.v[2]; bVal = b.v[3] - b.v[2]; break;
     }
 
     t = aVal / (aVal - bVal);
-    AfxV4dMix(v, a, b, t); // mix(a, b, t); // Linear interpolation in homogeneous space
+    return AfxV4dMix(a, b, t); // mix(a, b, t); // Linear interpolation in homogeneous space
 }
 
 afxUnit ClipTriangle(afxUnit vtxCnt, afxV4d input[], afxV4d vertices[])
@@ -90,19 +90,19 @@ afxUnit ClipTriangle(afxUnit vtxCnt, afxV4d input[], afxV4d vertices[])
 
             if (currIn && prevIn)
             {
-                AfxV4dCopy(vertices[rsltCnt], /*current*/input[i]);
+                vertices[rsltCnt] = /*current*/input[i];
                 ++rsltCnt;
             }
             else if (currIn && !prevIn)
             {
-                ClipIntersectVertices(vertices[rsltCnt], /*prev*/input[(i + vtxCnt - 1) % vtxCnt], /*current*/input[i], plane);
+                vertices[rsltCnt] = ClipIntersectVertices(/*prev*/input[(i + vtxCnt - 1) % vtxCnt], /*current*/input[i], plane);
                 ++rsltCnt;
-                AfxV4dCopy(vertices[rsltCnt], /*current*/input[i]);
+                vertices[rsltCnt] = /*current*/input[i];
                 ++rsltCnt;
             }
             else if (!currIn && prevIn)
             {
-                ClipIntersectVertices(vertices[rsltCnt], /*prev*/input[(i + vtxCnt - 1) % vtxCnt], /*current*/input[i], plane);
+                vertices[rsltCnt] = ClipIntersectVertices(/*prev*/input[(i + vtxCnt - 1) % vtxCnt], /*current*/input[i], plane);
                 ++rsltCnt;
             }
             // else both out -> discard edge.

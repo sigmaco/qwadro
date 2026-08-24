@@ -117,21 +117,21 @@ AFXINL afxReal      AfxAtan2f(afxReal y, afxReal x);
 // VECTOR                                                                     //
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void     AfxSinV2d(afxV2d v, afxV2d const in); // v = sin(in)
-AFXINL void     AfxSinV3d(afxV3d v, afxV3d const in); // v = sin(in)
-AFXINL void     AfxSinV4d(afxV4d v, afxV4d const in); // v = sin(in)
+AFXINL afxV2d     AfxV2dSin(afxV2d const in); // v = sin(in)
+AFXINL afxV3d     AfxV3dSin(afxV3d const in); // v = sin(in)
+AFXINL afxV4d     AfxV4dSin(afxV4d const in); // v = sin(in)
 
-AFXINL void     AfxCosV2d(afxV2d v, afxV2d const in); // v = cos(in)
-AFXINL void     AfxCosV3d(afxV3d v, afxV3d const in); // v = cos(in)
-AFXINL void     AfxCosV4d(afxV4d v, afxV4d const in); // v = cos(in)
+AFXINL afxV2d     AfxV2dCos(afxV2d const in); // v = cos(in)
+AFXINL afxV3d     AfxV3dCos(afxV3d const in); // v = cos(in)
+AFXINL afxV4d     AfxV4dCos(afxV4d const in); // v = cos(in)
 
-AFXINL void     AfxTanV2d(afxV2d v, afxV2d const in); // v = tan(in)
-AFXINL void     AfxTanV3d(afxV3d v, afxV3d const in); // v = tan(in)
-AFXINL void     AfxTanV4d(afxV4d v, afxV4d const in); // v = tan(in)
+AFXINL afxV2d     AfxV2dTan(afxV2d const in); // v = tan(in)
+AFXINL afxV3d     AfxV3dTan(afxV3d const in); // v = tan(in)
+AFXINL afxV4d     AfxV4dTan(afxV4d const in); // v = tan(in)
 
-AFXINL void     AfxAcosV2d(afxV2d v, afxV2d const in); // v = acos(in)
-AFXINL void     AfxAcosV3d(afxV3d v, afxV3d const in); // v = acos(in)
-AFXINL void     AfxAcosV4d(afxV4d v, afxV4d const in); // v = acos(in)
+AFXINL afxV2d     AfxV2dAcos(afxV2d const in); // v = acos(in)
+AFXINL afxV3d     AfxV3dAcos(afxV3d const in); // v = acos(in)
+AFXINL afxV4d     AfxV4dAcos(afxV4d const in); // v = acos(in)
 
 /*
     The atan function, or arc tangent, is a trigonometric operation. It is the inverse of the tangent function. 
@@ -139,11 +139,11 @@ AFXINL void     AfxAcosV4d(afxV4d v, afxV4d const in); // v = acos(in)
     This angle is expressed in radians, and the result lies within the interval (-Pi / 2, Pi / 2)
 */
 
-AFXINL void     AfxAtanV2d(afxV2d v, afxV2d const in); // v = atan(in)
-AFXINL void     AfxAtanV3d(afxV3d v, afxV3d const in); // v = atan(in)
-AFXINL void     AfxAtanV4d(afxV4d v, afxV4d const in); // v = atan(in)
+AFXINL afxV2d     AfxV2dAtan(afxV2d const in); // v = atan(in)
+AFXINL afxV3d     AfxV3dAtan(afxV3d const in); // v = atan(in)
+AFXINL afxV4d     AfxV4dAtan(afxV4d const in); // v = atan(in)
 
-AFXINL void     AfxComputeTriangleNormal(afxV3d const a, afxV3d const b, afxV3d const c, afxReal n[3]);
+AFXINL afxV3d     AfxComputeTriangleNormal(afxV3d const a, afxV3d const b, afxV3d const c);
 
 /**
     Barycentric coordinates are very useful in 2D and 3D graphics. 
@@ -157,13 +157,13 @@ AFXINL void     AfxComputeTriangleNormal(afxV3d const a, afxV3d const b, afxV3d 
     Returns a point in Barycentric coordinates, using the specified position vectors.
 */
 
-AFXINL void     AfxBarycentricV2d(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxReal f, afxReal g);
-AFXINL void     AfxBarycentricV3d(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxReal f, afxReal g);
-AFXINL void     AfxBarycentricV4d(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxReal f, afxReal g);
+AFXINL afxV2d     AfxV2dBarycentric(afxV2d const a, afxV2d const b, afxV2d const c, afxReal f, afxReal g);
+AFXINL afxV3d     AfxV3dBarycentric(afxV3d const a, afxV3d const b, afxV3d const c, afxReal f, afxReal g);
+AFXINL afxV4d     AfxV4dBarycentric(afxV4d const a, afxV4d const b, afxV4d const c, afxReal f, afxReal g);
 
-AFXINL void     AfxBarycentricV2d2(afxV2d v, afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const f, afxV2d const g);
-AFXINL void     AfxBarycentricV3d2(afxV3d v, afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const f, afxV3d const g);
-AFXINL void     AfxBarycentricV4d2(afxV4d v, afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const f, afxV4d const g);
+AFXINL afxV2d     AfxV2dBarycentric2(afxV2d const a, afxV2d const b, afxV2d const c, afxV2d const f, afxV2d const g);
+AFXINL afxV3d     AfxV3dBarycentric2(afxV3d const a, afxV3d const b, afxV3d const c, afxV3d const f, afxV3d const g);
+AFXINL afxV4d     AfxV4dBarycentric2(afxV4d const a, afxV4d const b, afxV4d const c, afxV4d const f, afxV4d const g);
 
 ////////////////////////////////////////////////////////////////////////////////
 // QUATERNION (aka QWATERNION)                                                //
@@ -176,6 +176,6 @@ AFXINL void     AfxBarycentricV4d2(afxV4d v, afxV4d const a, afxV4d const b, afx
 /// f = Weighting factor.
 /// g = Weighting factor.
 
-AFXINL void AfxQuatBarycentric(afxQuat q, afxQuat const a, afxQuat const b, afxQuat const c, afxReal f, afxReal g);
+AFXINL afxQuat AfxQuatBarycentric(afxQuat const a, afxQuat const b, afxQuat const c, afxReal f, afxReal g);
 
 #endif//AFX_TRIGONOMETRY_H

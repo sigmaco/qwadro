@@ -74,8 +74,8 @@ _ARX afxCmdId AsxCmdApplyRootMotionVectors(arxContext ctx, arxPose pose, afxV3d 
     AFX_ASSERT(cmd);
 
     cmd->ApplyRootMotionVectors.pose = pose;
-    AfxV3dCopy(cmd->ApplyRootMotionVectors.translation, translation);
-    AfxV3dCopy(cmd->ApplyRootMotionVectors.rotation, rotation);
+    cmd->ApplyRootMotionVectors.translation = translation;
+    cmd->ApplyRootMotionVectors.rotation = rotation;
 
     return 0;
 }
@@ -145,7 +145,7 @@ _ARX afxCmdId AsxCmdSamplePuppetAnimationsAcceleratedLOD(arxContext ctx, arxPupp
 
     cmd->SamplePuppetAnimationsAccelerated.bod = bod;
     cmd->SamplePuppetAnimationsAccelerated.allowedErr = allowedErr;
-    AfxM4dCopy(cmd->SamplePuppetAnimationsAccelerated.displace, displace ? displace : AFX_M4D_IDENTITY);
+    cmd->SamplePuppetAnimationsAccelerated.displace = displace;
     cmd->SamplePuppetAnimationsAccelerated.pivotCnt = pivotCnt;
     cmd->SamplePuppetAnimationsAccelerated.plce = plce;
     cmd->SamplePuppetAnimationsAccelerated.scratch = scratch;
@@ -340,10 +340,10 @@ _ARX afxCmdId AsxCmdRebuildPose(arxContext ctx, arxSkeleton skl, afxUnit baseJnt
     cmd->RebuildPose.rigid = rigid;
     cmd->RebuildPose.pose = pose;
 
-    if (displace)
-        AfxM4dCopy(cmd->RebuildPose.displace, displace);
-    else
-        AfxM4dReset(cmd->RebuildPose.displace);
+    //if (displace)
+        cmd->RebuildPose.displace = displace;
+    //else
+        //AfxM4dReset(cmd->RebuildPose.displace);
 
     return cmdId;
 }
@@ -398,10 +398,10 @@ _ARX afxCmdId AsxCmdBuildPlacement(arxContext ctx, arxSkeleton skl, afxUnit base
     cmd->BuildPlacement.noComposite = noComposite;
     cmd->BuildPlacement.plce = plce;
 
-    if (displace)
-        AfxM4dCopy(cmd->BuildPlacement.displace, displace);
-    else
-        AfxM4dReset(cmd->BuildPlacement.displace);
+    //if (displace)
+        cmd->BuildPlacement.displace = displace;
+    //else
+        //AfxM4dReset(cmd->BuildPlacement.displace);
 
     return cmdId;
 }

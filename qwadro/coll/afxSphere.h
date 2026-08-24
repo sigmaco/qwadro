@@ -21,17 +21,18 @@
 #define AFX_SPHERE_H
 
 #include "qwadro/coll/afxVolume.h"
+#include "qwadro/math/afxArithmetic.h"
 
 #define AFX_SPHERE_RADIUS (3)
 
 #define AFX_SPHERE(x_, y_, z_, radius_) \
     (afxSphere){ .xyzr = { (x_), (y_), (z_), (radius_) }
 
-AFXINL afxSphere*   AfxMakeSphere(afxSphere* sph, afxV3d const centre, afxReal radius);
+AFXINL afxSphere    AfxMakeSphere(afxV3d const centre, afxReal radius);
 
 AFXINL afxReal      AfxGetSphereRadius(afxSphere const sph);
 
-AFXINL void         AfxGetSphereOrigin(afxSphere const sph, afxV4d centre);
+AFXINL afxV4d       AfxGetSphereOrigin(afxSphere const sph);
 
 AFXINL afxBox       AfxGetSphereAabb(afxSphere const sph);
 
@@ -43,7 +44,9 @@ AFXINL afxBox       AfxGetSphereAabb(afxSphere const sph);
     their centers is less than or equal to the sum of their radii.
 */
 
-AFXINL afxUnit AfxDoesSphereIntersects(afxSphere* sph, afxUnit cnt, afxSphere const others[]);
+AFXINL afxUnit AfxSphereIntersectsAny(afxSphere const sph, afxUnit cnt, afxSphere const others[]);
+
+AFXINL afxUnit AfxSphereIntersect(afxSphere const sph, afxSphere const b);
 
 /*
     The AfxDoesSphereIntersectsAabbs() function tests whether a sphere intersects with an array of axis-aligned boxes.
@@ -54,16 +57,17 @@ AFXINL afxUnit AfxDoesSphereIntersects(afxSphere* sph, afxUnit cnt, afxSphere co
     Returns the index for the first collided box in array, else AFX_INVALID_INDEX for none of them.
 */
 
-AFXINL afxUnit AfxDoesSphereIntersectsAabbs(afxSphere* sph, afxUnit cnt, afxBox const boxes[]);
+AFXINL afxUnit AfxSphereIntersectsAabbs(afxSphere const sph, afxUnit cnt, afxBox const boxes[]);
+AFXINL afxUnit AfxSphereIntersectsAabb(afxSphere const sph, afxBox const box);
 
 // Tests whether a given point is inside, on, or outside a sphere. 
 // The function compares the squared distance between the point and the center of the sphere with the square of the radius.
 // Returns: -1 = outside, 0 = on surface, 1 = inside
-AFXINL afxInt AfxTestSphereEnglobingPoint(afxSphere const* sph, afxV3d const point);
+AFXINL afxInt AfxTestSphereEnglobingPoint(afxSphere const sph, afxV3d const point);
 
 // Tests whether a given point is inside, on, or outside a sphere. 
 // The function compares the squared distance between the point and the center of the sphere with the square of the radius.
 // Returns: -1 = outside, 0 = on surface, 1 = inside
-AFXINL afxInt AfxTestSphereEnglobingPoints(afxSphere const* sph, afxBool all, afxBool fully, afxUnit cnt, afxV3d const points[]);
+AFXINL afxInt AfxTestSphereEnglobingPoints(afxSphere const sph, afxBool all, afxBool fully, afxUnit cnt, afxV3d const points[]);
 
 #endif//AFX_SPHERE_H

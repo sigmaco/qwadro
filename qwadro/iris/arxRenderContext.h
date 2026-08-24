@@ -99,8 +99,8 @@ ARX void ArxComputeLookToMatrices
     arxRenderContext rctx,
     afxV3d const eye,
     afxV3d const dir,
-    afxM4d v,
-    afxM4d iv
+    afxM4d* v,
+    afxM4d* iv
 );
 
 ARX void ArxComputeLookAtMatrices
@@ -108,8 +108,8 @@ ARX void ArxComputeLookAtMatrices
     arxRenderContext rctx,
     afxV3d const eye,
     afxV3d const target,
-    afxM4d v,
-    afxM4d iv
+    afxM4d* v,
+    afxM4d* iv
 );
 
 ARX void ArxComputeBasicOrthographicMatrices
@@ -118,8 +118,8 @@ ARX void ArxComputeBasicOrthographicMatrices
     afxReal aspectRatio,
     afxReal scale,
     afxReal range,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeOrthographicMatrices
@@ -128,8 +128,8 @@ ARX void ArxComputeOrthographicMatrices
     afxV2d const extent,
     afxReal near,
     afxReal far,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeOffcenterOrthographicMatrices
@@ -141,16 +141,16 @@ ARX void ArxComputeOffcenterOrthographicMatrices
     afxReal top,
     afxReal near,
     afxReal far,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeBoundingOrthographicMatrices
 (
     arxRenderContext rctx,
     afxBox const aabb,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeFovMatrices
@@ -160,8 +160,8 @@ ARX void ArxComputeFovMatrices
     afxReal aspectRatio,
     afxReal near,
     afxReal far,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeFrustrumMatrices
@@ -173,8 +173,8 @@ ARX void ArxComputeFrustrumMatrices
     afxReal top,
     afxReal near,
     afxReal far,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputeBasicPerspectiveMatrices
@@ -182,8 +182,8 @@ ARX void ArxComputeBasicPerspectiveMatrices
     arxRenderContext rctx,
     afxReal aspectRatio,
     afxReal range,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX void ArxComputePerspectiveMatrices
@@ -192,8 +192,8 @@ ARX void ArxComputePerspectiveMatrices
     afxV2d const extent,
     afxReal near,
     afxReal far,
-    afxM4d p,
-    afxM4d ip
+    afxM4d* p,
+    afxM4d* ip
 );
 
 ARX afxError ArxStageMaterials
@@ -201,7 +201,7 @@ ARX afxError ArxStageMaterials
     arxRenderContext rctx, 
     arxMtd mtd, 
     afxUnit cnt, 
-    afxUnit indices[]
+    afxUnit const indices[]
 );
 
 ARX afxError ArxUseMaterials

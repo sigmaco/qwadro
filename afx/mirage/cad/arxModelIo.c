@@ -352,7 +352,7 @@ _ARX afxError ArxArchiveMeshes(afxStream out, afxString* sdb, afxUnit cnt, arxMe
             msvas[i].flags = msh->attrInfo[i].flags;
 
             avxFormatDescription pfd;
-            AvxDescribeFormats(1, &msvas[i].encodedFmt, &pfd);
+            AvxDescribeFormat(msvas[i].encodedFmt, &pfd);
 
             afxSize fmtSiz = pfd.stride;// AfxVertexFormatGetSize(msvas[i].encodedFmt);
             msvas[i].baseDataOffset = AfxAskStreamPosn(out);
@@ -449,8 +449,8 @@ _ARX afxError ArxDownloadModel(arxModel mdl, afxStream out)
     mdlHdr.fcc[2] = 'd';
     mdlHdr.fcc[3] = '\0';
     mdlHdr.hdrSiz = sizeof(mdlHdr) - sizeof(urdMark);
-    AfxM3dReset(mdlHdr.basis);
-    AfxV3dZero(mdlHdr.origin);
+    mdlHdr.basis = AfxM3dIdentity();
+    mdlHdr.origin = AfxV3dZero();
     mdlHdr.unitsPerMeter = 1.f;
     mdlHdr.lodType = mdl->lodType;
     mdlHdr.boneCnt = mdl->skl->boneCnt;
@@ -803,7 +803,7 @@ _ARX afxError ArxUploadMeshes(arxScenario scio, afxArena* arena, afxString const
             for (afxUnit k = 0; k < mshHdr->morphCnt; k++)
             {
                 avxFormatDescription pfd;
-                AvxDescribeFormats(1, &vaHdr.encodedFmt, &pfd);
+                AvxDescribeFormat(vaHdr.encodedFmt, &pfd);
                 afxUnit stride = pfd.stride;// AfxVertexFormatGetSize(vaHdr.encodedFmt);
 
                 if (ArxUploadVertexData(msh, j, k, 0, mshHdr->vtxCnt, in, stride))

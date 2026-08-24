@@ -96,7 +96,7 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
-    rasi.usage = avxRasterUsage_SRC;
+    rasi.usage = avxRasterUsage_PACK;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {
@@ -106,7 +106,8 @@ _AUX afxError AfxLoadWindowIcon(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
-    rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
+    avxExtent extent = AvxGetRasterExtent(ras, rgn.lodIdx);
+    rgn.extent = extent;
 
     afxError err2 = AfxChangeWindowIcon(wnd, ras, &rgn);
 
@@ -178,7 +179,7 @@ _AUX afxError AfxLoadWindowCursor(afxWindow wnd, afxUri const* uri)
     avxRaster ras;
     avxRasterInfo rasi = { 0 };
     rasi.flags = avxRasterFlag_2D;
-    rasi.usage = avxRasterUsage_SRC;
+    rasi.usage = avxRasterUsage_PACK;
     avxRasterFile tga = { 0 };
     if (AvxLoadRasters(dsys, 1, &rasi, &uri[0], &tga, &ras))
     {
@@ -188,8 +189,8 @@ _AUX afxError AfxLoadWindowCursor(afxWindow wnd, afxUri const* uri)
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     avxRasterRegion rgn = { 0 };
-    rgn.whd = AvxGetRasterExtent(ras, rgn.lodIdx);
-
+    avxExtent extent = AvxGetRasterExtent(ras, rgn.lodIdx);
+    rgn.extent = extent;
     afxError err2 = AfxChangeWindowCursor(wnd, ras, &rgn, 0, 0);
 
     if (err2 && (afxError_UNSUPPORTED != err2))
@@ -343,7 +344,9 @@ _AUX afxError AfxRequestWindowCursor(afxWindow wnd, afxRect const* confinement, 
     else
     {
         // Possibly replace Union with Intersection if that's more appropriate.
-        if (AfxIntersectRects(&wnd->cursConfinRect, &wnd->surfaceRc, confinement))
+        wnd->cursConfinRect = AfxGetIntersectedRect(&wnd->surfaceRc, confinement);
+
+        if (!AfxIsRectVoid(&wnd->cursConfinRect))
         {
             wnd->cursConfined = TRUE;
         }
@@ -596,8 +599,7 @@ _AUX afxError AfxAdjustWindowBounds(afxWindow wnd, afxRect const* min, afxRect c
     if (max)
         wnd->frameRcMax = *max;
 
-    afxRect rc;
-    AfxClampRect(&rc, &wnd->frameRc, &wnd->frameRcMin, &wnd->frameRcMax);
+    afxRect rc = AfxGetClampedRect(&wnd->frameRc, &wnd->frameRcMin, &wnd->frameRcMax);
 
     // FIXME: Should call AfxAdjustWindow whether new bounds constrain the current surface area.
 }
@@ -671,7 +673,7 @@ _AUX afxError AfxAdjustWindow(afxWindow wnd, afxDisplay disp, afxUnit dport, afx
         err2 = err;
     }
 
-    AFX_ASSERT(AfxDoesRectContain(&wnd->frameRc, &wnd->surfaceRc));
+    AFX_ASSERT(AfxRectContains(&wnd->frameRc, &wnd->surfaceRc));
 
 #if  0
     afxSurface frameDout = wnd->frameDout;
@@ -731,20 +733,20 @@ _AUX afxError _AuxAdjustWindowFromNdc(afxWindow wnd, afxDisplay disp, afxUnit dp
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
-    AFX_ASSERT(extent);
+    //AFX_ASSERT(extent);
 
     afxDesktop* dwm = wnd->dwm;
     afxRect rc = { 0 };
 
-    if (offset)
+    //if (offset)
     {
-        rc.x = (afxUnit)AfxUnndcf(offset[0], dwm->res.x - 1);
-        rc.y = (afxUnit)AfxUnndcf(offset[1], dwm->res.y - 1);
+        rc.x = (afxUnit)AfxUnndcf(offset.v[0], dwm->res.x - 1);
+        rc.y = (afxUnit)AfxUnndcf(offset.v[1], dwm->res.y - 1);
     }
 
-    AFX_ASSERT(extent);
-    rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-    rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+    //AFX_ASSERT(extent);
+    rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+    rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
 
     if (AfxAdjustWindow(wnd, disp, dport, anchor, &rc))
         AfxThrowError();
@@ -760,15 +762,15 @@ _AUX afxError _AuxAdjustWindowSurfaceFromNdc(afxWindow wnd, afxDisplay disp, afx
     afxDesktop* dwm = wnd->dwm;
     afxRect rc = { 0 };
 
-    if (offset)
+    //if (offset)
     {
-        rc.x = (afxUnit)AfxUnndcf(offset[0], wnd->frameRc.w - 1);
-        rc.y = (afxUnit)AfxUnndcf(offset[1], wnd->frameRc.h - 1);
+        rc.x = (afxUnit)AfxUnndcf(offset.v[0], wnd->frameRc.w - 1);
+        rc.y = (afxUnit)AfxUnndcf(offset.v[1], wnd->frameRc.h - 1);
     }
 
-    AFX_ASSERT(extent);
-    rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-    rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+    //AFX_ASSERT(extent);
+    rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+    rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
 
     if (AfxAdjustWindow(wnd, disp, dport, anchor, &rc))
         AfxThrowError();
@@ -915,16 +917,16 @@ _AUX afxError _AuxWndSwCtorCb(afxWindow wnd, void** args, afxUnit invokeNo)
     wnd->alwaysOnTop = FALSE;
     wnd->active = FALSE;
     wnd->focused = FALSE;
-    AfxV2dZero(wnd->cursPos);
-    AfxV2dZero(wnd->cursMove);
-    AfxV2dZero(wnd->cursPosNdc);
-    AfxV2dZero(wnd->cursMoveNdc);
+    wnd->cursPos = AFX_V2D_ZERO;
+    wnd->cursMove = AFX_V2D_ZERO;
+    wnd->cursPosNdc = AFX_V2D_ZERO;
+    wnd->cursMoveNdc = AFX_V2D_ZERO;
 
     AfxGetClock(&wnd->startClock);
     wnd->lastClock = wnd->startClock;
 
-    AfxV2dZero(wnd->grabPoint);
-    AfxV2dZero(wnd->hoveredPoint);
+    wnd->grabPoint = AFX_V2D_ZERO;
+    wnd->hoveredPoint = AFX_V2D_ZERO;
 
     wnd->grabbedWidg = NIL;
     wnd->hoveredWidg = NIL;
@@ -990,18 +992,18 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
         cfg2.eventCb = AFX_WND_EVENT_HANDLER;
 
     afxDesktop* dwm = &env->dwm;
-    afxRect rc = { .w = cfg2.dout.ccfg.whd.w,.h = cfg2.dout.ccfg.whd.h };
+    afxRect rc = { .w = cfg2.dout.ccfg.extent.w,.h = cfg2.dout.ccfg.extent.h };
 
-    if (origin)
+    //if (origin)
     {
-        rc.x = (afxUnit)AfxUnndcf(origin[0], dwm->res.x - 1);
-        rc.y = (afxUnit)AfxUnndcf(origin[1], dwm->res.y - 1);
+        rc.x = (afxUnit)AfxUnndcf(origin.v[0], dwm->res.x - 1);
+        rc.y = (afxUnit)AfxUnndcf(origin.v[1], dwm->res.y - 1);
     }
 
-    if (extent)
+    if (extent.v[0] * extent.v[1])
     {
-        rc.w = (afxUnit)AfxUnndcf(extent[0], dwm->res.w);
-        rc.h = (afxUnit)AfxUnndcf(extent[1], dwm->res.h);
+        rc.w = (afxUnit)AfxUnndcf(extent.v[0], dwm->res.w);
+        rc.h = (afxUnit)AfxUnndcf(extent.v[1], dwm->res.h);
     }
     else
     {
@@ -1011,8 +1013,8 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
 
     cfg2.x = rc.x;
     cfg2.y = rc.y;
-    cfg2.dout.ccfg.whd.w = rc.w;
-    cfg2.dout.ccfg.whd.h = rc.h;
+    cfg2.dout.ccfg.extent.w = rc.w;
+    cfg2.dout.ccfg.extent.h = rc.h;
 
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &cfg2.dout.dsys);
 
@@ -1024,7 +1026,7 @@ _AUX afxError _AvxEnvSwConfigureWndCb(afxEnvironment env, afxWindowConfig* cfg, 
     AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
 
     afxError err2;
-    if (err2 = AvxConfigureSurface(dpy, &cfg2.dout))
+    if ((err2 = AvxConfigureSurface(dpy, &cfg2.dout)))
     {
         AfxThrowError();
         err = err2;

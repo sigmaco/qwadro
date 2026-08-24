@@ -81,17 +81,16 @@ ARX void ArxComputePuppetMotionVectors
     arxPuppet pup, 
     afxReal secsElapsed, 
     afxBool inverse, 
-    afxV3d translation, 
-    afxV3d rotation
+    afxV3d* translation, 
+    afxV3d* rotation
 );
 
-ARX void ArxComputePuppetMotionMatrix
+ARX afxM4d ArxComputePuppetMotionMatrix
 (
     arxPuppet pup, 
     afxReal secsElapsed, 
     afxBool inverse, 
-    afxM4d const mm, 
-    afxM4d m
+    afxM4d const mm
 );
 
 

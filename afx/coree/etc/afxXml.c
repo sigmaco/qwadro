@@ -263,8 +263,8 @@ static afxError _AfxXmlParseAttribs(afxXml* xml, afxXmlNode* elem, struct xml_pa
                 {
                     if (sscanf(token, "%[^=]", str_name, str_content) != 1)
                     {
-                        AfxDeallocate((void**)&str_name, AfxHere());
-                        AfxDeallocate((void**)&str_content, AfxHere());
+                        AfxDeallocate(AfxHere(), (void**)&str_name);
+                        AfxDeallocate(AfxHere(), (void**)&str_content);
                         continue;
                     }
                     else *str_content = '\0';
@@ -707,7 +707,7 @@ _AFX afxError AfxParseXml(afxXml* xml, void* buffer, afxUnit length)
 
             for (afxUnit i = 0; i < elemCnt; i++)
             {
-                afxXmlElement*elem = &xml->elems[i];//AfxGetArrayUnit(&xml->tempElemArr, i);
+                afxXmlElement*elem = &xml->elems[i];//AfxGetAtArray(&xml->tempElemArr, i);
                 //AfxReportComment("%u/%u; %u/%u; %u/%u; %.*s : %.8s;", i, elem->parentIdx, elem->baseTagIdx, elem->tagCnt, elem->baseChildIdx, elem->childCnt, AfxPushString(&elem->name), 0);
             }
             int a = 1;
@@ -725,7 +725,7 @@ _AFX afxError AfxParseXml(afxXml* xml, void* buffer, afxUnit length)
             {
                 for (afxUnit i = 0; i < elemCnt; i++)
                 {
-                    afxXmlElement* elem = AfxGetArrayUnit(&xml->tempElemArr, i);
+                    afxXmlElement* elem = AfxGetAtArray(&xml->tempElemArr, i);
 
                     if (elem->parentIdx == activeParentIdx)
                     {
@@ -757,8 +757,8 @@ _AFX afxError AfxParseXml(afxXml* xml, void* buffer, afxUnit length)
 
             for (afxUnit i = 0; i < elemCnt; i++)
             {
-                afxXmlElement* old = AfxGetArrayUnit(&xml->tempElemArr, i);                
-                afxXmlElement* neo = AfxGetArrayUnit(&sorted, indicesMap[i]);
+                afxXmlElement* old = AfxGetAtArray(&xml->tempElemArr, i);                
+                afxXmlElement* neo = AfxGetAtArray(&sorted, indicesMap[i]);
                 neo->baseChildIdx = indicesMap[old->baseChildIdx];
             }
 
@@ -771,7 +771,7 @@ _AFX afxError AfxParseXml(afxXml* xml, void* buffer, afxUnit length)
 #if 0
             for (afxUnit i = 0; i < elemCnt; i++)
             {
-                afxXmlElement*elem = &xml->elems[i];//AfxGetArrayUnit(&xml->tempElemArr, i);
+                afxXmlElement*elem = &xml->elems[i];//AfxGetAtArray(&xml->tempElemArr, i);
                 AfxReportMessage("# %u, @ %u, [ %u, %u ], [ %u, %u ], %.*s : %.8s;", i, elem->parentIdx, elem->baseTagIdx, elem->tagCnt, elem->baseChildIdx, elem->childCnt, AfxPushString(&elem->name), 0);
             }
 #endif

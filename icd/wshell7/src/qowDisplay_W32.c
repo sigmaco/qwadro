@@ -243,7 +243,7 @@ _QOW afxError _QowVduCtorCb(afxDisplayPort vdu, void** args, afxUnit invokeNo)
                         for (afxUnit i = 0; i < fmtCnt; i++)
                         {
                             avxFormatDescription fd;
-                            AvxDescribeFormats(1, &formats[i], &fd);
+                            AvxDescribeFormat(formats[i], &fd);
                             AfxReportMessage("fmt %.*s", AfxPushString(&fd.tag));
                         }
                     }
@@ -393,7 +393,7 @@ _QOW afxUnit _QowDpyQueryModesCb(afxDisplay dpy, afxUnit port, avxFormat fmt, af
     {
         static DXGI_FORMAT const avxToDxgiFmtMap[] =
         {
-            [avxFormat_UNDEFINED] = DXGI_FORMAT_UNKNOWN,
+            [avxFormat_NIL] = DXGI_FORMAT_UNKNOWN,
             [avxFormat_RGBA32f] = DXGI_FORMAT_R32G32B32A32_FLOAT,
             [avxFormat_RGBA32u] = DXGI_FORMAT_R32G32B32A32_UINT,
             [avxFormat_RGBA32i] = DXGI_FORMAT_R32G32B32A32_SINT,
@@ -503,7 +503,7 @@ _QOW afxUnit _QowDpyQueryModesCb(afxDisplay dpy, afxUnit port, avxFormat fmt, af
     if (dpy->type == qowDisplayType_GDI)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &fmt, &pfd);
+        AvxDescribeFormat(fmt, &pfd);
         AFX_ASSERT(pfd.rasCaps);
 
         HDC hScreenDc = GetDC(NIL);
@@ -618,11 +618,11 @@ _QOW afxError _QowDpyGetGammaControlCb(afxDisplay dpy, afxUnit port, afxGammaCur
         DXGI_GAMMA_CONTROL dxgiGamma;
         hr = vdu->pDxgiOutput->lpVtbl->GetGammaControl(vdu->pDxgiOutput, &dxgiGamma);
 
-        AfxV3dSet(desc->offset, dxgiGamma.Offset.Red, dxgiGamma.Offset.Green, dxgiGamma.Offset.Blue);
-        AfxV3dSet(desc->scale, dxgiGamma.Scale.Red, dxgiGamma.Scale.Green, dxgiGamma.Scale.Blue);
+        desc->offset = AfxV3dMake(dxgiGamma.Offset.Red, dxgiGamma.Offset.Green, dxgiGamma.Offset.Blue);
+        desc->scale = AfxV3dMake(dxgiGamma.Scale.Red, dxgiGamma.Scale.Green, dxgiGamma.Scale.Blue);
 
         for (afxUnit i = 0; i < 1025; i++)
-            AfxV3dSet(desc->curve[i], dxgiGamma.GammaCurve[i].Red, dxgiGamma.GammaCurve[i].Green, dxgiGamma.GammaCurve[i].Blue);
+            desc->curve[i] = AfxV3dMake(dxgiGamma.GammaCurve[i].Red, dxgiGamma.GammaCurve[i].Green, dxgiGamma.GammaCurve[i].Blue);
 
         return err;
     }
@@ -645,18 +645,18 @@ _QOW afxError _QowDpySetGammaControlCb(afxDisplay dpy, afxUnit port, afxGammaCur
     if (dpy->type == qowDisplayType_DXGI)
     {
         DXGI_GAMMA_CONTROL dxgiGamma;
-        dxgiGamma.Offset.Red = ctrl->offset[0];
-        dxgiGamma.Offset.Green = ctrl->offset[1];
-        dxgiGamma.Offset.Blue = ctrl->offset[2];
-        dxgiGamma.Scale.Red = ctrl->scale[0];
-        dxgiGamma.Scale.Green = ctrl->scale[1];
-        dxgiGamma.Scale.Blue = ctrl->scale[2];
+        dxgiGamma.Offset.Red = ctrl->offset.v[0];
+        dxgiGamma.Offset.Green = ctrl->offset.v[1];
+        dxgiGamma.Offset.Blue = ctrl->offset.v[2];
+        dxgiGamma.Scale.Red = ctrl->scale.v[0];
+        dxgiGamma.Scale.Green = ctrl->scale.v[1];
+        dxgiGamma.Scale.Blue = ctrl->scale.v[2];
 
         for (afxUnit i = 0; i < 1025; i++)
         {
-            dxgiGamma.GammaCurve[i].Red = ctrl->curve[i][0];
-            dxgiGamma.GammaCurve[i].Green = ctrl->curve[i][1];
-            dxgiGamma.GammaCurve[i].Blue = ctrl->curve[i][2];
+            dxgiGamma.GammaCurve[i].Red = ctrl->curve[i].v[0];
+            dxgiGamma.GammaCurve[i].Green = ctrl->curve[i].v[1];
+            dxgiGamma.GammaCurve[i].Blue = ctrl->curve[i].v[2];
         }
 
         HRESULT hr;
@@ -937,7 +937,7 @@ _QOW afxError _QowDpyCtorCb(afxDisplay dpy, void** args, afxUnit invokeNo)
                     for (afxUnit i = 0; i < fmtCnt; i++)
                     {
                         avxFormatDescription fd;
-                        AvxDescribeFormats(1, &formats[i], &fd);
+                        AvxDescribeFormat(formats[i], &fd);
                         AfxReportMessage("fmt %.*s", AfxPushString(&fd.tag));
                     }
                     break;
@@ -1252,7 +1252,7 @@ _QOW afxUnit _ZglEnumerateDisplayFormats(afxModule icd, afxUnit port, afxUnit cn
     for (afxUnit fmtIdx = 0; fmtIdx < fmtCnt; fmtIdx++)
     {
         pfd = (avxFormatDescription) { 0 };
-        AvxDescribeFormats(1, &formats[fmtIdx], &pfd);
+        AvxDescribeFormat(formats[fmtIdx], &pfd);
 
         int pxlAttrPairs[30][2] =
         {
@@ -1333,7 +1333,7 @@ _QOW afxUnit _ZglEnumerateDisplayModes(afxModule icd, afxUnit port, avxFormat fm
     AFX_ASSERT_OBJECTS(afxFcc_DPY, 1, &dpy);
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     AFX_ASSERT(pfd.rasCaps);
 
     HDC hScreenDc = GetDC(NIL);
@@ -1403,7 +1403,7 @@ _QOW afxUnit _ZglEnumerateDisplayModes(afxModule icd, afxUnit port, avxFormat fm
 
 afxError RegisterPresentVdus(afxModule icd)
 {
-    afxError err;
+    afxError err = 0;
 #if 0
     // enumerates all display monitors (i.e., screens) that intersect with a given device context (DC) or a clipping rectangle.
     // Optional: drawing context (NULL = entire desktop).
@@ -1555,4 +1555,5 @@ afxError RegisterPresentVdus(afxModule icd)
         ddIdx++;
     }
 #endif//USE_GDI_DISPLAY
+    return 0;
 }

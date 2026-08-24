@@ -91,7 +91,7 @@ _QOWINL afxError _QowDoutFindPixelFormat(afxSurface dout)
     }
 
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &dout->m.ccfg.rigs[0].fmt, &pfd);
+    AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
     int pxlAttrPairCnt = 0;
     int pxlAttrPairs[][2] =
@@ -332,9 +332,9 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
         avxFence fenc = ctrl->wait;
         // Just a copy of _DpuWaitForFence, just because we are not the DPU here.
         afxUnit64 oldVal = 0;
-        if (ctrl->waitValue == (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+        if (ctrl->waitValue == (oldVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value)))
         {
-            GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+            GLsync glHandle = AfxAtomicLoadPtr(&fenc->glHandleAtom);
 
             if (glHandle)
             {
@@ -410,7 +410,7 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
         AvxSignalFence(fenc, ctrl->signalValue);
 #if 0
         afxUnit64 oldVal = 0;
-        if (ctrl->signalValue > (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+        if (ctrl->signalValue > (oldVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value)))
         {
             AvxSignalFence(fenc, ctrl->signalValue);
 #if 0
@@ -418,7 +418,7 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
             avxFence fenc = ctrl->signal;
             GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
             AFX_ASSERT(gl->IsSync(glHandle));
-            glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+            glHandle = AfxAtomicExchangePtr(&fenc->glHandleAtom, glHandle);
             if (glHandle)
             {
                 AFX_ASSERT(gl->IsSync(glHandle));
@@ -443,6 +443,7 @@ _QOW afxError _ZglDoutCapture_WGL(afxDrawQueue dque, avxCaption* ctrl)
         }
     }
 #endif//_NEVER_RESTORE_WGL_CONTEXT
+    return err;
 }
 
 _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl)
@@ -479,9 +480,9 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
         avxFence fenc = ctrl->wait;
         // Just a copy of _DpuWaitForFence, just because we are not the DPU here.
         afxUnit64 oldVal = 0;
-        if (ctrl->waitValue <= (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+        if (ctrl->waitValue <= (oldVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value)))
         {
-            GLsync glHandle = AfxLoadAtomPtr(&fenc->glHandleAtom);
+            GLsync glHandle = AfxAtomicLoadPtr(&fenc->glHandleAtom);
 
             if (glHandle)
             {
@@ -727,8 +728,8 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
             {
                 for (afxUnit i = 0; i < ctrl->hintCnt; i++)
                 {
-                    afxRect rc;
-                    if (AfxIntersectRects(&rc, &dout->m.area, &ctrl->hintRcs[i]))
+                    afxRect rc = AfxGetIntersectedRect(&dout->m.area, &ctrl->hintRcs[i]);
+                    if (!AfxIsRectVoid(&rc))
                     {
                         dout->wgl.AddSwapHintRectWIN(rc.x, rc.y, rc.w, rc.h); _ZglThrowErrorOccuried();
                     }
@@ -775,7 +776,7 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
         AvxSignalFence(fenc, ctrl->signalValue);
 #if 0
         afxUnit64 oldVal = 0;
-        if (ctrl->signalValue > (oldVal = (afxUnit64)AfxLoadAtom64(&fenc->m.value)))
+        if (ctrl->signalValue > (oldVal = (afxUnit64)AfxAtomicLoad64(&fenc->m.value)))
         {
             AvxSignalFence(fenc, ctrl->signalValue);
 #if 0
@@ -783,7 +784,7 @@ _QOW afxError _ZglDoutPresent_WGL(afxDrawQueue dque, avxPresentation const* ctrl
             avxFence fenc = ctrl->signal;
             GLsync glHandle = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
             AFX_ASSERT(gl->IsSync(glHandle));
-            glHandle = AfxExchangeAtomPtr(&fenc->glHandleAtom, glHandle);
+            glHandle = AfxAtomicExchangePtr(&fenc->glHandleAtom, glHandle);
             if (glHandle)
             {
                 AFX_ASSERT(gl->IsSync(glHandle));
@@ -1226,7 +1227,7 @@ _QOW afxError _ZglRelinkDoutCb_WGL(afxSurface dout)
     if (!dout->dcPixFmt)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &dout->m.ccfg.bins[0].fmt, &pfd);
+        AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
         int pxlAttrPairCnt = 0;
         int pxlAttrPairs[][2] =
@@ -1372,7 +1373,7 @@ _QOW afxError _ZglRelinkDoutCb_WGL(afxSurface dout)
         }
     }
 
-    avxRange const screenRes =
+    avxExtent const screenRes =
     {
         GetDeviceCaps(dout->hDC, HORZRES),
         GetDeviceCaps(dout->hDC, VERTRES),
@@ -1744,7 +1745,7 @@ _QOW afxError _ZglDoutCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
 
     wglMakeCurrentWIN(bkpHdc, bkpGlrc);
 
-    avxRange const screenRes =
+    avxExtent const screenRes =
     {
         GetDeviceCaps(dout->hDC, HORZRES),
         GetDeviceCaps(dout->hDC, VERTRES),

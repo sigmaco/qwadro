@@ -97,7 +97,7 @@ AFX_DEFINE_STRUCT(_arxPupDdi)
     void(*stepCb)(arxPuppet, afxReal time);
     void(*purgeTermMotvCb)(arxPuppet);
     void(*recenterMotvClocksCb)(arxPuppet, afxReal currClock);
-    void(*compMotVecCb)(arxPuppet, afxReal secsElapsed, afxBool inverse, afxV3d translation, afxV3d rotation);
+    void(*compMotVecCb)(arxPuppet, afxReal secsElapsed, afxBool inverse, afxV3d* translation, afxV3d* rotation);
     void(*accumAnimsCb)(arxPose rslt, arxPuppet pup, afxUnit basePivotIdx, afxUnit pivotCnt, afxReal allowedErr, afxUnit const sparseJntMap[]);
 
     // temporarily here to advance works.

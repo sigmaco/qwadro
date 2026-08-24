@@ -602,6 +602,7 @@ _AFX afxError _AfxScanIcdManifests(afxSystem sys, afxString const* platform, afx
 #endif
     //AfxForEachUriResolution(afxFileFlag_R, &fileMask, (void*)_AfxParseDriverManifestCb, sys);
     int a = 0;
+    return err;
 }
 
 _AFX afxError AfxBootstrapSystem(afxSystemConfig const *config)

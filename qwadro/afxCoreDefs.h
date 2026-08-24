@@ -25,25 +25,49 @@
 #include "qwadro/afxPlatformDefs.h"
 
 #ifndef __e2coree__
-#   ifdef _DEBUG
-#       define AFX DLLIMPORT extern 
-#       define AFXINL DLLIMPORT EMBED
-#   else
-#       define AFX DLLIMPORT extern 
-#       define AFXINL DLLIMPORT EMBED
-#   endif
+#   ifndef AFX
+#       ifdef _DEBUG
+#           define AFX DLLIMPORT extern 
+#       else//_DEBUG
+#           define AFX DLLIMPORT extern 
+#       endif//_DEBUG
+#   endif//AFX
+#   ifndef AFXINL
+#       ifdef _DEBUG
+#           define AFXINL DLLIMPORT EMBED 
+#       else//_DEBUG
+#           define AFXINL DLLIMPORT EMBED 
+#       endif//_DEBUG
+#   endif//AFXINL
 #else
-#   ifdef _DEBUG
-#       define _AFX DLLEXPORT
-#       define AFX DLLEXPORT extern 
-#       define _AFXINL _AFX /*DLLEXPORT INLINE*/
-#       define AFXINL AFX /*DLLEXPORT EMBED*/
-#   else
-#       define _AFX DLLEXPORT
-#       define AFX DLLEXPORT extern 
-#       define _AFXINL DLLEXPORT INLINE
-#       define AFXINL DLLEXPORT EMBED
-#   endif
+#   ifndef _AFX
+#       ifdef _DEBUG
+#           define _AFX DLLEXPORT 
+#       else//_DEBUG
+#           define _AFX DLLEXPORT 
+#       endif//_DEBUG
+#   endif//_AFX
+#   ifndef AFX
+#       ifdef _DEBUG
+#           define AFX DLLEXPORT extern 
+#       else//_DEBUG
+#           define AFX DLLEXPORT extern 
+#       endif//_DEBUG
+#   endif//AFX
+#   ifndef _AFXINL
+#       ifdef _DEBUG
+#           define _AFXINL DLLEXPORT INLINE 
+#       else//_DEBUG
+#           define _AFXINL DLLEXPORT INLINE 
+#       endif//_DEBUG
+#   endif//_AFXINL
+#   ifndef AFXINL
+#       ifdef _DEBUG
+#           define AFXINL DLLEXPORT EMBED 
+#       else//_DEBUG
+#           define AFXINL DLLEXPORT EMBED 
+#       endif//_DEBUG
+#   endif//AFXINL
 #endif//__e2coree__
 
  // used to access or embed the struct of an handled object.
@@ -244,7 +268,8 @@ typedef enum afxError
 // The afxError type allows for clear and consistent error handling and success status reporting in your code.
 {
     // Zero indicates a successful operation.
-    afxError_NONE,
+    afxError_NIL,
+    afxError_NONE = afxError_NIL,
     afxError_SUCCESS = afxError_NONE,
 
     // Positive codes

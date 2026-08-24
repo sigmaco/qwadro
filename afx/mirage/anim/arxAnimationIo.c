@@ -208,16 +208,16 @@ _ARX afxError AfxSerializeGestures(afxStream out, afxString* sdb, afxUnit cnt, a
         gesHdr.vecCnt = ges->vecCnt;
         gesHdr.displacement = ges->displacement;
 
-        AfxV3dCopy(gesHdr.loopTranslation, ges->loopTranslation);
+        gesHdr.loopTranslation = ges->loopTranslation;
 
         if (ges->periodicLoop)
         {
             gesHdr.periodicLoopRadius = ges->periodicLoop->radius;
             gesHdr.periodicLoop_dAngle = ges->periodicLoop->dAngle;
             gesHdr.periodicLoop_dZ = ges->periodicLoop->dZ;
-            AfxV3dCopy(gesHdr.periodicLoopBasisX, ges->periodicLoop->basisX);
-            AfxV3dCopy(gesHdr.periodicLoopBasisY, ges->periodicLoop->basisY);
-            AfxV3dCopy(gesHdr.periodicLoopAxis, ges->periodicLoop->axis);
+            gesHdr.periodicLoopBasisX = ges->periodicLoop->basisX;
+            gesHdr.periodicLoopBasisY = ges->periodicLoop->basisY;
+            gesHdr.periodicLoopAxis = ges->periodicLoop->axis;
         }
 
         if (ges->pivotCnt)
@@ -395,8 +395,8 @@ _ARX afxError AfxSerializeAnimation(arxAnimation ani, afxStream out)
     aniHdr.fcc[2] = 'd';
     aniHdr.fcc[3] = '\0';
     aniHdr.hdrSiz = sizeof(aniHdr) - sizeof(urdMark);
-    AfxM3dReset(aniHdr.basis);
-    AfxV3dZero(aniHdr.origin);
+    aniHdr.basis = AfxM3dIdentity();
+    aniHdr.origin = AfxV3dZero();
     aniHdr.unitsPerMeter = 1.f;
     aniHdr.flags = ani->flags;
     aniHdr.gesCnt = ani->gesSlotCnt;
@@ -591,7 +591,7 @@ _ARX afxError ArxUploadGestures(arxScenario scio, afxArena* arena, afxString con
     {
         FMA_GES_HDR const* gesHdr = &gesHdrs[i];
 
-        AfxV3dCopy(gestures[i]->loopTranslation, gesHdr->loopTranslation);
+        gestures[i]->loopTranslation = gesHdr->loopTranslation;
 
         FMA_CUR_HDR* curHdrs = AfxRequestArena(arena, sizeof(curHdrs[0]), gesHdr->totalCurCnt, NIL, 0);
 

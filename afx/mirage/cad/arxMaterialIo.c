@@ -102,10 +102,10 @@ _ARX afxError _ArxParseXmlMtdMaterialProp(afxXmlNode const* xml, arxMtd mtd, arx
         {
             if (propIdx == 0)
             {
-                afxInt cnt = AfxScanString(&a->content, "%f %f %f", &mtli.albedo[0], &mtli.albedo[1], &mtli.albedo[2]);
+                afxInt cnt = AfxScanString(&a->content, "%f %f %f", &mtli.albedo.v[0], &mtli.albedo.v[1], &mtli.albedo.v[2]);
 
                 if (3 != cnt)
-                    AfxV3dSet(mtli.albedo, 1, 1, 1);
+                    mtli.albedo = AfxV3dMake(1, 1, 1);
             }
             break;
         }

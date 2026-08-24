@@ -117,11 +117,11 @@ ARX afxError ArxSetParentNode(arxNode nod, arxNode parent);
 ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t);
 ARX void    ArxGetNodeTransform(arxNode nod, afxTransform* t);
 
-ARX void    ArxGetNodeMatrix(arxNode nod, afxM4d m);
+ARX afxM4d  ArxGetNodeMatrix(arxNode nod);
 
-ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d translation, afxV3d rotation);
+ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d* translation, afxV3d* rotation);
 
-ARX afxError ArxComputeDagMotionMatrix(arxNode nod, afxReal secsElapsed, afxBool inv, afxM4d const mm, afxM4d m);
+ARX afxM4d ArxComputeDagMotionMatrix(arxNode nod, afxReal secsElapsed, afxBool inv, afxM4d const mm);
 
 // 
 
@@ -139,7 +139,7 @@ ARX afxBool ArxGetNode(arxNodular* nodu, arxNode* node);
 
 ARX afxError ArxAcquireJunctionNode(arxScenario scio, arxNode parent, arxModel skl, afxQuatBlend blendOp, afxReal fillThreshold, arxNode* node);
 ARX afxError ArxAcquireCrossfadeNode(arxScenario scio, arxNode parent, arxNode a, arxNode b, afxReal weightNone, afxReal weightAll, arxTrackMask* trackMask, arxNode* node);
-ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(*sample)(void*, afxReal, arxPose, afxUnit, afxUnit const*), void(*setClock)(void*, afxReal), void(*motionVectors)(void*, afxReal, afxReal*, afxReal*, afxBool), void* udd, arxNode* node);
+ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(*sample)(void*, afxReal, arxPose, afxUnit, afxUnit const*), void(*setClock)(void*, afxReal), void(*motionVectors)(void*, afxReal, afxV3d*, afxV3d*, afxBool), void* udd, arxNode* node);
 ARX afxError ArxAcquirePoseNode(arxScenario scio, arxNode parent, arxPose pose, arxNode* node);
 ARX afxError ArxAcquireAnimationNode(arxScenario scio, arxNode parent, arxPuppet bod, afxReal fillThreshold, arxNode* node);
 ARX afxError ArxAcquirePostureNode(arxScenario scio, arxNode parent, arxPosture plce, arxNode* node);
@@ -150,9 +150,9 @@ typedef enum arxDagCaptureFlag
 } arxDagCaptureFlags;
 
 ARX afxError ArxCaptureNodes(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxArray* pvs);
-ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxBox const* bounds, afxArray* pvs);
-ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxSphere const* bounds, afxArray* pvs);
-ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxFrustum const* bounds, afxArray* pvs);
+ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxBox const bounds, afxArray* pvs);
+ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxSphere const bounds, afxArray* pvs);
+ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxFrustum const bounds, afxArray* pvs);
 
 typedef enum arxDagStepFlag
 {

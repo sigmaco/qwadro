@@ -344,7 +344,7 @@ _AFX afxError _AfxZipReadCdEntryCallback(afxArchive arc, afxUnit idx, _afxZipSer
 
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
-    _afxZipEntry *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry *e = AfxGetAtArray(&arc->entries, idx);
     AfxMakeUri128(&e->path, NIL);
     AfxCopyUri(&e->path.uri, path);
 
@@ -381,7 +381,7 @@ _AFX afxBool AfxFindArchivedFile(afxArchive arc, afxUri const *name, afxUnit *id
 
     for (afxUnit i = 0; i < arc->entries.pop; ++i)
     {
-        _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, i);
+        _afxZipEntry const *e = AfxGetAtArray(&arc->entries, i);
         // in case of several copies, grab most recent file (last coincidence)
         if (0 == AfxCompareUri(name, &e->path.uri))
         {
@@ -399,7 +399,7 @@ _AFX afxSize AfxGetArchivedFileOffset(afxArchive arc, afxUnit idx)
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
     AFX_ASSERT(idx < arc->entries.pop);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     return e->offset;
 }
 
@@ -409,7 +409,7 @@ _AFX afxBool AfxArchivedFileIsDirectory(afxArchive arc, afxUnit idx)
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
     AFX_ASSERT(idx < arc->entries.pop);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     afxString const *nameStr = AfxGetUriString(&e->path.uri);
     afxUnit nameLen = AfxGetStringLength(nameStr);
     afxChar const *rawName = AfxGetStringData(nameStr, 0);
@@ -435,7 +435,7 @@ _AFX afxError AfxDumpArchivedFile(afxArchive arc, afxUnit idx, afxUnit bufSiz, v
     AFX_ASSERT(bufSiz);
     AFX_ASSERT(buf);
 
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AFX_ASSERT(e);
     afxUnit size = e->codec == 0 ? e->uncompressedSize : e->compressedSize;
     AFX_ASSERT(bufSiz >= size);
@@ -459,7 +459,7 @@ _AFX afxError AfxForkArchivedFile(afxArchive arc, afxUnit idx, afxStream *ios)
     AFX_ASSERT(idx < arc->entries.pop);
     AFX_ASSERT_OBJECTS(afxFcc_IOB, 1, &ios);
 
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AFX_ASSERT(e);
     afxUnit size = e->codec == 0 ? e->uncompressedSize : e->compressedSize;
     afxStream ios2;
@@ -490,7 +490,7 @@ _AFX afxError AfxDescribeArchivedFile(afxArchive arc, afxUnit idx, afxArchiveIte
 
     AFX_ASSERT(idx < arc->entries.pop);
     AFX_ASSERT(desc);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AFX_ASSERT(e);
     desc->offset = e->offset;
     desc->size = e->uncompressedSize;
@@ -507,7 +507,7 @@ _AFX afxError AfxOpenArchivedFile(afxArchive arc, afxUnit idx, afxStream *in)
 
     AFX_ASSERT(idx < arc->entries.pop);
 
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AFX_ASSERT(e);
     afxUnit size = e->codec == 0 ? e->uncompressedSize : e->compressedSize;
     afxStream in2;
@@ -540,7 +540,7 @@ _AFX afxError AfxExtractArchivedFile(afxArchive arc, afxUnit idx, afxUri const *
     AFX_ASSERT(uri);
     AFX_ASSERT(!AfxIsUriBlank(uri));
 
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AFX_ASSERT(e);
     afxUnit size = e->codec == 0 ? e->uncompressedSize : e->compressedSize;
     
@@ -571,7 +571,7 @@ _AFX afxUnit AfxGetArchivedFileCodec(afxArchive arc, afxUnit idx)
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
     AFX_ASSERT(idx < arc->entries.pop);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     afxUnit method = e->codec;
     return method < AFX_U8_MAX ? method : method >> AFX_BYTE_SIZE;
 }
@@ -582,7 +582,7 @@ _AFX afxUnit AfxGetArchivedFileUncompressedSize(afxArchive arc, afxUnit idx)
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
     AFX_ASSERT(idx < arc->entries.pop);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     return e->uncompressedSize;
 }
 
@@ -592,7 +592,7 @@ _AFX afxUnit32 AfxGetArchivedFileCrc(afxArchive arc, afxUnit idx)
     AFX_ASSERT_OBJECTS(afxFcc_ARC, 1, &arc);
 
     AFX_ASSERT(idx < arc->entries.pop);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     return e->crc32;
 }
 
@@ -603,7 +603,7 @@ _AFX afxString* AfxGetArchivedFileName(afxArchive arc, afxUnit idx, afxUri *name
 
     AFX_ASSERT(idx < arc->entries.pop);
     AFX_ASSERT(name);
-    _afxZipEntry const *e = AfxGetArrayUnit(&arc->entries, idx);
+    _afxZipEntry const *e = AfxGetAtArray(&arc->entries, idx);
     AfxCopyUri(name, &e->path.uri);
     return (afxString*)AfxGetUriString(name);
 }

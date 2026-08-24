@@ -76,6 +76,8 @@ AFX_DEFINE_STRUCT(avxRasteredCopy)
 
 AFX_DEFINE_STRUCT(avxRasterCopy)
 // Especificação de operação de cópia de avxRaster.
+// avxRasterOverlap?
+// avxRasterCopy?
 {
     avxRasterRegion src;
 

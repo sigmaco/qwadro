@@ -31,6 +31,8 @@
 #define AFX_QUATERNION_H
 
 #include "qwadro/math/afxVector.h"
+#include "qwadro/math/afxArithmetic.h"
+#include "qwadro/math/afxArithmetic2.h"
 
 typedef enum afxQuatBlend
 // The afxQuatBlend enum represents different blending modes for quaternions, which are often used for representing rotations in 3D space. 
@@ -67,7 +69,9 @@ typedef enum afxQuatBlend
     afxQuatBlend_ACCUM_ADJACENT,
 } afxQuatBlend;
 
-#define AFX_QUAT(x, y, z, w) (afxQuat){ (x), (y), (z), (w) }
+#define AFX_QUAT(x, y, z, w) \
+    (afxQuat){ { { (x), (y), (z), (w) } } }
+
 #define AFX_QUATERNION(x, y, z, w) AFX_QUAT((x), (y), (z), (w))
 
 #define AFX_QUAT_ZERO AFX_QUAT(0, 0, 0, 0)
@@ -81,17 +85,16 @@ typedef enum afxQuatBlend
 /// Redefine um quaternion ao estado de unit/identity.
 /// Dado um quaternion (x, y, z, w), a função AfxQuatReset vai fazer o quaternion (0, 0, 0, 1).
 
-AFXINL void AfxQuatReset(afxQuat q);
+AFXINL afxQuat AfxQuatIdentity(void);
 
 /// Preenche um quaternion com zeros.
 
-AFXINL void AfxQuatZero(afxQuat q);
+AFXINL afxQuat AfxQuatZero(void);
 
 /// Define cada componente de um quaternion.
 
-AFXINL void AfxQuatSet
+AFXINL afxQuat AfxQuatMake
 (
-    afxQuat q, 
     afxReal x, 
     afxReal y, 
     afxReal z, 
@@ -102,9 +105,8 @@ AFXINL void AfxQuatSet
 /// Thus you only really need to store 3 components of the quaternion, and the 4th can be calculated using the formula
 /// We can compress a Quaternion down to three elements by making sure one of the them is greater than or equal to zero. We can then rebuild the missing element with this function.
 
-AFXINL void AfxQuatReconstructV3d
+AFXINL afxQuat AfxQuatReconstructV3d
 (
-    afxQuat q, 
     afxV3d const in
 );
 
@@ -119,6 +121,7 @@ AFXINL afxBool  AfxQuatIsIdentity
 );
 
 AFXINL afxBool AfxQuatIsNan(afxQuat const q);
+
 AFXINL afxBool AfxQuatIsInfinite(afxQuat const q);
 
 /// Em margem de erro escalar de Epsilon, testa se dois quaternions são equivalentes.
@@ -134,32 +137,14 @@ AFXINL afxBool AfxQuatIsDifferent(afxQuat const q, afxQuat const other);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/// Cambia (operação de troca) os dados entre dois quaternions.
-
-AFXINL void AfxQuatSwap
-(
-    afxQuat q, 
-    afxQuat other
-);
-
-/// Copia os dados de um outro quaternion.
-
-AFXINL void AfxQuatCopy
-(
-    afxQuat q, 
-    afxQuat const in
-);
-
-////////////////////////////////////////////////////////////////////////////////
-
 /// Normalizes a quaternion.
 /// q = Returns the normalized form of in.
 /// in = Quaternion to normalize.
 
-AFXINL afxReal  AfxQuatNormalize
+AFXINL afxQuat AfxQuatNormalize
 (
-    afxQuat q, 
-    afxQuat const in
+    afxQuat const in,
+    afxReal* length
 );
 
 /// Estimates the normalized version of a quaternion.
@@ -169,47 +154,47 @@ AFXINL afxReal  AfxQuatNormalize
 /// q = An XMVECTOR union that is the estimate of the normalized version of a quaternion.
 /// in = A quaternion for which to estimate the normalized version.
 
-AFXINL afxReal  AfxQuatNormalizeEstimated
+AFXINL afxQuat AfxQuatNormalizeEstimated
 (
-    afxQuat q, 
-    afxQuat const in
+    afxQuat const in,
+    afxReal* length
 );
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // q = a + b
-AFXINL void AfxQuatAdd(afxQuat q, afxQuat const a, afxQuat const b);
+AFXINL afxQuat AfxQuatAdd(afxQuat const a, afxQuat const b);
 
 // q = a - b
-AFXINL void AfxQuatSub(afxQuat q, afxQuat const a, afxQuat const b);
+AFXINL afxQuat AfxQuatSub(afxQuat const a, afxQuat const b);
 
 // q = a * s
-AFXINL void AfxQuatScale(afxQuat q, afxQuat const in, afxReal scalar);
+AFXINL afxQuat AfxQuatScale(afxQuat const in, afxReal scalar);
 
 // q = a / s
-AFXINL void AfxQuatDiv(afxQuat q, afxQuat const in, afxReal dividend);
+AFXINL afxQuat AfxQuatDiv(afxQuat const in, afxReal dividend);
 
 // q = add + (mul * f)
-AFXINL void AfxQuatMad(afxQuat q, afxQuat const add, afxQuat const mul, afxQuat const f);
+AFXINL afxQuat AfxQuatMad(afxQuat const add, afxQuat const mul, afxQuat const f);
 
 // q = add + (mul * lambda)
-AFXINL void AfxQuatMads(afxQuat q, afxQuat const add, afxQuat const mul, afxReal lambda);
+AFXINL afxQuat AfxQuatMads(afxQuat const add, afxQuat const mul, afxReal lambda);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void AfxQuatGetImaginaryPart(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetImaginaryPart(afxQuat const q);
 
-AFXINL void AfxQuatGetBasisVector0(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetBasisVector0(afxQuat const q);
 
-AFXINL void AfxQuatGetBasisVector1(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetBasisVector1(afxQuat const q);
 
-AFXINL void AfxQuatGetBasisVector2(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetBasisVector2(afxQuat const q);
 
-AFXINL void AfxQuatGetInvBasisVector0(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetInvBasisVector0(afxQuat const q);
 
-AFXINL void AfxQuatGetInvBasisVector1(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetInvBasisVector1(afxQuat const q);
 
-AFXINL void AfxQuatGetInvBasisVector2(afxQuat const q, afxV3d v);
+AFXINL afxV3d AfxQuatGetInvBasisVector2(afxQuat const q);
 
 /// Computes the dot product of two quaternions.
 /// q = First quaternion.
@@ -235,7 +220,7 @@ AFXINL afxReal  AfxQuatMagRecip(afxQuat const q);
 
 /// Negativa todos os componentes de um quaternion.
 
-AFXINL void AfxQuatNeg(afxQuat q, afxQuat const in);
+AFXINL afxQuat AfxQuatNeg(afxQuat const in);
 
 /// Computes the conjugate of a quaternion.
 /// Given a quaternion ( x, y, z, w), the AfxQuatConj function returns the quaternion (-x, -y, -z, w).
@@ -243,23 +228,36 @@ AFXINL void AfxQuatNeg(afxQuat q, afxQuat const in);
 /// q = Returns the conjugate of in.
 /// in = The quaternion to conjugate.
 
-AFXINL void AfxQuatConj(afxQuat q, afxQuat const in);
+AFXINL afxQuat AfxQuatConj(afxQuat const in);
 
 /// Computes the inverse of a quaternion.
 /// q = Returns the inverse of in.
 /// in = Quaternion to invert.
 
-AFXINL void AfxQuatInv(afxQuat q, afxQuat const in); // q = inverse of in
+AFXINL afxQuat AfxQuatInv(afxQuat const in); // q = inverse of in
 
 AFXINL afxReal AfxQuatAngle(afxQuat const q);
 
 AFXINL afxReal AfxQuatAngle2(afxQuat const q, afxQuat const other);
 
+
+AFXINL afxQuat AfxQuatDofX(afxQuat const q);
+
+AFXINL afxQuat AfxQuatDofY(afxQuat const q);
+
+AFXINL afxQuat AfxQuatDofZ(afxQuat const q);
+
+AFXINL afxQuat AfxQuatDofXY(afxQuat const q);
+
+AFXINL afxQuat AfxQuatDofXZ(afxQuat const q);
+
+AFXINL afxQuat AfxQuatDofYZ(afxQuat const q);
+
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void AfxQuatTangentM3d(afxQuat q, afxM3d const tbn);
+AFXINL afxQuat AfxQuatTangentM3d(afxM3d const tbn);
 
-AFXINL void AfxQuatTangentFrame(afxQuat q, afxV3d const normal, afxV3d const tangent, afxV3d const bitangent);
+AFXINL afxQuat AfxQuatTangentFrame(afxV3d const normal, afxV3d const tangent, afxV3d const bitangent);
 
 ////////////////////////////////////////////////////////////////////////////////
 

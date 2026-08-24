@@ -22,6 +22,8 @@
 #define _ARX_VERTEX_BUILDER_C
 #define _ARX_MESH_TOPOLOGY_C
 #include "../scene/arxIcd.h"
+#include "qwadro/math/afxArithmetic2.h"
+#include "qwadro/math/afxTrigonometry.h"
 
 AFX_DEFINE_STRUCT(arxMeshFactory2)
 {
@@ -67,7 +69,12 @@ _ARX afxError ArxAddTriangles(arxMeshFactory2* mfac, afxUnit mtlIdx, afxUnit tri
     AFX_ASSERT(mfac);
 
     for (afxUnit i = 0; i < triCnt; i++)
-        AfxV3dCopy(mfac->triVtxPos[i], vertices[i]);
+    {
+        // Isso aqui tá uma merda
+        mfac->triVtxPos[i] = vertices[i][0];
+        mfac->triVtxPos[i +1] = vertices[i][1];
+        mfac->triVtxPos[i +2] = vertices[i][2];
+    }
 
     for (afxUnit i = 0; i < triCnt; i++)
     {
@@ -102,14 +109,13 @@ _ARX afxError ArxRebuildTriangleNormals(arxMeshFactory2* mfac, afxUnit baseTriId
         afxUnit const ib = baseTriIdx + j * ARX_INDICES_PER_TRI + 1;
         afxUnit const ic = baseTriIdx + j * ARX_INDICES_PER_TRI + 2;
 
-        afxV4d e1, e2, no;
-        AfxV4dSub(e1, pos[ia], pos[ib]);
-        AfxV4dSub(e2, pos[ic], pos[ib]);
-        AfxV3dCross(no, e1, e2);
+        afxV3d e1 = AfxV3dSub(pos[ia], pos[ib]);
+        afxV3d e2 = AfxV3dSub(pos[ic], pos[ib]);
+        afxV3d no = AfxV3dCross(e1, e2);
 
-        AfxV3dAdd(nrm[ia], nrm[ia], no);
-        AfxV3dAdd(nrm[ib], nrm[ib], no);
-        AfxV3dAdd(nrm[ic], nrm[ic], no);
+        nrm[ia] = AfxV3dAdd(nrm[ia], no);
+        nrm[ib] = AfxV3dAdd(nrm[ib], no);
+        nrm[ic] = AfxV3dAdd(nrm[ic], no);
     }
     return err;
 }
@@ -135,21 +141,19 @@ _ARX afxError ArxRebuildTriangleTangents(arxMeshFactory2* mfac, afxUnit baseTriI
         afxUnit const ib = baseTriIdx + i * ARX_INDICES_PER_TRI + 1;
         afxUnit const ic = baseTriIdx + i * ARX_INDICES_PER_TRI + 2;
 
-        afxV3d ea, eb; // edges
-        AfxV3dSub(ea, pos[ib], pos[ia]);
-        AfxV3dSub(eb, pos[ic], pos[ia]);
+        // edges
+        afxV3d ea = AfxV3dSub(pos[ib], pos[ia]);
+        afxV3d eb = AfxV3dSub(pos[ic], pos[ia]);
+        afxV2d deltaUv1 = AfxV2dSub(uv[ib], uv[ia]);
+        afxV2d deltaUv2 = AfxV2dSub(uv[ic], uv[ia]);
 
-        afxV2d deltaUv1, deltaUv2;
-        AfxV2dSub(deltaUv1, uv[ib], uv[ia]);
-        AfxV2dSub(deltaUv2, uv[ic], uv[ia]);
-
-        afxReal f = 1.f / (deltaUv1[0] * deltaUv2[1] - deltaUv2[0] * deltaUv1[1]);
+        afxReal f = 1.f / (deltaUv1.v[0] * deltaUv2.v[1] - deltaUv2.v[0] * deltaUv1.v[1]);
 
         if (tan)
         {
-            tan[ia][0] = f * (deltaUv2[1] * ea[0] - deltaUv1[1] * eb[0]);
-            tan[ia][1] = f * (deltaUv2[1] * ea[1] - deltaUv1[1] * eb[1]);
-            tan[ia][2] = f * (deltaUv2[1] * ea[2] - deltaUv1[1] * eb[2]);
+            tan[ia].v[0] = f * (deltaUv2.v[1] * ea.v[0] - deltaUv1.v[1] * eb.v[0]);
+            tan[ia].v[1] = f * (deltaUv2.v[1] * ea.v[1] - deltaUv1.v[1] * eb.v[1]);
+            tan[ia].v[2] = f * (deltaUv2.v[1] * ea.v[2] - deltaUv1.v[1] * eb.v[2]);
 #if 0
             if (!perTriOut)
             {
@@ -162,9 +166,9 @@ _ARX afxError ArxRebuildTriangleTangents(arxMeshFactory2* mfac, afxUnit baseTriI
 
         if (bit)
         {
-            bit[ia][0] = f * (-deltaUv2[0] * ea[0] + deltaUv1[0] * eb[0]);
-            bit[ia][1] = f * (-deltaUv2[0] * ea[1] + deltaUv1[0] * eb[1]);
-            bit[ia][2] = f * (-deltaUv2[0] * ea[2] + deltaUv1[0] * eb[2]);
+            bit[ia].v[0] = f * (-deltaUv2.v[0] * ea.v[0] + deltaUv1.v[0] * eb.v[0]);
+            bit[ia].v[1] = f * (-deltaUv2.v[0] * ea.v[1] + deltaUv1.v[0] * eb.v[1]);
+            bit[ia].v[2] = f * (-deltaUv2.v[0] * ea.v[2] + deltaUv1.v[0] * eb.v[2]);
 #if 0
             if (!perTriOut)
             {
@@ -199,9 +203,9 @@ _ARX afxError ArxRebuildTriangleSkins(arxMeshFactory2* mfac, afxUnit baseTriIdx,
         afxUnit const ic = baseTriIdx + j * ARX_INDICES_PER_TRI + 2;
 
         // Project the 3D vertices to 2D (XY plane)
-        afxReal u1 = pos[ia][0], v1y = pos[ia][1];
-        afxReal u2 = pos[ib][0], v2y = pos[ib][1];
-        afxReal u3 = pos[ic][0], v3y = pos[ic][1];
+        afxReal u1 = pos[ia].v[0], v1y = pos[ia].v[1];
+        afxReal u2 = pos[ib].v[0], v2y = pos[ib].v[1];
+        afxReal u3 = pos[ic].v[0], v3y = pos[ic].v[1];
 
         // Find the min and max values for the u and v coordinates
         afxReal min_u = fminf(fminf(u1, u2), u3);
@@ -214,14 +218,14 @@ _ARX afxError ArxRebuildTriangleSkins(arxMeshFactory2* mfac, afxUnit baseTriIdx,
         afxReal range_v = max_v - min_v;
 
         // Store the UV coordinates for this triangle
-        uv[ia][0] = (u1 - min_u) / range_u;
-        uv[ia][1] = (v1y - min_v) / range_v;
+        uv[ia].v[0] = (u1 - min_u) / range_u;
+        uv[ia].v[1] = (v1y - min_v) / range_v;
 
-        uv[ib][0] = (u2 - min_u) / range_u;
-        uv[ib][1] = (v2y - min_v) / range_v;
+        uv[ib].v[0] = (u2 - min_u) / range_u;
+        uv[ib].v[1] = (v2y - min_v) / range_v;
 
-        uv[ic][0] = (u3 - min_u) / range_u;
-        uv[ic][1] = (v3y - min_v) / range_v;
+        uv[ic].v[0] = (u3 - min_u) / range_u;
+        uv[ic].v[1] = (v3y - min_v) / range_v;
     }
     return err;
 }
@@ -229,11 +233,10 @@ _ARX afxError ArxRebuildTriangleSkins(arxMeshFactory2* mfac, afxUnit baseTriIdx,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_ARX afxError ArxBuildParallelepipedMesh(arxScenario scio, afxV3d whd, afxReal slantX, afxReal slantY, afxV3d const pivot, arxMesh* mesh)
+_ARX afxError ArxBuildParallelepipedMesh(arxScenario scio, afxV3d const whd, afxReal slantX, afxReal slantY, afxV3d const pivot, arxMesh* mesh)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
-    AFX_ASSERT(whd);
 
     if (!slantX)
         slantX = 0.5f;
@@ -244,21 +247,21 @@ _ARX afxError ArxBuildParallelepipedMesh(arxScenario scio, afxV3d whd, afxReal s
     afxUnit numVertices = 8;
     afxUnit numIndices = 36; // 12 triangles * 3 vertices per triangle
 
-    afxReal halfWidth = whd[0] / 2.0f;
-    afxReal halfHeight = whd[1] / 2.0f;
-    afxReal halfDepth = whd[2] / 2.0f;
+    afxReal halfWidth = whd.v[0] / 2.0f;
+    afxReal halfHeight = whd.v[1] / 2.0f;
+    afxReal halfDepth = whd.v[2] / 2.0f;
 
     // Define the 8 vertices of the parallelepiped
     afxV3d const vertData[8] =
     {
-        {-halfWidth - slantX, -halfHeight - slantY, -halfDepth},
-        {halfWidth - slantX, -halfHeight - slantY, -halfDepth},
-        {halfWidth - slantX, halfHeight - slantY, -halfDepth},
-        {-halfWidth - slantX, halfHeight - slantY, -halfDepth},
-        {-halfWidth + slantX, -halfHeight + slantY, halfDepth},
-        {halfWidth + slantX, -halfHeight + slantY, halfDepth},
-        {halfWidth + slantX, halfHeight + slantY, halfDepth},
-        {-halfWidth + slantX, halfHeight + slantY, halfDepth}
+        AFX_V3D(-halfWidth - slantX, -halfHeight - slantY, -halfDepth),
+        AFX_V3D(halfWidth - slantX, -halfHeight - slantY, -halfDepth),
+        AFX_V3D(halfWidth - slantX, halfHeight - slantY, -halfDepth),
+        AFX_V3D(-halfWidth - slantX, halfHeight - slantY, -halfDepth),
+        AFX_V3D(-halfWidth + slantX, -halfHeight + slantY, halfDepth),
+        AFX_V3D(halfWidth + slantX, -halfHeight + slantY, halfDepth),
+        AFX_V3D(halfWidth + slantX, halfHeight + slantY, halfDepth),
+        AFX_V3D(-halfWidth + slantX, halfHeight + slantY, halfDepth)
     };
 
     // Define indices for the 12 triangles of the parallelepiped
@@ -295,20 +298,20 @@ _ARX afxError ArxBuildParallelepipedMesh(arxScenario scio, afxV3d whd, afxReal s
 
     for (afxUnit i = 0; i < 8; ++i)
     {
-        nrm[index][0] = 0.0f; // Normals
-        nrm[index][1] = 0.0f;
-        nrm[index][2] = 1.0f;
-        uv[index][0] = (i % 2) ? 1.0f : 0.0f; // Texture coordinates
-        uv[index][1] = (i / 4) ? 1.0f : 0.0f;
+        nrm[index].v[0] = 0.0f; // Normals
+        nrm[index].v[1] = 0.0f;
+        nrm[index].v[2] = 1.0f;
+        uv[index].v[0] = (i % 2) ? 1.0f : 0.0f; // Texture coordinates
+        uv[index].v[1] = (i / 4) ? 1.0f : 0.0f;
         index++;
     }
 
-    if (pivot)
+    //if (pivot)
     {
         afxV3d* pos = ArxAccessVertexData(msh, 0, 0, 0);
 
         for (afxUnit i = 0; i < mshb.vtxCnt; i++)
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
     }
 
     ArxUpdateMeshIndices(msh, 0, mshb.triCnt, indicesData, sizeof(indicesData[0]));
@@ -368,19 +371,19 @@ _ARX afxError ArxBuildDomeMesh2(arxScenario scio, afxReal radius, afxUnit stacks
             afxReal x = xy * AfxCosf(sectorAngle);
             afxReal y = xy * AfxSinf(sectorAngle);
 
-            AfxV3dSet(pos[index], x, y, z);
+            pos[index] = AfxV3dMake(x, y, z);
 
             // Normal vector (normalized vertex position)
             afxReal length = AfxSqrtf(x * x + y * y + z * z);
-            AfxV3dSet(nrm[index], x / length, y / length, z / length);
-            AfxV2dSet(uv[index], (afxReal)j / slices, (afxReal)i / stacks);
+            nrm[index] = AfxV3dMake(x / length, y / length, z / length);
+            uv[index] = AfxV2dMake((afxReal)j / slices, (afxReal)i / stacks);
             index++;
         }
     }
 
-    if (pivot)
+    //if (pivot)
         for (afxUnit i = 0; i < numVertices; i++)
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
 
 #if 0 // we couldn't use trip strip at the time this code was written.
     afxBool strip = FALSE;
@@ -529,12 +532,12 @@ _ARX afxError ArxBuildCapsuleMesh(arxScenario scio, afxReal radius, afxReal heig
                 afxReal x = xy * cosf(sectorAngle);
                 afxReal y = xy * sinf(sectorAngle);
 
-                AfxV3dSet(pos[index], x, y, z);
+                pos[index] = AfxV3dMake(x, y, z);
 
                 // Normal vector (normalized vertex position)
                 afxReal length = sqrtf(x * x + y * y + z * z);
-                AfxV3dSet(nrm[index], x / length, y / length, z / length);
-                AfxV2dSet(uv[index], (afxReal)j / slices, (afxReal)i / stacks);
+                nrm[index] = AfxV3dMake(x / length, y / length, z / length);
+                uv[index] = AfxV2dMake((afxReal)j / slices, (afxReal)i / stacks);
                 index++;
             }
         }
@@ -552,19 +555,19 @@ _ARX afxError ArxBuildCapsuleMesh(arxScenario scio, afxReal radius, afxReal heig
             afxReal y = yOffset;
             afxReal z = radius * sinf(angle);
 
-            AfxV3dSet(pos[index], x, y, z);
+            pos[index] = AfxV3dMake(x, y, z);
 
             // Normal vector (perpendicular to the cylinder surface)
-            AfxV3dSet(nrm[index], 0.f, (i == 0) ? -1.0f : 1.0f, 0.f);
+            nrm[index] = AfxV3dMake(0.f, (i == 0) ? -1.0f : 1.0f, 0.f);
 
-            AfxV2dSet(uv[index], (afxReal)j / cylinderSlices, (i == 0) ? 0.0f : 1.0f);
+            uv[index] = AfxV2dMake((afxReal)j / cylinderSlices, (i == 0) ? 0.0f : 1.0f);
             index++;
         }
     }
 
-    if (pivot)
+    //if (pivot)
         for (afxUnit i = 0; i < numVertices; i++)
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
 
     {
         afxUnit* indices = ArxGetMeshIndices(msh, 0);
@@ -682,16 +685,16 @@ _ARX afxError ArxBuildPlaneMesh(arxScenario scio, afxUnit gridSizeX, afxUnit gri
             afxReal ypos = (y / (afxReal)gridSizeY) * height - halfHeight;
 
             // Vertex position
-            AfxV3dSet(pos[index], xpos, 0.f, ypos); // Plane is at y = 0
-            AfxV3dSet(nrm[index], 0.f, 1.f, 0.f); // Normal vector (pointing up)
-            AfxV2dSet(uv[index], x / (afxReal)gridSizeX, y / (afxReal)gridSizeY);
+            pos[index] = AfxV3dMake(xpos, 0.f, ypos); // Plane is at y = 0
+            nrm[index] = AfxV3dMake(0.f, 1.f, 0.f); // Normal vector (pointing up)
+            uv[index]= AfxV2dMake(x / (afxReal)gridSizeX, y / (afxReal)gridSizeY);
             index++;
         }
     }
 
-    if (pivot)
+    //if (pivot)
         for (afxUnit i = 0; i < numVertices; i++)
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
 
     {
         afxUnit* indices = ArxGetMeshIndices(msh, 0);
@@ -789,25 +792,25 @@ _ARX afxError ArxBuildSphereMesh(arxScenario scio, afxReal radius, afxUnit stack
             afxReal y = xy * AfxSinf(sectorAngle);
 
             // Set position
-            AfxV3dSet(pos[index], x, y, z);
+            pos[index] = AfxV3dMake(x, y, z);
 
             // Normal vector (normalize the vertex position)
             afxReal length = AfxSqrtf(x * x + y * y + z * z);
-            AfxV3dSet(nrm[index], x / length, y / length, z / length);
+            nrm[index] = AfxV3dMake(x / length, y / length, z / length);
 
             // Set UV coordinates
-            AfxV2dSet(uv[index], (afxReal)j / slices, (afxReal)i / stacks);
+            uv[index] = AfxV2dMake((afxReal)j / slices, (afxReal)i / stacks);
 
             index++;
         }
     }
 
     // Apply pivot translation if provided
-    if (pivot)
+    //if (pivot)
     {
         for (afxUnit i = 0; i < numVertices; ++i)
         {
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
         }
     }
 
@@ -903,18 +906,41 @@ _ARX afxError ArxBuildBoxMesh(arxScenario scio, afxV3d const whd, afxV3d const p
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT(mesh);
-    AFX_ASSERT(whd);
+    //AFX_ASSERT(whd);
 
     // The cube uses 24 unique vertices instead of 8 shared, so that each face has unique normals and tangents (no smoothing between faces).
 
     static afxV3d const cubeVertices[] =
     {
-        {-0.5f,-0.5f,-0.5f }, {-0.5f,-0.5f, 0.5f }, { 0.5f,-0.5f, 0.5f }, { 0.5f,-0.5f,-0.5f },
-        {-0.5f, 0.5f,-0.5f }, {-0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f,-0.5f },
-        {-0.5f,-0.5f,-0.5f }, {-0.5f, 0.5f,-0.5f }, { 0.5f, 0.5f,-0.5f }, { 0.5f,-0.5f,-0.5f },
-        {-0.5f,-0.5f, 0.5f }, {-0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f,-0.5f, 0.5f },
-        {-0.5f,-0.5f,-0.5f }, {-0.5f,-0.5f, 0.5f }, {-0.5f, 0.5f, 0.5f }, {-0.5f, 0.5f,-0.5f },
-        { 0.5f,-0.5f,-0.5f }, { 0.5f,-0.5f, 0.5f }, { 0.5f, 0.5f, 0.5f }, { 0.5f, 0.5f,-0.5f }
+        AFX_V3D(-0.5f,-0.5f,-0.5f ), 
+        AFX_V3D(-0.5f,-0.5f, 0.5f ), 
+        AFX_V3D(0.5f,-0.5f, 0.5f ), 
+        AFX_V3D(0.5f,-0.5f,-0.5f ),
+
+        AFX_V3D(-0.5f, 0.5f,-0.5f ), 
+        AFX_V3D(-0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(0.5f, 0.5f,-0.5f ),
+
+        AFX_V3D(-0.5f,-0.5f,-0.5f ), 
+        AFX_V3D(-0.5f, 0.5f,-0.5f ), 
+        AFX_V3D(0.5f, 0.5f,-0.5f ), 
+        AFX_V3D(0.5f,-0.5f,-0.5f ),
+
+        AFX_V3D(-0.5f,-0.5f, 0.5f ), 
+        AFX_V3D(-0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(0.5f,-0.5f, 0.5f ),
+
+        AFX_V3D(-0.5f,-0.5f,-0.5f ), 
+        AFX_V3D(-0.5f,-0.5f, 0.5f ), 
+        AFX_V3D(-0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(-0.5f, 0.5f,-0.5f ),
+
+        AFX_V3D(0.5f,-0.5f,-0.5f ), 
+        AFX_V3D(0.5f,-0.5f, 0.5f ), 
+        AFX_V3D(0.5f, 0.5f, 0.5f ), 
+        AFX_V3D(0.5f, 0.5f,-0.5f )
     };
 
     static afxV3d const cubeNormals[] =
@@ -995,22 +1021,22 @@ _ARX afxError ArxBuildBoxMesh(arxScenario scio, afxV3d const whd, afxV3d const p
     afxV3d* pos = ArxAccessVertexData(msh, 0, 0, 0);
 
     // If whd has a component < 1, it's clamped to 1 via AfxV3dMax.
-    afxV3d whdSanitized;
-    AfxV3dMax(whdSanitized, AFX_V3D_ONE, whd);
+    afxV3d whdSanitized = AfxV3dMax(AFX_V3D_ONE, whd);
 
-    if (pivot)
+    //if (pivot)
     {
         // Pivot positioning: Want the box's bottom to rest on the origin? Use axis = { 0, 0.5f * height, 0 }.
 
         for (afxUnit i = 0; i < mshb.vtxCnt; i++)
         {
-            AfxV3dMultiply(pos[i], pos[i], whdSanitized);
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dMultiply(pos[i], whdSanitized);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
         }
     }
+#if 0
     else for (afxUnit i = 0; i < mshb.vtxCnt; i++)
         AfxV3dMultiply(pos[i], pos[i], whdSanitized);
-
+#endif
     *mesh = msh;
     return err;
 }
@@ -1053,15 +1079,15 @@ _ARX afxError ArxBuildGridMesh(arxScenario scio, afxUnit rows, afxUnit layers, a
         afxReal x = (afxReal)(i % (layers + 1)) / (afxReal)layers;
         afxReal z = 1.f - (afxReal)(i / (layers + 1)) / (afxReal)rows;
         afxReal s = x, t = z;
-        AfxV3dSet(pos[i], width * (x - 0.5f), 0.f, depth * (z - 0.5f));
-        AfxV3dSet(nrm[i], 0, 1, 0);
-        AfxV3dSet(tan[i], 1, 0, 0); //
-        AfxV2dSet(uv0[i], s, t);
+        pos[i] = AfxV3dMake(width * (x - 0.5f), 0.f, depth * (z - 0.5f));
+        nrm[i] = AfxV3dMake(0, 1, 0);
+        tan[i] = AfxV3dMake(1, 0, 0); //
+        uv0[i] = AfxV2dMake(s, t);
     }
 
-    if (pivot)
+    //if (pivot)
         for (afxUnit i = 0; i < numberVertices; i++)
-            AfxV3dAdd(pos[i], pos[i], pivot);
+            pos[i] = AfxV3dAdd(pos[i], pivot);
 
     if (triangleStrip) for (afxUnit i = 0, total = rows * (layers + 1); i < total; i++)
     {

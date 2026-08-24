@@ -70,10 +70,10 @@ _AVX avxPipelineConfig const AVX_PIPELINE_BLUEPRINT_DEFAULT =
     .depthTestEnabled = FALSE,
     .depthCompareOp = avxCompareOp_LESS,
     .depthWriteDisabled = FALSE,
-    .dsFmt = avxFormat_UNDEFINED,
+    .dsFmt = avxFormat_NIL,
     
     .depthBoundsTestEnabled = FALSE,
-    .depthBounds = { 0, 1 },
+    .depthBounds = AFX_V2D(0, 1),
 
     // color bending, logical op and color writing
     .colorOutCnt = 1,
@@ -88,7 +88,7 @@ _AVX avxPipelineConfig const AVX_PIPELINE_BLUEPRINT_DEFAULT =
         AVX_DEFAULT_COLOR_OUTPUT,
         AVX_DEFAULT_COLOR_OUTPUT
     },
-    .blendConstants = { 0, 0, 0, 0 },
+    .blendConstants = AFX_V4D(0, 0, 0, 0),
     .pixelLogicOpEnabled = FALSE,
     .pixelLogicOp = avxLogicOp_COPY
 };
@@ -267,7 +267,7 @@ _AVX afxError _AvxParseXmlPipelineBlueprint(afxXmlNode const* xmle, afxUnit spec
 
             if (AfxScanString(&a->content, "%f", &mini))
             {
-                config.depthBounds[0] = mini;
+                config.depthBounds.v[0] = mini;
                 //config.dsFlags = avxDepthStencilFlag_BOUNDS_TEST;
             }
             break;
@@ -278,7 +278,7 @@ _AVX afxError _AvxParseXmlPipelineBlueprint(afxXmlNode const* xmle, afxUnit spec
 
             if (AfxScanString(&a->content, "%f", &maxi))
             {
-                config.depthBounds[1] = maxi;
+                config.depthBounds.v[1] = maxi;
                 //config.dsFlags = avxDepthStencilFlag_BOUNDS_TEST;
             }
             break;
@@ -633,12 +633,12 @@ _AVX void AvxDescribePipelineRasterization(avxPipeline pip, avxRasterization* in
     info->dsFmt = pip->dsFmt;
 
     if ((info->depthBoundsTestEnabled = pip->depthBoundsTestEnabled))
-        AfxV2dCopy(info->depthBounds, pip->depthBounds);
+        info->depthBounds = pip->depthBounds;
 
     if ((info->colorOutCnt = pip->outCnt))
         AfxCopy(info->colorOuts, pip->outs, sizeof(pip->outs[0]) * pip->outCnt);
 
-    AvxCopyColor(info->blendConstants, pip->blendConstants);
+    info->blendConstants = pip->blendConstants;
     info->pixelLogicOpEnabled = pip->logicOpEnabled;
     info->pixelLogicOp = pip->logicOp;
 }
@@ -1078,13 +1078,13 @@ _AVX afxError _AvxPipCtorCb(avxPipeline pip, void** args, afxUnit invokeNo)
     pip->stencilBack = razb->stencilBack;
 
     pip->depthBoundsTestEnabled = !!razb->depthBoundsTestEnabled;
-    AfxV2dCopy(pip->depthBounds, razb->depthBounds);
+    pip->depthBounds = razb->depthBounds;
 
     pip->dsFmt = razb->dsFmt; // ?
 
     // deveria ser só o blend/write, já que só podemos determinar as saídas quando assembleado com fragment shaders enquanto pipeline completo.
 
-    AfxV4dCopy(pip->blendConstants, razb->blendConstants);
+    pip->blendConstants = razb->blendConstants;
 
     pip->logicOpEnabled = !!razb->pixelLogicOpEnabled;
     pip->logicOp = razb->pixelLogicOp;
@@ -1401,8 +1401,8 @@ _AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipeli
                 AFX_ASSERT(c->stencilFront.writeMask == pip->stencilFront.writeMask);
                 AFX_ASSERT(c->stencilTestEnabled == pip->stencilTestEnabled);
 
-                AFX_ASSERT(pip->depthBounds[0] == c->depthBounds[0]);
-                AFX_ASSERT(pip->depthBounds[1] == c->depthBounds[1]);
+                AFX_ASSERT(pip->depthBounds.v[0] == c->depthBounds.v[0]);
+                AFX_ASSERT(pip->depthBounds.v[1] == c->depthBounds.v[1]);
                 AFX_ASSERT(pip->depthBoundsTestEnabled == c->depthBoundsTestEnabled);
                 AFX_ASSERT(pip->depthCompareOp == c->depthCompareOp);
                 AFX_ASSERT(pip->depthTestEnabled == c->depthTestEnabled);
@@ -1411,10 +1411,10 @@ _AVX afxError AvxAssembleGfxPipelines(afxDrawSystem dsys, afxUnit cnt, avxPipeli
             }
 
             {
-                AFX_ASSERT(pip->blendConstants[0] == c->blendConstants[0]);
-                AFX_ASSERT(pip->blendConstants[1] == c->blendConstants[1]);
-                AFX_ASSERT(pip->blendConstants[2] == c->blendConstants[2]);
-                AFX_ASSERT(pip->blendConstants[3] == c->blendConstants[3]);
+                AFX_ASSERT(pip->blendConstants.v[0] == c->blendConstants.v[0]);
+                AFX_ASSERT(pip->blendConstants.v[1] == c->blendConstants.v[1]);
+                AFX_ASSERT(pip->blendConstants.v[2] == c->blendConstants.v[2]);
+                AFX_ASSERT(pip->blendConstants.v[3] == c->blendConstants.v[3]);
                 AFX_ASSERT((pip->outCnt == c->colorOutCnt) || ((c->colorOutCnt == 0) && (pip->outCnt == 1)));
 
                 for (afxUnit j = 0; j < c->colorOutCnt; j++)

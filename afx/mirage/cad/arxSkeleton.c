@@ -237,21 +237,18 @@ _ARX afxUnit ArxGetBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit bone
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxM4dCopy(dst[i], skl->boneIw[boneIdx]);
+            dst[i] = skl->boneIw[boneIdx];
         }
         break;
     }
-    case sizeof(afxV3d4) :
+    case sizeof(afxM43d) :
     {
-        afxV3d4* dst = (afxV3d4*)matrices;
+        afxM43d* dst = (afxM43d*)matrices;
 
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxV3dCopy(dst[i][0], skl->boneIw[boneIdx][0]);
-            AfxV3dCopy(dst[i][1], skl->boneIw[boneIdx][1]);
-            AfxV3dCopy(dst[i][2], skl->boneIw[boneIdx][2]);
-            AfxV3dCopy(dst[i][3], skl->boneIw[boneIdx][3]);
+            dst[i] = AfxM43dFromM4d(skl->boneIw[boneIdx]);
         }
         break;
     }
@@ -262,7 +259,7 @@ _ARX afxUnit ArxGetBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit bone
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxM3dCopyM4d(dst[i], skl->boneIw[boneIdx]);
+            dst[i] = AfxM3dFromM4d(skl->boneIw[boneIdx]);
         }
         break;
     }
@@ -288,7 +285,7 @@ _ARX afxError ArxReplaceBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit
     if (!matrices) for (afxUnit i = 0; i < boneCnt; i++)
     {
         afxUnit boneIdx = baseBone + i;
-        AfxM4dReset(skl->boneIw[boneIdx]);
+        skl->boneIw[boneIdx] = AfxM4dIdentity();
         return err;
     }
     
@@ -302,21 +299,18 @@ _ARX afxError ArxReplaceBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxM4dCopy(skl->boneIw[boneIdx], src[i]);
+            skl->boneIw[boneIdx] = src[i];
         }
         break;
     }
-    case sizeof(afxV3d4) :
+    case sizeof(afxM43d) :
     {
-        afxV3d4 const* src = (afxV3d4 const*)matrices;
+        afxM43d const* src = (afxM43d const*)matrices;
 
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxV4dCopyAtv3d(skl->boneIw[boneIdx][0], src[i][0]);
-            AfxV4dCopyAtv3d(skl->boneIw[boneIdx][1], src[i][1]);
-            AfxV4dCopyAtv3d(skl->boneIw[boneIdx][2], src[i][2]);
-            AfxV4dCopyAtv3d(skl->boneIw[boneIdx][3], src[i][3]);
+            skl->boneIw[boneIdx] = AfxM4dFromM43d(src[i]);
         }
         break;
     }
@@ -327,7 +321,7 @@ _ARX afxError ArxReplaceBoneInversors(arxSkeleton skl, afxUnit baseBone, afxUnit
         for (afxUnit i = 0; i < boneCnt; i++)
         {
             afxUnit boneIdx = baseBone + i;
-            AfxM4dCopyM3d(skl->boneIw[boneIdx], src[i], AFX_V4D_IDENTITY);
+            skl->boneIw[boneIdx] = AfxM4dFromM3d(src[i], AFX_V4D_IDENTITY);
         }
         break;
     }
@@ -625,9 +619,6 @@ _ARX afxClassConfig const _ARX_SKL_CLASS_CONFIG =
 _ARX void ArxTransformSkeletons(afxM3d const ltm, afxM3d const iltm, afxReal ltTol, afxV3d const atv, afxReal atTol, afxFlags flags, afxUnit cnt, arxSkeleton skeletons[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(atv);
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
     AFX_ASSERT(cnt);
     AFX_ASSERT(skeletons);
 

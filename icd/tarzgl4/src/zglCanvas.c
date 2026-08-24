@@ -241,9 +241,9 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
             */
 
             // Set framebuffer defaults (required when no attachments are used
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, canv->m.whd.w);
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, canv->m.whd.h);
-            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS, canv->m.whd.d);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, canv->m.extent.w);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, canv->m.extent.h);
+            gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS, canv->m.extent.d);
             gl->FramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_SAMPLES, (2 ^ canv->m.lodCnt));
             // From zglRaster.c
             // If you don't use the VK_EXT_sample_locations extension, 
@@ -298,7 +298,7 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
                     AfxThrowError();
                     glTexHandle = 0;
                     glTexTarget = GL_TEXTURE_2D;
-                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, 0, 0, (canv->m.whdMin.d > 1));
+                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, 0, 0, (canv->m.extentMin.d > 1));
                 }
                 else
                 {
@@ -320,7 +320,7 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
                         glTexTarget = ras->glTarget;
                         AFX_ASSERT(gl->IsTexture(glTexHandle));
                     }
-                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, ras->m.baseMip, ras->m.baseLayer, (canv->m.whdMin.d > 1));
+                    _ZglBindFboAttachment(dpu->gl, glTarget, NIL, glAttachment, glTexTarget, glTexHandle, ras->m.baseMip, ras->m.baseLayer, (canv->m.extentMin.d > 1));
                 }
             }
 
@@ -497,7 +497,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
             case avxLoadOp_CLEAR:
             {
                 gl->InvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 1, (GLenum[]) { GL_BACK }); _ZglThrowErrorOccuried();
-                afxReal const *rgba = dt->clearVal.rgba;
+                afxReal const *rgba = dt->clearVal.rgba.v;
                 gl->ClearColor(rgba[0], rgba[1], rgba[2], rgba[3]); _ZglThrowErrorOccuried();
                 gl->Clear(GL_COLOR_BUFFER_BIT); _ZglThrowErrorOccuried();
                 break;
@@ -520,7 +520,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
 
     afxLayeredRect areaMax;
     AvxGetCanvasExtent(canv, NIL, &areaMax);
-    avxRange canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
+    avxExtent canvWhd = { areaMax.area.w, areaMax.area.h, areaMax.layerCnt };
 
     afxUnit maxColSurCnt;
     afxUnit dsSurIdx[2] = { AFX_INVALID_INDEX, AFX_INVALID_INDEX };
@@ -738,7 +738,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
             default:
             {
                 dt = &c[i];
-                afxReal const* rgba = dt->clearVal.rgba;
+                afxReal const* rgba = dt->clearVal.rgba.v;
                 GLint dbi = clearBufs[i] - GL_COLOR_ATTACHMENT0;
                 gl->ClearBufferfv(GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                 break;
@@ -917,7 +917,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
                     }
                     default:
                     {
-                        afxReal const* rgba = values[i].rgba;
+                        afxReal const* rgba = values[i].rgba.v;
                         GLint dbi = GL_COLOR_ATTACHMENT0;
                         gl->ClearNamedFramebufferfv(fboOpDst, GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                         break;
@@ -949,7 +949,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
                     }
                     default:
                     {
-                        afxReal const* rgba = values[i].rgba;
+                        afxReal const* rgba = values[i].rgba.v;
                         GLint dbi = GL_COLOR_ATTACHMENT0;
                         gl->ClearBufferfv(GL_COLOR, /*GL_DRAW_BUFFER0 +*/ dbi, rgba); _ZglThrowErrorOccuried();
                         break;
@@ -971,6 +971,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
     {
         gl->BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
+    return err;
 }
 
 _ZGL afxError _ZglDpuResolveCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUnit opCnt, avxRasterCopy const ops[])

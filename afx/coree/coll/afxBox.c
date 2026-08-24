@@ -27,30 +27,73 @@
 #include "qwadro/math/afxInterpolation.h"
 #include "qwadro/math/afxMultiplication.h"
 
-_AFXINL void AfxMakeAabb(afxBox* bb, afxUnit cnt, afxV3d const points[])
+_AFXINL afxBox AfxMakeAabb(afxUnit cnt, afxV3d const points[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
     AFX_ASSERT(!cnt || points);
 
     // Initialize the AABB with extreme values
-    AfxV4dFill(bb->min, AFX_R32_MAX);
-    bb->min[3] = 1;
-    AfxV4dFill(bb->max, -AFX_R32_MAX);
-    bb->max[3] = 1;
-
+    afxBox bb =
+    {
+        .min = AFX_V4D_MAX,
+        .max = AFX_V4D_MIN
+    };
+    
     if (cnt)
     {
         // Add the points regularly.
-        AfxEmboxVectors(bb, cnt, points);
+        bb = AfxEmboxVectors(bb, cnt, points);
     }
+    return bb;
 }
 
-_AFXINL void AfxEmboxTriangles(afxBox* bb, afxUnit triCnt, afxV3d const vertices[], afxUnit const indices[], afxUnit idxStride)
+_AFXINL afxV3d AfxGetAabbExtents(afxBox const bb, afxBool* isValid)
+{
+    afxError err = { 0 };
+    // Calculate the bounding box extent: (max - min).
+    afxV3d extent = AfxV3dSub(bb.max.v3, bb.min.v3);
+    // Multiply by 0.5 to get half the extent (center-to-corner) if so desired.
+    if (isValid) *isValid = !!(AfxV3dSum(extent));
+    return extent;
+}
+
+_AFXINL afxV4d AfxGetAabbCentre(afxBox const bb, afxReal* halfSiz)
+{
+    afxError err = { 0 };
+    // (min + max) / 2
+    // 0.5 * (min + max)
+    afxV4d centre;
+    centre.v[0] = (bb.min.v[0] + bb.max.v[0]) * 0.5;
+    centre.v[1] = (bb.min.v[1] + bb.max.v[1]) * 0.5;
+    centre.v[2] = (bb.min.v[2] + bb.max.v[2]) * 0.5;
+    centre.v[3] = 1.f;
+    if (halfSiz) *halfSiz = fmaxf(fmaxf((bb.max.v[0] - bb.min.v[0]) * 0.5, (bb.max.v[1] - bb.min.v[1]) * 0.5), (bb.max.v[2] - bb.min.v[2]) * 0.5);
+    return centre;
+}
+
+_AFXINL void AfxGetAabbCorners(afxBox const bb, afxV3d vertices[AFX_NUM_BOX_CORNERS])
+// Generate vertices from box corners.
+{
+    // The vertices are defined as 8 unique corner points.
+
+    afxError err = { 0 };
+    AFX_ASSERT(vertices);
+
+    // Initialize the 8 unique vertices (the 8 corners of the cuboid)
+    vertices[0] = AfxV3dMake(bb.min.v[0], bb.min.v[1], bb.min.v[2]); // Front-left bottom
+    vertices[1] = AfxV3dMake(bb.max.v[0], bb.min.v[1], bb.min.v[2]); // Front-right bottom
+    vertices[2] = AfxV3dMake(bb.max.v[0], bb.min.v[1], bb.max.v[2]); // Back-right bottom
+    vertices[3] = AfxV3dMake(bb.min.v[0], bb.min.v[1], bb.max.v[2]); // Back-left bottom
+    vertices[4] = AfxV3dMake(bb.min.v[0], bb.max.v[1], bb.min.v[2]); // Front-left top
+    vertices[5] = AfxV3dMake(bb.max.v[0], bb.max.v[1], bb.min.v[2]); // Front-right top
+    vertices[6] = AfxV3dMake(bb.max.v[0], bb.max.v[1], bb.max.v[2]); // Back-right top
+    vertices[7] = AfxV3dMake(bb.min.v[0], bb.max.v[1], bb.max.v[2]); // Back-left top
+}
+
+_AFXINL afxBox AfxEmboxTriangles(afxBox bb, afxUnit triCnt, afxV3d const vertices[], afxUnit const indices[], afxUnit idxStride)
 {
     afxError err = { 0 };
     AFX_ASSERT(vertices);
-    AFX_ASSERT(bb);
 
     // To generate an Axis-Aligned Bounding Box (AABB) from an array of vertices, you'll need to calculate the minimum 
     // and maximum values for the x, y, and z coordinates. 
@@ -66,63 +109,67 @@ _AFXINL void AfxEmboxTriangles(afxBox* bb, afxUnit triCnt, afxV3d const vertices
             afxUnit ic = i * 3 + 2;
             AFX_ASSERT_TRIANGLE_BOUNDS(ia, ib, ic, triCnt);
 
-            AfxV3dMin(bb->min, bb->min, vertices[ia]);
-            AfxV3dMax(bb->max, bb->max, vertices[ia]);
-            AfxV3dMin(bb->min, bb->min, vertices[ib]);
-            AfxV3dMax(bb->max, bb->max, vertices[ib]);
-            AfxV3dMin(bb->min, bb->min, vertices[ic]);
-            AfxV3dMax(bb->max, bb->max, vertices[ic]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ia]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ia]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ib]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ib]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ic]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ic]);
         }
+        return bb;
     }
-    else
+
+    if (idxStride == 4)
     {
-        if (idxStride == 4)
+        afxUnit32 const* indices2 = (void*)indices;
+
+        // Loop through the points and adjust the min and max values
+        for (afxUnit i = 0; i < triCnt; i++)
         {
-            afxUnit32 const* indices2 = (void*)indices;
+            afxUnit ia = indices2[i * 3 + 0];
+            afxUnit ib = indices2[i * 3 + 1];
+            afxUnit ic = indices2[i * 3 + 2];
+            AFX_ASSERT_TRIANGLE_BOUNDS(ia, ib, ic, triCnt);
 
-            // Loop through the points and adjust the min and max values
-            for (afxUnit i = 0; i < triCnt; i++)
-            {
-                afxUnit ia = indices2[i * 3 + 0];
-                afxUnit ib = indices2[i * 3 + 1];
-                afxUnit ic = indices2[i * 3 + 2];
-                AFX_ASSERT_TRIANGLE_BOUNDS(ia, ib, ic, triCnt);
-
-                AfxV3dMin(bb->min, bb->min, vertices[ia]);
-                AfxV3dMax(bb->max, bb->max, vertices[ia]);
-                AfxV3dMin(bb->min, bb->min, vertices[ib]);
-                AfxV3dMax(bb->max, bb->max, vertices[ib]);
-                AfxV3dMin(bb->min, bb->min, vertices[ic]);
-                AfxV3dMax(bb->max, bb->max, vertices[ic]);
-            }
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ia]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ia]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ib]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ib]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ic]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ic]);
         }
-        else if (idxStride == 2)
-        {
-            afxUnit16 const* indices2 = (void*)indices;
-
-            // Loop through the points and adjust the min and max values
-            for (afxUnit i = 0; i < triCnt; i++)
-            {
-                afxUnit ia = indices2[i * 3 + 0];
-                afxUnit ib = indices2[i * 3 + 1];
-                afxUnit ic = indices2[i * 3 + 2];
-                AFX_ASSERT_TRIANGLE_BOUNDS(ia, ib, ic, triCnt);
-
-                AfxV3dMin(bb->min, bb->min, vertices[ia]);
-                AfxV3dMax(bb->max, bb->max, vertices[ia]);
-                AfxV3dMin(bb->min, bb->min, vertices[ib]);
-                AfxV3dMax(bb->max, bb->max, vertices[ib]);
-                AfxV3dMin(bb->min, bb->min, vertices[ic]);
-                AfxV3dMax(bb->max, bb->max, vertices[ic]);
-            }
-        }
+        return bb;
     }
+    
+    if (idxStride == 2)
+    {
+        afxUnit16 const* indices2 = (void*)indices;
+
+        // Loop through the points and adjust the min and max values
+        for (afxUnit i = 0; i < triCnt; i++)
+        {
+            afxUnit ia = indices2[i * 3 + 0];
+            afxUnit ib = indices2[i * 3 + 1];
+            afxUnit ic = indices2[i * 3 + 2];
+            AFX_ASSERT_TRIANGLE_BOUNDS(ia, ib, ic, triCnt);
+
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ia]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ia]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ib]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ib]);
+            bb.min.v3 = AfxV3dMin(bb.min.v3, vertices[ic]);
+            bb.max.v3 = AfxV3dMax(bb.max.v3, vertices[ic]);
+        }
+        return bb;
+    }
+
+    AfxThrowError();
+    return bb;
 }
 
-_AFXINL void AfxEmboxVectors(afxBox* bb, afxUnit cnt, afxV3d const vectors[])
+_AFXINL afxBox AfxEmboxVectors(afxBox bb, afxUnit cnt, afxV3d const vectors[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
     AFX_ASSERT(vectors);
 
     // To generate an Axis-Aligned Bounding Box (AABB) from an array of points, you'll need to calculate the minimum 
@@ -132,15 +179,15 @@ _AFXINL void AfxEmboxVectors(afxBox* bb, afxUnit cnt, afxV3d const vectors[])
     // Loop through the points and adjust the min and max values
     for (afxUnit i = 0; i < cnt; i++)
     {
-        AfxV3dMin(bb->min, bb->min, vectors[i]);
-        AfxV3dMax(bb->max, bb->max, vectors[i]);
+        bb.min.v3 = AfxV3dMin(bb.min.v3, vectors[i]);
+        bb.max.v3 = AfxV3dMax(bb.max.v3, vectors[i]);
     }
+    return bb;
 }
 
-_AFXINL void AfxEmboxPoints(afxBox* bb, afxUnit cnt, afxV4d const points[])
+_AFXINL afxBox AfxEmboxPoints(afxBox bb, afxUnit cnt, afxV4d const points[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
     AFX_ASSERT(points);
 
     // To generate an Axis-Aligned Bounding Box (AABB) from an array of points, you'll need to calculate the minimum 
@@ -150,15 +197,15 @@ _AFXINL void AfxEmboxPoints(afxBox* bb, afxUnit cnt, afxV4d const points[])
     // Loop through the points and adjust the min and max values
     for (afxUnit i = 0; i < cnt; i++)
     {
-        AfxV3dMin(bb->min, bb->min, points[i]);
-        AfxV3dMax(bb->max, bb->max, points[i]);
+        bb.min.v3 = AfxV3dMin(bb.min.v3, points[i].v3);
+        bb.max.v3 = AfxV3dMax(bb.max.v3, points[i].v3);
     }
+    return bb;
 }
 
-_AFXINL void AfxEmboxAabbs(afxBox* bb, afxUnit cnt, afxBox const boxes[])
+_AFXINL afxBox AfxEmboxAabbs(afxBox bb, afxUnit cnt, afxBox const boxes[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
     AFX_ASSERT(boxes);
 
     // To compute the Axis-Aligned Bounding Box(AABB) for an array of AABBs, the process is straightforward. 
@@ -169,15 +216,15 @@ _AFXINL void AfxEmboxAabbs(afxBox* bb, afxUnit cnt, afxBox const boxes[])
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        AfxV3dMin(bb->min, bb->min, boxes[i].min);
-        AfxV3dMax(bb->max, bb->max, boxes[i].max);
+        bb.min.v3 = AfxV3dMin(bb.min.v3, boxes[i].min.v3);
+        bb.max.v3 = AfxV3dMax(bb.max.v3, boxes[i].max.v3);
     }
+    return bb;
 }
 
-_AFXINL void AfxEmboxSpheres(afxBox* bb, afxUnit cnt, afxSphere const spheres[])
+_AFXINL afxBox AfxEmboxSpheres(afxBox bb, afxUnit cnt, afxSphere const spheres[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
     AFX_ASSERT(spheres);
 
     // To compute the Axis-Aligned Bounding Box (AABB) for an array of spheres, the concept is similar to computing the AABB for an array of points. 
@@ -186,54 +233,10 @@ _AFXINL void AfxEmboxSpheres(afxBox* bb, afxUnit cnt, afxSphere const spheres[])
     // Loop through each sphere and adjust the min and max values of the AABB
     for (afxUnit i = 0; i < cnt; i++)
     {
-        AfxEmboxAabbs(bb, 1, (afxBox[]) { AfxGetSphereAabb(spheres[i]) });
+        bb = AfxEmboxAabbs(bb, 1, (afxBox[]) { AfxGetSphereAabb(spheres[i]) });
     }
-    bb->max[3] = (bb->min[3] = AFX_REAL(1));
-}
-
-_AFXINL afxBool AfxGetAabbExtents(afxBox const* bb, afxV3d extent)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(bb);
-    AFX_ASSERT(extent);
-    // Calculate the bounding box extent: (max - min).
-    AfxV3dSub(extent, bb->max, bb->min);
-    // Multiply by 0.5 to get half the extent (center-to-corner) if so desired.
-    return !!(AfxV3dSum(extent));
-}
-
-_AFXINL afxReal AfxGetAabbCentre(afxBox const* bb, afxV4d centre)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(bb);
-    AFX_ASSERT(centre);
-    // (min + max) / 2
-    // 0.5 * (min + max)
-    centre[0] = (bb->min[0] + bb->max[0]) * 0.5;
-    centre[1] = (bb->min[1] + bb->max[1]) * 0.5;
-    centre[2] = (bb->min[2] + bb->max[2]) * 0.5;
-    centre[3] = 1.f;
-    return fmaxf(fmaxf((bb->max[0] - bb->min[0]) * 0.5, (bb->max[1] - bb->min[1]) * 0.5), (bb->max[2] - bb->min[2]) * 0.5);
-}
-
-_AFXINL void AfxGetAabbCorners(afxBox const* bb, afxV3d vertices[AFX_NUM_BOX_CORNERS])
-// Generate vertices from box corners.
-{
-    // The vertices are defined as 8 unique corner points.
-
-    afxError err = { 0 };
-    AFX_ASSERT(vertices);
-    AFX_ASSERT(bb);
-
-    // Initialize the 8 unique vertices (the 8 corners of the cuboid)
-    AfxV3dSet(vertices[0], bb->min[0], bb->min[1], bb->min[2]); // Front-left bottom
-    AfxV3dSet(vertices[1], bb->max[0], bb->min[1], bb->min[2]); // Front-right bottom
-    AfxV3dSet(vertices[2], bb->max[0], bb->min[1], bb->max[2]); // Back-right bottom
-    AfxV3dSet(vertices[3], bb->min[0], bb->min[1], bb->max[2]); // Back-left bottom
-    AfxV3dSet(vertices[4], bb->min[0], bb->max[1], bb->min[2]); // Front-left top
-    AfxV3dSet(vertices[5], bb->max[0], bb->max[1], bb->min[2]); // Front-right top
-    AfxV3dSet(vertices[6], bb->max[0], bb->max[1], bb->max[2]); // Back-right top
-    AfxV3dSet(vertices[7], bb->min[0], bb->max[1], bb->max[2]); // Back-left top
+    bb.max.v[3] = (bb.min.v[3] = AFX_REAL(1));
+    return bb;
 }
 
 _AFXINL afxUnit AfxGenerateIndexedLinesForAabbs(afxUnit cnt, afxBox const aabbs[], afxV3d vertices[][AFX_NUM_BOX_CORNERS], afxUnit vtxStride, afxUnit indices[][AFX_NUM_BOX_EDGE_VERTICES], afxUnit idxSiz)
@@ -265,24 +268,24 @@ _AFXINL afxUnit AfxGenerateIndexedLinesForAabbs(afxUnit cnt, afxBox const aabbs[
     for (afxUnit bbIdx = 0; bbIdx < cnt; ++bbIdx)
     {
         afxBox const* box = &aabbs[bbIdx];
-        afxReal xmin = box->min[0], ymin = box->min[1], zmin = box->min[2];
-        afxReal xmax = box->max[0], ymax = box->max[1], zmax = box->max[2];
+        afxReal xmin = box->min.v[0], ymin = box->min.v[1], zmin = box->min.v[2];
+        afxReal xmax = box->max.v[0], ymax = box->max.v[1], zmax = box->max.v[2];
         afxV3d const corners[AFX_NUM_BOX_CORNERS] =
         {
-            {xmin, ymin, zmin}, // 0
-            {xmax, ymin, zmin}, // 1
-            {xmin, ymax, zmin}, // 2
-            {xmax, ymax, zmin}, // 3
-            {xmin, ymin, zmax}, // 4
-            {xmax, ymin, zmax}, // 5
-            {xmin, ymax, zmax}, // 6
-            {xmax, ymax, zmax}  // 7
+            AFX_V3D(xmin, ymin, zmin), // 0
+            AFX_V3D(xmax, ymin, zmin), // 1
+            AFX_V3D(xmin, ymax, zmin), // 2
+            AFX_V3D(xmax, ymax, zmin), // 3
+            AFX_V3D(xmin, ymin, zmax), // 4
+            AFX_V3D(xmax, ymin, zmax), // 5
+            AFX_V3D(xmin, ymax, zmax), // 6
+            AFX_V3D(xmax, ymax, zmax)  // 7
         };
 
         // vertices[bbIdx * 8 + j], corners[j]
         for (afxUnit j = 0; j < AFX_NUM_BOX_CORNERS; ++j)
         {
-            AfxV3dCopy(vertices[bbIdx][j], corners[j]);
+            vertices[bbIdx][j] = corners[j];
         }
 
         // Copy line indices (offset by current AABB vertex index base)
@@ -369,24 +372,24 @@ _AFXINL afxUnit AfxGenerateIndexedFacesForAabbs(afxUnit cnt, afxBox const aabbs[
     for (afxUnit bbIdx = 0; bbIdx < cnt; ++bbIdx)
     {
         afxBox const* box = &aabbs[bbIdx];
-        afxReal xmin = box->min[0], ymin = box->min[1], zmin = box->min[2];
-        afxReal xmax = box->max[0], ymax = box->max[1], zmax = box->max[2];
+        afxReal xmin = box->min.v[0], ymin = box->min.v[1], zmin = box->min.v[2];
+        afxReal xmax = box->max.v[0], ymax = box->max.v[1], zmax = box->max.v[2];
         afxV3d const cubeCorners[AFX_NUM_BOX_CORNERS] =
         {
-            {xmin, ymin, zmin}, // 0
-            {xmax, ymin, zmin}, // 1
-            {xmin, ymax, zmin}, // 2
-            {xmax, ymax, zmin}, // 3
-            {xmin, ymin, zmax}, // 4
-            {xmax, ymin, zmax}, // 5
-            {xmin, ymax, zmax}, // 6
-            {xmax, ymax, zmax}  // 7
+            AFX_V3D(xmin, ymin, zmin), // 0
+            AFX_V3D(xmax, ymin, zmin), // 1
+            AFX_V3D(xmin, ymax, zmin), // 2
+            AFX_V3D(xmax, ymax, zmin), // 3
+            AFX_V3D(xmin, ymin, zmax), // 4
+            AFX_V3D(xmax, ymin, zmax), // 5
+            AFX_V3D(xmin, ymax, zmax), // 6
+            AFX_V3D(xmax, ymax, zmax)  // 7
         };
         
         // vertices[bbIdx * 8 + j], corners[j]
         for (afxUnit j = 0; j < AFX_NUM_BOX_CORNERS; ++j)
         {
-            AfxV3dCopy(vertices[bbIdx][j], cubeCorners[j]);
+            vertices[bbIdx][j] = cubeCorners[j];
         }
 
         // Copy indices (offset by vertex start index)
@@ -422,52 +425,53 @@ _AFXINL afxUnit AfxGenerateIndexedFacesForAabbs(afxUnit cnt, afxBox const aabbs[
     return rslt;
 }
 
-_AFXINL afxUnit AfxDoesAabbIncludeAtv3d(afxBox const* bb, afxUnit cnt, afxV3d const point[])
-{
-    afxError err = { 0 };
-    AFX_ASSERT(bb);
-    AFX_ASSERT(point);
-    afxUnit rslt = 0;
-
-    for (afxUnit i = 0; i < cnt; i++)
-    {
-        if
-        (
-            (!(bb->max[0] < point[i][0])) && 
-            (!(bb->max[1] < point[i][1])) && 
-            (!(bb->max[2] < point[i][2])) &&
-            (!(bb->min[0] > point[i][0])) && 
-            (!(bb->min[1] > point[i][1])) && 
-            (!(bb->min[2] > point[i][2]))
-        )
-        {
-            ++rslt;
-        }
-    }
-    return rslt;
-}
-
-_AFXINL afxBool AfxIntersectAabbs(afxBox* bb, afxBox const a, afxBox const b)
+_AFXINL afxBox AfxGetIntersectedAabb(afxBox const a, afxBox const b)
 {
     // Compute the intersection of two AABBs
     // Returns true if they intersect, and fills the result AABB
     
-    bb->min[0] = fmaxf(a.min[0], b.min[0]);
-    bb->min[1] = fmaxf(a.min[1], b.min[1]);
-    bb->min[2] = fmaxf(a.min[2], b.min[2]);
-
-    bb->max[0] = fminf(a.max[0], b.max[0]);
-    bb->max[1] = fminf(a.max[1], b.max[1]);
-    bb->max[2] = fminf(a.max[2], b.max[2]);
-
-    // Check if the intersection is valid (non-empty)
-    return (bb->min[0] <= bb->max[0]) && (bb->min[1] <= bb->max[1]) && (bb->min[2] <= bb->max[2]);
+    afxBox bb;
+    bb.min.v[0] = AFX_MAX(a.min.v[0], b.min.v[0]);
+    bb.min.v[1] = AFX_MAX(a.min.v[1], b.min.v[1]);
+    bb.min.v[2] = AFX_MAX(a.min.v[2], b.min.v[2]);
+    bb.min.v[3] = 1;
+    bb.max.v[0] = AFX_MIN(a.max.v[0], b.max.v[0]);
+    bb.max.v[1] = AFX_MIN(a.max.v[1], b.max.v[1]);
+    bb.max.v[2] = AFX_MIN(a.max.v[2], b.max.v[2]);
+    bb.max.v[3] = 1;
+    return bb;
 }
 
-_AFXINL afxUnit AfxDoesAabbInclude(afxBox const* bb, afxUnit cnt, afxBox const other[])
+_AFXINL afxBool AfxAabbIntersects(afxBox const a, afxBox const b)
+{
+    // Compute the intersection of two AABBs
+    // Returns true if they intersect, and fills the result AABB
+
+    afxBox bb = AfxGetIntersectedAabb(a, b);
+
+    // Check if the intersection is valid (non-empty)
+    return (bb.min.v[0] <= bb.max.v[0]) && (bb.min.v[1] <= bb.max.v[1]) && (bb.min.v[2] <= bb.max.v[2]);
+}
+
+_AFXINL afxUnit AfxAabbIncludes(afxBox const bb, afxBox const other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
+    afxUnit rslt = 0;
+
+    // Check if an AABB intersects with another AABB (overlapping region)
+
+    if ((bb.min.v[0] < other.max.v[0] && bb.max.v[0] > other.min.v[0]) &&
+        (bb.min.v[1] < other.max.v[1] && bb.max.v[1] > other.min.v[1]) &&
+        (bb.min.v[2] < other.max.v[2] && bb.max.v[2] > other.min.v[2]))
+    {
+        ++rslt;
+    }
+    return rslt;
+}
+
+_AFXINL afxUnit AfxAabbIncludesAny(afxBox const bb, afxUnit cnt, afxBox const other[])
+{
+    afxError err = { 0 };
     AFX_ASSERT(other);
     afxUnit rslt = 0;
 
@@ -475,9 +479,9 @@ _AFXINL afxUnit AfxDoesAabbInclude(afxBox const* bb, afxUnit cnt, afxBox const o
     {
         // Check if an AABB intersects with another AABB (overlapping region)
 
-        if ((bb->min[0] < other[i].max[0] && bb->max[0] > other[i].min[0]) &&
-            (bb->min[1] < other[i].max[1] && bb->max[1] > other[i].min[1]) &&
-            (bb->min[2] < other[i].max[2] && bb->max[2] > other[i].min[2]))
+        if ((bb.min.v[0] < other[i].max.v[0] && bb.max.v[0] > other[i].min.v[0]) &&
+            (bb.min.v[1] < other[i].max.v[1] && bb.max.v[1] > other[i].min.v[1]) &&
+            (bb.min.v[2] < other[i].max.v[2] && bb.max.v[2] > other[i].min.v[2]))
         {
             ++rslt;
         }
@@ -485,36 +489,53 @@ _AFXINL afxUnit AfxDoesAabbInclude(afxBox const* bb, afxUnit cnt, afxBox const o
     return rslt;
 }
 
-afxBool AfxTestSphereBox(afxSphere const* bs, afxBox const* bb)
+_AFXINL afxUnit AfxAabbIncludesAtv3d(afxBox const bb, afxUnit cnt, afxV3d const point[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
+    AFX_ASSERT(point);
+    afxUnit rslt = 0;
+
+    for (afxUnit i = 0; i < cnt; i++)
+    {
+        if( (!(bb.max.v[0] < point[i].v[0])) &&
+            (!(bb.max.v[1] < point[i].v[1])) &&
+            (!(bb.max.v[2] < point[i].v[2])) &&
+            (!(bb.min.v[0] > point[i].v[0])) &&
+            (!(bb.min.v[1] > point[i].v[1])) &&
+            (!(bb.min.v[2] > point[i].v[2]))
+            )
+        {
+            ++rslt;
+        }
+    }
+    return rslt;
+}
+
+afxBool AfxTestSphereBox(afxSphere const bs, afxBox const bb)
+{
+    afxError err = { 0 };
 
     // test if a bounding box is fully inside a bounding sphere.
 
     for (afxUnit i = 0; i < 3; i++)
-        if ((bs->xyzr[i] + bs->xyzr[AFX_SPHERE_RADIUS] < bb->min[i]) || 
-            (bs->xyzr[i] - bs->xyzr[AFX_SPHERE_RADIUS] > bb->max[i]))
+        if ((bs.xyzr.v[i] + bs.xyzr.v[AFX_SPHERE_RADIUS] < bb.min.v[i]) || 
+            (bs.xyzr.v[i] - bs.xyzr.v[AFX_SPHERE_RADIUS] > bb.max.v[i]))
             return FALSE;
 
     return TRUE;
 }
 
-_AFXINL void AfxTransformAabb(afxBox const* bb, afxM4d const m, afxBox* to)
+_AFXINL afxBox AfxTransformAabb(afxBox bb, afxM4d const m)
 {
     afxError err = { 0 };
-    AFX_ASSERT(bb);
-    AFX_ASSERT(m);
-    AFX_ASSERT(to);
-    AfxResetBoxes(1, to, 0);
-    AfxM4dPostMultiplyV4d(m, 2, &bb->max, &to->max);
+    bb.max = AfxV4dPostMultiplyM4d(m, bb.max);
+    bb.min = AfxV4dPostMultiplyM4d(m, bb.min);
+    return bb;
 }
 
-_AFXINL void AfxTransformObbs(afxM3d const ltm, afxV4d const atv, afxUnit cnt, afxBox const in[], afxBox out[])
+_AFXINL void AfxTransformObbs(afxM3d const ltm, afxV3d const atv, afxUnit cnt, afxBox const in[], afxBox out[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(atv);
-    AFX_ASSERT(ltm);
     AFX_ASSERT(cnt);
     AFX_ASSERT(in);
     AFX_ASSERT(out);
@@ -523,9 +544,9 @@ _AFXINL void AfxTransformObbs(afxM3d const ltm, afxV4d const atv, afxUnit cnt, a
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxV3d max, min, pos;
-        AfxV3dFill(max, -3.4028235e38);
-        AfxV3dFill(min, 3.4028235e38);
+        afxV3d pos;
+        afxV3d max = AfxV3dFill(-3.4028235e38);
+        afxV3d min = AfxV3dFill(3.4028235e38);
 
         for (afxUnit z = 0; z < 2; z++)
         {
@@ -533,22 +554,21 @@ _AFXINL void AfxTransformObbs(afxM3d const ltm, afxV4d const atv, afxUnit cnt, a
             {
                 for (afxUnit x = 0; x < 2; x++)
                 {
-                    afxV3d tmp;
-                    AfxV3dSet(tmp,  x ? in[i].max[0] : in[i].min[0],
-                                    y ? in[i].max[1] : in[i].min[1],
-                                    z ? in[i].max[2] : in[i].min[2]);
+                    afxV3d tmp = AfxV3dMake(x ? in[i].max.v[0] : in[i].min.v[0],
+                                            y ? in[i].max.v[1] : in[i].min.v[1],
+                                            z ? in[i].max.v[2] : in[i].min.v[2]);
 
-                    AfxV3dPostMultiplyM3d(pos, ltm, tmp);
-                    AfxV3dAdd(pos, pos, atv);
+                    pos = AfxV3dPostMultiplyM3d(ltm, tmp);
+                    pos = AfxV3dAdd(pos, atv);
 
-                    AfxV3dMin(min, min, pos);
-                    AfxV3dMax(max, max, pos);
+                    min = AfxV3dMin(min, pos);
+                    max = AfxV3dMax(max, pos);
                 }
             }
         }
 
-        AfxV3dCopy(out[i].max, max);
-        AfxV3dCopy(out[i].min, min);
+        out[i].max = AfxV4dFromV3d(max);
+        out[i].min = AfxV4dFromV3d(min);
     }
 }
 
@@ -558,6 +578,10 @@ _AFXINL void AfxCopyBoxes(afxUnit cnt, afxBox const in[], afxUnit inStride, afxB
     AFX_ASSERT(cnt);
     AFX_ASSERT(out);
     AFX_ASSERT(in);
+    AFX_ASSERT(inStride >= sizeof(afxBox) || cnt == 1);
+    AFX_ASSERT(outStride >= sizeof(afxBox) || cnt == 1);
+    AFX_ASSERT_ALIGNMENT(inStride, AFX_PTR_ALIGNMENT);
+    AFX_ASSERT_ALIGNMENT(outStride, AFX_PTR_ALIGNMENT);
 
     // is a array copy operation (not sparsed elements)?
     if ((inStride == outStride) && ((inStride == sizeof(afxBox)) || (inStride == 0)))
@@ -595,18 +619,20 @@ _AFXINL void AfxResetBoxes(afxUnit cnt, afxBox boxes[], afxUnit stride)
     afxError err = { 0 };
     AFX_ASSERT(boxes);
     AFX_ASSERT(cnt);
+    AFX_ASSERT(stride >= sizeof(afxBox) || cnt == 1);
+    AFX_ASSERT_ALIGNMENT(stride, AFX_PTR_ALIGNMENT);
 
     // if elements are not sparsed.
     if (!stride || (stride == sizeof(afxBox)))
     {
         for (afxUnit i = 0; i < cnt; i++)
-            AfxMakeAabb(&boxes[i], 0, NIL);
+            boxes[i] = AfxMakeAabb(0, NIL);
     }
     else
     {
         for (afxUnit i = 0; i < cnt; i++)
         {
-            AfxMakeAabb(&boxes[0], 0, NIL);
+            boxes[0] = AfxMakeAabb(0, NIL);
             boxes = (afxBox*)(AFX_CAST(afxByte const*, boxes) + stride);
         }
     }

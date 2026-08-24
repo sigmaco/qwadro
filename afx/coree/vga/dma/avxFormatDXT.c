@@ -179,7 +179,7 @@ inline void flip_s3tc(afxByte* dst, afxByte const* src, afxUnit srcSiz, afxUnit 
         afxSize XBlocks = rowStride <= 4 ? 1 : rowStride / 4;
 
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &fmt, &pfd);
+        AvxDescribeFormat(fmt, &pfd);
         afxUnit blockSiz = pfd.stride;
 
         if (rowCnt == 2)

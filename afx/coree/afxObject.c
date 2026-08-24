@@ -82,7 +82,7 @@ _AFXINL afxInt32 AfxGetRefCount(afxObject obj)
     afxError err = { 0 };
     afxObjectBase* hdr = GET_OBJ_HDR(obj);
     AFX_ASSERT(hdr->fcc == afxFcc_OBJ);
-    return AfxLoadAtom32(&hdr->refCnt);
+    return AfxAtomicLoad32(&hdr->refCnt);
 }
 
 _AFXINL afxUnit32 AfxGetObjectTid(afxObject obj)

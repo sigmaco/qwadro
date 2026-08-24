@@ -391,7 +391,7 @@ _ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufRem
                 iorp->Remap.mapOps[i].placeholder = map->placeholder;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }
@@ -421,7 +421,7 @@ _ACX afxError _AcxSqueRemapBuffers(afxWarpQueue sque, afxUnit mapCnt, _acxBufRem
                 iorp->Remap.unmapOps[i].buf = map->buf;
 
                 AfxReacquireObjects(1, &map->buf);
-                AfxIncAtom32(&map->buf->storage[0].pendingRemap);
+                AfxAtomicInc32(&map->buf->storage[0].pendingRemap);
             }
         }
     }

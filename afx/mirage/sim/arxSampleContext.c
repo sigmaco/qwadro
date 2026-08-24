@@ -127,7 +127,7 @@ _ARX afxError _AsxCtxDtorCb(arxContext ctx)
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CTX, 1, &ctx);
 
-    while (AfxLoadAtom32(&ctx->submCnt))
+    while (AfxAtomicLoad32(&ctx->submCnt))
     {
         AfxYield();
     }

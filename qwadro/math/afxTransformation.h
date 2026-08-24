@@ -23,6 +23,8 @@
 #include "qwadro/math/afxVector.h"
 #include "qwadro/math/afxQuaternion.h"
 #include "qwadro/math/afxMatrix.h"
+#include "qwadro/math/afxArithmetic.h"
+#include "qwadro/math/afxArithmetic2.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // VECTOR                                                                     //
@@ -33,16 +35,16 @@
 /// in = 3D vector to rotate.
 /// rot = Quaternion that describes the rotation to apply to the vector.
 
-AFXINL void AfxV3dRotate(afxV3d v, afxV3d const in, afxQuat const q);
+AFXINL afxV3d AfxV3dRotate(afxV3d const in, afxQuat const q);
 
-AFXINL void AfxV3dRotateInv(afxV3d v, afxV3d const in, afxQuat const q);
+AFXINL afxV3d AfxV3dRotateInv(afxV3d const in, afxQuat const q);
 
 // Similarity transform
 
 AFXINL void     AfxAssimilateAtv3d
 (
     afxM3d const ltm, 
-    afxV4d const atv, 
+    afxV3d const atv, 
     afxUnit cnt, 
     afxV3d const in[], 
     afxV3d out[]
@@ -51,7 +53,7 @@ AFXINL void     AfxAssimilateAtv3d
 AFXINL void     AfxAssimilateAtv4d
 (
     afxM3d const ltm, 
-    afxV4d const atv, 
+    afxV3d const atv, 
     afxUnit cnt, 
     afxV4d const in[], 
     afxV4d out[]
@@ -69,15 +71,13 @@ AFXINL void     AfxAssimilateAtv4d
 
 // aka get matrix rotation
 
-AFXINL void AfxQuatRotationM3d
+AFXINL afxQuat AfxQuatRotationM3d
 (
-    afxQuat q,
     afxM3d const m
 );
 
-AFXINL void AfxQuatRotationM4d
+AFXINL afxQuat AfxQuatRotationM4d
 (
-    afxQuat q,
     afxM4d const m
 );
 
@@ -88,9 +88,8 @@ AFXINL void AfxQuatRotationM4d
 
 // makes a quaternion rotation that will rotate around the given axis by the specified angle. The axis must be a normalized vector.
 
-AFXINL void AfxQuatRotationAxial
+AFXINL afxQuat AfxQuatRotationAxial
 (
-    afxQuat q,
     afxV3d const axis,
     afxReal phi // angle
 );
@@ -104,9 +103,8 @@ AFXINL void AfxQuatRotationAxial
 /// q = Returns the rotation quaternion.
 /// pitchYawRoll = 3D vector containing the Euler angles in the order x-axis (pitch), then y-axis (yaw), and then z-axis (roll).
 
-AFXINL void AfxQuatRotationEuler
+AFXINL afxQuat AfxQuatRotationEuler
 (
-    afxQuat q,
     afxV3d const pitchYawRoll
 );
 
@@ -115,10 +113,9 @@ AFXINL void AfxQuatRotationEuler
 /// axis = Address of a 3D vector describing the axis of rotation for the quaternion Q.
 /// radians = Address of float describing the radian angle of rotation for the quaternion Q.
 
-AFXINL void AfxQuatExtractAxialRotation
+AFXINL afxV3d AfxQuatExtractAxialRotation
 (
     afxQuat const q, 
-    afxV3d axis, 
     afxReal *radians
 ); // extracts an axis/angle representation to this quaternion rotation.
 
@@ -136,16 +133,14 @@ AFXINL void AfxAssimilateQuat
 /// I have seen this problem solved in many different ways, many times involving inverse trig functions. We are going to solve this problem with quaternions - and it's really easy!
 /// Here is a function that will give you the rotation quaternion that will rotate some initial vector into some final vector
 
-AFXINL void AfxQuatLookTo
+AFXINL afxQuat AfxQuatLookTo
 (
-    afxQuat q, 
     afxV3d const from, 
     afxV3d const to
 );
 
-AFXINL void AfxQuatFromAngularVelocity
+AFXINL afxQuat AfxQuatFromAngularVelocity
 (
-    afxQuat q, 
     afxV3d const vel
 );
 
@@ -153,9 +148,8 @@ AFXINL void AfxQuatFromAngularVelocity
 /// If you represent the orientation of this body with a quaternion, you will need to know how to update it. 
 /// Here is a sample function for integrating a quaternion with a given angular velocity and time step.
 
-AFXINL void AfxQuatIntegrate
+AFXINL afxQuat AfxQuatIntegrate
 (
-    afxQuat q, 
     afxQuat const in, 
     afxV3d const omega, 
     afxReal dt
@@ -165,9 +159,8 @@ AFXINL void AfxQuatIntegrate
     The AfxQuatIntegrateEULER function for first-order (explicit Euler) quaternion integration.
 */
 
-AFXINL void AfxQuatIntegrateEULER
+AFXINL afxQuat AfxQuatIntegrateEULER
 (
-    afxQuat q, 
     afxQuat const in, 
     afxV3d const omega, 
     afxReal dt
@@ -194,30 +187,29 @@ AFXINL void AfxQuatRotateV3d
 // Affine transformation matrix methods
 
 // Builds a matrix that scales along the x-axis, y-axis, and z-axis.
-AFXINL void AfxM3dScaling(afxM3d m, afxV3d const scale);
-AFXINL void AfxM4dScaling(afxM4d m, afxV3d const scale);
+AFXINL afxM3d AfxM3dScaling(afxV3d const scale);
+AFXINL afxM4d AfxM4dScaling(afxV3d const scale);
 
 // Builds a rotation matrix from a quaternion.
-AFXINL void AfxM3dRotationQuat(afxM3d m, afxQuat const q);
-AFXINL void AfxM4dRotationQuat(afxM4d m, afxQuat const q);
+AFXINL afxM3d AfxM3dRotationQuat(afxQuat const q);
+AFXINL afxM4d AfxM4dRotationQuat(afxQuat const q);
 
 // Builds a matrix that rotates around an arbitrary axis.
-AFXINL void AfxM3dRotationAxis(afxM3d m, afxV3d const axis, afxReal /*theta*/radians);
-AFXINL void AfxM4dRotationAxis(afxM4d m, afxV3d const axis, afxReal /*theta*/radians);
+AFXINL afxM3d AfxM3dRotationAxis(afxV3d const axis, afxReal /*theta*/radians);
+AFXINL afxM4d AfxM4dRotationAxis(afxV3d const axis, afxReal /*theta*/radians);
 
 // Builds a rotation matrix based on a given pitch, yaw, and roll (Euler angles).
-AFXINL void AfxM4dRotationEuler(afxM4d m, afxReal pitch, afxReal yaw, afxReal roll);
+AFXINL afxM4d AfxM4dRotationEuler(afxReal pitch, afxReal yaw, afxReal roll);
 
 // Builds a matrix that rotates around the x-axis, y-axis or z-axis.
 // Angles are measured clockwise when looking along the rotation axis toward the origin.
-AFXINL void AfxM4dRotationX(afxM4d m, afxReal angle);
-AFXINL void AfxM4dRotationY(afxM4d m, afxReal angle);
-AFXINL void AfxM4dRotationZ(afxM4d m, afxReal angle);
+AFXINL afxM4d AfxM4dRotationX(afxReal angle);
+AFXINL afxM4d AfxM4dRotationY(afxReal angle);
+AFXINL afxM4d AfxM4dRotationZ(afxReal angle);
 
-AFXINL void AfxM4dTranslation
+AFXINL afxM4d AfxM4dTranslation
 // Builds a translation matrix from the specified vector describing the translations along the x-axis, y-axis, and z-axis.
 (
-    afxM4d m, 
     afxV3d const translation // vector describing the translations along the x-axis, y-axis, and z-axis.
 );
 
@@ -232,16 +224,15 @@ AFXINL afxBool AfxM3dPolarDecompose
 (
     afxM3d const m, 
     afxReal tol, 
-    afxM3d rm, 
-    afxM3d ssm
+    afxM3d* rm, 
+    afxM3d* ssm
 );
 
 // Compose
 
-AFXINL void AfxM4dComposeTransformation
+AFXINL afxM4d AfxM4dComposeTransformation
 // Builds a transformation matrix.
 (
-    afxM4d m, 
     // Vector describing the center of the scaling.
     afxV3d const scalPivot,
     // Quaternion describing the orientation of the scaling.
@@ -256,10 +247,9 @@ AFXINL void AfxM4dComposeTransformation
     afxV3d const translation
 );
 
-AFXINL void AfxM4dComposeAffineTransformation
+AFXINL afxM4d AfxM4dComposeAffineTransformation
 // Builds an affine transformation matrix.
 (
-    afxM4d m, 
     // Vector of scaling factors for each dimension.
     afxV3d const scale,
     // Point identifying the center of rotation.
@@ -285,15 +275,14 @@ AFXINL void AfxAssimilateAtm4d
 (
     afxM3d const ltm, 
     afxM3d const iltm, 
-    afxV4d const atv, 
+    afxV3d const atv, 
     afxUnit cnt, 
     afxM4d const in[], 
     afxM4d out[]
 );
 
-AFXINL void AfxM4dRigidMotion
+AFXINL afxM4d AfxM4dRigidMotion
 (
-    afxM4d m, 
     afxM4d const mm, 
     afxV3d const rotation, 
     afxV3d const translation

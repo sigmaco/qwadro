@@ -62,46 +62,46 @@ typedef enum afxMemoryOrder
 } afxMemoryOrder;
 
 // reads a value from an atomic object.
-AFXINL afxInt32     AfxLoadAtom32(afxAtom32* src);
-AFXINL afxInt64     AfxLoadAtom64(afxAtom64* src);
-AFXINL void*        AfxLoadAtomPtr(afxAtomPtr* src);
+AFXINL afxInt32     AfxAtomicLoad32(afxAtom32* src);
+AFXINL afxInt64     AfxAtomicLoad64(afxAtom64* src);
+AFXINL void*        AfxAtomicLoadPtr(afxAtomPtr* src);
 
 // stores a value in an atomic object.
-AFXINL void         AfxStoreAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL void         AfxStoreAtom64(afxAtom64* dsr, afxInt64 val);
-AFXINL void         AfxStoreAtomPtr(afxAtomPtr* dst, void* val);
+AFXINL void         AfxAtomicStore32(afxAtom32* dst, afxInt32 val);
+AFXINL void         AfxAtomicStore64(afxAtom64* dsr, afxInt64 val);
+AFXINL void         AfxAtomicStorePtr(afxAtomPtr* dst, void* val);
 
-AFXINL afxInt32     AfxIncAtom32(afxAtom32* val);
-AFXINL afxInt64     AfxIncAtom64(afxAtom64* val);
+AFXINL afxInt32     AfxAtomicInc32(afxAtom32* val);
+AFXINL afxInt64     AfxAtomicInc64(afxAtom64* val);
 
 // atomic addition.
-AFXINL afxInt32     AfxAddAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL afxInt64     AfxAddAtom64(afxAtom64* dst, afxInt64 val);
+AFXINL afxInt32     AfxAtomicAdd32(afxAtom32* dst, afxInt32 val);
+AFXINL afxInt64     AfxAtomicAdd64(afxAtom64* dst, afxInt64 val);
 
-AFXINL afxInt32     AfxDecAtom32(afxAtom32* val);
-AFXINL afxInt64     AfxDecAtom64(afxAtom64* val);
+AFXINL afxInt32     AfxAtomicDec32(afxAtom32* val);
+AFXINL afxInt64     AfxAtomicDec64(afxAtom64* val);
 
 // atomic subtraction.
-AFXINL afxInt32     AfxSubAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL afxInt64     AfxSubAtom64(afxAtom64* dst, afxInt64 val);
+AFXINL afxInt32     AfxAtomicSub32(afxAtom32* dst, afxInt32 val);
+AFXINL afxInt64     AfxAtomicSub64(afxAtom64* dst, afxInt64 val);
 
 // swaps a value with the value of an atomic object.
-AFXINL afxInt32     AfxExchangeAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL afxInt64     AfxExchangeAtom64(afxAtom64* dst, afxInt64 val);
-AFXINL void*        AfxExchangeAtomPtr(afxAtomPtr* dst, void* val);
+AFXINL afxInt32     AfxAtomicExchange32(afxAtom32* dst, afxInt32 val);
+AFXINL afxInt64     AfxAtomicExchange64(afxAtom64* dst, afxInt64 val);
+AFXINL void*        AfxAtomicExchangePtr(afxAtomPtr* dst, void* val);
 
 // atomic bitwise AND.
-AFXINL afxInt32     AfxAndAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL afxInt64     AfxAndAtom64(afxAtom64* dst, afxInt64 val);
+AFXINL afxInt32     AfxAtomicAnd32(afxAtom32* dst, afxInt32 val);
+AFXINL afxInt64     AfxAtomicAnd64(afxAtom64* dst, afxInt64 val);
 
 // atomic bitwise OR.
-AFXINL afxInt32     AfxOrAtom32(afxAtom32* dst, afxInt32 val);
-AFXINL afxInt64     AfxOrAtom64(afxAtom64* dst, afxInt64 val);
+AFXINL afxInt32     AfxAtomicOr32(afxAtom32* dst, afxInt32 val);
+AFXINL afxInt64     AfxAtomicOr64(afxAtom64* dst, afxInt64 val);
 
 // swaps a value with an atomic object if the old value is what is expected, otherwise reads the old value.
-AFXINL afxBool      AfxCasAtom32(afxAtom32* dst, afxInt32* expected, afxInt32 proposed);
-AFXINL afxBool      AfxCasAtom64(afxAtom64* dst, afxInt64* expected, afxInt64 proposed);
-AFXINL afxBool      AfxCasAtomPtr(afxAtomPtr* dst, void** expected, void* proposed);
+AFXINL afxBool      AfxAtomicCas32(afxAtom32* dst, afxInt32* expected, afxInt32 proposed);
+AFXINL afxBool      AfxAtomicCas64(afxAtom64* dst, afxInt64* expected, afxInt64 proposed);
+AFXINL afxBool      AfxAtomicCasPtr(afxAtomPtr* dst, void** expected, void* proposed);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -116,14 +116,14 @@ case sizeof(afxInt32): AfxAtomicInit32((pobj_),(desired_)); break;\
 default: AfxThrowError(); break; \
 }
 
-AFX afxInt32 AfxAtomicLoad32(const volatile afxInt32* obj, afxMemoryOrder order);
-AFX afxInt64 AfxAtomicLoad64(const volatile afxInt64* obj, afxMemoryOrder order);
+AFX afxInt32 AfxAtomicLoad32_(const volatile afxInt32* obj, afxMemoryOrder order);
+AFX afxInt64 AfxAtomicLoad64_(const volatile afxInt64* obj, afxMemoryOrder order);
 
 #define AfxAtomicLoad(pobj_, order_) \
 switch(sizeof(*(pobj_))) \
 { \
-case sizeof(afxInt64): AfxAtomicLoad64((pobj_),(order_)); break;\
-case sizeof(afxInt32): AfxAtomicLoad32((pobj_),(order_)); break;\
+case sizeof(afxInt64): AfxAtomicLoad64_((pobj_),(order_)); break;\
+case sizeof(afxInt32): AfxAtomicLoad32_((pobj_),(order_)); break;\
 default: AfxThrowError(); break; \
 }
 
@@ -139,25 +139,25 @@ default: AfxThrowError(); break; \
     Otherwise the behavior is undefined.
 */
 
-AFX void AfxAtomicStore32(volatile afxInt32* obj, afxInt32 value, afxMemoryOrder order);
-AFX void AfxAtomicStore64(volatile afxInt64* obj, afxInt64 value, afxMemoryOrder order);
+AFX void AfxAtomicStore32_(volatile afxInt32* obj, afxInt32 value, afxMemoryOrder order);
+AFX void AfxAtomicStore64_(volatile afxInt64* obj, afxInt64 value, afxMemoryOrder order);
 
 #define AfxAtomicStore(pobj_, value_, order_) \
 switch(sizeof(*(pobj_))) \
 { \
-case sizeof(afxInt64): AfxAtomicStore64((pobj_),(value_),(order_)); break;\
-case sizeof(afxInt32): AfxAtomicStore32((pobj_),(value_),(order_)); break;\
+case sizeof(afxInt64): AfxAtomicStore64_((pobj_),(value_),(order_)); break;\
+case sizeof(afxInt32): AfxAtomicStore32_((pobj_),(value_),(order_)); break;\
 default: AfxThrowError(); break; \
 }
 
-AFX afxInt32 AfxAtomicExchange32(volatile afxInt32* obj, afxInt32 value, afxMemoryOrder order);
-AFX afxInt64 AfxAtomicExchange64(volatile afxInt64* obj, afxInt64 value, afxMemoryOrder order);
+AFX afxInt32 AfxAtomicExchange32_(volatile afxInt32* obj, afxInt32 value, afxMemoryOrder order);
+AFX afxInt64 AfxAtomicExchange64_(volatile afxInt64* obj, afxInt64 value, afxMemoryOrder order);
 
 #define AfxAtomicExchange(pobj_, value_, order_) \
 switch(sizeof(*(pobj_))) \
 { \
-case sizeof(afxInt64): AfxAtomicExchange64((pobj_),(value_),(order_)); break;\
-case sizeof(afxInt32): AfxAtomicExchange32((pobj_),(value_),(order_)); break;\
+case sizeof(afxInt64): AfxAtomicExchange64_((pobj_),(value_),(order_)); break;\
+case sizeof(afxInt32): AfxAtomicExchange32_((pobj_),(value_),(order_)); break;\
 default: AfxThrowError(); break; \
 }
 

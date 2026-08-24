@@ -505,7 +505,7 @@ _ARXINL void ArxSetPulleyEaseOutCurve(arxPulley pull, afxReal StartSeconds, afxR
     _PackEaseCurve(&pull->easeOutValues, StartValue, StartTangent, EndTangent, EndValue);
 }
 
-_ARXINL afxReal _ComputeEaseCurve(afxReal *Bezier, afxReal StartClock, afxReal CurrentClock, afxReal EndClock)
+_ARXINL afxReal _ComputeEaseCurve(afxV4d const Bezier, afxReal StartClock, afxReal CurrentClock, afxReal EndClock)
 {
     afxReal v5; // st7
 
@@ -517,7 +517,7 @@ _ARXINL afxReal _ComputeEaseCurve(afxReal *Bezier, afxReal StartClock, afxReal C
             goto LABEL_3;
     LABEL_7:
         v5 = 1.0;
-        return ((1.0 - v5) * Bezier[1] + v5 * Bezier[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier[3] * v5 * v5 + (1.0 - v5) * Bezier[0] * (1.0 - v5) * (1.0 - v5);
+        return ((1.0 - v5) * Bezier.v[1] + v5 * Bezier.v[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier.v[3] * v5 * v5 + (1.0 - v5) * Bezier.v[0] * (1.0 - v5) * (1.0 - v5);
     }
 
     v5 = (CurrentClock - StartClock) / v4;
@@ -525,32 +525,32 @@ _ARXINL afxReal _ComputeEaseCurve(afxReal *Bezier, afxReal StartClock, afxReal C
     if (v5 >= 0.0)
     {
         if (v5 <= 1.0)
-            return ((1.0 - v5) * Bezier[1] + v5 * Bezier[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier[3] * v5 * v5 + (1.0 - v5) * Bezier[0] * (1.0 - v5) * (1.0 - v5);
+            return ((1.0 - v5) * Bezier.v[1] + v5 * Bezier.v[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier.v[3] * v5 * v5 + (1.0 - v5) * Bezier.v[0] * (1.0 - v5) * (1.0 - v5);
 
         goto LABEL_7;
     }
 
 LABEL_3:
     v5 = 0.0;
-    return ((1.0 - v5) * Bezier[1] + v5 * Bezier[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier[3] * v5 * v5 + (1.0 - v5) * Bezier[0] * (1.0 - v5) * (1.0 - v5);
+    return ((1.0 - v5) * Bezier.v[1] + v5 * Bezier.v[2]) * (1.0 - v5) * v5 * 3.0 + v5 * Bezier.v[3] * v5 * v5 + (1.0 - v5) * Bezier.v[0] * (1.0 - v5) * (1.0 - v5);
 }
 
-_ARXINL void _UnpackEaseCurve(afxUnit32 value, afxV4d result)
+_ARXINL afxV4d _UnpackEaseCurve(afxUnit32 value)
 {
-    result[0] = (afxReal)(afxUnit8)value * 0.0039215689;
-    result[1] = (afxReal)((afxUnit16)value >> 8) * 0.0039215689;
-    result[2] = (afxReal)((value >> 16) & 0xFF) * 0.0039215689;
-    result[3] = (afxReal)(value >> 24) * 0.0039215689;
+    afxV4d result;
+    result.v[0] = (afxReal)(afxUnit8)value * 0.0039215689;
+    result.v[1] = (afxReal)((afxUnit16)value >> 8) * 0.0039215689;
+    result.v[2] = (afxReal)((value >> 16) & 0xFF) * 0.0039215689;
+    result.v[3] = (afxReal)(value >> 24) * 0.0039215689;
+    return result;
 }
 
 _ARXINL afxReal ArxGetPulleyEaseCurveMultiplier(arxPulley pull)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PULL, 1, &pull);
-    afxV4d easeInValues;
-    _UnpackEaseCurve(pull->easeInValues, easeInValues);
-    afxV4d easeOutValues;
-    _UnpackEaseCurve(pull->easeOutValues, easeOutValues);
+    afxV4d easeInValues = _UnpackEaseCurve(pull->easeInValues);
+    afxV4d easeOutValues = _UnpackEaseCurve(pull->easeOutValues);
 
     afxReal result = 1.0;
 
@@ -566,7 +566,7 @@ _ARXINL afxReal ArxGetPulleyEaseCurveMultiplier(arxPulley pull)
             else
             {
                 afxReal a = (pull->timing.currTime - pull->timing.easeOutEndTime) / (pull->timing.easeInStartTime - pull->timing.easeOutEndTime);
-                result = (1.0 - a) * easeOutValues[3] + easeInValues[0] * (a);
+                result = (1.0 - a) * easeOutValues.v[3] + easeInValues.v[0] * (a);
             }
         }
         else

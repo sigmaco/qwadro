@@ -76,15 +76,20 @@ AFX_DEFINE_STRUCT(afxArray)
     // A type signature used for runtime validation/debugging.
     afxFcc      fcc; // afxFcc_ARR;
 #endif
+
     // Size (in bytes) of each item in the array.
     afxUnit     unitSiz;
+
     // Alignment requirement of each item, typically a power of two.
     // Useful for SIMD or architecture-specific performance optimizations.
     afxUnit     align;
+
     // Capacity; how many items the array can hold before needing to reallocate memory.
     afxUnit     cap;
+
     // Population; how many elements are currently in use (i.e. how many valid items exist).
     afxUnit     pop;
+
     // A union giving access to the underlying data in multiple ways:
     //  items: Points to the data (typed via casting later).
     //  bytemap: Byte-level access (useful for serialization or memory scanning).
@@ -112,74 +117,155 @@ AFX_DEFINE_STRUCT(afxArray)
     Its design is essential when memory layout must be externally controlled.
 */
 
-AFXINL afxError     AfxMakeArray
+AFXINL afxError AfxMakeArray
 (
     // The array to initialize.
-    afxArray*       arr, 
+    afxArray* arr, 
+
     // Size of each unit (element).
-    afxUnit         unitSiz, 
+    afxUnit unitSiz, 
+
     // How many units the array can hold.
-    afxUnit         cap, 
+    afxUnit cap, 
+
     // Optional buffer (can be NIL).
-    void*           buf, 
+    void* buf, 
+
     // Initial unit count (<= cap) for user-provided buffer.
-    afxUnit         pop
+    afxUnit pop
 );
+
+AFXINL afxUnit AfxGetArrayCap
+(
+    afxArray const* arr
+)
+{
+    // returns the maximum possible number of elements.
+
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    return arr->cap;
+}
+
+AFXINL afxUnit AfxGetArrayPop
+(
+    afxArray const* arr
+)
+{
+    // returns the number of elements.
+
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    return arr->pop;
+}
 
 /*
-    The AfxEmptyArray() clears or resets the array, optionally freeing its memory, depending on the flag.
-    Optionally, it also frees the memory allocation, thus zeroing its capacity.
-    This function is used to properly discommission an array.
-    
-    Reusing array structures with or without releasing memory, depending on whether you plan to push more data in again soon.
+    The AfxIsArrayEmpty() function returns true if the array contains no elements (count == 0),
+    regardless of whether memory is allocated or not.
+
 */
 
-AFXINL afxError     AfxEmptyArray
+AFXINL afxBool AfxIsArrayEmpty
 (
-    // The dynamic array to exhaust.
-    afxArray*       arr, 
-    // If TRUE, it keeps memory allocated for reuse.
-    afxBool         dontFree,
-    // If TRUE, it zeroes out the array's memory.
-    afxBool         zeroOut
-);
+    // The array to be checked.
+    afxArray const* arr
+)
+{
+    // AfxIsArrayEmpty() - Checks if the container has no elements, i.e. whether begin() == end().
 
-/*
-    The AfxReserveArraySpace() function ensures the array has at least @cap units of capacity allocated.
-    This function does not change the count of items. It may allocate or reallocate internal storage.
-    Useful for preallocation if you know you'll push a bunch of elements soon, avoiding repeated 
-    reallocations during a large push sequence (like pushing 1000 things at once).
-*/
-
-AFXINL afxError     AfxReserveArraySpace
-(
-    // The array to be inflated.
-    afxArray*       arr, 
-    // The desired capacity.
-    afxUnit         cap
-);
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    return (arr->pop == 0);
+}
 
 /*
     The AfxIsArrayFull() function returns true if the current count of elements has reached the array's capacity.
     You'll probably want to reserve or grow the array if this returns true before pushing more items.
 */
 
-AFXINL afxBool      AfxIsArrayFull
+AFXINL afxBool AfxIsArrayFull
 (
     // The array to be checked.
     afxArray const* arr
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    return (arr->pop == arr->cap);
+}
+
+AFXINL void* AfxGetAtArray
+(
+    afxArray const* arr,
+    afxUnit unitIdx
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    AFX_ASSERT_RANGE(arr->pop, unitIdx, 1);
+    //if (unitIdx >= arr->pop) return NIL; // bounds check
+    AFX_ASSERT(arr->bytemap);
+    return &(arr->bytemap[unitIdx * arr->unitSiz]);
+}
+
+AFXINL void* AfxGetFirstAtArray
+(
+    afxArray const* arr
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    //if (unitIdx >= arr->pop) return NIL; // bounds check
+    AFX_ASSERT(arr->bytemap);
+    return &(arr->bytemap[0 * arr->unitSiz]);
+}
+
+AFXINL void* AfxGetLastAtArray
+(
+    afxArray const* arr
+)
+{
+    afxError err = { afxError_NIL };
+    AFX_ASSERT(arr);
+    //if (unitIdx >= arr->pop) return NIL; // bounds check
+    AFX_ASSERT(arr->bytemap);
+    return &(arr->bytemap[arr->pop * arr->unitSiz]);
+}
+
+/*
+    The AfxEmptyArray() clears or resets the array, optionally freeing its memory, depending on the flag.
+    Optionally, it also frees the memory allocation, thus zeroing its capacity.
+    This function is used to properly discommission an array.
+
+    Reusing array structures with or without releasing memory, depending on whether you plan to push more data in again soon.
+*/
+
+AFXINL afxError AfxEmptyArray
+(
+    // The dynamic array to exhaust.
+    afxArray* arr,
+
+    // If TRUE, it keeps memory allocated for reuse.
+    afxBool dontFree,
+
+    // If TRUE, it zeroes out the array's memory.
+    afxBool zeroOut
 );
 
 /*
-    The AfxIsArrayEmpty() function returns true if the array contains no elements (count == 0), 
-    regardless of whether memory is allocated or not.
-
+    The AfxReserveArraySpace() function ensures the array has at least @cap units of capacity allocated.
+    This function does not change the count of items. It may allocate or reallocate internal storage.
+    Useful for preallocation if you know you'll push a bunch of elements soon, avoiding repeated
+    reallocations during a large push sequence (like pushing 1000 things at once).
 */
 
-AFXINL afxBool      AfxIsArrayEmpty
+AFXINL afxError AfxReserveArraySpace
 (
-    // The array to be checked.
-    afxArray const* arr
+    // The array to be inflated.
+    afxArray* arr,
+
+    // The desired capacity.
+    afxUnit cap
 );
 
 /*
@@ -198,12 +284,16 @@ AFXINL void*        AfxPushArrayUnits
 (
     // The dynamic array to push data into.
     afxArray*       arr, 
+
     // Number of units (elements) to push.
     afxUnit         cnt, 
+
     // [out] Optional. Returns the base index where new units were added.
     afxUnit*        baseUnitIdx, 
+
     // Optional. Pointer to source data to copy from (optional).
     void const*     src, 
+
     // Stride (in bytes) between each source unit in @data.
     afxUnit         srcStride
 );
@@ -281,26 +371,33 @@ AFXINL afxError     AfxAppendArray
 
 AFXINL afxError AfxCopyArray
 (
-    // How many units to copy.
-    afxUnit         unitCnt,
-    // Number of bytes to copy per unit.
-    afxUnit         size,
-    // Source array.
-    afxArray const* src,
-    // Index in source array to start reading.
-    afxUnit         srcUnitIdx,
-    // Byte offset into each source unit.
-    afxUnit         srcOffset,
     // Destination array.
     afxArray*       dst,
+
     // Index in destination array to start writing.
     afxUnit         toUnitIdx,
+
     // Byte offset into each destination unit.
-    afxUnit         toOffset
+    afxUnit         toOffset,
+
+    // Source array.
+    afxArray const* src,
+
+    // Index in source array to start reading.
+    afxUnit         srcUnitIdx,
+
+    // Byte offset into each source unit.
+    afxUnit         srcOffset,
+    
+    // How many units to copy.
+    afxUnit         unitCnt,
+
+    // Number of bytes to copy per unit.
+    afxUnit         size
 );
 
 /*
-    The AfxDumpArray() function copies a range of units from the internal array into a destination buffer, 
+    The AfxDumpFromArray() function copies a range of units from the internal array into a destination buffer, 
     possibly skipping bytes via stride, and optionally starting from a byte offset inside each unit.
 
     @firstUnit + @unitCnt defines the range of elements to dump.
@@ -309,49 +406,53 @@ AFXINL afxError AfxCopyArray
     @dst can be a tightly packed buffer, a struct array, a GPU upload buffer, etc.
 */
 
-AFXINL void         AfxDumpArray
+AFXINL void         AfxDumpFromArray
 (
     // source array.
     afxArray const* arr, 
+
     // first unit to dump.
     afxUnit         firstUnit, 
+
     // how many units to dump.
     afxUnit         unitCnt, 
+
     // byte offset inside each unit (to extract a field).
     afxUnit         offset, 
+
     // destination buffer.
     void*           dst, 
+
     // spacing between dst units in bytes.
     afxUnit         stride
 );
 
 /*
-    The AfxUpdateArray() function updates a specific region of the internal array with data from an external source, 
+    The AfxUpdateAtArray() function updates a specific region of the internal array with data from an external source, 
     supporting partial field updates via offset, range-based updates (firstUnit, unitCnt), 
     strided input (e.g., tightly-packed, interleaved, or padded source data).
     It's essentially a field-aware, batched memcpy with offset into the array.
 */
 
-AFXINL void         AfxUpdateArray
+AFXINL void         AfxUpdateAtArray
 (
     // destination array (to be modified).
     afxArray*       arr, 
+
     // index of the first unit to update.
     afxUnit         firstUnit, 
+
     // number of units to update.
     afxUnit         unitCnt, 
+
     // byte offset into each unit.
     afxUnit         offset, 
+
     // source buffer to copy from.
     void const*     src, 
+
     // spacing between source units in bytes.
     afxUnit         stride
-);
-
-AFXINL void*        AfxGetArrayUnit
-(
-    afxArray const* arr, 
-    afxUnit         unitIdx
 );
 
 AFX afxBool         AfxLookUpArray

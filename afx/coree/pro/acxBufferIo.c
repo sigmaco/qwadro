@@ -318,9 +318,9 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
         if (!range) range = AFX_MIN(bufCap, bufCap - offset);
 
         // Wait for any pending mapping operation on the buffer
-        while (AfxLoadAtom32(&buf->storage[0].pendingRemap)) AfxYield();
+        while (AfxAtomicLoad32(&buf->storage[0].pendingRemap)) AfxYield();
         // Signal an ongoing mapping operation
-        AfxIncAtom32(&buf->storage[0].pendingRemap);
+        AfxAtomicInc32(&buf->storage[0].pendingRemap);
 
         // If the buffer has already been mapped, check if the region is valid
         if (buf->storage[0].mapPtr)
@@ -331,7 +331,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
             if ((offset < buf->storage[0].mapOffset) || ((offset + range) > (buf->storage[0].mapOffset + buf->storage[0].mapRange)))
             {
                 AfxThrowError();
-                AfxDecAtom32(&buf->storage[0].pendingRemap);
+                AfxAtomicDec32(&buf->storage[0].pendingRemap);
                 break;
             }
             else
@@ -346,7 +346,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
             }
 
             // Decrement the pending remap count as no new operation was added
-            AfxDecAtom32(&buf->storage[0].pendingRemap);
+            AfxAtomicDec32(&buf->storage[0].pendingRemap);
         }
         // If buffer is host-side allocated, map directly (just do it here)
         else if (buf->storage[0].hostedAlloc.addr)
@@ -371,7 +371,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
             *placeholders[i] = &buf->storage[0].mapPtr[map->offset];
 #endif
             // Decrement the pending remap count as no new operation was added
-            AfxDecAtom32(&buf->storage[0].pendingRemap);
+            AfxAtomicDec32(&buf->storage[0].pendingRemap);
         }
         else
         {
@@ -385,7 +385,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
             AFX_ASSERT(remaps2[opCnt].placeholder);
             opCnt++;
 
-            //AfxDecAtom32(&buf->pendingRemap);
+            //AfxAtomicDec32(&buf->pendingRemap);
         }
     }
 
@@ -414,7 +414,7 @@ _ACX afxError AcxMapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap maps
 #endif//ACX_VALIDATION_ENABLED
 
         // Decrement the pending remap counter for each buffer.
-        AfxDecAtom32(&buf->storage[0].pendingRemap);
+        AfxAtomicDec32(&buf->storage[0].pendingRemap);
     }
 
     // Return the error code (still AFX_ERR_NONE if no error occurred).
@@ -468,9 +468,9 @@ _ACX afxError AcxUnmapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap ma
 
         // Wait for any ongoing mapping operation to complete before unmapping.
         // Yield if there are pending remaps.
-        while (AfxLoadAtom32(&buf->storage[0].pendingRemap)) AfxYield();
+        while (AfxAtomicLoad32(&buf->storage[0].pendingRemap)) AfxYield();
         // Indicate that an unmap operation is ongoing.
-        AfxIncAtom32(&buf->storage[0].pendingRemap);
+        AfxAtomicInc32(&buf->storage[0].pendingRemap);
 
         if (buf->storage[0].mapPtr)
         {
@@ -490,7 +490,7 @@ _ACX afxError AcxUnmapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap ma
                     buf->storage[0].mapFlags = NIL;
                     buf->storage[0].mapPtr = NIL;
                     // Decrement the pending remap counter
-                    AfxDecAtom32(&buf->storage[0].pendingRemap);
+                    AfxAtomicDec32(&buf->storage[0].pendingRemap);
                 }
                 else
                 {
@@ -535,7 +535,7 @@ _ACX afxError AcxUnmapBuffers(afxWarpSystem ssys, afxUnit cnt, acxBufferedMap ma
 #endif//ACX_VALIDATION_ENABLED
 
         // Remove the pending remap state for the unmapped buffer
-        AfxDecAtom32(&buf->storage[0].pendingRemap);
+        AfxAtomicDec32(&buf->storage[0].pendingRemap);
     }
 
     // Return the error code (AFX_ERR_NONE if successful)

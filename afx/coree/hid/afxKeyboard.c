@@ -29,6 +29,14 @@
 #define _AUX_ENVIRONMENT_C
 #include "../ux/auxIcd.h"
 
+/*
+    A make-and-break key is a type of electrical/mechanical switch that makes (closes) a circuit when pressed or actuated and breaks (opens) it when released.
+    It's used in telegraph keys, relays, push buttons, and control circuits.
+
+    Make => contacts close => current flows.
+    Break => contacts open => current stops.    
+*/
+
 _AUX afxError AfxEmulatePressedKeys(afxUnit seat, afxUnit cnt, afxKey const key[], afxUnit8 const pressure[])
 {
     afxError err = { 0 };
@@ -410,7 +418,7 @@ _AUX afxResult AfxCountPressedKeys(afxUnit seat)
     return (c);
 }
 
-_AUX void AfxGetMouseMotion(afxUnit seat, afxV2d motion, afxV2d vel, afxV2d accel)
+_AUX afxV2d AfxGetMouseMotion(afxUnit seat)
 {
     afxError err = { 0 };
 
@@ -418,30 +426,18 @@ _AUX void AfxGetMouseMotion(afxUnit seat, afxV2d motion, afxV2d vel, afxV2d acce
     if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
-        return;
+        return AFX_V2D_ZERO;
     }
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
     {
-        motion[0] = env->seats[seat].motion[0][0];
-        motion[1] = env->seats[seat].motion[0][1];
-
-        if (vel)
-        {
-            vel[0] = env->seats[seat].motionVel[0][0];
-            vel[1] = env->seats[seat].motionVel[0][1];
-        }
-
-        if (accel)
-        {
-            accel[0] = env->seats[seat].motionAcc[0][0];
-            accel[1] = env->seats[seat].motionAcc[0][1];
-        }
+        return env->seats[seat].motion[0];
     }
+    return AFX_V2D_ZERO;
 }
 
-_AUX afxReal AfxGetMouseWheelDelta(afxUnit seat)
+_AUX afxV2d AfxGetMouseVelocity(afxUnit seat)
 {
     afxError err = { 0 };
 
@@ -449,14 +445,52 @@ _AUX afxReal AfxGetMouseWheelDelta(afxUnit seat)
     if (!AfxGetActiveEnvironment(&env))
     {
         AfxThrowError();
-        return 0;
+        return AFX_V2D_ZERO;
+    }
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (seat < env->seatCnt)
+    {
+        return env->seats[seat].motionVel[0];
+    }
+    return AFX_V2D_ZERO;
+}
+
+_AUX afxV2d AfxGetMouseAcceleration(afxUnit seat)
+{
+    afxError err = { 0 };
+
+    afxEnvironment env;
+    if (!AfxGetActiveEnvironment(&env))
+    {
+        AfxThrowError();
+        return AFX_V2D_ZERO;
+    }
+    AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
+
+    if (seat < env->seatCnt)
+    {
+        return env->seats[seat].motionAcc[0];
+    }
+    return AFX_V2D_ZERO;
+}
+
+_AUX afxV2d AfxGetMouseWheelDelta(afxUnit seat)
+{
+    afxError err = { 0 };
+
+    afxEnvironment env;
+    if (!AfxGetActiveEnvironment(&env))
+    {
+        AfxThrowError();
+        return AFX_V2D_ZERO;
     }
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
         return env->seats[seat].wheelDelta[0];
 
-    return 0;
+    return AFX_V2D_ZERO;
 }
 
 _AUX afxBool AfxIsMousePressed(afxUnit seat, afxMouseButton mb)
@@ -610,7 +644,7 @@ _AUX afxBool AfxTestMouseMotionX(afxUnit seat, afxInt tolerance)
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
-        rslt = (((afxReal)AFX_ABS(env->seats[seat].motion[0][0] - env->seats[seat].motion[1][0])) >= (afxReal)tolerance);
+        rslt = (((afxReal)AFX_ABS(env->seats[seat].motion[0].v[0] - env->seats[seat].motion[1].v[0])) >= (afxReal)tolerance);
 
     return rslt;
 }
@@ -629,7 +663,7 @@ _AUX afxBool AfxTestMouseMotionZ(afxUnit seat, afxInt tolerance)
     AFX_ASSERT_OBJECTS(afxFcc_ENV, 1, &env);
 
     if (seat < env->seatCnt)
-        rslt = (((afxReal)AFX_ABS(env->seats[seat].motion[0][1] - env->seats[seat].motion[1][1])) >= (afxReal)tolerance);
+        rslt = (((afxReal)AFX_ABS(env->seats[seat].motion[0].v[1] - env->seats[seat].motion[1].v[1])) >= (afxReal)tolerance);
 
     return rslt;
 }
@@ -657,8 +691,8 @@ _AUX afxError AfxEmulateMouseMotion(afxUnit seat, afxV2d const motion)
         // Velocity (what most motion compensation uses).
         // velocity = (pos_now - pos_prev) / dt
 
-        afxReal dx = motion[0] - env->seats[seat].motion[0][0];
-        afxReal dy = motion[1] - env->seats[seat].motion[0][1];
+        afxReal dx = motion.v[0] - env->seats[seat].motion[0].v[0];
+        afxReal dy = motion.v[1] - env->seats[seat].motion[0].v[1];
         afxReal vx = 0, vy = 0;
 
         if (dt > 0)
@@ -670,20 +704,20 @@ _AUX afxError AfxEmulateMouseMotion(afxUnit seat, afxV2d const motion)
         // Acceleration (less commonly needed).
         // acceleration = (velocity_now - velocity_prev) / dt
 
-        env->seats[seat].motionAcc[1][0] = env->seats[seat].motionAcc[0][0];
-        env->seats[seat].motionAcc[1][1] = env->seats[seat].motionAcc[0][1];
-        env->seats[seat].motionAcc[0][0] = vx - env->seats[seat].motionVel[0][0];
-        env->seats[seat].motionAcc[0][1] = vy - env->seats[seat].motionVel[0][1];
+        env->seats[seat].motionAcc[1].v[0] = env->seats[seat].motionAcc[0].v[0];
+        env->seats[seat].motionAcc[1].v[1] = env->seats[seat].motionAcc[0].v[1];
+        env->seats[seat].motionAcc[0].v[0] = vx - env->seats[seat].motionVel[0].v[0];
+        env->seats[seat].motionAcc[0].v[1] = vy - env->seats[seat].motionVel[0].v[1];
 
-        env->seats[seat].motionVel[1][0] = env->seats[seat].motionVel[0][0];
-        env->seats[seat].motionVel[1][1] = env->seats[seat].motionVel[0][1];
-        env->seats[seat].motionVel[0][0] = vx;
-        env->seats[seat].motionVel[0][1] = vy;
+        env->seats[seat].motionVel[1].v[0] = env->seats[seat].motionVel[0].v[0];
+        env->seats[seat].motionVel[1].v[1] = env->seats[seat].motionVel[0].v[1];
+        env->seats[seat].motionVel[0].v[0] = vx;
+        env->seats[seat].motionVel[0].v[1] = vy;
 
-        env->seats[seat].motion[1][0] = env->seats[seat].motion[0][0];
-        env->seats[seat].motion[1][1] = env->seats[seat].motion[0][1];
-        env->seats[seat].motion[0][0] = motion[0];
-        env->seats[seat].motion[0][1] = motion[1];
+        env->seats[seat].motion[1].v[0] = env->seats[seat].motion[0].v[0];
+        env->seats[seat].motion[1].v[1] = env->seats[seat].motion[0].v[1];
+        env->seats[seat].motion[0].v[0] = motion.v[0];
+        env->seats[seat].motion[0].v[1] = motion.v[1];
 
         // Let's say our UI rendering lags by 1 frame. You want to render the cursor slightly ahead of where it was last frame, 
         // based on how fast it was moving.
@@ -705,7 +739,7 @@ _AUX afxError AfxEmulateMouseMotion(afxUnit seat, afxV2d const motion)
     return err;
 }
 
-_AUX afxError AfxEmulateMouseWheelAction(afxUnit seat, afxReal delta)
+_AUX afxError AfxEmulateMouseWheelAction(afxUnit seat, afxV2d const delta)
 {
     afxError err = { 0 };
 
@@ -873,8 +907,7 @@ _AUX afxResult _AuxKbdCtorCb(afxKeyboard kbd, void** args, afxUnit invokeNo)
     AfxZero(kbd->lastMbState, sizeof(kbd->lastMbState));
     AfxZero(kbd->prevMbState, sizeof(kbd->prevMbState));
     kbd->buttonCnt = AFX_MB_TOTAL;
-    kbd->lastMotion[0] = 0;
-    kbd->lastMotion[1] = 0;
+    kbd->lastMotion = AFX_V2D_ZERO;
     kbd->lastWheelDelta = 0;
     kbd->prevWheelDelta = 0;
     kbd->sampleRate = 1;

@@ -72,7 +72,7 @@ _AFX void AfxIncrementRingWriteIndex(afxRing* ring, afxUnit32 itemCnt)
     afxError err = { 0 };
     AFX_ASSERT(AfxGetRingNbWritableItems(ring) >= itemCnt);
     ring->writeIdx = (ring->writeIdx + itemCnt) % ring->cap;
-    AfxAddAtom32(&ring->readableItemCnt, itemCnt);
+    AfxAtomicAdd32(&ring->readableItemCnt, itemCnt);
 }
 
 // ---- Consumer ----
@@ -101,7 +101,7 @@ _AFX void AfxIncrementRingReadIndex(afxRing* ring, afxUnit32 itemCnt)
     afxError err = { 0 };
     AFX_ASSERT((afxUnit32)ring->readableItemCnt >= ring->cap);
     ring->readIdx = (ring->readIdx + itemCnt) % ring->cap;
-    AfxSubAtom32(&ring->readableItemCnt, itemCnt);
+    AfxAtomicSub32(&ring->readableItemCnt, itemCnt);
 }
 
 _AFX afxUnit32 AfxGetRingNbReadableItems(afxRing* ring)

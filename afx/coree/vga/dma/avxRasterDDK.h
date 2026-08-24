@@ -101,7 +101,7 @@ AFX_OBJECT(avxRaster)
     afxUnit             baseMip; // sub
     afxUnit             mipCnt; // mip level cnt
     afxUnit             baseLayer; // sub
-    avxRange            whd; // extent of image
+    avxExtent           extent; // extent of image
     afxUnit             spp; // samples per pixel --- 1, 2, 4, 8, 16, 32, or 64.
     avxFormat           fmt;
     afxUnit             fmtStride; // cached to avoid queries.
@@ -128,8 +128,12 @@ AFX_OBJECT(avxRaster)
 AVX afxClassConfig const _AVX_CLASS_CONFIG_RAS;
 
 AVXINL void _AvxSanitizeRasterIo(avxRaster ras, afxSize bufCap, afxUnit cnt, avxRasterIo const raw[], avxRasterIo san[]);
+
 AVXINL void _AvxSanitizeRasterCopy(avxRaster ras, avxRaster src, afxUnit cnt, avxRasterCopy const raw[], avxRasterCopy san[]);
+AVXINL avxRasterCopy _AvxGetSanitizedRasterCopy(avxRaster ras, avxRaster src, avxRasterCopy const* op);
+
 AVXINL void _AvxSanitizeRasterRegion(avxRaster ras, afxUnit cnt, avxRasterRegion const raw[], avxRasterRegion san[]);
+AVXINL avxRasterRegion _AvxGetSanitizedRasterRegion(avxRaster ras, avxRasterRegion const* op);
 
 AVXINL afxError _AvxDsysSW_DeallocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[]);
 AVXINL afxError _AvxDsysSW_AllocateRastersCb(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[]);

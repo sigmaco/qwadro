@@ -86,10 +86,9 @@ ARX afxBool ArxGetGestureId
     afxString* id
 );
 
-ARX void ArxComputeGestureDisplacement
+ARX afxM4d ArxComputeGestureDisplacement
 (
-    arxGesture ges, 
-    afxM4d m
+    arxGesture ges
 );
 
 ARX afxBool ArxFindGestureVector

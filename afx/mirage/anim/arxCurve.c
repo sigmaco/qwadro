@@ -236,8 +236,8 @@ _ARXINL afxReal* ArxGetCurveControls(arxCurve c)
 
     switch (fmt)
     {
-    case arxCurveFormat_D3Constant32f: return c->ctrls3;
-    case arxCurveFormat_D4Constant32f: return c->ctrls4;
+    case arxCurveFormat_D3Constant32f: return c->ctrls3.v;
+    case arxCurveFormat_D4Constant32f: return c->ctrls4.v;
     default: break;
     }
 #if !0

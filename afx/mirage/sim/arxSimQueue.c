@@ -165,7 +165,7 @@ _ASX afxError _AsxExecuteSampleCommands(arxSimQueue sque, asxSubmission const* c
 
         AfxReacquireObjects(1, &sctx);
         work->Execute.cmdbs[i] = sctx;
-        AfxIncAtom32(&sctx->submCnt);
+        AfxAtomicInc32(&sctx->submCnt);
         work->Execute.cmdbs[i]->state = asxContextState_PENDING;
     }
 

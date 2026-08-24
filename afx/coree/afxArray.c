@@ -19,7 +19,7 @@
 
 _AFXINL afxError AfxMakeArray(afxArray* arr, afxUnit unitSiz, afxUnit cap, void* buf, afxUnit pop)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(unitSiz);
     AFX_ASSERT(cap >= pop);
@@ -41,7 +41,7 @@ _AFXINL afxError AfxEmptyArray(afxArray* arr, afxBool dontFree, afxBool zeroOut)
     // Invalidates any references, pointers, or iterators referring to contained elements. Any past - the - end iterators are also invalidated.
     // Leaves the capacity() of the vector unchanged(note: the standard's restriction on the changes to capacity is in the specification of vector::reserve, see [1])
 
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
 
     if (!dontFree)
@@ -65,22 +65,6 @@ _AFXINL afxError AfxEmptyArray(afxArray* arr, afxBool dontFree, afxBool zeroOut)
     return err;
 }
 
-_AFXINL afxBool AfxIsArrayFull(afxArray const* arr)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(arr);
-    return (arr->pop == arr->cap);
-}
-
-_AFXINL afxBool AfxIsArrayEmpty(afxArray const* arr)
-{
-    // AfxIsArrayEmpty() - Checks if the container has no elements, i.e. whether begin() == end().
-
-    afxError err = { 0 };
-    AFX_ASSERT(arr);
-    return (arr->pop == 0);
-}
-
 _AFXINL afxError AfxOptimizeArray(afxArray* arr)
 {
     // AfxOptimizeArray() - Requests the removal of unused capacity.
@@ -88,7 +72,7 @@ _AFXINL afxError AfxOptimizeArray(afxArray* arr)
     // If reallocation occurs, mem iterators, including the past the end iterator, and mem references to the elements are invalidated.
     // If no reallocation takes place, no iterators or references are invalidated.
 
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AfxReportError("To be implemented. Should release unused reserved memory.");
     AfxThrowError();
@@ -102,7 +86,7 @@ _AFXINL afxError AfxReserveArraySpace(afxArray* arr, afxUnit cap)
     // reserve() does not change the size of the vector.
     // If newcap is greater than capacity(), mem iterators, including the past -the- end iterator, and mem references to the elements are invalidated. Otherwise, no iterators or references are invalidated.
 
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(cap);
 
@@ -126,19 +110,9 @@ _AFXINL afxError AfxReserveArraySpace(afxArray* arr, afxUnit cap)
     return err;
 }
 
-_AFXINL void* AfxGetArrayUnit(afxArray const* arr, afxUnit unitIdx)
+_AFXINL void AfxUpdateAtArray(afxArray* arr, afxUnit firstUnit, afxUnit unitCnt, afxUnit offset, void const* src, afxUnit stride)
 {
-    afxError err = { 0 };
-    AFX_ASSERT(arr);
-    AFX_ASSERT_RANGE(arr->pop, unitIdx, 1);
-    //if (unitIdx >= arr->pop) return NIL; // bounds check
-    AFX_ASSERT(arr->bytemap);
-    return &(arr->bytemap[unitIdx * arr->unitSiz]);
-}
-
-_AFXINL void AfxUpdateArray(afxArray* arr, afxUnit firstUnit, afxUnit unitCnt, afxUnit offset, void const* src, afxUnit stride)
-{
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT_RANGE(arr->pop, firstUnit, unitCnt);
     AFX_ASSERT(arr->bytemap);
@@ -147,9 +121,9 @@ _AFXINL void AfxUpdateArray(afxArray* arr, afxUnit firstUnit, afxUnit unitCnt, a
     AfxStream2(unitCnt, src, stride, &arr->bytemap[(firstUnit * arr->unitSiz) + offset], arr->unitSiz);
 }
 
-_AFXINL void AfxDumpArray(afxArray const* arr, afxUnit firstUnit, afxUnit unitCnt, afxUnit offset, void *dst, afxUnit stride)
+_AFXINL void AfxDumpFromArray(afxArray const* arr, afxUnit firstUnit, afxUnit unitCnt, afxUnit offset, void *dst, afxUnit stride)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT_RANGE(arr->pop, firstUnit, unitCnt);
     AFX_ASSERT(arr->bytemap);
@@ -160,7 +134,7 @@ _AFXINL void AfxDumpArray(afxArray const* arr, afxUnit firstUnit, afxUnit unitCn
 
 _AFXINL void* AfxPushArrayUnits(afxArray* arr, afxUnit cnt, afxUnit* baseUnitIdx, void const* src, afxUnit srcStride)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(cnt);
 
@@ -182,17 +156,17 @@ _AFXINL void* AfxPushArrayUnits(afxArray* arr, afxUnit cnt, afxUnit* baseUnitIdx
     if (baseUnitIdx)
         *baseUnitIdx = baseIdx;
 
-    afxByte* first = AfxGetArrayUnit(arr, baseIdx);
+    afxByte* first = AfxGetAtArray(arr, baseIdx);
 
     if (src)
-        AfxUpdateArray(arr, baseIdx, cnt, 0, src, srcStride);
+        AfxUpdateAtArray(arr, baseIdx, cnt, 0, src, srcStride);
 
     return first;
 }
 
 _AFXINL afxError AfxInsertArrayUnits(afxArray* arr, afxUnit baseIdx, afxUnit cnt, void const* src, afxUnit srcStride)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT_RANGE(arr->pop, baseIdx, 1);
     AFX_ASSERT(cnt);
@@ -246,7 +220,7 @@ _AFXINL afxError AfxInsertArrayUnits(afxArray* arr, afxUnit baseIdx, afxUnit cnt
 
 _AFXINL afxError AfxRemoveArrayUnits(afxArray* arr, afxUnit idx, afxUnit cnt)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT_RANGE(arr->pop, idx, cnt);
 
@@ -266,7 +240,7 @@ _AFXINL afxError AfxRemoveArrayUnits(afxArray* arr, afxUnit idx, afxUnit cnt)
 
 _AFXINL afxError AfxAppendArray(afxArray* arr, afxArray const* src)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(src);
     AFX_ASSERT(arr != src);
@@ -303,7 +277,7 @@ _AFXINL afxError AfxSwapArray(afxArray* arr, afxArray* other)
     // AfxSwapArray() - Exchanges the contents of the container with those of other.Does not invoke any move, copy, or swap operations on individual elements.
     // All iterators and references remain valid. The past-the-end iterator is invalidated.
 
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(other);
     AFX_ASSERT(arr != other);
@@ -326,7 +300,7 @@ _AFXINL afxError AfxSwapArray(afxArray* arr, afxArray* other)
 
 _AFXINL afxError AfxCloneArray(afxArray* arr, afxArray const* src, afxUnit baseIdx, afxUnit cnt)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(src);
     AFX_ASSERT(arr !=  src);
@@ -353,9 +327,9 @@ _AFXINL afxError AfxCloneArray(afxArray* arr, afxArray const* src, afxUnit baseI
     return err;
 }
 
-_AFXINL afxError AfxCopyArray(afxUnit unitCnt, afxUnit size, afxArray const* src, afxUnit srcUnitIdx, afxUnit srcOffset, afxArray* dst, afxUnit dstUnitIdx, afxUnit dstOffset)
+_AFXINL afxError AfxCopyArray(afxArray* dst, afxUnit dstUnitIdx, afxUnit dstOffset, afxArray const* src, afxUnit srcUnitIdx, afxUnit srcOffset, afxUnit unitCnt, afxUnit size)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(dst);
     AFX_ASSERT(src);
     AFX_ASSERT(dst != src);
@@ -395,14 +369,14 @@ _AFXINL afxError AfxCopyArray(afxUnit unitCnt, afxUnit size, afxArray const* src
 
 _AFX afxBool AfxLookUpArray(afxArray* arr, void* data, afxUnit* elemIdx)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(data);
     AFX_ASSERT(elemIdx);
 
     for (afxUnit i = 0; i < arr->pop; i++)
     {
-        void* el = AfxGetArrayUnit(arr, i);
+        void* el = AfxGetAtArray(arr, i);
 
         if (0 == AfxMemcmp(el, data, arr->unitSiz))
         {
@@ -416,7 +390,7 @@ _AFX afxBool AfxLookUpArray(afxArray* arr, void* data, afxUnit* elemIdx)
 
 _AFX afxError AfxPushArrayUnique(afxArray* arr, void* data, afxUnit* elemIdx)
 {
-    afxError err = { 0 };
+    afxError err = { afxError_NIL };
     AFX_ASSERT(arr);
     AFX_ASSERT(data);
     AFX_ASSERT(elemIdx);

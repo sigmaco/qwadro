@@ -64,7 +64,7 @@ AFX_OBJECT(arxNode)
     void *udd; // cb
     afxError(*sampleCb)(void*, afxReal, arxPose, afxUnit, afxUnit const*); // cb
     void(*setClockCb)(void*, afxReal time); // cb
-    void(*motionVectorsCb)(void*, afxReal, afxReal*, afxReal*, afxBool); // cb
+    void(*motionVectorsCb)(void*, afxReal, afxV3d*, afxV3d*, afxBool); // cb
     afxReal weightNone; // crossfade
     afxReal weightAll; // crossfade
     arxTrackMask*trackMask; // comm, crossfade

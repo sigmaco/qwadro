@@ -19,13 +19,13 @@
 
 #include "qwadro/coll/afxSphere.h"
 #include "qwadro/coll/afxBox.h"
+#include "qwadro/math/afxArithmetic2.h"
 
-_AFXINL afxSphere* AfxMakeSphere(afxSphere* sph, afxV3d const centre, afxReal radius)
+_AFXINL afxSphere AfxMakeSphere(afxV3d const centre, afxReal radius)
 {
     afxError err = { 0 };
-    AFX_ASSERT(sph);
-    AFX_ASSERT(centre);
-    AfxV4dSet(sph->xyzr, centre[0], centre[1], centre[2], radius);
+    afxSphere sph;
+    sph.xyzr = AFX_V4D(centre.v[0], centre.v[1], centre.v[2], radius);
     return sph;
 }
 
@@ -33,23 +33,22 @@ _AFXINL afxReal AfxGetSphereRadius(afxSphere const sph)
 {
     afxError err = { 0 };
     //AFX_ASSERT(sph);
-    return sph.xyzr[AFX_SPHERE_RADIUS];
+    return sph.xyzr.v[AFX_SPHERE_RADIUS];
 }
 
-_AFXINL void AfxGetSphereOrigin(afxSphere const sph, afxV4d centre)
+_AFXINL afxV4d AfxGetSphereOrigin(afxSphere const sph)
 {
     afxError err = { 0 };
-    AFX_ASSERT(centre);
-    AfxV4dSet(centre, sph.xyzr[0], sph.xyzr[1], sph.xyzr[2], 1);
+    return AFX_V4D(sph.xyzr.v[0], sph.xyzr.v[1], sph.xyzr.v[2], 1);
 }
 
 _AFXINL afxBox AfxGetSphereAabb(afxSphere const sph)
 {
     afxError err = { 0 };
     // Calculate the AABB for this sphere
-    afxReal r = sph.xyzr[AFX_SPHERE_RADIUS];
-    return AFX_AABB(sph.xyzr[0] - r, sph.xyzr[1] - r, sph.xyzr[2] - r,
-                    sph.xyzr[0] + r, sph.xyzr[1] + r, sph.xyzr[2] + r);
+    afxReal r = sph.xyzr.v[AFX_SPHERE_RADIUS];
+    return AFX_AABB(sph.xyzr.v[0] - r, sph.xyzr.v[1] - r, sph.xyzr.v[2] - r,
+                    sph.xyzr.v[0] + r, sph.xyzr.v[1] + r, sph.xyzr.v[2] + r);
 }
 
 /*
@@ -59,18 +58,33 @@ _AFXINL afxBox AfxGetSphereAabb(afxSphere const sph)
     their centers is less than or equal to the sum of their radii.
 */
 
-_AFXINL afxUnit AfxDoesSphereIntersects(afxSphere* sph, afxUnit cnt, afxSphere const others[])
+_AFXINL afxUnit AfxSphereIntersect(afxSphere const sph, afxSphere const b)
 {
     afxError err = { 0 };
-    AFX_ASSERT(sph);
+
+    afxReal distSquared = AfxV3dDist(sph.xyzr.v3, b.xyzr.v3);
+    afxReal radiusSum = sph.xyzr.v[AFX_SPHERE_RADIUS] + b.xyzr.v[AFX_SPHERE_RADIUS];
+
+    // Compare the squared distance with the squared sum of the radii to avoid square root
+    if (distSquared <= radiusSum * radiusSum)
+    {
+        // Return i if any sphere intersects with the target sphere
+        return 1;
+    }
+    return 0;  // Return 0 if no sphere intersects with the target sphere
+}
+
+_AFXINL afxUnit AfxSphereIntersectsAny(afxSphere const sph, afxUnit cnt, afxSphere const others[])
+{
+    afxError err = { 0 };
     AFX_ASSERT(!cnt || others);
 
     for (afxUnit i = 0; i < cnt; ++i)
     {
-        afxSphere const* b = &others[i];
+        afxSphere const b = others[i];
 
-        afxReal distSquared = AfxV3dDist(sph->xyzr, b->xyzr);
-        afxReal radiusSum = sph->xyzr[AFX_SPHERE_RADIUS] + b->xyzr[AFX_SPHERE_RADIUS];
+        afxReal distSquared = AfxV3dDist(sph.xyzr.v3, b.xyzr.v3);
+        afxReal radiusSum = sph.xyzr.v[AFX_SPHERE_RADIUS] + b.xyzr.v[AFX_SPHERE_RADIUS];
 
         // Compare the squared distance with the squared sum of the radii to avoid square root
         if (distSquared <= radiusSum * radiusSum)
@@ -91,24 +105,22 @@ _AFXINL afxUnit AfxDoesSphereIntersects(afxSphere* sph, afxUnit cnt, afxSphere c
     Returns the index for the first collided box in array, else AFX_INVALID_INDEX for none of them.
 */
 
-_AFXINL afxUnit AfxDoesSphereIntersectsAabbs(afxSphere* sph, afxUnit cnt, afxBox const boxes[])
+_AFXINL afxUnit AfxSphereIntersectsAabbs(afxSphere const sph, afxUnit cnt, afxBox const boxes[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(sph);
     AFX_ASSERT(!cnt || boxes);
 
-    afxReal r2 = sph->xyzr[AFX_SPHERE_RADIUS] * sph->xyzr[AFX_SPHERE_RADIUS];
+    afxReal r2 = sph.xyzr.v[AFX_SPHERE_RADIUS] * sph.xyzr.v[AFX_SPHERE_RADIUS];
 
     for (afxUnit i = 0; i < cnt; ++i)
     {
-        afxBox const* box = &boxes[i];
+        afxBox const box = boxes[i];
 
         // Find the closest point on the box to the sphere's center
-        afxV3d closest;
-        AfxV3dMin(closest, sph->xyzr, box->max);
-        AfxV3dMax(closest, box->min, closest);
+        afxV3d closest = AfxV3dMin(sph.xyzr.v3, box.max.v3);
+        closest = AfxV3dMax(box.min.v3, closest);
         // Calculate the squared distance from the sphere's center to the closest point
-        afxReal distSquared = AfxV3dDist(sph->xyzr, closest);
+        afxReal distSquared = AfxV3dDist(sph.xyzr.v3, closest);
 
         // Check if the distance is less than or equal to the squared radius
         if (distSquared <= r2)
@@ -120,19 +132,37 @@ _AFXINL afxUnit AfxDoesSphereIntersectsAabbs(afxSphere* sph, afxUnit cnt, afxBox
     return AFX_INVALID_INDEX;
 }
 
+_AFXINL afxUnit AfxSphereIntersectsAabb(afxSphere const sph, afxBox const box)
+{
+    afxError err = { 0 };
+
+    afxReal r2 = sph.xyzr.v[AFX_SPHERE_RADIUS] * sph.xyzr.v[AFX_SPHERE_RADIUS];
+
+    // Find the closest point on the box to the sphere's center
+    afxV3d closest = AfxV3dMin(sph.xyzr.v3, box.max.v3);
+    closest = AfxV3dMax(box.min.v3, closest);
+    // Calculate the squared distance from the sphere's center to the closest point
+    afxReal distSquared = AfxV3dDist(sph.xyzr.v3, closest);
+
+    // Check if the distance is less than or equal to the squared radius
+    if (distSquared <= r2)
+    {
+        return 1;
+    }
+    // Return 0 if no box intersects with the sphere
+    return 0;
+}
+
 // Tests whether a given point is inside, on, or outside a sphere. 
 // The function compares the squared distance between the point and the center of the sphere with the square of the radius.
 // Returns: -1 = outside, 0 = on surface, 1 = inside
-_AFXINL afxInt AfxTestSphereEnglobingPoint(afxSphere const* sph, afxV3d const point)
+_AFXINL afxInt AfxTestSphereEnglobingPoint(afxSphere const sph, afxV3d const point)
 {
     afxError err = { 0 };
-    AFX_ASSERT(sph);
-    AFX_ASSERT(point);
 
-    afxV3d s;
-    AfxV3dSub(s, point, sph->xyzr);
+    afxV3d s = AfxV3dSub(point, sph.xyzr.v3);
     afxReal distSq = AfxV3dDot(s, s);
-    afxReal radiusSq = sph->xyzr[AFX_SPHERE_RADIUS] * sph->xyzr[AFX_SPHERE_RADIUS];
+    afxReal radiusSq = sph.xyzr.v[AFX_SPHERE_RADIUS] * sph.xyzr.v[AFX_SPHERE_RADIUS];
 
     if (distSq < radiusSq)
         return 1; // Inside the sphere
@@ -145,18 +175,16 @@ _AFXINL afxInt AfxTestSphereEnglobingPoint(afxSphere const* sph, afxV3d const po
 // Tests whether a given point is inside, on, or outside a sphere. 
 // The function compares the squared distance between the point and the center of the sphere with the square of the radius.
 // Returns: -1 = outside, 0 = on surface, 1 = inside
-_AFXINL afxInt AfxTestSphereEnglobingPoints(afxSphere const* sph, afxBool all, afxBool fully, afxUnit cnt, afxV3d const points[])
+_AFXINL afxInt AfxTestSphereEnglobingPoints(afxSphere const sph, afxBool all, afxBool fully, afxUnit cnt, afxV3d const points[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(sph);
     AFX_ASSERT(points);
 
     for (afxUnit i = 0; i < cnt; i++)
     {
-        afxV3d s;
-        AfxV3dSub(s, points[i], sph->xyzr);
+        afxV3d s = AfxV3dSub(points[i], sph.xyzr.v3);
         afxReal distSq = AfxV3dDot(s, s);
-        afxReal radiusSq = sph->xyzr[AFX_SPHERE_RADIUS] * sph->xyzr[AFX_SPHERE_RADIUS];
+        afxReal radiusSq = sph.xyzr.v[AFX_SPHERE_RADIUS] * sph.xyzr.v[AFX_SPHERE_RADIUS];
 
         if (distSq < radiusSq)
         {

@@ -21,6 +21,7 @@
 #define AFX_SPACE_H
 
 #include "qwadro/math/afxScalar.h"
+#include "qwadro/math/afxTrigonometry.h"
 
 /**
     A spherical coordinate system is a coordinate system for three-dimensional space where the position of a point is specified by three numbers: 
@@ -76,25 +77,31 @@ AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxSphericalCoord)
     afxReal32       phi; // elevation
 };
 
-AFXINL void AfxGetCartesionFromSphericalCoord(afxSphericalCoord const* sc, afxV3d cartesian)
+AFXINL afxV3d AfxGetCartesionFromSphericalCoord(afxSphericalCoord const* sc)
 {
     afxReal phiS = AfxSin(sc->phi);
     afxReal x = sc->polar.r * phiS * AfxCos(sc->polar.theta);
     afxReal y = sc->polar.r * phiS * AfxSin(sc->polar.theta);
     afxReal z = sc->polar.r * AfxCos(sc->phi);
     // Now, (x, y, z) would be the Cartesian coordinates of the point in 3D space.
-    cartesian[0] = x;
-    cartesian[1] = y;
-    cartesian[2] = z;
+    afxV3d cartesian = AFX_V3D(x, y, z);
+    return cartesian;
 }
 
 AFX_DEFINE_STRUCT_ALIGNED(AFX_SIMD_ALIGNMENT, afxSpace)
 /// A 3D coordinate system, expressed relative to a canonical coordinate system.
 {
-    afxV3d  right; // Unit vector pointing to the right (local +x axis).
-    afxV3d  up; // Unit vector pointing upwards (local +y axis).
-    afxV3d  ahead; // Unit vector pointing forwards (local -z axis).
-    afxV3d  origin; // The origin, relative to the canonical coordinate system.
+    // Unit vector pointing to the right (local +x axis).
+    afxV3d  right;
+
+    // Unit vector pointing upwards (local +y axis).
+    afxV3d  up;
+
+    // Unit vector pointing forwards (local -z axis).
+    afxV3d  ahead;
+
+    // The origin, relative to the canonical coordinate system.
+    afxV3d  origin;
 };
 
 #endif//AFX_SPACE_H

@@ -39,14 +39,14 @@ struct TriWeightData
     afxTriangle32 vtxIdx;
 };
 
-#define AFX_V2D_IN(arr_, stride_, idx_) ((afxReal const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
-#define AFX_V2D_OUT(arr_, stride_, idx_) ((afxReal*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V2D_IN(arr_, stride_, idx_) ((afxV2d const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V2D_OUT(arr_, stride_, idx_) ((afxV2d*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
 
-#define AFX_V3D_IN(arr_, stride_, idx_) ((afxReal const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
-#define AFX_V3D_OUT(arr_, stride_, idx_) ((afxReal*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V3D_IN(arr_, stride_, idx_) ((afxV3d const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V3D_OUT(arr_, stride_, idx_) ((afxV3d*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
 
-#define AFX_V4D_IN(arr_, stride_, idx_) ((afxReal const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
-#define AFX_V4D_OUT(arr_, stride_, idx_) ((afxReal*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V4D_IN(arr_, stride_, idx_) ((afxV4d const*)&(((afxByte const*)(arr_))[(stride_) * (idx_)]))
+#define AFX_V4D_OUT(arr_, stride_, idx_) ((afxV4d*)&(((afxByte*)(arr_))[(stride_) * (idx_)]))
 
 #define AFX_VTX_IDX(arr_, stride_, i_) ((afxUnit32 const*)&(((afxByte const*)(arr_))[(stride_) * (i_)]))
 #define AFX_VTX_IDX16(arr_, stride_, i_) ((afxUnit16 const*)&(((afxByte const*)(arr_))[(stride_) * (i_)]))
@@ -212,32 +212,31 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
             afxUnit const ib = i * ARX_INDICES_PER_TRI + 1;
             afxUnit const ic = i * ARX_INDICES_PER_TRI + 2;
 
-            afxV3d ea, eb; // edges
-            AfxV3dSub(ea, AFX_V3D_IN(pos, posStride, ib), AFX_V3D_IN(pos, posStride, ia));
-            AfxV3dSub(eb, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ia));
+            // edges
+            afxV3d ea = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ib), *AFX_V3D_IN(pos, posStride, ia));
+            afxV3d eb = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ia));
             //pos = pos2 += posStride;
             //pos += posStep;
 
-            afxV2d deltaUv1, deltaUv2;
-            AfxV2dSub(deltaUv1, AFX_V2D_IN(uv, uvStride, ib), AFX_V2D_IN(uv, uvStride, ia));
-            AfxV2dSub(deltaUv2, AFX_V2D_IN(uv, uvStride, ic), AFX_V2D_IN(uv, uvStride, ia));
+            afxV2d deltaUv1 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ib), *AFX_V2D_IN(uv, uvStride, ia));
+            afxV2d deltaUv2 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ic), *AFX_V2D_IN(uv, uvStride, ia));
             //uv = uv2 += uvStride;
             //uv += uvStep;
 
-            afxReal f = 1.f / (deltaUv1[0] * deltaUv2[1] - deltaUv2[0] * deltaUv1[1]);
+            afxReal f = 1.f / (deltaUv1.v[0] * deltaUv2.v[1] - deltaUv2.v[0] * deltaUv1.v[1]);
             
             if (tan)
             {
-                AFX_V3D_OUT(tan, tanStride, ia)[0] = f * (deltaUv2[1] * ea[0] - deltaUv1[1] * eb[0]);
-                AFX_V3D_OUT(tan, tanStride, ia)[1] = f * (deltaUv2[1] * ea[1] - deltaUv1[1] * eb[1]);
-                AFX_V3D_OUT(tan, tanStride, ia)[2] = f * (deltaUv2[1] * ea[2] - deltaUv1[1] * eb[2]);
+                AFX_V3D_OUT(tan, tanStride, ia)->v[0] = f * (deltaUv2.v[1] * ea.v[0] - deltaUv1.v[1] * eb.v[0]);
+                AFX_V3D_OUT(tan, tanStride, ia)->v[1] = f * (deltaUv2.v[1] * ea.v[1] - deltaUv1.v[1] * eb.v[1]);
+                AFX_V3D_OUT(tan, tanStride, ia)->v[2] = f * (deltaUv2.v[1] * ea.v[2] - deltaUv1.v[1] * eb.v[2]);
 
                 // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
 
                 if (!perTriOut)
                 {
-                    AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ib), AFX_V3D_IN(tan, tanStride, ia));
-                    AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ic), AFX_V3D_IN(tan, tanStride, ia));
+                    *AFX_V3D_OUT(tan, tanStride, ib) = *AFX_V3D_IN(tan, tanStride, ia);
+                    *AFX_V3D_OUT(tan, tanStride, ic) = *AFX_V3D_IN(tan, tanStride, ia);
                 }
                 //tan = tan2 += tanStride;
                 //tan += tanStep;
@@ -245,15 +244,15 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
 
             if (bit)
             {
-                AFX_V3D_OUT(bit, bitStride, ia)[0] = f * (-deltaUv2[0] * ea[0] + deltaUv1[0] * eb[0]);
-                AFX_V3D_OUT(bit, bitStride, ia)[1] = f * (-deltaUv2[0] * ea[1] + deltaUv1[0] * eb[1]);
-                AFX_V3D_OUT(bit, bitStride, ia)[2] = f * (-deltaUv2[0] * ea[2] + deltaUv1[0] * eb[2]);
+                AFX_V3D_OUT(bit, bitStride, ia)->v[0] = f * (-deltaUv2.v[0] * ea.v[0] + deltaUv1.v[0] * eb.v[0]);
+                AFX_V3D_OUT(bit, bitStride, ia)->v[1] = f * (-deltaUv2.v[0] * ea.v[1] + deltaUv1.v[0] * eb.v[1]);
+                AFX_V3D_OUT(bit, bitStride, ia)->v[2] = f * (-deltaUv2.v[0] * ea.v[2] + deltaUv1.v[0] * eb.v[2]);
 
                 if (!perTriOut)
                 {
                     // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                    AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ib), AFX_V3D_IN(bit, bitStride, ia));
-                    AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ic), AFX_V3D_IN(bit, bitStride, ia));
+                    *AFX_V3D_OUT(bit, bitStride, ib) = *AFX_V3D_IN(bit, bitStride, ia);
+                    *AFX_V3D_OUT(bit, bitStride, ic) = *AFX_V3D_IN(bit, bitStride, ia);
                 }
                 //bit = bit2 += bitStride;
                 //bit += bitStep;
@@ -276,31 +275,30 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
                 afxUnit const ib = indices2[i * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[i * ARX_INDICES_PER_TRI + 2];
 
-                afxV3d ea, eb; // edges
-                AfxV3dSub(ea, AFX_V3D_IN(pos, posStride, ib), AFX_V3D_IN(pos, posStride, ia));
-                AfxV3dSub(eb, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ia));
+                // edges
+                afxV3d ea = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ib), *AFX_V3D_IN(pos, posStride, ia));
+                afxV3d eb = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ia));
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
-                afxV2d deltaUv1, deltaUv2;
-                AfxV2dSub(deltaUv1, AFX_V2D_IN(uv, uvStride, ib), AFX_V2D_IN(uv, uvStride, ia));
-                AfxV2dSub(deltaUv2, AFX_V2D_IN(uv, uvStride, ic), AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv1 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ib), *AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv2 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ic), *AFX_V2D_IN(uv, uvStride, ia));
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
 
-                afxReal f = 1.f / (deltaUv1[0] * deltaUv2[1] - deltaUv2[0] * deltaUv1[1]);
+                afxReal f = 1.f / (deltaUv1.v[0] * deltaUv2.v[1] - deltaUv2.v[0] * deltaUv1.v[1]);
 
                 if (tan)
                 {
-                    AFX_V3D_OUT(tan, tanStride, ia)[0] = f * (deltaUv2[1] * ea[0] - deltaUv1[1] * eb[0]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[1] = f * (deltaUv2[1] * ea[1] - deltaUv1[1] * eb[1]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[2] = f * (deltaUv2[1] * ea[2] - deltaUv1[1] * eb[2]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[0] = f * (deltaUv2.v[1] * ea.v[0] - deltaUv1.v[1] * eb.v[0]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[1] = f * (deltaUv2.v[1] * ea.v[1] - deltaUv1.v[1] * eb.v[1]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[2] = f * (deltaUv2.v[1] * ea.v[2] - deltaUv1.v[1] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ib), tan[ia]);
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ic), tan[ia]);
+                        *AFX_V3D_OUT(tan, tanStride, ib) = tan[ia];
+                        *AFX_V3D_OUT(tan, tanStride, ic) = tan[ia];
                     }
                     //tan = tan2 += tanStride;
                     //tan += tanStep;
@@ -308,15 +306,15 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
 
                 if (bit)
                 {
-                    AFX_V3D_OUT(bit, bitStride, ia)[0] = f * (-deltaUv2[0] * ea[0] + deltaUv1[0] * eb[0]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[1] = f * (-deltaUv2[0] * ea[1] + deltaUv1[0] * eb[1]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[2] = f * (-deltaUv2[0] * ea[2] + deltaUv1[0] * eb[2]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[0] = f * (-deltaUv2.v[0] * ea.v[0] + deltaUv1.v[0] * eb.v[0]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[1] = f * (-deltaUv2.v[0] * ea.v[1] + deltaUv1.v[0] * eb.v[1]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[2] = f * (-deltaUv2.v[0] * ea.v[2] + deltaUv1.v[0] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ib), AFX_V3D_IN(bit, bitStride, ia));
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ic), AFX_V3D_IN(bit, bitStride, ia));
+                        *AFX_V3D_OUT(bit, bitStride, ib) = *AFX_V3D_IN(bit, bitStride, ia);
+                        *AFX_V3D_OUT(bit, bitStride, ic) = *AFX_V3D_IN(bit, bitStride, ia);
                     }
                     //bit = bit2 += bitStride;
                     //bit += bitStep;
@@ -334,31 +332,30 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
                 afxUnit const ib = indices2[i * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[i * ARX_INDICES_PER_TRI + 2];
 
-                afxV3d ea, eb; // edges
-                AfxV3dSub(ea, AFX_V3D_IN(pos, posStride, ib), AFX_V3D_IN(pos, posStride, ia));
-                AfxV3dSub(eb, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ia));
+                // edges
+                afxV3d ea = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ib), *AFX_V3D_IN(pos, posStride, ia));
+                afxV3d eb = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ia));
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
-                afxV2d deltaUv1, deltaUv2;
-                AfxV2dSub(deltaUv1, AFX_V2D_IN(uv, uvStride, ib), AFX_V2D_IN(uv, uvStride, ia));
-                AfxV2dSub(deltaUv2, AFX_V2D_IN(uv, uvStride, ic), AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv1 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ib), *AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv2 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ic), *AFX_V2D_IN(uv, uvStride, ia));
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
 
-                afxReal f = 1.f / (deltaUv1[0] * deltaUv2[1] - deltaUv2[0] * deltaUv1[1]);
+                afxReal f = 1.f / (deltaUv1.v[0] * deltaUv2.v[1] - deltaUv2.v[0] * deltaUv1.v[1]);
 
                 if (tan)
                 {
-                    AFX_V3D_OUT(tan, tanStride, ia)[0] = f * (deltaUv2[1] * ea[0] - deltaUv1[1] * eb[0]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[1] = f * (deltaUv2[1] * ea[1] - deltaUv1[1] * eb[1]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[2] = f * (deltaUv2[1] * ea[2] - deltaUv1[1] * eb[2]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[0] = f * (deltaUv2.v[1] * ea.v[0] - deltaUv1.v[1] * eb.v[0]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[1] = f * (deltaUv2.v[1] * ea.v[1] - deltaUv1.v[1] * eb.v[1]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[2] = f * (deltaUv2.v[1] * ea.v[2] - deltaUv1.v[1] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ib), tan[ia]);
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ic), tan[ia]);
+                        *AFX_V3D_OUT(tan, tanStride, ib) = tan[ia];
+                        *AFX_V3D_OUT(tan, tanStride, ic) = tan[ia];
                     }
                     //tan = tan2 += tanStride;
                     //tan += tanStep;
@@ -366,15 +363,15 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
 
                 if (bit)
                 {
-                    AFX_V3D_OUT(bit, bitStride, ia)[0] = f * (-deltaUv2[0] * ea[0] + deltaUv1[0] * eb[0]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[1] = f * (-deltaUv2[0] * ea[1] + deltaUv1[0] * eb[1]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[2] = f * (-deltaUv2[0] * ea[2] + deltaUv1[0] * eb[2]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[0] = f * (-deltaUv2.v[0] * ea.v[0] + deltaUv1.v[0] * eb.v[0]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[1] = f * (-deltaUv2.v[0] * ea.v[1] + deltaUv1.v[0] * eb.v[1]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[2] = f * (-deltaUv2.v[0] * ea.v[2] + deltaUv1.v[0] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ib), AFX_V3D_IN(bit, bitStride, ia));
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ic), AFX_V3D_IN(bit, bitStride, ia));
+                        *AFX_V3D_OUT(bit, bitStride, ib) = *AFX_V3D_IN(bit, bitStride, ia);
+                        *AFX_V3D_OUT(bit, bitStride, ic) = *AFX_V3D_IN(bit, bitStride, ia);
                     }
                     //bit = bit2 += bitStride;
                     //bit += bitStep;
@@ -391,31 +388,30 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
                 afxUnit const ib = indices2[i * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[i * ARX_INDICES_PER_TRI + 2];
 
-                afxV3d ea, eb; // edges
-                AfxV3dSub(ea, AFX_V3D_IN(pos, posStride, ib), AFX_V3D_IN(pos, posStride, ia));
-                AfxV3dSub(eb, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ia));
+                // edges
+                afxV3d ea = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ib), *AFX_V3D_IN(pos, posStride, ia));
+                afxV3d eb = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ia));
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
-                afxV2d deltaUv1, deltaUv2;
-                AfxV2dSub(deltaUv1, AFX_V2D_IN(uv, uvStride, ib), AFX_V2D_IN(uv, uvStride, ia));
-                AfxV2dSub(deltaUv2, AFX_V2D_IN(uv, uvStride, ic), AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv1 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ib), *AFX_V2D_IN(uv, uvStride, ia));
+                afxV2d deltaUv2 = AfxV2dSub(*AFX_V2D_IN(uv, uvStride, ic), *AFX_V2D_IN(uv, uvStride, ia));
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
 
-                afxReal f = 1.f / (deltaUv1[0] * deltaUv2[1] - deltaUv2[0] * deltaUv1[1]);
+                afxReal f = 1.f / (deltaUv1.v[0] * deltaUv2.v[1] - deltaUv2.v[0] * deltaUv1.v[1]);
 
                 if (tan)
                 {
-                    AFX_V3D_OUT(tan, tanStride, ia)[0] = f * (deltaUv2[1] * ea[0] - deltaUv1[1] * eb[0]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[1] = f * (deltaUv2[1] * ea[1] - deltaUv1[1] * eb[1]);
-                    AFX_V3D_OUT(tan, tanStride, ia)[2] = f * (deltaUv2[1] * ea[2] - deltaUv1[1] * eb[2]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[0] = f * (deltaUv2.v[1] * ea.v[0] - deltaUv1.v[1] * eb.v[0]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[1] = f * (deltaUv2.v[1] * ea.v[1] - deltaUv1.v[1] * eb.v[1]);
+                    AFX_V3D_OUT(tan, tanStride, ia)->v[2] = f * (deltaUv2.v[1] * ea.v[2] - deltaUv1.v[1] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ib), tan[ia]);
-                        AfxV3dCopy(AFX_V3D_OUT(tan, tanStride, ic), tan[ia]);
+                        *AFX_V3D_OUT(tan, tanStride, ib) = tan[ia];
+                        *AFX_V3D_OUT(tan, tanStride, ic) = tan[ia];
                     }
                     //tan = tan2 += tanStride;
                     //tan += tanStep;
@@ -423,15 +419,15 @@ _ARX afxError ArxComputeTriangleTangents(afxUnit triCnt, void const* indices, af
 
                 if (bit)
                 {
-                    AFX_V3D_OUT(bit, bitStride, ia)[0] = f * (-deltaUv2[0] * ea[0] + deltaUv1[0] * eb[0]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[1] = f * (-deltaUv2[0] * ea[1] + deltaUv1[0] * eb[1]);
-                    AFX_V3D_OUT(bit, bitStride, ia)[2] = f * (-deltaUv2[0] * ea[2] + deltaUv1[0] * eb[2]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[0] = f * (-deltaUv2.v[0] * ea.v[0] + deltaUv1.v[0] * eb.v[0]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[1] = f * (-deltaUv2.v[0] * ea.v[1] + deltaUv1.v[0] * eb.v[1]);
+                    AFX_V3D_OUT(bit, bitStride, ia)->v[2] = f * (-deltaUv2.v[0] * ea.v[2] + deltaUv1.v[0] * eb.v[2]);
 
                     if (!perTriOut)
                     {
                         // Because a triangle is always a flat shape, we only need to calculate a single tangent/bitangent pair per triangle as they will be the same for each of the triangle's vertices.
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ib), AFX_V3D_IN(bit, bitStride, ia));
-                        AfxV3dCopy(AFX_V3D_OUT(bit, bitStride, ic), AFX_V3D_IN(bit, bitStride, ia));
+                        *AFX_V3D_OUT(bit, bitStride, ib) = *AFX_V3D_IN(bit, bitStride, ia);
+                        *AFX_V3D_OUT(bit, bitStride, ic) = *AFX_V3D_IN(bit, bitStride, ia);
                     }
                     //bit = bit2 += bitStride;
                     //bit += bitStep;
@@ -471,14 +467,13 @@ _ARX afxError ArxComputeTriangleNormals(afxUnit triCnt, void const* indices, afx
             afxUnit const ib = j * ARX_INDICES_PER_TRI + 1;
             afxUnit const ic = j * ARX_INDICES_PER_TRI + 2;
 
-            afxV4d e1, e2, no;
-            AfxV4dSub(e1, AFX_V3D_IN(pos, posStride, ia), AFX_V3D_IN(pos, posStride, ib));
-            AfxV4dSub(e2, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ib));
-            AfxV3dCross(no, e1, e2);
+            afxV3d e1 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ia), *AFX_V3D_IN(pos, posStride, ib));
+            afxV3d e2 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ib));
+            afxV3d no = AfxV3dCross(e1, e2);
             
-            AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ia), AFX_V3D_IN(nrm, nrmStride, ia), no);
-            AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ib), AFX_V3D_IN(nrm, nrmStride, ib), no);
-            AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ic), AFX_V3D_IN(nrm, nrmStride, ic), no);
+            *AFX_V3D_OUT(nrm, nrmStride, ia) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ia), no);
+            *AFX_V3D_OUT(nrm, nrmStride, ib) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ib), no);
+            *AFX_V3D_OUT(nrm, nrmStride, ic) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ic), no);
             //nrm = nrm2 += nrmStride;
             //nrm += nrmStep;
         }
@@ -499,16 +494,15 @@ _ARX afxError ArxComputeTriangleNormals(afxUnit triCnt, void const* indices, afx
                 afxUnit const ib = indices2[j * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
-                afxV4d e1, e2, no;
-                AfxV4dSub(e1, AFX_V3D_IN(pos, posStride, ia), AFX_V3D_IN(pos, posStride, ib));
-                AfxV4dSub(e2, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ib));
-                AfxV3dCross(no, e1, e2);
+                afxV3d e1 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ia), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d e2 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d no = AfxV3dCross(e1, e2);
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ia), AFX_V3D_IN(nrm, nrmStride, ia), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ib), AFX_V3D_IN(nrm, nrmStride, ib), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ic), AFX_V3D_IN(nrm, nrmStride, ic), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ia) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ia), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ib) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ib), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ic) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ic), no);
                 //nrm = nrm2 += nrmStride;
                 //nrm += nrmStep;
             }
@@ -524,16 +518,15 @@ _ARX afxError ArxComputeTriangleNormals(afxUnit triCnt, void const* indices, afx
                 afxUnit const ib = indices2[j * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
-                afxV4d e1, e2, no;
-                AfxV4dSub(e1, AFX_V3D_IN(pos, posStride, ia), AFX_V3D_IN(pos, posStride, ib));
-                AfxV4dSub(e2, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ib));
-                AfxV3dCross(no, e1, e2);
+                afxV3d e1 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ia), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d e2 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d no = AfxV3dCross(e1, e2);
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ia), AFX_V3D_IN(nrm, nrmStride, ia), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ib), AFX_V3D_IN(nrm, nrmStride, ib), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ic), AFX_V3D_IN(nrm, nrmStride, ic), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ia) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ia), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ib) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ib), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ic) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ic), no);
                 //nrm = nrm2 += nrmStride;
                 //nrm += nrmStep;
             }
@@ -549,16 +542,15 @@ _ARX afxError ArxComputeTriangleNormals(afxUnit triCnt, void const* indices, afx
                 afxUnit const ib = indices2[j * ARX_INDICES_PER_TRI + 1];
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
-                afxV4d e1, e2, no;
-                AfxV4dSub(e1, AFX_V3D_IN(pos, posStride, ia), AFX_V3D_IN(pos, posStride, ib));
-                AfxV4dSub(e2, AFX_V3D_IN(pos, posStride, ic), AFX_V3D_IN(pos, posStride, ib));
-                AfxV3dCross(no, e1, e2);
+                afxV3d e1 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ia), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d e2 = AfxV3dSub(*AFX_V3D_IN(pos, posStride, ic), *AFX_V3D_IN(pos, posStride, ib));
+                afxV3d no = AfxV3dCross(e1, e2);
                 //pos = pos2 += inStride;
                 //pos += posStep;
 
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ia), AFX_V3D_IN(nrm, nrmStride, ia), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ib), AFX_V3D_IN(nrm, nrmStride, ib), no);
-                AfxV3dAdd(AFX_V3D_OUT(nrm, nrmStride, ic), AFX_V3D_IN(nrm, nrmStride, ic), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ia) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ia), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ib) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ib), no);
+                *AFX_V3D_OUT(nrm, nrmStride, ic) = AfxV3dAdd(*AFX_V3D_IN(nrm, nrmStride, ic), no);
                 //nrm = nrm2 += outStride;
                 //nrm += nrmStep;
             }
@@ -580,9 +572,9 @@ _ARX afxError ArxComputeTriangleNormals(afxUnit triCnt, void const* indices, afx
         afxUnit const ib = indices2[j * ARX_INDICES_PER_TRI + 1];
         afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
-        AfxV3dNormalize(AFX_V3D_OUT(nrm, nrmStride, ia), AFX_V3D_IN(nrm, nrmStride, ia));
-        AfxV3dNormalize(AFX_V3D_OUT(nrm, nrmStride, ib), AFX_V3D_IN(nrm, nrmStride, ib));
-        AfxV3dNormalize(AFX_V3D_OUT(nrm, nrmStride, ic), AFX_V3D_IN(nrm, nrmStride, ic));
+        *AFX_V3D_OUT(nrm, nrmStride, ia) = AfxV3dNormalize(*AFX_V3D_IN(nrm, nrmStride, ia), NIL);
+        *AFX_V3D_OUT(nrm, nrmStride, ib) = AfxV3dNormalize(*AFX_V3D_IN(nrm, nrmStride, ib), NIL);
+        *AFX_V3D_OUT(nrm, nrmStride, ic) = AfxV3dNormalize(*AFX_V3D_IN(nrm, nrmStride, ic), NIL);
     }
     return err;
 }
@@ -607,9 +599,9 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
             afxUnit const ic = j * ARX_INDICES_PER_TRI + 2;
 
             // Project the 3D vertices to 2D (XY plane)
-            afxReal u1 = AFX_V3D_IN(pos, posStride, ia)[0], v1y = AFX_V3D_IN(pos, posStride, ia)[1];
-            afxReal u2 = AFX_V3D_IN(pos, posStride, ib)[0], v2y = AFX_V3D_IN(pos, posStride, ib)[1];
-            afxReal u3 = AFX_V3D_IN(pos, posStride, ic)[0], v3y = AFX_V3D_IN(pos, posStride, ic)[1];
+            afxReal u1 = AFX_V3D_IN(pos, posStride, ia)->v[0], v1y = AFX_V3D_IN(pos, posStride, ia)->v[1];
+            afxReal u2 = AFX_V3D_IN(pos, posStride, ib)->v[0], v2y = AFX_V3D_IN(pos, posStride, ib)->v[1];
+            afxReal u3 = AFX_V3D_IN(pos, posStride, ic)->v[0], v3y = AFX_V3D_IN(pos, posStride, ic)->v[1];
             //pos = pos2 += posStride;
             //pos += posStep;
 
@@ -624,14 +616,14 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
             afxReal range_v = max_v - min_v;
 
             // Store the UV coordinates for this triangle
-            AFX_V2D_OUT(uv, uvStride, ia)[0] = (u1 - min_u) / range_u;
-            AFX_V2D_OUT(uv, uvStride, ia)[1] = (v1y - min_v) / range_v;
+            AFX_V2D_OUT(uv, uvStride, ia)->v[0] = (u1 - min_u) / range_u;
+            AFX_V2D_OUT(uv, uvStride, ia)->v[1] = (v1y - min_v) / range_v;
 
-            AFX_V2D_OUT(uv, uvStride, ib)[0] = (u2 - min_u) / range_u;
-            AFX_V2D_OUT(uv, uvStride, ib)[1] = (v2y - min_v) / range_v;
+            AFX_V2D_OUT(uv, uvStride, ib)->v[0] = (u2 - min_u) / range_u;
+            AFX_V2D_OUT(uv, uvStride, ib)->v[1] = (v2y - min_v) / range_v;
 
-            AFX_V2D_OUT(uv, uvStride, ic)[0] = (u3 - min_u) / range_u;
-            AFX_V2D_OUT(uv, uvStride, ic)[1] = (v3y - min_v) / range_v;
+            AFX_V2D_OUT(uv, uvStride, ic)->v[0] = (u3 - min_u) / range_u;
+            AFX_V2D_OUT(uv, uvStride, ic)->v[1] = (v3y - min_v) / range_v;
             //uv = uv2 += uvStride;
             //uv += uvStep;
         }
@@ -654,9 +646,9 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
                 // Project the 3D vertices to 2D (XY plane)
-                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)[0], v1y = AFX_V3D_IN(pos, posStride, ia)[1];
-                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)[0], v2y = AFX_V3D_IN(pos, posStride, ib)[1];
-                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)[0], v3y = AFX_V3D_IN(pos, posStride, ic)[1];
+                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)->v[0], v1y = AFX_V3D_IN(pos, posStride, ia)->v[1];
+                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)->v[0], v2y = AFX_V3D_IN(pos, posStride, ib)->v[1];
+                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)->v[0], v3y = AFX_V3D_IN(pos, posStride, ic)->v[1];
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
@@ -671,14 +663,14 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxReal range_v = max_v - min_v;
 
                 // Store the UV coordinates for this triangle
-                AFX_V2D_OUT(uv, uvStride, ia)[0] = (u1 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ia)[1] = (v1y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[0] = (u1 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[1] = (v1y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ib)[0] = (u2 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ib)[1] = (v2y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[0] = (u2 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[1] = (v2y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ic)[0] = (u3 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ic)[1] = (v3y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[0] = (u3 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[1] = (v3y - min_v) / range_v;
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
             }
@@ -696,9 +688,9 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
                 // Project the 3D vertices to 2D (XY plane)
-                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)[0], v1y = AFX_V3D_IN(pos, posStride, ia)[1];
-                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)[0], v2y = AFX_V3D_IN(pos, posStride, ib)[1];
-                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)[0], v3y = AFX_V3D_IN(pos, posStride, ic)[1];
+                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)->v[0], v1y = AFX_V3D_IN(pos, posStride, ia)->v[1];
+                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)->v[0], v2y = AFX_V3D_IN(pos, posStride, ib)->v[1];
+                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)->v[0], v3y = AFX_V3D_IN(pos, posStride, ic)->v[1];
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
@@ -713,14 +705,14 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxReal range_v = max_v - min_v;
 
                 // Store the UV coordinates for this triangle
-                AFX_V2D_OUT(uv, uvStride, ia)[0] = (u1 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ia)[1] = (v1y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[0] = (u1 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[1] = (v1y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ib)[0] = (u2 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ib)[1] = (v2y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[0] = (u2 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[1] = (v2y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ic)[0] = (u3 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ic)[1] = (v3y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[0] = (u3 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[1] = (v3y - min_v) / range_v;
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
             }
@@ -738,9 +730,9 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxUnit const ic = indices2[j * ARX_INDICES_PER_TRI + 2];
 
                 // Project the 3D vertices to 2D (XY plane)
-                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)[0], v1y = AFX_V3D_IN(pos, posStride, ia)[1];
-                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)[0], v2y = AFX_V3D_IN(pos, posStride, ib)[1];
-                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)[0], v3y = AFX_V3D_IN(pos, posStride, ic)[1];
+                afxReal u1 = AFX_V3D_IN(pos, posStride, ia)->v[0], v1y = AFX_V3D_IN(pos, posStride, ia)->v[1];
+                afxReal u2 = AFX_V3D_IN(pos, posStride, ib)->v[0], v2y = AFX_V3D_IN(pos, posStride, ib)->v[1];
+                afxReal u3 = AFX_V3D_IN(pos, posStride, ic)->v[0], v3y = AFX_V3D_IN(pos, posStride, ic)->v[1];
                 //pos = pos2 += posStride;
                 //pos += posStep;
 
@@ -755,14 +747,14 @@ _ARX afxError ArxComputeTriangleSkins(afxUnit triCnt, void const* indices, afxUn
                 afxReal range_v = max_v - min_v;
 
                 // Store the UV coordinates for this triangle
-                AFX_V2D_OUT(uv, uvStride, ia)[0] = (u1 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ia)[1] = (v1y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[0] = (u1 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ia)->v[1] = (v1y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ib)[0] = (u2 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ib)[1] = (v2y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[0] = (u2 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ib)->v[1] = (v2y - min_v) / range_v;
 
-                AFX_V2D_OUT(uv, uvStride, ic)[0] = (u3 - min_u) / range_u;
-                AFX_V2D_OUT(uv, uvStride, ic)[1] = (v3y - min_v) / range_v;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[0] = (u3 - min_u) / range_u;
+                AFX_V2D_OUT(uv, uvStride, ic)->v[1] = (v3y - min_v) / range_v;
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
             }
@@ -795,25 +787,25 @@ _ARX afxError ArxGenerateTriangleSkins(afxUnit triCnt, void const* indices, afxU
 
             if (j % 2)
             {
-                AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                AFX_V2D_OUT(uv, stride, ia)[1] = 1;
+                AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                AFX_V2D_OUT(uv, stride, ia)->v[1] = 1;
 
-                AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                AFX_V2D_OUT(uv, stride, ic)[0] = 1;
-                AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                AFX_V2D_OUT(uv, stride, ic)->v[0] = 1;
+                AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
             }
             else
             {
-                AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                AFX_V2D_OUT(uv, stride, ia)[1] = 0;
+                AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                AFX_V2D_OUT(uv, stride, ia)->v[1] = 0;
 
-                AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                AFX_V2D_OUT(uv, stride, ic)[0] = 0;
-                AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                AFX_V2D_OUT(uv, stride, ic)->v[0] = 0;
+                AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
             }
             //uv = uv2 += uvStride;
             //uv += uvStep;
@@ -840,25 +832,25 @@ _ARX afxError ArxGenerateTriangleSkins(afxUnit triCnt, void const* indices, afxU
 
                 if (j % 2)
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 1;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
                 else
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
                 //uv = uv2 += uvStride;
                 //uv += uvStep;
@@ -880,25 +872,25 @@ _ARX afxError ArxGenerateTriangleSkins(afxUnit triCnt, void const* indices, afxU
 
                 if (j % 2)
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 1;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
                 else
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
             }
             break;
@@ -918,25 +910,25 @@ _ARX afxError ArxGenerateTriangleSkins(afxUnit triCnt, void const* indices, afxU
 
                 if (j % 2)
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 1;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
                 else
                 {
-                    AFX_V2D_OUT(uv, stride, ia)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ia)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ia)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ib)[0] = 1;
-                    AFX_V2D_OUT(uv, stride, ib)[1] = 0;
+                    AFX_V2D_OUT(uv, stride, ib)->v[0] = 1;
+                    AFX_V2D_OUT(uv, stride, ib)->v[1] = 0;
 
-                    AFX_V2D_OUT(uv, stride, ic)[0] = 0;
-                    AFX_V2D_OUT(uv, stride, ic)[1] = 1;
+                    AFX_V2D_OUT(uv, stride, ic)->v[0] = 0;
+                    AFX_V2D_OUT(uv, stride, ic)->v[1] = 1;
                 }
             }
             break;
@@ -1064,7 +1056,7 @@ _ARXINL void ArxUpdateVertices(arxTriangulation* mshb, afxUnit baseVtxIdx, afxUn
     }
 }
 
-_ARXINL void ArxUpdateVertexPositions(arxTriangulation* mshb, afxUnit baseVtxIdx, afxUnit vtxCnt, afxReal const posn[][3], afxUnit srcStride)
+_ARXINL void ArxUpdateVertexPositions(arxTriangulation* mshb, afxUnit baseVtxIdx, afxUnit vtxCnt, afxV3d const posn[], afxUnit srcStride)
 {
     afxError err = { 0 };
     //AfxAssertType(mshb, afxFcc_MSHB);
@@ -1074,14 +1066,14 @@ _ARXINL void ArxUpdateVertexPositions(arxTriangulation* mshb, afxUnit baseVtxIdx
     if (srcStride == sizeof(posn[0]))
     {
         for (afxUnit i = 0; i < vtxCnt; i++)
-            AfxV4dCopyAtv3d(mshb->posn[baseVtxIdx + i], posn[i]);
+            mshb->posn[baseVtxIdx + i] = AfxV4dFromAtv3d(posn[i]);
     }
     else
     {
         afxByte* posnBytemap = (void*)posn;
         
         for (afxUnit i = 0; i < vtxCnt; i++)
-            AfxV4dCopyAtv3d(mshb->posn[baseVtxIdx + i], (void*)(&posnBytemap[i * srcStride]));
+            mshb->posn[baseVtxIdx + i] = AfxV4dFromAtv3d(*(afxV3d*)(&posnBytemap[i * srcStride]));
     }
 }
 
@@ -1101,7 +1093,7 @@ _ARXINL void ArxUpdateVertexPositions4(arxTriangulation* mshb, afxUnit baseVtxId
         afxByte* posnBytemap = (void*)posn;
 
         for (afxUnit i = 0; i < vtxCnt; i++)
-            AfxV4dCopy(mshb->posn[baseVtxIdx + i], (void*)(&posnBytemap[i * srcStride]));
+            mshb->posn[baseVtxIdx + i] = *(afxV4d*)(&posnBytemap[i * srcStride]);
     }
 }
 
@@ -1126,7 +1118,7 @@ _ARXINL afxError ArxUpdateVertexNormals(arxTriangulation* mshb, afxUnit baseVtxI
             afxByte* nrmBytemap = (void*)nrm;
 
             for (afxUnit i = 0; i < vtxCnt; i++)
-                AfxV3dCopy(mshb->nrm[baseVtxIdx + i], (void*)(&nrmBytemap[i * srcStride]));
+                mshb->nrm[baseVtxIdx + i] = *(afxV3d*)(&nrmBytemap[i * srcStride]);
         }
     }
     return err;
@@ -1153,7 +1145,7 @@ _ARXINL afxError ArxUpdateVertexWraps(arxTriangulation* mshb, afxUnit baseVtxIdx
             afxByte* uvBytemap = (void*)uv;
 
             for (afxUnit i = 0; i < vtxCnt; i++)
-                AfxV2dCopy(mshb->uv[baseVtxIdx + i], (void*)(&uvBytemap[i * srcStride]));
+                mshb->uv[baseVtxIdx + i] = *(afxV2d*)(&uvBytemap[i * srcStride]);
         }
     }
     
@@ -1192,8 +1184,8 @@ _ARXINL afxUnit ArxAddVertexBiases(arxTriangulation* mshb, afxUnit cnt, afxUnit 
     for (afxUnit i = 0; i < cnt; i++)
     {
         AFX_ASSERT(weight && 1.f >= weight[i]);
-        AfxUpdateArray(&mshb->biases, baseBiasIdx + i, 1, 0, (const arxVertexBias[]) { { .pivotIdx = jntIdx ? jntIdx[i] : 0, .weight = weight ? weight[i] : 1.f } }, sizeof(arxVertexBias));
-        AFX_ASSERT_RANGE(mshb->artCnt, ((arxVertexBias const*)AfxGetArrayUnit(&mshb->biases, baseBiasIdx + i))->pivotIdx, 1);
+        AfxUpdateAtArray(&mshb->biases, baseBiasIdx + i, 1, 0, (const arxVertexBias[]) { { .pivotIdx = jntIdx ? jntIdx[i] : 0, .weight = weight ? weight[i] : 1.f } }, sizeof(arxVertexBias));
+        AFX_ASSERT_RANGE(mshb->artCnt, ((arxVertexBias const*)AfxGetAtArray(&mshb->biases, baseBiasIdx + i))->pivotIdx, 1);
     }
     return baseBiasIdx;
 }

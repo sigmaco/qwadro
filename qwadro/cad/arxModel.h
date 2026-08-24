@@ -122,10 +122,9 @@ ARX void ArxGetModelDisplacement
     afxTransform* t
 );
 
-ARX void ArxComputeModelDisplacement
+ARX afxM4d ArxComputeModelDisplacement
 (
-    arxModel mdl, 
-    afxM4d m
+    arxModel mdl
 );
 
 // MESH RIGGING

@@ -149,13 +149,13 @@ _ARX void ArxRecenterPuppetMotiveClocks(arxPuppet pup, afxReal currClock)
     pup->ddi->recenterMotvClocksCb(pup, currClock);
 }
 
-_ARX void _ArxPipCompMotVecsCb(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxV3d translation, afxV3d rotation)
+_ARX void _ArxPipCompMotVecsCb(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxV3d* translation, afxV3d* rotation)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
 }
 
-_ARX void ArxComputePuppetMotionVectors(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxV3d translation, afxV3d rotation)
+_ARX void ArxComputePuppetMotionVectors(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxV3d* translation, afxV3d* rotation)
 {
     // AfxGetBodyRootMotionVectors
     // AfxQueryBodyRootMotionVectors
@@ -166,14 +166,14 @@ _ARX void ArxComputePuppetMotionVectors(arxPuppet pup, afxReal secsElapsed, afxB
     pup->ddi->compMotVecCb(pup, secsElapsed, inverse, translation, rotation);
 }
 
-_ARX void ArxComputePuppetMotionMatrix(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxM4d const mm, afxM4d m)
+_ARX afxM4d ArxComputePuppetMotionMatrix(arxPuppet pup, afxReal secsElapsed, afxBool inverse, afxM4d const mm)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PUP, 1, &pup);
 
-    afxV4d t, r;
-    ArxComputePuppetMotionVectors(pup, secsElapsed, inverse, t, r);
-    AfxM4dRigidMotion(m, mm, r, t);
+    afxV3d t, r;
+    ArxComputePuppetMotionVectors(pup, secsElapsed, inverse, &t, &r);
+    return AfxM4dRigidMotion(mm, r, t);
 }
 
 _ARX void _ArxPupAccumAnimsCb(arxPose rslt, arxPuppet pup, afxUnit basePivotIdx, afxUnit pivotCnt, afxReal allowedErr, afxUnit const sparseJntMap[])

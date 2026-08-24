@@ -24,37 +24,33 @@
 #include "qwadro/math/afxTransformation.h"
 #include "qwadro/math/afxInterpolation.h"
 #include "qwadro/math/afxMultiplication.h"
+#include "qwadro/math/afxTrigonometry.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Initialization                                                             //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatReset(afxQuat q)
+_AFXINL afxQuat AfxQuatIdentity(void)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AfxQuatCopy(q, AFX_QUAT_IDENTITY);
+    return AFX_QUAT_IDENTITY;
 }
 
-_AFXINL void AfxQuatZero(afxQuat q)
+_AFXINL afxQuat AfxQuatZero(void)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AfxQuatCopy(q, AFX_QUAT_ZERO);
+    return AFX_QUAT_ZERO;
 }
 
-_AFXINL void AfxQuatSet(afxQuat q, afxReal x, afxReal y, afxReal z, afxReal w)
+_AFXINL afxQuat AfxQuatMake(afxReal x, afxReal y, afxReal z, afxReal w)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AfxV4dSet(q, x, y, z, w);
+    return AFX_QUAT(x, y, z, w);
 }
 
-_AFXINL void AfxQuatReconstructV3d(afxQuat q, afxV3d const in)
+_AFXINL afxQuat AfxQuatReconstructV3d(afxV3d const in)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(in);
 
     // Since rotation quaternions are normalized, there are only 3 degrees of freedom instead of 4. 
     // Thus you only really need to store 3 components of the quaternion, and the 4th can be calculated using the formula
@@ -62,8 +58,8 @@ _AFXINL void AfxQuatReconstructV3d(afxQuat q, afxV3d const in)
     // We can then rebuild the missing element with this function.
 
     afxReal t = 1.f - AfxV3dDot(in, in);
-    AfxV3dCopy(q, in);
-    q[3] = t < 0.f ? 0.f : -AfxSqrtf(t);
+    return AFX_QUAT(in.x, in.y, in.z,
+                    t < 0.f ? 0.f : -AfxSqrtf(t));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,30 +74,24 @@ _AFXINL afxBool AfxQuatIsIdentity(afxQuat const q)
 _AFXINL afxBool AfxQuatIsNan(afxQuat const q)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
     return AfxV4dIsNan(q);
 }
 
 _AFXINL afxBool AfxQuatIsInfinite(afxQuat const q)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
     return AfxV4dIsInfinite(q);
 }
 
 _AFXINL afxBool AfxQuatIsEqual(afxQuat const q, afxQuat const other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(other);
     return AfxV4dIsEqual(q, other);
 }
 
 _AFXINL afxBool AfxQuatIsDifferent(afxQuat const q, afxQuat const other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(other);
     return AfxV4dIsDiff(q, other);
 }
 
@@ -109,190 +99,153 @@ _AFXINL afxBool AfxQuatIsDifferent(afxQuat const q, afxQuat const other)
 // Transferance                                                               //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatSwap(afxQuat q, afxQuat other)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(other);
-    AFX_ASSERT(q != other);
-    AfxV4dSwap(q, other);
-}
-
-_AFXINL void AfxQuatCopy(afxQuat q, afxQuat const in)
-{
-    afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(in);
-    AFX_ASSERT_DIFF(q, in);
-    AfxV4dCopy(q, in);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Clamping                                                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL afxReal AfxQuatNormalize(afxQuat q, afxQuat const in)
+_AFXINL afxQuat AfxQuatNormalize(afxQuat const in, afxReal* length)
 {
     // Should be compatible with XMVECTOR XMQuaternionNormalize(FXMVECTOR Q)
 
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
-    return AfxV4dNormalize(q, in);
+    return AfxV4dNormalize(in, length);
 }
 
-_AFXINL afxReal AfxQuatNormalizeEstimated(afxQuat q, afxQuat const in)
+_AFXINL afxQuat AfxQuatNormalizeEstimated(afxQuat const in, afxReal* length)
 {
     // Should be compatible with XMVECTOR XMQuaternionNormalizeEst(FXMVECTOR Q)
 
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
-    return AfxV4dNormalizeEstimated(q, in);
+    return AfxV4dNormalizeEstimated(in, length);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Arithmetica                                                                //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatAdd(afxQuat q, afxQuat const a, afxQuat const b)
+_AFXINL afxQuat AfxQuatAdd(afxQuat const a, afxQuat const b)
 {
     afxError err = { 0 };
-    AFX_ASSERT(a);
-    AfxV4dAdd(q, a, b);
+    return AfxV4dAdd(a, b);
 }
 
-_AFXINL void AfxQuatSub(afxQuat q, afxQuat const a, afxQuat const b)
+_AFXINL afxQuat AfxQuatSub(afxQuat const a, afxQuat const b)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(b);
-    AFX_ASSERT(a);
-    AfxV4dSub(q, a, b);
+    return AfxV4dSub(a, b);
 }
 
-_AFXINL void AfxQuatScale(afxQuat q, afxQuat const in, afxReal scalar)
+_AFXINL afxQuat AfxQuatScale(afxQuat const in, afxReal scalar)
 {
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
-    AfxV4dScale(q, in, scalar);
+    return AfxV4dScale(in, scalar);
 }
 
-AFXINL void AfxQuatDiv(afxQuat q, afxQuat const in, afxReal dividend)
+AFXINL afxQuat AfxQuatDiv(afxQuat const in, afxReal dividend)
 {
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
-    AfxV4dDiv(q, in, (afxV4d) { dividend, dividend, dividend, dividend });
+    return AfxV4dDiv(in, (afxV4d) { dividend, dividend, dividend, dividend });
 }
 
-_AFXINL void AfxQuatMad(afxQuat q, afxQuat const add, afxQuat const mul, afxQuat const f)
+_AFXINL afxQuat AfxQuatMad(afxQuat const add, afxQuat const mul, afxQuat const f)
 {
-    AfxV4dMad(q, add, mul, f);
+    return AfxV4dMad(add, mul, f);
 }
 
-_AFXINL void AfxQuatMads(afxQuat q, afxQuat const add, afxQuat const mul, afxReal lambda)
+_AFXINL afxQuat AfxQuatMads(afxQuat const add, afxQuat const mul, afxReal lambda)
 {
-    AfxV4dMads(q, add, mul, lambda);
+    return AfxV4dMads(add, mul, lambda);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Algebra                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatConj(afxQuat q, afxQuat const in)
+_AFXINL afxQuat AfxQuatConj(afxQuat const in)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(in);
-    AfxV4dNegAffine(q, in);
+    return AfxV4dNegAffine(in);
 }
 
-_AFXINL void AfxQuatNeg(afxQuat q, afxQuat const in)
+_AFXINL afxQuat AfxQuatNeg(afxQuat const in)
 {
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
-    AfxV4dNeg(q, in);
+    return AfxV4dNeg(in);
 }
 
-_AFXINL void AfxQuatInv(afxQuat q, afxQuat const in)
+_AFXINL afxQuat AfxQuatInv(afxQuat const in)
 {
     // Should be compatible with XMVECTOR XMQuaternionInverse(FXMVECTOR Q)
 
     afxError err = { 0 };
-    AFX_ASSERT(in);
-    AFX_ASSERT(q);
 
     afxReal norm = AfxQuatSq(in);
 
-    if (AfxIsGreaterThanEpsilon(norm)) AfxQuatZero(q);
-    else
-    {
-        AfxQuatConj(q, in);
-        afxV4d const v = { norm, norm, norm, norm };
-        AfxV4dDiv(q, q, v);
-    }
+    if (AfxIsGreaterThanEpsilon(norm))
+        return AFX_QUAT_ZERO;
+
+    afxQuat conj = AfxQuatConj(in);
+    afxV4d const v = { norm, norm, norm, norm };
+    return AfxV4dDiv(conj, v);
 }
 
-_AFXINL void AfxQuatGetImaginaryPart(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetImaginaryPart(afxQuat const q)
 {
-    return AfxV3dCopy(v, q);
+    return AFX_V3D(q.x, q.y, q.z);
 }
 
-_AFXINL void AfxQuatGetBasisVector0(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetBasisVector0(afxQuat const q)
 {
-    afxReal const x2 = q[0] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    ( q[3] * w2) - 1.0  + q[0] * x2,
-                    ( q[2] * w2)        + q[1] * x2,
-                    (-q[1] * w2)        + q[2] * x2);
+    afxReal const x2 = q.x * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( ( q.w * w2) - 1.0  + q.x * x2,
+                    ( q.z * w2)        + q.y * x2,
+                    (-q.y * w2)        + q.z * x2);
 }
 
-_AFXINL void AfxQuatGetBasisVector1(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetBasisVector1(afxQuat const q)
 {
-    afxReal const y2 = q[1] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    (-q[2] * w2)        + q[0] * y2, 
-                    ( q[3] * w2) - 1.0  + q[1] * y2, 
-                    ( q[0] * w2)        + q[2] * y2);
+    afxReal const y2 = q.y * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( (-q.z * w2)        + q.x * y2,
+                    ( q.w * w2) - 1.0  + q.y * y2, 
+                    ( q.x * w2)        + q.z * y2);
 }
 
-_AFXINL void AfxQuatGetBasisVector2(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetBasisVector2(afxQuat const q)
 {
-    afxReal const z2 = q[2] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    ( q[1] * w2)        + q[0] * z2, 
-                    (-q[0] * w2)        + q[1] * z2, 
-                    ( q[3] * w2) - 1.0  + q[2] * z2);
+    afxReal const z2 = q.z * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( ( q.y * w2)        + q.x * z2,
+                    (-q.x * w2)        + q.y * z2, 
+                    ( q.w * w2) - 1.0  + q.z * z2);
 }
 
-_AFXINL void AfxQuatGetInvBasisVector0(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetInvBasisVector0(afxQuat const q)
 {
-    afxReal const x2 = q[0] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    ( q[3] * w2) - 1.0  + q[0] * x2, 
-                    (-q[2] * w2)        + q[1] * x2, 
-                    ( q[1] * w2)        + q[2] * x2);
+    afxReal const x2 = q.x * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( ( q.w * w2) - 1.0  + q.x * x2,
+                    (-q.z * w2)        + q.y * x2, 
+                    ( q.y * w2)        + q.z * x2);
 }
 
-_AFXINL void AfxQuatGetInvBasisVector1(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetInvBasisVector1(afxQuat const q)
 {
-    afxReal const y2 = q[1] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    ( q[2] * w2)        + q[0] * y2, 
-                    ( q[3] * w2) - 1.0  + q[1] * y2, 
-                    (-q[0] * w2)        + q[2] * y2);
+    afxReal const y2 = q.y * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( ( q.z * w2)        + q.x * y2,
+                    ( q.w * w2) - 1.0  + q.y * y2, 
+                    (-q.x * w2)        + q.z * y2);
 }
 
-_AFXINL void AfxQuatGetInvBasisVector2(afxQuat const q, afxV3d v)
+_AFXINL afxV3d AfxQuatGetInvBasisVector2(afxQuat const q)
 {
-    afxReal const z2 = q[2] * 2.0;
-    afxReal const w2 = q[3] * 2.0;
-    AfxV3dSet(v,    (-q[1] * w2)        + q[0] * z2, 
-                    ( q[0] * w2)        + q[1] * z2, 
-                    ( q[3] * w2) - 1.0  + q[2] * z2);
+    afxReal const z2 = q.z * 2.0;
+    afxReal const w2 = q.w * 2.0;
+    return AFX_V3D( (-q.y * w2)        + q.x * z2, 
+                    ( q.x * w2)        + q.y * z2, 
+                    ( q.w * w2) - 1.0  + q.z * z2);
 }
 
 _AFXINL afxReal AfxQuatDot(afxQuat const q, afxQuat const other)
@@ -300,8 +253,6 @@ _AFXINL afxReal AfxQuatDot(afxQuat const q, afxQuat const other)
     // Should be compatible with  XMVECTOR XMQuaternionDot(FXMVECTOR Q1, FXMVECTOR Q2)
 
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(other);
     return AfxV4dDot(q, other);
 }
 
@@ -318,7 +269,6 @@ _AFXINL afxReal AfxQuatMag(afxQuat const q)
     // Should be compatible with XMVECTOR XMQuaternionLength(FXMVECTOR Q)
 
     afxError err = { 0 };
-    AFX_ASSERT(q);
     return AfxV4dMag(q);
 }
 
@@ -327,41 +277,66 @@ _AFXINL afxReal AfxQuatMagRecip(afxQuat const q)
     // Should be compatible with XMVECTOR XMQuaternionReciprocalLength(FXMVECTOR Q)
 
     afxError err = { 0 };
-    AFX_ASSERT(q);
     return AfxV4dMagRecip(q);
 }
 
 _AFXINL afxReal AfxQuatAngle(afxQuat const q)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    return AfxAcosf(q[3]) * 2.0;
+    return AfxAcosf(q.w) * 2.0;
 }
 
 _AFXINL afxReal AfxQuatAngle2(afxQuat const q, afxQuat const other)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
     return AfxAcosf(AfxQuatDot(q, other)) * 2.0;
+}
+
+_AFXINL afxQuat AfxQuatDofX(afxQuat const q)
+{
+    return AFX_QUAT(q.v[0], 0, 0, q.v[3]);
+}
+
+_AFXINL afxQuat AfxQuatDofY(afxQuat const q)
+{
+    return AFX_QUAT(0, q.v[1], 0, q.v[3]);
+}
+
+_AFXINL afxQuat AfxQuatDofZ(afxQuat const q)
+{
+    return AFX_QUAT(0, 0, q.v[2], q.v[3]);
+}
+
+_AFXINL afxQuat AfxQuatDofXY(afxQuat const q)
+{
+    return AFX_QUAT(q.v[0], q.v[1], 0, q.v[3]);
+}
+
+_AFXINL afxQuat AfxQuatDofXZ(afxQuat const q)
+{
+    return AFX_QUAT(q.v[0], 0, q.v[2], q.v[3]);
+}
+
+_AFXINL afxQuat AfxQuatDofYZ(afxQuat const q)
+{
+    return AFX_QUAT(0, q.v[1], q.v[2], q.v[3]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Trigonometry                                                               //
 ////////////////////////////////////////////////////////////////////////////////
 
-_AFXINL void AfxQuatTangentM3d(afxQuat q, afxM3d const tbn)
+_AFXINL afxQuat AfxQuatTangentM3d(afxM3d const tbn)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(tbn);
 
-    AfxQuatRotationM3d(q, tbn);
-    AfxQuatNormalize(q, q);
+    afxQuat q = AfxQuatRotationM3d(tbn);
+    q = AfxQuatNormalize(q, NIL);
 
     // Make sure QTangent is always positive
 
-    if (q[3] < 0)
-        q[3] = -q[3];
+    if (q.w < 0)
+        q.w = -q.w;
 
     // yosoygames.com.ar/wp/2018/03/vertex-formats-part-1-compression/
 
@@ -377,33 +352,29 @@ _AFXINL void AfxQuatTangentM3d(afxQuat q, afxM3d const tbn)
     afxUnit const BITS = 16;
     afxReal const bias = 1.f / (2 ^ (BITS - 1) - 1);
 
-    if (q[3] < bias)
+    if (q.w < bias)
     {
         afxReal normFactor = AfxSqrtf(1.f - bias * bias);
-        AfxV3dScale(q, q, normFactor);
-        q[3] = bias;
+        q.x * normFactor;
+        q.y * normFactor;
+        q.z * normFactor;
+        q.w = bias;
     }
 #endif
 
     //If it's reflected, then make sure .w is negative.
-    afxV3d naturalBinormal;
-    AfxV3dCross(naturalBinormal, tbn[0], tbn[2]);
+    afxV3d naturalBinormal = AfxV3dCross(tbn.x, tbn.z);
 
-    if (AfxV3dDot(naturalBinormal, tbn[1]) <= 0)
-        AfxQuatNeg(q, q);
+    if (AfxV3dDot(naturalBinormal, tbn.y) <= 0)
+        q = AfxQuatNeg(q);
 }
 
-_AFXINL void AfxQuatTangentFrame(afxQuat q, afxV3d const normal, afxV3d const tangent, afxV3d const bitangent)
+_AFXINL afxQuat AfxQuatTangentFrame(afxV3d const normal, afxV3d const tangent, afxV3d const bitangent)
 {
     afxError err = { 0 };
-    AFX_ASSERT(q);
-    AFX_ASSERT(normal);
-    AFX_ASSERT(tangent);
-    AFX_ASSERT(bitangent);
-
     afxM3d tbn;
-    AfxM3dSet(tbn, normal, tangent, bitangent);
-    AfxQuatTangentM3d(q, tbn);
+    tbn = AfxM3dMake(normal, tangent, bitangent);
+    return AfxQuatTangentM3d(tbn);
 }
 
 // Utils
@@ -420,13 +391,12 @@ _AFXINL void AfxEnforceQuaternionContinuity(afxUnit cnt, afxQuat q[])
 
     for (afxUnit i = cnt; i-- > 0;)
     {
-        afxQuat t;
-        AfxQuatCopy(t, q[i]);
+        afxQuat t = q[i];
 
         if (AfxQuatDot(t, last) < 0.0)
-            AfxQuatNeg(t, t);
+            t = AfxQuatNeg(t);
 
-        AfxQuatCopy(last, t);
-        AfxQuatCopy(q[i], t);
+        last = t;
+        q[i] = t;
     }
 }

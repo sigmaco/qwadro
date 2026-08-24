@@ -1105,7 +1105,7 @@ _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
         afxDrawSystem dsys = dpu->m.dsys;
         AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
-        avxRange whd;
+        avxExtent whd;
         avxCanvas canv;
         AvxGetSurfaceCanvas(dout, outBufIdx, &canv);
         whd = AvxGetCanvasExtent(canv, (avxOrigin) { 0 });
@@ -1190,7 +1190,7 @@ _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
         DpuDraw(dpu, &dic);
 
         DpuConcludeDrawScope(dpu);
-        AfxDecAtom32(&dout->m.submCnt);
+        AfxAtomicDec32(&dout->m.submCnt);
     }
 
     return err;
@@ -1307,8 +1307,8 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
     dpu->depthTestEnabled = FALSE;
     dpu->depthCompareOp = avxCompareOp_LESS;
     dpu->depthWriteDisabled = FALSE;
-    dpu->depthBounds[0] = 0.f;
-    dpu->depthBounds[1] = 1.f;
+    dpu->depthBounds.v[0] = 0.f;
+    dpu->depthBounds.v[1] = 1.f;
     
     dpu->stencilTestEnabled = FALSE;
     dpu->stencilFront.compareOp = avxCompareOp_ALWAYS;

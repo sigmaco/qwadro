@@ -115,7 +115,7 @@ AFX_DEFINE_STRUCT(arxMeshBlueprint)
 };
 
 
-ARX afxError            ArxBuildParallelepipedMesh(arxScenario scio, afxV3d whd, afxReal slantX, afxReal slantY, afxV3d const pivot, arxMesh* mesh);
+ARX afxError            ArxBuildParallelepipedMesh(arxScenario scio, afxV3d const whd, afxReal slantX, afxReal slantY, afxV3d const pivot, arxMesh* mesh);
 ARX afxError            ArxBuildDomeMesh(arxScenario scio, afxReal radius, afxUnit slices, afxV3d const pivot, arxMesh* mesh);
 
 ARX afxError            ArxBuildDomeMesh2(arxScenario scio, afxReal radius, afxUnit stacks, afxUnit slices, afxBool inv, afxV3d const pivot, arxMesh* mesh);

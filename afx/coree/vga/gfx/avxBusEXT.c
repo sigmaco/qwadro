@@ -36,15 +36,13 @@ _AVX afxError AvxCmdStampDebug(afxDrawContext dctx, afxM4d const v, afxV2d const
     // This command must only be called outside of a video coding scope.
     AFX_ASSERT(!dctx->inVideoCoding);
 
-    AFX_ASSERT(at);
-    AFX_ASSERT(v);
     AFX_ASSERT(caption);
 
     afxCmdId cmdId;
     _avxCmd* cmd = _AvxDctxPushCmd(dctx, _AVX_CMD_ID(StampDebug), sizeof(cmd->StampDebug) + AFX_ALIGN_SIZE(caption->len, 16), &cmdId);
     AFX_ASSERT(cmd);
-    AfxM4dCopyAtm(cmd->StampDebug.v, v);
-    AfxV2dCopy(cmd->StampDebug.at, at);
+    cmd->StampDebug.v = AfxM4dFromAtm(v);
+    cmd->StampDebug.at = at;
     AfxCopy(cmd->StampDebug.data, caption->start, caption->len);
 
     return err;

@@ -91,6 +91,7 @@ _ARX afxError ArxDamageNode(arxNode nod)
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &ch);
         ArxDamageNode(ch);
     }
+    return err;
 }
 
 _ARX arxNode ArxGetRootNode(arxNode nod)
@@ -225,14 +226,14 @@ _ARX void _ArxNodUpdateMatrix(arxNode nod)
     {
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &parent);
         _ArxNodUpdateMatrix(parent);
-        AfxComputeCompositeTransformM4d(&nod->t, nod->m);
-        AfxM4dMultiply(nod->w, nod->m, parent->w);
+        nod->m = AfxComputeCompositeTransformM4d(&nod->t);
+        nod->w = AfxM4dMultiply(nod->m, parent->w);
     }
     else
     {
         // if there is not parent, just copy it.
-        AfxComputeCompositeTransformM4d(&nod->t, nod->m);
-        AfxM4dCopy(nod->w, nod->m);
+        nod->m = AfxComputeCompositeTransformM4d(&nod->t);
+        nod->w = nod->m;
     }
 #if 0
     arxNode child;
@@ -252,7 +253,7 @@ _ARX afxBool ArxUpdateNode(arxNode nod)
 
     //if (nod->dirty)
     {
-        AfxComputeCompositeTransformM4d(&nod->t, nod->m);
+        nod->m = AfxComputeCompositeTransformM4d(&nod->t);
 
         arxNode p = AfxGetLinker(&nod->parent);
 
@@ -260,23 +261,23 @@ _ARX afxBool ArxUpdateNode(arxNode nod)
         {
             AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &p);
             if (p->dirty) ArxUpdateNode(p);
-            AfxM4dMultiplyAtm(nod->w, nod->m, p->w);
+            nod->w = AfxM4dMultiplyAtm(nod->m, p->w);
         }
         else
         {
-            AfxM4dCopyAtm(nod->w, nod->m);
+            nod->w = AfxM4dFromAtm(nod->m);
         }
         nod->dirty = 0;
     }
+    return err;
 }
 
-_ARX void ArxGetNodeMatrix(arxNode nod, afxM4d m)
+_ARX afxM4d ArxGetNodeMatrix(arxNode nod)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
-    AFX_ASSERT(m);
     if (nod->dirty) ArxUpdateNode(nod);
-    AfxM4dCopy(m, nod->w);
+    return nod->w;
 }
 
 _ARX void ArxGetNodeTransform(arxNode nod, afxTransform* t)
@@ -312,7 +313,7 @@ _ARX afxError ArxTransformNode(arxNode nod, afxTransform const* t)
     return err;
 }
 
-_ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d translation, afxV3d rotation)
+_ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBool inv, afxV3d* translation, afxV3d* rotation)
 {
     // AfxQueryDagRootMotionVectors
 
@@ -328,8 +329,8 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
     }
     case arxNodeType_Leaf_Pose:
     {
-        AfxV3dCopy(translation, AFX_V4D_IDENTITY);
-        AfxV3dCopy(rotation, AFX_V4D_IDENTITY);
+        *translation = AFX_V3D_ZERO;
+        *rotation = AFX_V3D_ZERO;
         break;
     }
     case arxNodeType_Leaf_Callback:
@@ -340,8 +341,8 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
         }
         else
         {
-            AfxV3dCopy(translation, AFX_V4D_IDENTITY);
-            AfxV3dCopy(rotation, AFX_V4D_IDENTITY);
+            *translation = AFX_V3D_ZERO;
+            *rotation = AFX_V3D_ZERO;
         }
         break;
     }
@@ -367,13 +368,13 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
                     ArxComputeDagMotionVectors(first, secsElapsed, inv, translation, rotation);
                     afxReal fr = 1.0 - f;
 
-                    AfxV3dScale(translation, translation, fr);
-                    AfxV3dScale(rotation, rotation, fr);
+                    *translation = AfxV3dScale(*translation, fr);
+                    *rotation = AfxV3dScale(*rotation, fr);
 
                     afxV3d t1, r1;
-                    ArxComputeDagMotionVectors(last, secsElapsed, inv, t1, r1);
-                    AfxV3dMads(translation, t1, translation, f);
-                    AfxV3dMads(rotation, r1, rotation, f);
+                    ArxComputeDagMotionVectors(last, secsElapsed, inv, &t1, &r1);
+                    *translation = AfxV3dMads(t1, *translation, f);
+                    *rotation = AfxV3dMads(r1, *rotation, f);
                     break;
                 }
                 else
@@ -397,8 +398,8 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
             n = AFX_REBASE(AfxGetFirstLink(&n->children), AFX_OBJECT(arxNode), parent);
         }
 
-        AfxV3dCopy(translation, AFX_V4D_IDENTITY);
-        AfxV3dCopy(rotation, AFX_V4D_IDENTITY);
+        *translation = AFX_V3D_ZERO;
+        *rotation = AFX_V3D_ZERO;
 
         afxReal totalWeight = 0.f;
 
@@ -411,9 +412,9 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
             if (AFX_ABS(w) >= 0.001)
             {
                 afxV3d t1, r1;
-                ArxComputeDagMotionVectors(it, secsElapsed, inv, t1, r1);
-                AfxV3dMads(translation, t1, translation, w);
-                AfxV3dMads(rotation, r1, rotation, w);
+                ArxComputeDagMotionVectors(it, secsElapsed, inv, &t1, &r1);
+                *translation = AfxV3dMads(t1, *translation, w);
+                *rotation = AfxV3dMads(r1, *rotation, w);
                 totalWeight = w + totalWeight;
             }
         }
@@ -421,8 +422,8 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
         if (totalWeight > 0.001)
         {
             afxReal twr = 1.0 / totalWeight;
-            AfxV3dScale(translation, translation, twr);
-            AfxV3dScale(rotation, rotation, twr);
+            *translation = AfxV3dScale(*translation, twr);
+            *rotation = AfxV3dScale(*rotation, twr);
         }
 
         break;
@@ -433,18 +434,14 @@ _ARX afxError ArxComputeDagMotionVectors(arxNode nod, afxReal secsElapsed, afxBo
     return err;
 }
 
-_ARX afxError ArxComputeDagMotionMatrix(arxNode nod, afxReal secsElapsed, afxBool inv, afxM4d const mm, afxM4d m)
+_ARX afxM4d ArxComputeDagMotionMatrix(arxNode nod, afxReal secsElapsed, afxBool inv, afxM4d const mm)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
-    AFX_ASSERT(mm);
-    AFX_ASSERT(m);
     
     afxV3d t, r;
-    ArxComputeDagMotionVectors(nod, secsElapsed, inv, t, r);
-    AfxM4dRigidMotion(m, mm, r, t);
-
-    return err;
+    ArxComputeDagMotionVectors(nod, secsElapsed, inv, &t, &r);
+    return AfxM4dRigidMotion(mm, r, t);
 }
 
 _ARX afxError ArxStepDag(arxNode nod, afxReal time)
@@ -715,8 +712,8 @@ _ARXINL afxError _AsxNodCtorCb(arxNode nod, void** args, afxUnit invokeNo)
     
     ///////////
     AfxResetTransform(&nod->t);
-    AfxM4dCopy(nod->m, AFX_M4D_IDENTITY);
-    AfxM4dCopy(nod->w, AFX_M4D_IDENTITY);
+    nod->m = AFX_M4D_IDENTITY;
+    nod->w = AFX_M4D_IDENTITY;
     nod->dirty = 0;
     nod->taCnt = 0;
     nod->ltaCnt = 0;
@@ -803,7 +800,7 @@ _ARX afxError ArxAcquireCrossfadeNode(arxScenario scio, arxNode parent, arxNode 
     return err;
 }
 
-_ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(*sample)(void*, afxReal, arxPose, afxUnit, afxUnit const*), void(*setClock)(void*, afxReal), void(*motionVectors)(void*, afxReal, afxReal*, afxReal*, afxBool), void* udd, arxNode* node)
+_ARX afxError ArxAcquireCallbackNode(arxScenario scio, arxNode parent, afxError(*sample)(void*, afxReal, arxPose, afxUnit, afxUnit const*), void(*setClock)(void*, afxReal), void(*motionVectors)(void*, afxReal, afxV3d*, afxV3d*, afxBool), void* udd, arxNode* node)
 {
     afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
@@ -965,14 +962,14 @@ _ARX afxError ArxCaptureNodes(arxScenario scio, arxDagCaptureFlags flags, afxBoo
     return err;
 }
 
-_ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxFrustum const* bounds, afxArray* pvs)
+_ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxFrustum const bounds, afxArray* pvs)
 {
     afxError err = { 0 };
     // scio must be a valid arxScenario handle.
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT(pvs);
     AFX_ASSERT(pvs->cap);
-    AFX_ASSERT(bounds);
+    //AFX_ASSERT(bounds);
 
     arxNode root;
     afxChain const* dags = _ArxScioGetDagRoots(scio);
@@ -1010,14 +1007,14 @@ _ARX afxError ArxCaptureNodesInFrustum(arxScenario scio, arxDagCaptureFlags flag
     return err;
 }
 
-_ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxBox const* bounds, afxArray* pvs)
+_ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxBox const bounds, afxArray* pvs)
 {
     afxError err = { 0 };
     // scio must be a valid arxScenario handle.
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT(pvs);
     AFX_ASSERT(pvs->cap);
-    AFX_ASSERT(bounds);
+    //AFX_ASSERT(bounds);
 
     arxNode root;
     afxChain const* dags = _ArxScioGetDagRoots(scio);
@@ -1025,7 +1022,7 @@ _ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, a
     {
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &root);
 
-        if (-1 == AfxDoesAabbIncludeAtv3d(bounds, 1, root->w[3]))
+        if (0 == AfxAabbIncludesAtv3d(bounds, 1, &root->w.v4[3].v3))
             continue;
 
         afxUnit arrel;
@@ -1037,7 +1034,7 @@ _ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, a
         {
             AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
 
-            if (-1 == AfxDoesAabbIncludeAtv3d(bounds, 1, nod->w[3]))
+            if (0 == AfxAabbIncludesAtv3d(bounds, 1, &nod->w.v4[3].v3))
                 continue;
 
             afxUnit arrel2;
@@ -1049,7 +1046,7 @@ _ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, a
             {
                 AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &child);
 
-                if (-1 == AfxDoesAabbIncludeAtv3d(bounds, 1, child->w[3]))
+                if (0 == AfxAabbIncludesAtv3d(bounds, 1, &child->w.v4[3].v3))
                     continue;
 
                 afxUnit arrel3;
@@ -1058,16 +1055,17 @@ _ARX afxError ArxCaptureNodesInBox(arxScenario scio, arxDagCaptureFlags flags, a
             }
         }
     }
+    return err;
 }
 
-_ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxSphere const* bounds, afxArray* pvs)
+_ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags, afxBool(*cb)(arxNode nod, void *udd), void *udd, afxSphere const bounds, afxArray* pvs)
 {
     afxError err = { 0 };
     // scio must be a valid arxScenario handle.
     AFX_ASSERT_OBJECTS(afxFcc_SCIO, 1, &scio);
     AFX_ASSERT(pvs);
     AFX_ASSERT(pvs->cap);
-    AFX_ASSERT(bounds);
+    //AFX_ASSERT(bounds);
 
     arxNode root;
     afxChain const* dags = _ArxScioGetDagRoots(scio);
@@ -1075,7 +1073,7 @@ _ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags
     {
         AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &root);
 
-        if (-1 == AfxTestSphereEnglobingPoint(bounds, root->w[3]))
+        if (-1 == AfxTestSphereEnglobingPoint(bounds, root->w.v4[3].v3))
             continue;
 
         afxUnit arrel;
@@ -1087,7 +1085,7 @@ _ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags
         {
             AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &nod);
 
-            if (-1 == AfxTestSphereEnglobingPoint(bounds, nod->w[3]))
+            if (-1 == AfxTestSphereEnglobingPoint(bounds, nod->w.v4[3].v3))
                 continue;
 
             afxUnit arrel2;
@@ -1099,7 +1097,7 @@ _ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags
             {
                 AFX_ASSERT_OBJECTS(afxFcc_NOD, 1, &child);
 
-                if (-1 == AfxTestSphereEnglobingPoint(bounds, child->w[3]))
+                if (-1 == AfxTestSphereEnglobingPoint(bounds, child->w.v4[3].v3))
                     continue;
 
                 afxUnit arrel3;
@@ -1108,6 +1106,7 @@ _ARX afxError ArxCaptureNodesInSphere(arxScenario scio, arxDagCaptureFlags flags
             }
         }
     }
+    return err;
 }
 
 _ARX void _ArxNodUpdatePose(arxNode nod)

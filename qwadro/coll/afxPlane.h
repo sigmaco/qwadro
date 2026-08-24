@@ -21,6 +21,7 @@
 #define AFX_PLANE_H
 
 #include "qwadro/coll/afxBox.h"
+#include "qwadro/math/afxArithmetic.h"
 
 #define AFX_PLANE_DIST (3)
 
@@ -42,25 +43,25 @@ typedef enum afxFloorPlane
 } afxFloorPlane;
 
 #define AFX_PLANE(u_, v_, w_, d_) \
-    (afxPlane){ .uvwd = { (u_), (v_), (w_), (d_) } }
+    (afxPlane){ .uvwd = { { { (u_), (v_), (w_), (d_) } } } }
 
-AFXINL afxBool      AfxPlaneIsEqual(afxPlane a, afxPlane b);
-AFXINL afxBool      AfxPlaneIsNearEqual(afxPlane a, afxPlane b, afxV4d epsilon);
-AFXINL afxBool      AfxPlaneIsNotEqual(afxPlane a, afxPlane b);
-AFXINL afxBool      AfxPlaneIsNaN(afxPlane p);
-AFXINL afxBool      AfxPlaneIsInfinite(afxPlane p);
-AFXINL afxReal      AfxPlaneDot(afxPlane a, afxPlane b);
-AFXINL afxReal      AfxPlaneDotCoord(afxPlane p, afxV3d v);
-AFXINL afxReal      AfxPlaneDotNormal(afxPlane p, afxV3d v);
+AFXINL afxBool      AfxPlaneIsEqual(afxPlane const a, afxPlane const b);
+AFXINL afxBool      AfxPlaneIsNearEqual(afxPlane const a, afxPlane const b, afxV4d const epsilon);
+AFXINL afxBool      AfxPlaneIsNotEqual(afxPlane const a, afxPlane const b);
+AFXINL afxBool      AfxPlaneIsNaN(afxPlane const p);
+AFXINL afxBool      AfxPlaneIsInfinite(afxPlane const p);
+AFXINL afxReal      AfxPlaneDot(afxPlane const a, afxPlane const b);
+AFXINL afxReal      AfxPlaneDotCoord(afxPlane const p, afxV3d const v);
+AFXINL afxReal      AfxPlaneDotNormal(afxPlane const p, afxV3d const v);
 AFXINL afxPlane     AfxPlaneNormalizeEst(afxPlane p);
 AFXINL afxPlane     AfxPlaneNormalize(afxPlane p);
-AFXINL afxPlane     AfxPlaneIntersectLine(afxPlane p, afxV4d start, afxV4d end);
-AFXINL void         AfxPlaneIntersectPlane(afxPlane a, afxPlane b, afxV4d start, afxV4d end);
-AFXINL afxPlane     AfxPlaneTransform(afxPlane p, afxM4d const m);
-AFXINL afxPlane     AfxPlaneFromPointNormal(afxV4d point, afxV4d normal);
-AFXINL afxPlane     AfxPlaneFromPoints(afxV4d a, afxV4d b, afxV4d c);
+AFXINL afxPlane     AfxPlaneIntersectLine(afxPlane const p, afxV4d const start, afxV4d const end);
+AFXINL void         AfxPlaneIntersectPlane(afxPlane const a, afxPlane const b, afxV4d* start, afxV4d* end);
+AFXINL afxPlane     AfxPlaneTransform(afxPlane const p, afxM4d const m);
+AFXINL afxPlane     AfxPlaneFromPointNormal(afxV4d const point, afxV4d const normal);
+AFXINL afxPlane     AfxPlaneFromPoints(afxV4d const a, afxV4d const b, afxV4d const c);
 
-AFXINL void         AfxMakePlane(afxPlane* p, afxV3d const normal, afxReal dist);
+AFXINL afxPlane AfxMakePlane(afxV3d const normal, afxReal dist);
 
 /*
     The AfxMakePlaneFromPointNormal() function constructs a plane from a point on the plane and a normal vector.
@@ -73,9 +74,8 @@ AFXINL void         AfxMakePlane(afxPlane* p, afxV3d const normal, afxReal dist)
     p->uvwd[3]    = distance term
 */
 
-AFXINL void AfxMakePlaneFromPointNormal
+AFXINL afxPlane AfxMakePlaneFromPointNormal
 (
-    afxPlane *p, 
     afxV3d const point, 
     afxV3d const normal
 );
@@ -95,30 +95,31 @@ AFXINL void AfxMakePlaneFromPointNormal
     This is a standard plane-from-triangle computation.
 */
 
-AFXINL void         AfxMakePlaneFromTriangle
+AFXINL afxPlane AfxMakePlaneFromTriangle
 (
-    afxPlane* p, 
     afxV3d const a, 
     afxV3d const b, 
     afxV3d const c
 );
 
-AFXINL void         AfxGetPlaneNormal(afxPlane* p, afxV3d normal);
+AFXINL afxV3d       AfxGetPlaneNormal(afxPlane p);
 
-AFXINL afxReal      AfxGetPlaneDistance(afxPlane const* p); // aka GetPlaneDistance
+AFXINL afxReal      AfxGetPlaneDistance(afxPlane const p); // aka GetPlaneDistance
 
-AFXINL afxReal      AfxFindPlaneDistance(afxPlane const* p, afxV3d const point);
+AFXINL afxReal      AfxFindPlaneDistance(afxPlane const p, afxV3d const point);
 
-AFXINL afxReal      AfxFindPlaneHitInterpolationConstant(afxPlane const* p, afxV3d const a, afxV3d const b);
+AFXINL afxReal      AfxFindPlaneHitInterpolationConstant(afxPlane const p, afxV3d const a, afxV3d const b);
 
 // Test this plane with an AABB
 // <0 if the box is completly on the back side of the plane
 // >0 if the box is completly on the front side of the plane
 // 0 if the box intersects with the plane
-AFXINL afxResult    AfxPlaneTestAabbs(afxPlane const* p, afxUnit cnt, afxBox const aabb[]);
+AFXINL afxResult    AfxPlaneTestAabbs(afxPlane const p, afxUnit cnt, afxBox const aabb[]);
+AFXINL afxResult    AfxPlaneTestAabb(afxPlane const p, afxBox const aabb);
 
 // Test this plane with a collision sphere.
-AFXINL afxResult    AfxPlaneTestSpheres(afxPlane const* p, afxUnit cnt, afxSphere const spheres[]);
+AFXINL afxResult    AfxPlaneTestSpheres(afxPlane const p, afxUnit cnt, afxSphere const spheres[]);
+AFXINL afxResult    AfxPlaneTestSphere(afxPlane const p, afxSphere const sph);
 
 ////////////////////////////////////////
 

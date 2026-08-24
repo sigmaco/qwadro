@@ -83,7 +83,7 @@ _ARX afxError ArxCmdRenderPuppets(arxRenderContext rctx, afxM4d m, afxUnit cnt, 
 #else
         if (!ArxCountPuppetMotives(pup))
         {
-            ArxProducePosture(plce, NIL, skl, 0, instPup->boneCnt, 0, instPup->boneCnt, m ? m : AFX_M4D_IDENTITY, FALSE);
+            ArxProducePosture(plce, NIL, skl, 0, instPup->boneCnt, 0, instPup->boneCnt, m, FALSE);
         }
         else
         {
@@ -94,7 +94,7 @@ _ARX afxError ArxCmdRenderPuppets(arxRenderContext rctx, afxM4d m, afxUnit cnt, 
             ArxAccumulatePuppetAnimations(pose, pup, 0, instPup->boneCnt, allowedErr, NIL);
             ArxConcludePoseAccumulation(pose, 0, instPup->boneCnt, mdl, allowedErr, NIL);
 
-            ArxProducePosture(plce, pose, skl, 0, instPup->boneCnt, 0, lodJntCnt, m ? m : AFX_M4D_IDENTITY, FALSE);
+            ArxProducePosture(plce, pose, skl, 0, instPup->boneCnt, 0, lodJntCnt, m, FALSE);
         }
 #endif
 

@@ -81,10 +81,10 @@ _ARX void precompute_triangle_edges(afxUnit triCnt, afxUnit const indices[], afx
 {
     for (afxUnit i = 0; i < triCnt; i++)
     {
-        AfxV3dCopy(tris[i].v0, vertices[indices[3 * i]]); // Store reference vertex v0 of the triangle
-        AfxV3dSub(tris[i].e1, vertices[indices[3 * i + 1]], tris[i].v0); // First edge of the triangle (v1 - v0)
-        AfxV3dSub(tris[i].e2, vertices[indices[3 * i + 2]], tris[i].v0); // Second edge of the triangle (v2 - v0)
-        AfxV3dCross(tris[i].nrm, tris[i].e1, tris[i].e2);  // The normal of the triangle
+        tris[i].v0 = vertices[indices[3 * i]]; // Store reference vertex v0 of the triangle
+        tris[i].e1 = AfxV3dSub(vertices[indices[3 * i + 1]], tris[i].v0); // First edge of the triangle (v1 - v0)
+        tris[i].e2 = AfxV3dSub(vertices[indices[3 * i + 2]], tris[i].v0); // Second edge of the triangle (v2 - v0)
+        tris[i].nrm = AfxV3dCross(tris[i].e1, tris[i].e2);  // The normal of the triangle
     }
 }
 
@@ -102,7 +102,7 @@ _ARX void transform_triangle_edges_and_normal(afxM4d const m, asxTriangle const*
     AfxM4dPostMultiplyAtv3d(m, 1, &in->e2, &out->e2);
 
     // Recompute the normal (cross product) after transforming edges
-    AfxV3dCross(out->nrm, in->e1, in->e2);
+    out->nrm = AfxV3dCross(in->e1, in->e2);
 }
 
 // The Moller–Trumbore ray-triangle intersection algorithm (optimized with precomputed edges)
@@ -115,8 +115,7 @@ _ARX afxBool intersect_triangle(asxTriangle const* triA, asxTriangle const* triB
         return FALSE;  // The triangles are parallel or coplanar
 
     // Compute the vector s (v0 - u0) from the reference vertices of the two triangles
-    afxV3d s;
-    AfxV3dSub(s, triA->v0, triB->v0);
+    afxV3d s = AfxV3dSub(triA->v0, triB->v0);
 
     afxReal f = 1.0f / a;
     afxReal u = f * AfxV3dDot(s, triB->nrm);
@@ -124,8 +123,7 @@ _ARX afxBool intersect_triangle(asxTriangle const* triA, asxTriangle const* triB
     if (u < 0.0f || u > 1.0f)
         return FALSE;  // No intersection
 
-    afxV3d q;
-    AfxV3dCross(q, s, triA->e1);
+    afxV3d q = AfxV3dCross(s, triA->e1);
     afxReal v = f * AfxV3dDot(triB->nrm, q);
     
     if (v < 0.0f || u + v > 1.0f)
@@ -145,12 +143,12 @@ _ARX afxBool AfxTestShapeCollision2(asxShape const s1, afxM4d const m1, asxShape
 
     for (afxUnit i = 0; i < s1->triCnt; i++)
     {
-        if (m1)
+        //if (m1)
             transform_triangle_edges_and_normal(m1, &s1->tris[i], s1t);
 
         for (afxUnit j = 0; j < s2->triCnt; j++)
         {
-            if (m2)
+            //if (m2)
                 transform_triangle_edges_and_normal(m2, &s2->tris[j], s2t);
 
             afxReal rslt = intersect_triangle(s1t, s2t);

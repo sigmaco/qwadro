@@ -100,8 +100,8 @@ _ARX void ArxProducePosture(arxPosture plce, arxPose pose, arxSkeleton skl, afxU
     AFX_ASSERT_RANGE(totalJntCnt, baseJntIdx, jntCnt);
     AFX_ASSERT_RANGE(plce->matCnt, baseJntIdx, jntCnt);
 
-    if (!displace)
-        displace = AFX_M4D_IDENTITY;
+    //if (!displace)
+        //displace = AFX_M4D_IDENTITY;
 
     afxM4d const* iw = _ArxSklGetIwArray(skl, 0);
     afxUnit const* pi = _ArxSklGetPiArray(skl, 0);
@@ -129,22 +129,22 @@ _ARX void ArxProducePosture(arxPosture plce, arxPose pose, arxSkeleton skl, afxU
 
                 if (delta) // delta is always computed if present for rest pose.
                 {
-                    BWP_Dispatch(&lt[jntIdx], iw[jntIdx], delta[jntIdx], mm[jntIdx], mm[parentIdx]);
+                    mm[jntIdx] = BWP_Dispatch(&lt[jntIdx], iw[jntIdx], &delta[jntIdx], mm[parentIdx]);
                 }
                 else
                 {
-                    BWPNC_Dispatch(&lt[jntIdx], mm[parentIdx], mm[jntIdx]);
+                    mm[jntIdx] = BWPNC_Dispatch(&lt[jntIdx], mm[parentIdx]);
                 }
             }
             else
             {
                 if (delta) // delta is always computed if present for rest pose.
                 {
-                    BWP_Dispatch(&lt[jntIdx], iw[jntIdx], delta[jntIdx], mm[jntIdx], displace);
+                    mm[jntIdx] = BWP_Dispatch(&lt[jntIdx], iw[jntIdx], &delta[jntIdx], displace);
                 }
                 else
                 {
-                    BWPNC_Dispatch(&lt[jntIdx], displace, mm[jntIdx]);
+                    mm[jntIdx] = BWPNC_Dispatch(&lt[jntIdx], displace);
                 }
             }
         }
@@ -175,11 +175,11 @@ _ARX void ArxProducePosture(arxPosture plce, arxPose pose, arxSkeleton skl, afxU
             if (parentIdx != AFX_INVALID_INDEX)
             {
                 AFX_ASSERT_RANGE(totalJntCnt, parentIdx, 1);
-                BWPNC_Dispatch(t, mm[parentIdx], mm[jntIdx]);
+                mm[jntIdx] = BWPNC_Dispatch(t, mm[parentIdx]);
             }
             else
             {
-                BWPNC_Dispatch(t, displace, mm[jntIdx]);
+                mm[jntIdx] = BWPNC_Dispatch(t, displace);
             }
 
             --reqJntCnt;
@@ -206,11 +206,11 @@ _ARX void ArxProducePosture(arxPosture plce, arxPose pose, arxSkeleton skl, afxU
         if (parentIdx != AFX_INVALID_INDEX)
         {
             AFX_ASSERT_RANGE(totalJntCnt, parentIdx, 1);
-            BWP_Dispatch(t, iw[jntIdx], delta[jntIdx], mm[jntIdx], mm[parentIdx]);
+            mm[jntIdx] = BWP_Dispatch(t, iw[jntIdx], &delta[jntIdx], mm[parentIdx]);
         }
         else
         {
-            BWP_Dispatch(t, iw[jntIdx], delta[jntIdx], mm[jntIdx], displace);
+            mm[jntIdx] = BWP_Dispatch(t, iw[jntIdx], &delta[jntIdx], displace);
         }
 
         --reqJntCnt;
@@ -233,8 +233,8 @@ _ARX void ArxProducePosturePose(arxPosture plce, arxSkeleton skl, afxUnit baseJn
     AFX_ASSERT(pose);
     AFX_ASSERT(plce);
 
-    if (!displace)
-        displace = AFX_M4D_IDENTITY;
+    //if (!displace)
+        //displace = AFX_M4D_IDENTITY;
 
     afxUnit const* pi = _ArxSklGetPiArray(skl, 0);
     afxM4d* mm = plce->mm;
@@ -253,23 +253,21 @@ _ARX void ArxProducePosturePose(arxPosture plce, arxSkeleton skl, afxUnit baseJn
             if (parentIdx != AFX_INVALID_INDEX)
             {
                 AFX_ASSERT_RANGE(totalJntCnt, parentIdx, 1);
-                AfxM4dInvertAtm(invParent, mm[parentIdx]);
+                invParent = AfxM4dInvertAtm(mm[parentIdx], NIL);
             }
             else
             {
-                AfxM4dInvertAtm(invParent, displace);
+                invParent = AfxM4dInvertAtm(displace, NIL);
             }
 
-            afxM4d lam;
-            AfxM4dMultiplyAtm(lam, mm[jntIdx], invParent);
+            afxM4d lam = AfxM4dMultiplyAtm(mm[jntIdx], invParent);
             afxTransform* t = ArxGetPoseTransform(pose, jntIdx);
 
-            afxM3d rm;
-            AfxM3dSet(rm, lam[0], lam[1], lam[2]);
-            AfxQuatRotationM3d(t->oq, rm);
-            AfxQuatNormalize(t->oq, t->oq);
-            AfxV3dCopy(t->pv, lam[3]);
-            AfxM3dReset(t->ssm);
+            afxM3d rm = AfxM3dMake(lam.v4[0].v3, lam.v4[1].v3, lam.v4[2].v3);
+            t->oq = AfxQuatRotationM3d(rm);
+            t->oq = AfxQuatNormalize(t->oq, NIL);
+            t->pv = lam.v4[3].v3;
+            t->ssm = AfxM3dIdentity();
             t->flags = afxTransformFlag_T | afxTransformFlag_R;
         }
     }
@@ -288,29 +286,25 @@ _ARX void ArxProducePosturePose(arxPosture plce, arxSkeleton skl, afxUnit baseJn
             if (parentIdx != AFX_INVALID_INDEX)
             {
                 AFX_ASSERT_RANGE(totalJntCnt, parentIdx, 1);
-                AfxM4dInvertAtm(invParent, mm[parentIdx]);
+                invParent = AfxM4dInvertAtm(mm[parentIdx], NIL);
             }
             else
             {
-                AfxM4dInvertAtm(invParent, displace);
+                invParent = AfxM4dInvertAtm(displace, NIL);
             }
 
-            afxM4d lam;
-            AfxM4dMultiplyAtm(lam, mm[jntIdx], invParent);
+            afxM4d lam = AfxM4dMultiplyAtm(mm[jntIdx], invParent);
 
-            afxM3d ltm;
-            AfxM3dSet(ltm, lam[0], lam[1], lam[2]);
+            afxM3d ltm = AfxM3dMake(lam.v4[0].v3, lam.v4[1].v3, lam.v4[2].v3);
 
             afxM3d rm, ssm;
-            if (!AfxM3dPolarDecompose(ltm, 0.0000099999997, rm, ssm))
+            if (!AfxM3dPolarDecompose(ltm, 0.0000099999997, &rm, &ssm))
                 AfxReportError("Can't accurately decompose MAX transform Q");
 
-            afxV3d pos;
-            AfxV3dCopy(pos, lam[3]);
+            afxV3d pos = lam.v4[3].v3;
 
-            afxQuat orien;
-            AfxQuatRotationM3d(orien, rm);
-            AfxQuatNormalize(orien, orien);
+            afxQuat orien = AfxQuatRotationM3d(rm);
+            orien = AfxQuatNormalize(orien, NIL);
 
             afxTransform* t = ArxGetPoseTransform(pose, jntIdx);
             AfxMakeTransform(t, pos, orien, ssm, TRUE);
@@ -338,7 +332,7 @@ _ARX void ArxProduceCompositeMatrices(arxPosture plce, arxSkeleton skl, afxUnit 
         for (afxUnit i = 0; i < cnt; i++)
         {
             afxUnit jntIdx = baseJnt + i;
-            BuildSingleCompositeFromWorldPoseTranspose_Generic(iw[jntIdx], mm[jntIdx], matrices[i]);
+            matrices[i] = AfxM4dFromM43d(BuildSingleCompositeFromWorldPoseTranspose_Generic(iw[jntIdx], mm[jntIdx]));
         }
     }
     else
@@ -348,7 +342,7 @@ _ARX void ArxProduceCompositeMatrices(arxPosture plce, arxSkeleton skl, afxUnit 
         for (afxUnit i = 0; i < cnt; i++)
         {
             afxUnit jntIdx = baseJnt + i;
-            BuildSingleCompositeFromWorldPose_Generic(iw[jntIdx], mm[jntIdx], matrices[i]);
+            matrices[i] = BuildSingleCompositeFromWorldPose_Generic(iw[jntIdx], mm[jntIdx]);
         }
     }
 }
@@ -378,7 +372,7 @@ _ARX void ArxProduceIndexedCompositeMatrices(arxPosture plce, arxSkeleton skl, a
             afxUnit jntIdx = jntMap[i];
             AFX_ASSERT_RANGE(totalJntCnt, jntIdx, 1);
             AFX_ASSERT_RANGE(totalMatCnt, jntIdx, 1);
-            BuildSingleCompositeFromWorldPoseTranspose_Generic(iw[jntIdx], mm[jntIdx], matrices[i]);
+            matrices[i] = AfxM4dFromM43d(BuildSingleCompositeFromWorldPoseTranspose_Generic(iw[jntIdx], mm[jntIdx]));
         }
     }
     else
@@ -393,7 +387,7 @@ _ARX void ArxProduceIndexedCompositeMatrices(arxPosture plce, arxSkeleton skl, a
             afxUnit jntIdx = jntMap[i];
             AFX_ASSERT_RANGE(totalJntCnt, jntIdx, 1);
             AFX_ASSERT_RANGE(totalMatCnt, jntIdx, 1);
-            BuildSingleCompositeFromWorldPose_Generic(iw[jntIdx], mm[jntIdx], matrices[i]);
+            matrices[i] = BuildSingleCompositeFromWorldPose_Generic(iw[jntIdx], mm[jntIdx]);
         }
     }
 }

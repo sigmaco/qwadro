@@ -48,9 +48,17 @@
 /// O Qwadro SDK é atualizado frequentemente, por isso é útil poder sempre garantir que a API e a ABI estejam sincronizadas.
 /// A maneira mais simples de fazer isso é usar as seguintes funções.
 
-AFX afxBool             AfxTestSystemCompatibility(afxUnit verMajor, afxUnit verMinor, afxUnit verPatch);
+AFX_DEFINE_STRUCT(afxVersion)
+{
+    afxUnit verMajor;
+    afxUnit verMinor;
+    afxUnit verPatch;
+    afxUnit _rsrvd;
+};
 
-AFX void                AfxGetSystemVersion(afxUnit* verMajor, afxUnit* verMinor, afxUnit* verPatch);
+AFX afxBool             AfxTestSystemCompatibility(afxVersion const ver);
+
+AFX void                AfxGetSystemVersion(afxVersion* ver);
 
 AFX afxString const *   AfxGetSystemVersionString(void);
 

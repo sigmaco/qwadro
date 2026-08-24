@@ -399,11 +399,11 @@ _ZGL void ZglDetermineGlTargetInternalFormatType(avxRaster ras, GLenum *target, 
     AFX_ASSERT(fmt);
     AFX_ASSERT(type);
     afxResult cubemap = AvxGetRasterFlags(ras, avxRasterFlag_CUBEMAP);
-    AFX_ASSERT(ras->m.whd.w); // always have at least one dimension.
+    AFX_ASSERT(ras->m.extent.w); // always have at least one dimension.
     
     if (AvxGetRasterFlags(ras, avxRasterFlag_1D)) // Y
     {
-        if (ras->m.whd.d > 1)
+        if (ras->m.extent.d > 1)
         {
             *target = GL_TEXTURE_1D_ARRAY;
         }
@@ -420,7 +420,7 @@ _ZGL void ZglDetermineGlTargetInternalFormatType(avxRaster ras, GLenum *target, 
         {
             if (cubemap)
             {
-                if (ras->m.whd.d > 6)
+                if (ras->m.extent.d > 6)
                 {
                     *target = GL_TEXTURE_CUBE_MAP_ARRAY;
                 }
@@ -431,7 +431,7 @@ _ZGL void ZglDetermineGlTargetInternalFormatType(avxRaster ras, GLenum *target, 
             }
             else
             {
-                if (ras->m.whd.d > 1)
+                if (ras->m.extent.d > 1)
                 {
                     *target = GL_TEXTURE_2D_ARRAY;
                 }
@@ -752,58 +752,58 @@ _ZGL void _ZglCopyTexSubImage(zglDpu* dpu, GLenum glDstTarget, GLenum glSrcTarge
         {
         case GL_TEXTURE_2D:
         {
-            gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+            gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             break;
         }
         case GL_TEXTURE_1D_ARRAY:
         {
-            for (afxUnit i = op->src.whd.d; i < op->src.whd.d; i++)
+            for (afxUnit i = op->src.extent.d; i < op->src.extent.d; i++)
             {
-                gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, i, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+                gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, i, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             }
             break;
         }
         case GL_TEXTURE_1D:
         {
-            gl->CopyTexSubImage1D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->src.origin.x, op->src.origin.y, op->src.whd.w);
+            gl->CopyTexSubImage1D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->src.origin.x, op->src.origin.y, op->src.extent.w);
             break;
         }
         case GL_TEXTURE_3D:
         {
-            for (afxUnit i = op->dstOrigin.z; i < op->src.whd.d; i++)
+            for (afxUnit i = op->dstOrigin.z; i < op->src.extent.d; i++)
             {
-                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             }
             break;
         }
         case GL_TEXTURE_2D_ARRAY:
         {
-            for (afxUnit i = op->dstOrigin.z; i < op->src.whd.d; i++)
+            for (afxUnit i = op->dstOrigin.z; i < op->src.extent.d; i++)
             {
-                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             }
             break;
         }
         case GL_TEXTURE_CUBE_MAP_ARRAY:
         {
-            for (afxUnit i = op->dstOrigin.z; i < op->src.whd.d; i++)
+            for (afxUnit i = op->dstOrigin.z; i < op->src.extent.d; i++)
             {
-                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+                gl->CopyTexSubImage3D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, i, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             }
             break;
         }
         case GL_TEXTURE_CUBE_MAP:
         {
-            for (afxUnit i = op->dstOrigin.z; i < op->src.whd.d; i++)
+            for (afxUnit i = op->dstOrigin.z; i < op->src.extent.d; i++)
             {
-                gl->CopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+                gl->CopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
             }
             break;
         }
         case GL_TEXTURE_RECTANGLE:
         {
             AFX_ASSERT(op->dstLodIdx == 0);
-            gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.whd.w, op->src.whd.h); _ZglThrowErrorOccuried();
+            gl->CopyTexSubImage2D(glDstTarget, op->dstLodIdx, op->dstOrigin.x, op->dstOrigin.y, op->src.origin.x, op->src.origin.y, op->src.extent.w, op->src.extent.h); _ZglThrowErrorOccuried();
         };
         default:
             AfxThrowError();
@@ -822,12 +822,12 @@ _ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion 
     {
     case GL_TEXTURE_2D:
     {
-        gl->TexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_2D_ARRAY:
     {
-        gl->TexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_CUBE_MAP:
@@ -838,25 +838,25 @@ _ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion 
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
     {
-        for (afxUnit i = 0; i < rgn->whd.d; i++)
+        for (afxUnit i = 0; i < rgn->extent.d; i++)
         {
-            gl->TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + rgn->origin.z + i, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+            gl->TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + rgn->origin.z + i, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         }
         break;
     }
     case GL_TEXTURE_1D:
     {
-        gl->TexSubImage1D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TexSubImage1D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->extent.w, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_1D_ARRAY:
     {
-        gl->TexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->extent.w, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_3D:
     {
-        gl->TexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     default: AfxThrowError(); break;
@@ -872,13 +872,13 @@ _ZGL afxError _ZglTextureSubImage(glVmt const* gl, GLuint glHandle, GLenum glTar
     {
     case GL_TEXTURE_2D:
     {
-        gl->TextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_2D_ARRAY:
     case GL_TEXTURE_CUBE_MAP:
     {
-        gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
@@ -888,25 +888,25 @@ _ZGL afxError _ZglTextureSubImage(glVmt const* gl, GLuint glHandle, GLenum glTar
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
     {
-        for (afxUnit i = 0; i < rgn->whd.d; i++)
+        for (afxUnit i = 0; i < rgn->extent.d; i++)
         {
-            gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z + i + (glTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X), rgn->whd.w, rgn->whd.h, 1, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+            gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z + i + (glTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X), rgn->extent.w, rgn->extent.h, 1, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         }
         break;
     }
     case GL_TEXTURE_1D:
     {
-        gl->TextureSubImage1D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TextureSubImage1D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->extent.w, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_1D_ARRAY:
     {
-        gl->TextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->extent.w, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_3D:
     {
-        gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
+        gl->TextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, glType, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     default: AfxThrowError(); break;
@@ -922,12 +922,12 @@ _ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRas
     {
     case GL_TEXTURE_2D:
     {
-        gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_2D_ARRAY:
     {
-        gl->CompressedTexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_CUBE_MAP:
@@ -938,25 +938,25 @@ _ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRas
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
     {
-        for (afxUnit i = 0; i < rgn->whd.d; i++)
+        for (afxUnit i = 0; i < rgn->extent.d; i++)
         {
-            gl->CompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + rgn->origin.z + i, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+            gl->CompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + rgn->origin.z + i, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         }
         break;
     }
     case GL_TEXTURE_1D:
     {
-        gl->CompressedTexSubImage1D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTexSubImage1D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->extent.w, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_1D_ARRAY:
     {
-        gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->extent.w, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_3D:
     {
-        gl->CompressedTexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     default: AfxThrowError(); break;
@@ -972,13 +972,13 @@ _ZGL afxError _ZglCompressedTextureSubImage(glVmt const* gl, GLuint glHandle, GL
     {
     case GL_TEXTURE_2D:
     {
-        gl->CompressedTextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->extent.w, rgn->extent.h, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_2D_ARRAY:
     case GL_TEXTURE_CUBE_MAP:
     {
-        gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_CUBE_MAP_POSITIVE_X:
@@ -988,25 +988,25 @@ _ZGL afxError _ZglCompressedTextureSubImage(glVmt const* gl, GLuint glHandle, GL
     case GL_TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
     {
-        for (afxUnit i = 0; i < rgn->whd.d; i++)
+        for (afxUnit i = 0; i < rgn->extent.d; i++)
         {
-            gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z + i + (glTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X), rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+            gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z + i + (glTarget - GL_TEXTURE_CUBE_MAP_POSITIVE_X), rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         }
         break;
     }
     case GL_TEXTURE_1D:
     {
-        gl->CompressedTextureSubImage1D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTextureSubImage1D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->extent.w, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_1D_ARRAY:
     {
-        gl->CompressedTextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTextureSubImage2D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->extent.w, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     case GL_TEXTURE_3D:
     {
-        gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
+        gl->CompressedTextureSubImage3D(glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->extent.w, rgn->extent.h, rgn->extent.d, glFmt, compressedSiz, (void const*)src); _ZglThrowErrorOccuried();
         break;
     }
     default: AfxThrowError(); break;

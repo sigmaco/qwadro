@@ -70,8 +70,8 @@ afxV3d const skyboxVertices[] =
 _ARX void ArxStepSky(arxSky sky, afxReal dt)
 {
     sky->sky.currRot += sky->sky.rotSpeed * dt;
-    AfxQuatRotationAxial(sky->sky.rotQuat, sky->sky.rotPivot, sky->sky.currRot);
-    AfxM4dRotationQuat(sky->sky.rotMtx, sky->sky.rotQuat);
+    sky->sky.rotQuat = AfxQuatRotationAxial(sky->sky.rotPivot, sky->sky.currRot);
+    sky->sky.rotMtx = AfxM4dRotationQuat(sky->sky.rotQuat);
 }
 
 _ARX afxError ArxDrawSky(afxDrawContext dctx, arxSky sky)
@@ -117,7 +117,7 @@ _ARX afxError ArxReloadSkyVisual(arxSky sky, afxUri const* uri)
         avxRasterInfo rasi = { 0 };
         rasi.flags = avxRasterFlag_CUBEMAP;
         rasi.usage = avxRasterUsage_TEXTURE;
-        rasi.whd.d = 6;
+        rasi.extent.d = 6;
 
         afxUnit portId = 0;
 
@@ -176,12 +176,12 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
 
     sky->scio = scio;
 
-    AfxV3dSet(sky->sky.rotPivot, 0, 0, 1);
+    sky->sky.rotPivot = AfxV3dMake(0, 0, 1);
     sky->sky.cubemapColorIntensity = 1.f;
     sky->sky.rotSpeed = 0.f;
     sky->sky.currRot = 0.f;
-    AvxMakeColor(sky->sky.ambientColor, 0.1, 0.1, 0.1, 1);
-    AvxMakeColor(sky->sky.emissiveColor, 0.1, 0.1, 0.1, 1);
+    sky->sky.ambientColor = AvxMakeColor(0.1, 0.1, 0.1, 1);
+    sky->sky.emissiveColor = AvxMakeColor(0.1, 0.1, 0.1, 1);
     
     sky->skyType = info->skyType;
 
@@ -269,10 +269,10 @@ _ARX afxError _ArxSkyCtorCb(arxSky sky, void** args, afxUnit invokeNo)
     }
     else
     {
-        ArxBuildSphereMesh(scio, 2.0, 20, 20, TRUE, NIL, &sky->skyMsh);
+        ArxBuildSphereMesh(scio, 2.0, 20, 20, TRUE, AFX_V3D_ZERO, &sky->skyMsh);
 
-        AvxMakeColor(sky->apexCol, 0.f, 0.15f, 0.66f, 1.f);
-        AvxMakeColor(sky->centreCol, 0.81f, 0.38f, 0.66f, 1.f);
+        sky->apexCol = AvxMakeColor(0.f, 0.15f, 0.66f, 1.f);
+        sky->centreCol = AvxMakeColor(0.81f, 0.38f, 0.66f, 1.f);
 
         avxShader shd;
         AvxAcquireShaders(dsys, 1, NIL, &shd);

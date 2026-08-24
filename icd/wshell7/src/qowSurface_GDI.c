@@ -229,8 +229,8 @@ _QOW afxError _QowDoutRegenerateCb_GDI(afxSurface dout, afxBool build)
         {
             BITMAPINFO bmi = { 0 };
             bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-            bmi.bmiHeader.biWidth = dout->m.ccfg.whd.w;
-            bmi.bmiHeader.biHeight = -dout->m.ccfg.whd.h; // top-down
+            bmi.bmiHeader.biWidth = dout->m.ccfg.extent.w;
+            bmi.bmiHeader.biHeight = -dout->m.ccfg.extent.h; // top-down
             bmi.bmiHeader.biPlanes = 1;
             bmi.bmiHeader.biBitCount = 32;
             bmi.bmiHeader.biCompression = BI_RGB;
@@ -278,7 +278,7 @@ _QOW afxError _QowRelinkDoutCb_GDI(afxSurface dout)
     if (!dout->dcPixFmt)
     {
         avxFormatDescription pfd;
-        AvxDescribeFormats(1, &dout->m.ccfg.rigs[0].fmt, &pfd);
+        AvxDescribeFormat(dout->m.ccfg.rigs[0].fmt, &pfd);
 
         PIXELFORMATDESCRIPTOR wpfd = { 0 };
         wpfd.nSize = sizeof(wpfd);
@@ -316,7 +316,7 @@ _QOW afxError _QowRelinkDoutCb_GDI(afxSurface dout)
         }
     }
 
-    avxRange const screenRes =
+    avxExtent const screenRes =
     {
         GetDeviceCaps(dout->hDC, HORZRES),
         GetDeviceCaps(dout->hDC, VERTRES),

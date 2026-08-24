@@ -126,9 +126,6 @@
     <ClInclude Include="..\..\..\qwadro\math\afxVector.h">
       <Filter>coree\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\qwadro\math\afxRotor.h">
-      <Filter>coree\math</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\qwadro\afxPool.h">
       <Filter>coree\mmu\mem</Filter>
     </ClInclude>
@@ -1194,9 +1191,6 @@
     <ClCompile Include="..\..\coree\math\afxReal16.c">
       <Filter>coree\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\coree\math\afxRotor.c">
-      <Filter>coree\math</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\coree\math\afxScalar.c">
       <Filter>coree\math</Filter>
     </ClCompile>
@@ -1897,10 +1891,10 @@
       <Filter>coree\vga</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\vga\afxDisplay.c">
-        <Filter>coree\vga</Filter>
+      <Filter>coree\vga</Filter>
     </ClCompile>
     <ClCompile Include="..\..\coree\vga\dma\afxFont.c">
-        <Filter>coree\vga\dma</Filter>
+      <Filter>coree\vga\dma</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

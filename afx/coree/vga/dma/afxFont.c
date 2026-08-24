@@ -80,7 +80,7 @@ AFX_DEFINE_STRUCT(auxGlyph)
 
 AFX_DEFINE_STRUCT(afxFontAtlas)
 {
-    avxRange    whd;
+    avxExtent    whd;
     avxRaster   ras;
 };
 
@@ -281,11 +281,9 @@ _AFX afxError AvxCmdBeginDeviceFont(afxDrawContext dctx, afxFont fnt, avxViewpor
 
     AvxCmdBindPipeline(dctx, fnt->fntPip, NIL, NIL);
 
-    afxM4d p;
-    AfxM4dReset(p);
-    AfxComputeOffcenterOrthographicMatrix(p, 0, vp->extent[0], 0, vp->extent[1], -1.f, 1.f, FALSE, avxClipSpaceDepth_NEG_ONE_TO_ONE);
+    afxM4d p = AfxComputeOffcenterOrthographicMatrix(0, vp->extent.v[0], 0, vp->extent.v[1], -1.f, 1.f, FALSE, avxClipSpaceDepth_NEG_ONE_TO_ONE);
     //AfxComputeBasicOrthographicMatrix(p, vp.extent[0] / vp.extent[1], 1.0, 3.0, &AVX_CLIP_SPACE_OPENGL);
-    AvxCmdPushConstants(dctx, 0, sizeof(p), p);
+    AvxCmdPushConstants(dctx, 0, sizeof(p), &p);
 
     //AvxCmdBindRasters(dctx, avxBus_GFX, 0, 0, 1, &dout->fntRas);
     AvxCmdBindSamplers(dctx, avxBus_GFX, 0, 0, 1, &fnt->fntSamp);
@@ -309,11 +307,9 @@ _AFX afxError AfxFlushDeviceFont(afxFont fnt, afxDrawContext dctx, avxViewport c
 
     AvxCmdBindPipeline(dctx, fnt->fntPip, NIL, NIL);
 
-    afxM4d p;
-    AfxM4dReset(p);
-    AfxComputeOffcenterOrthographicMatrix(p, 0, vp->extent[0], 0, vp->extent[1], -1.f, 1.f, FALSE, avxClipSpaceDepth_NEG_ONE_TO_ONE);
+    afxM4d p = AfxComputeOffcenterOrthographicMatrix(0, vp->extent.v[0], 0, vp->extent.v[1], -1.f, 1.f, FALSE, avxClipSpaceDepth_NEG_ONE_TO_ONE);
     //AfxComputeBasicOrthographicMatrix(p, vp.extent[0] / vp.extent[1], 1.0, 3.0, &AVX_CLIP_SPACE_OPENGL);
-    AvxCmdPushConstants(dctx, 0, sizeof(p), p);
+    AvxCmdPushConstants(dctx, 0, sizeof(p), &p);
 
     //AvxCmdBindRasters(dctx, avxBus_GFX, 0, 0, 1, &dout->fntRas);
     AvxCmdBindSamplers(dctx, avxBus_GFX, 0, 0, 1, &fnt->fntSamp);

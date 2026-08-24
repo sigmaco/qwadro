@@ -30,58 +30,58 @@
 
 // v = sqrt(in)
 
-AFXINL void     AfxV2dSqrt(afxV2d v, afxV2d const in); // v = sqrt(in)
-AFXINL void     AfxV3dSqrt(afxV3d v, afxV3d const in); // v = sqrt(in)
-AFXINL void     AfxV4dSqrt(afxV4d v, afxV4d const in); // v = sqrt(in)
+AFXINL afxV2d     AfxV2dSqrt(afxV2d const in); // v = sqrt(in)
+AFXINL afxV3d     AfxV3dSqrt(afxV3d const in); // v = sqrt(in)
+AFXINL afxV4d     AfxV4dSqrt(afxV4d const in); // v = sqrt(in)
 
 // v = 1 / sqrt(in)
 
-AFXINL void     AfxV2dRsqrt(afxV2d v, afxV2d const in); // v = 1 / sqrt(in)
-AFXINL void     AfxV3dRsqrt(afxV3d v, afxV3d const in); // v = 1 / sqrt(in)
-AFXINL void     AfxV4dRsqrt(afxV4d v, afxV4d const in); // v = 1 / sqrt(in)
+AFXINL afxV2d     AfxV2dRsqrt(afxV2d const in); // v = 1 / sqrt(in)
+AFXINL afxV3d     AfxV3dRsqrt(afxV3d const in); // v = 1 / sqrt(in)
+AFXINL afxV4d     AfxV4dRsqrt(afxV4d const in); // v = 1 / sqrt(in)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Clamping                                                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-AFXINL void     AfxV2dClamp(afxV2d v, afxV2d const in, afxV2d const min, afxV2d const max); // v = IN between bounds
-AFXINL void     AfxV3dClamp(afxV3d v, afxV3d const in, afxV3d const min, afxV3d const max);
-AFXINL void     AfxV4dClamp(afxV4d v, afxV4d const in, afxV4d const min, afxV4d const max);
+AFXINL afxV2d     AfxV2dClamp(afxV2d const in, afxV2d const min, afxV2d const max); // v = IN between bounds
+AFXINL afxV3d     AfxV3dClamp(afxV3d const in, afxV3d const min, afxV3d const max);
+AFXINL afxV4d     AfxV4dClamp(afxV4d const in, afxV4d const min, afxV4d const max);
 
 // This operation clamps a value between 0 and 1. If the value is below 0, it is set to 0; if above 1, it is set to 1. 
 // Otherwise, it remains unchanged.
 // Often used in graphics for color values, blending factors, or ensuring values stay within a specific range.
 
-AFXINL void     AfxSaturateV2d(afxV2d v, afxV2d const in);
-AFXINL void     AfxSaturateV3d(afxV3d v, afxV3d const in);
-AFXINL void     AfxSaturateV4d(afxV4d v, afxV4d const in);
+AFXINL afxV2d     AfxV2dSaturate(afxV2d const in);
+AFXINL afxV3d     AfxV3dSaturate(afxV3d const in);
+AFXINL afxV4d     AfxV4dSaturate(afxV4d const in);
 
-AFXINL void     AfxV2dMin(afxV2d v, afxV2d const a, afxV2d const b); // v = minor between A and B
-AFXINL void     AfxV3dMin(afxV3d v, afxV3d const a, afxV3d const b); // v = minor between A and B
-AFXINL void     AfxV4dMin(afxV4d v, afxV4d const a, afxV4d const b); // v = minor between A and B
+AFXINL afxV2d     AfxV2dMin(afxV2d const a, afxV2d const b); // v = minor between A and B
+AFXINL afxV3d     AfxV3dMin(afxV3d const a, afxV3d const b); // v = minor between A and B
+AFXINL afxV4d     AfxV4dMin(afxV4d const a, afxV4d const b); // v = minor between A and B
 
-AFXINL void     AfxV2dMax(afxV2d v, afxV2d const a, afxV2d const b); // v = major between A and B
-AFXINL void     AfxV3dMax(afxV3d v, afxV3d const a, afxV3d const b); // v = major between A and B
-AFXINL void     AfxV4dMax(afxV4d v, afxV4d const a, afxV4d const b); // v = major between A and B
+AFXINL afxV2d     AfxV2dMax(afxV2d const a, afxV2d const b); // v = major between A and B
+AFXINL afxV3d     AfxV3dMax(afxV3d const a, afxV3d const b); // v = major between A and B
+AFXINL afxV4d     AfxV4dMax(afxV4d const a, afxV4d const b); // v = major between A and B
 
-AFXINL void     AfxV2dAbs(afxV2d v, afxV2d const in); // v = abs(in)
-AFXINL void     AfxV3dAbs(afxV3d v, afxV3d const in); // v = abs(in)
-AFXINL void     AfxV4dAbs(afxV4d v, afxV4d const in); // v = abs(in)
+AFXINL afxV2d     AfxV2dAbs(afxV2d const in); // v = abs(in)
+AFXINL afxV3d     AfxV3dAbs(afxV3d const in); // v = abs(in)
+AFXINL afxV4d     AfxV4dAbs(afxV4d const in); // v = abs(in)
 
-AFXINL void     AfxV2dCeil(afxV2d v, afxV2d const in); // v = ceil(in)
-AFXINL void     AfxV3dCeil(afxV3d v, afxV3d const in); // v = ceil(in)
-AFXINL void     AfxV4dCeil(afxV4d v, afxV4d const in); // v = ceil(in)
+AFXINL afxV2d     AfxV2dCeil(afxV2d const in); // v = ceil(in)
+AFXINL afxV3d     AfxV3dCeil(afxV3d const in); // v = ceil(in)
+AFXINL afxV4d     AfxV4dCeil(afxV4d const in); // v = ceil(in)
 
-AFXINL void     AfxV2dFloor(afxV2d v, afxV2d const in); // v = floor(in)
-AFXINL void     AfxV3dFloor(afxV3d v, afxV3d const in); // v = floor(in)
-AFXINL void     AfxV4dFloor(afxV4d v, afxV4d const in); // v = floor(in)
+AFXINL afxV2d     AfxV2dFloor(afxV2d const in); // v = floor(in)
+AFXINL afxV3d     AfxV3dFloor(afxV3d const in); // v = floor(in)
+AFXINL afxV4d     AfxV4dFloor(afxV4d const in); // v = floor(in)
 
 // Truncation removes the fractional part of a number, effectively rounding it towards zero.
 // Converting floating-point values to integers or simplifying floating-point precision.
 
-AFXINL void     AfxTruncateV2d(afxV2d v, afxV2d const in);
-AFXINL void     AfxTruncateV3d(afxV3d v, afxV3d const in);
-AFXINL void     AfxTruncateV4d(afxV4d v, afxV4d const in);
+AFXINL afxV2d     AfxV2dTruncate(afxV2d const in);
+AFXINL afxV3d     AfxV3dTruncate(afxV3d const in);
+AFXINL afxV4d     AfxV4dTruncate(afxV4d const in);
 
 
 // Mix
@@ -91,9 +91,9 @@ AFXINL void     AfxTruncateV4d(afxV4d v, afxV4d const in);
 // Mixing colors, blending two values in a weighted way.
 // v = x * (1 - t) + y * t
 
-AFXINL void     AfxV2dMix(afxV2d v, afxV2d const x, afxV2d const y, afxReal t);
-AFXINL void     AfxV3dMix(afxV3d v, afxV3d const x, afxV3d const y, afxReal t);
-AFXINL void     AfxV4dMix(afxV4d v, afxV4d const x, afxV4d const y, afxReal t);
+AFXINL afxV2d     AfxV2dMix(afxV2d const x, afxV2d const y, afxReal t);
+AFXINL afxV3d     AfxV3dMix(afxV3d const x, afxV3d const y, afxReal t);
+AFXINL afxV4d     AfxV4dMix(afxV4d const x, afxV4d const y, afxReal t);
 
 // Lerp
 // LERP is a method to interpolate linearly between two values. 
@@ -103,9 +103,9 @@ AFXINL void     AfxV4dMix(afxV4d v, afxV4d const x, afxV4d const y, afxReal t);
 // Animation, transition effects, smooth movement between two points.
 // x + t * (y - x)
 
-AFXINL void     AfxV2dLerp(afxV2d v, afxV2d const x, afxV2d const y, afxReal t);
-AFXINL void     AfxV3dLerp(afxV3d v, afxV3d const x, afxV3d const y, afxReal t);
-AFXINL void     AfxV4dLerp(afxV4d v, afxV4d const x, afxV4d const y, afxReal t);
+AFXINL afxV2d     AfxV2dLerp(afxV2d const x, afxV2d const y, afxReal t);
+AFXINL afxV3d     AfxV3dLerp(afxV3d const x, afxV3d const y, afxReal t);
+AFXINL afxV4d     AfxV4dLerp(afxV4d const x, afxV4d const y, afxReal t);
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXPONENTIAL ARITHMETICA                                                    //
@@ -133,17 +133,17 @@ AFXINL afxReal      AfxExp2f(afxReal s);
 AFXINL afxReal64    AfxExp10(afxReal64 s);
 AFXINL afxReal      AfxExp10f(afxReal s);
 
-AFXINL void         AfxV2dExp(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dExp(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dExp(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dExp(afxV2d const in);
+AFXINL afxV3d         AfxV3dExp(afxV3d const in);
+AFXINL afxV4d         AfxV4dExp(afxV4d const in);
 
-AFXINL void         AfxV2dExp2(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dExp2(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dExp2(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dExp2(afxV2d const in);
+AFXINL afxV3d         AfxV3dExp2(afxV3d const in);
+AFXINL afxV4d         AfxV4dExp2(afxV4d const in);
 
-AFXINL void         AfxV2dExp10(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dExp10(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dExp10(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dExp10(afxV2d const in);
+AFXINL afxV3d         AfxV3dExp10(afxV3d const in);
+AFXINL afxV4d         AfxV4dExp10(afxV4d const in);
 
  // Returns x raised to the y power; x^y.
  // Results are undefined if x < 0 or if x = 0 and y <= 0.
@@ -151,9 +151,9 @@ AFXINL void         AfxV4dExp10(afxV4d v, afxV4d const in);
 AFXINL afxReal64    AfxPow(afxReal64 base, afxReal64 exp);
 AFXINL afxReal      AfxPowf(afxReal base, afxReal exp);
 
-AFXINL void         AfxV2dPow(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dPow(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dPow(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dPow(afxV2d const in);
+AFXINL afxV3d         AfxV3dPow(afxV3d const in);
+AFXINL afxV4d         AfxV4dPow(afxV4d const in);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -186,17 +186,17 @@ AFXINL afxReal64    AfxLog10(afxReal64 s);
 AFXINL afxReal      AfxLog10f(afxReal s);
 
 
-AFXINL void         AfxV2dLog(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dLog(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dLog(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dLog(afxV2d const in);
+AFXINL afxV3d         AfxV3dLog(afxV3d const in);
+AFXINL afxV4d         AfxV4dLog(afxV4d const in);
 
-AFXINL void         AfxV2dLog2(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dLog2(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dLog2(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dLog2(afxV2d const in);
+AFXINL afxV3d         AfxV3dLog2(afxV3d const in);
+AFXINL afxV4d         AfxV4dLog2(afxV4d const in);
 
-AFXINL void         AfxV2dLog10(afxV2d v, afxV2d const in);
-AFXINL void         AfxV3dLog10(afxV3d v, afxV3d const in);
-AFXINL void         AfxV4dLog10(afxV4d v, afxV4d const in);
+AFXINL afxV2d         AfxV2dLog10(afxV2d const in);
+AFXINL afxV3d         AfxV3dLog10(afxV3d const in);
+AFXINL afxV4d         AfxV4dLog10(afxV4d const in);
 
 
 #endif//AFX_EXPONENTIAL_H

@@ -944,11 +944,11 @@ _ZGL void _ZglFlushRsChanges(zglDpu* dpu)
             See glBlendFunc for a complete description of the blending operations. Initially the GL_BLEND_COLOR is set to (0, 0, 0, 0).
         */
 
-        AvxCopyColor(dpu->blendConstants, dpu->nextBlendConstants);
-        gl->BlendColor(dpu->nextBlendConstants[0],
-            dpu->nextBlendConstants[1],
-            dpu->nextBlendConstants[2],
-            dpu->nextBlendConstants[3]); _ZglThrowErrorOccuried();
+        dpu->blendConstants = dpu->nextBlendConstants;
+        gl->BlendColor(dpu->nextBlendConstants.v[0],
+            dpu->nextBlendConstants.v[1],
+            dpu->nextBlendConstants.v[2],
+            dpu->nextBlendConstants.v[3]); _ZglThrowErrorOccuried();
     }
 #endif
 

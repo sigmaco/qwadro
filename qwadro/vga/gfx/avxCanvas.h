@@ -102,7 +102,7 @@ AFX_DEFINE_STRUCT(avxCanvasConfig)
     avxCanvasFlags  flags;
 
     // The dimensions of the canvas.
-    avxRange        whd;
+    avxExtent       extent;
 
     // Multisampling order (2^lodCnt); 1 = 1x, 2 = 2x, 3 = 4x, 4 = 8x, ...
     afxUnit         lodCnt;
@@ -117,7 +117,7 @@ AFX_DEFINE_STRUCT(avxCanvasConfig)
 
 #define AVX_EMPTY_CANVAS_RIG \
     (avxCanvasRig) { .ras = NIL, \
-                        .fmt = avxFormat_UNDEFINED, \
+                        .fmt = avxFormat_NIL, \
                         .usage = avxRasterUsage_NIL, \
                         .flags = avxRasterFlag_NIL, \
                         .lodCnt = 1 }

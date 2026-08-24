@@ -47,7 +47,7 @@ AFX_DEFINE_STRUCT(_arxMotvDdi)
 {
     void(*PoseAccumulateBindingState)(arxPose, arxMotive, afxUnit, afxUnit, afxReal, afxUnit const*);
     void(*AnimationAccumulateBindingState)(arxPose, arxMotive, afxUnit, afxUnit, afxReal, const afxUnit *);
-    void(*AnimationAccumulateLoopTransform)(arxMotive, afxReal, afxReal*, afxV3d, afxV3d, afxBool);
+    void(*AnimationAccumulateLoopTransform)(arxMotive, afxReal, afxReal*, afxV3d*, afxV3d*, afxBool);
     void(*AnimationBuildDirect)(arxMotive, afxUnit, afxM4d const, arxPosture, afxReal);
     void(*PoseBuildDirect)(arxMotive, afxUnit, afxM4d const, arxPosture);
 };

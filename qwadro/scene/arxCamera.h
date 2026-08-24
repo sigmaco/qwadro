@@ -100,9 +100,9 @@ ARX void ArxGetCameraMatrices
     // The arxRamera object.
     arxCamera cam, 
     // A optional pointer to a 4x4 matrix that will be filled with the inverse view matrix; the camera/world matrix.
-    afxM4d iv, 
+    afxM4d* iv, 
     // A optional pointer to a 4x4 matrix that will be filled with the view matrix.
-    afxM4d v
+    afxM4d* v
 );
 
 /*
@@ -117,13 +117,13 @@ ARX void ArxGetProjectionMatrices
     // The camera object.
     arxCamera cam, 
     // An optional pointer to the inverse projection matrix.
-    afxM4d ip, 
+    afxM4d* ip, 
     // An optional pointer to the inverse projection * view matrix.
-    afxM4d ipv, 
+    afxM4d* ipv, 
     // An optional pointer to the projection * view matrix.
-    afxM4d pv, 
+    afxM4d* pv, 
     // An optional pointer to the projection matrix.
-    afxM4d p
+    afxM4d* p
 );
 
 /*
@@ -171,12 +171,12 @@ ARX void ArxTranslateCamera
     So use this if you need the camera's actual viewing position, not just its logical transform.
 */
 
-ARX void ArxGetCameraTranslation
+ARX afxV3d ArxGetCameraTranslation
 (
     // The arxCamera object.
-    arxCamera cam, 
+    arxCamera cam//, 
     // A pointer to the vector that will be set with the position.
-    afxV3d origin
+    //afxV3d origin
 );
 
 /*
@@ -204,9 +204,9 @@ ARX void ArxGetCameraDirectionX
     // The camera whose orientation is queried.
     arxCamera cam, 
     // Output vector pointing to the camera's left in world space.
-    afxV3d left, 
+    afxV3d* left, 
     // Output vector pointing to the camera's right in world space.
-    afxV3d right
+    afxV3d* right
 );
 
 /*
@@ -218,9 +218,9 @@ ARX void ArxGetCameraDirectionY
     // The camera whose orientation is queried.
     arxCamera cam, 
     // Output vector pointing downward relative to the camera.
-    afxV3d down, 
+    afxV3d* down, 
     // Output vector pointing upward relative to the camera.
-    afxV3d up
+    afxV3d* up
 );
 
 /*
@@ -232,9 +232,9 @@ ARX void ArxGetCameraDirectionZ
     // The camera whose position/orientation is queried.
     arxCamera cam, 
     // Output vector pointing toward the "near" (forward) direction.
-    afxV3d near, 
+    afxV3d* near, 
     // Output vector pointing toward the "far" (backward) direction.
-    afxV3d far
+    afxV3d* far
 );
 
 /*
@@ -355,12 +355,12 @@ ARX void ArxDisplaceCamera
     ArxDisplaceCamera(cam, currentDisplace);
 */
 
-ARX void ArxGetCameraDisplacement
+ARX afxV3d ArxGetCameraDisplacement
 (
     // The arxCamera object.
-    arxCamera cam,
+    arxCamera cam//,
     // A pointer to the vector which will be filled with the displacement offset.
-    afxV3d displace
+    //afxV3d displace
 );
 
 // TODO: Remove ArxGetCameraDistance, ArxSetCameraDistance, ArxApplyCameraDistance?
@@ -396,10 +396,10 @@ ARX void ArxOrbitCamera
     afxV3d const elevAzimRoll
 );
 
-ARX void ArxGetCameraOrbit
+ARX afxV3d ArxGetCameraOrbit
 (
-    arxCamera cam, 
-    afxV3d elevAzimRoll
+    arxCamera cam//, 
+    //afxV3d elevAzimRoll
 );
 
 /*
@@ -448,7 +448,7 @@ ARX void ArxAdjustCameraAspectRatio
     performs the required unprojection from clip space to world space.
 */
 
-ARX void ArxFindWorldCoordinates
+ARX afxV4d ArxFindWorldCoordinates
 (
     // The camera used for the transformation.
     arxCamera cam, 
@@ -456,9 +456,9 @@ ARX void ArxFindWorldCoordinates
     afxV2d const wh, 
     // The input point in screen space. Typically:
     // screenPoint.x = cursor X, screenPoint.y = cursor Y, screenPoint.z = depth (0=near, 1=far)
-    afxV3d const screenPoint, 
+    afxV3d const screenPoint//, 
     // Output world-space position (homogeneous vec4).
-    afxV4d worldPoint
+    //afxV4d worldPoint
 );
 
 /*
@@ -482,9 +482,9 @@ ARX void ArxGetCameraPickingRay
     // The cursor position (X, pre-flipped Y).
     afxV2d const cursor, 
     // Output: world-space origin of the ray (vec4).
-    afxV4d origin, 
+    afxV4d* origin, 
     // Output: normalized world-space direction of the ray (vec3).
-    afxV3d normal
+    afxV3d* normal
 );
 
 /*
@@ -494,16 +494,16 @@ ARX void ArxGetCameraPickingRay
     for UI hit-tests, rendering labels, HUD elements, or debugging aids.
 */
 
-ARX void ArxFindScreenCoordinates
+ARX afxV3d ArxFindScreenCoordinates
 (
     // The camera performing the projection.
     arxCamera cam, 
     // The window or framebuffer dimensions (width, height).
     afxV2d const wh, 
     // The world-space location (vec4).
-    afxV4d const worldPoint, 
+    afxV4d const worldPoint//, 
     // Output point in screen space (x, y, depth).
-    afxV3d screenPoint
+    //afxV3d screenPoint
 );
 
 /*
@@ -549,12 +549,12 @@ ARX void ArxComputeCameraRelativePlanarBases
     // A point lying on the constraint plane.
     afxV4d const pointOnPlane, 
     // Output: world-space basis vector corresponding to +X motion.
-    afxV3d xBasis, 
+    afxV3d* xBasis, 
     // Output: world-space basis vector corresponding to +Y motion.
-    afxV3d yBasis
+    afxV3d* yBasis
 );
 
-ARX afxError ArxAdjustCamera(arxCamera cam, avxViewport const* vp);
+ARX afxError ArxAdjustCamera(arxCamera cam, avxViewport const vp);
 
 ARX afxError ArxSetCameraNode
 (

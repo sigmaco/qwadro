@@ -129,7 +129,7 @@ _ARX void ArxCopyPose(arxPose pose, afxUnit toBaseIdx, arxPose from, afxUnit fro
     }
 }
 
-_ARX void ArxComputeAttachmentWorldMatrix(arxPose pose, arxSkeleton skl, afxUnit jntIdx, afxUnit const sparseJntMap[], afxUnit const sparseJntMapRev[], afxM4d const displace, afxM4d m)
+_ARX afxM4d ArxComputeAttachmentWorldMatrix(arxPose pose, arxSkeleton skl, afxUnit jntIdx, afxUnit const sparseJntMap[], afxUnit const sparseJntMapRev[], afxM4d const displace)
 {
     // Should be compatible with void GetWorldMatrixFromLocalAttitude(const skeleton *Skeleton, int BoneIndex, const local_pose *LocalAttitude, const float *Offset4x4, float *Result4x4, const int *SparseBoneArray, const int *SparseBoneArrayReverse)
     // void AfxSklGetWorldMatrixFromLocalAttitude(arxSkeleton skl, afxUnit jointIdx, arxPose const lp, afxM4d const offset, afxM4d m, afxUnit const* sparseBoneArray, afxUnit const* sparseBoneArrayReverse)
@@ -139,31 +139,30 @@ _ARX void ArxComputeAttachmentWorldMatrix(arxPose pose, arxSkeleton skl, afxUnit
     AFX_ASSERT_OBJECTS(afxFcc_POSE, 1, &pose);
     AFX_ASSERT_RANGE(pose->artCnt, jntIdx, 1);
     AFX_ASSERT_OBJECTS(afxFcc_SKL, 1, &skl);
-    AFX_ASSERT(m);
 
     afxUnit maxJntCnt = ArxGetSkeletonDepth(skl);
     afxUnit const* pi = _ArxSklGetPiArray(skl, 0);
-    AfxM4dReset(m);
+    
+    afxM4d m = AFX_M4D_IDENTITY;
 
     for (afxUnit i = jntIdx; i != AFX_INVALID_INDEX; i = pi[i])
     {
         AFX_ASSERT_RANGE(maxJntCnt, i, 1);
         afxTransform* t = ArxGetPoseTransform(pose, sparseJntMapRev ? sparseJntMapRev[i] : i);
-        afxM4d tmp, tmp2;
-        AfxComputeCompositeTransformM4d(t, tmp);
-        AfxM4dMultiplyAtm(tmp2, m, tmp);
-        AfxM4dCopy(m, tmp2);
+        afxM4d tmp = AfxComputeCompositeTransformM4d(t);
+        afxM4d tmp2 = AfxM4dMultiplyAtm(m, tmp);
+        m = tmp2;
     }
 
-    if (displace)
+    //if (displace)
     {
-        afxM4d tmp2;
-        AfxM4dMultiplyAtm(tmp2, m, displace);
-        AfxM4dCopy(m, tmp2);
+        afxM4d tmp2 = AfxM4dMultiplyAtm(m, displace);
+        m = tmp2;
     }
+    return m;
 }
 
-_ARX void ArxComputeAttachmentOffset(arxPose pose, arxSkeleton skl, afxUnit jntIdx, afxUnit const sparseJntMap[], afxUnit const sparseJntMapRev[], afxM4d const displace, afxM4d m)
+_ARX afxM4d ArxComputeAttachmentOffset(arxPose pose, arxSkeleton skl, afxUnit jntIdx, afxUnit const sparseJntMap[], afxUnit const sparseJntMapRev[], afxM4d const displace)
 {
     // void AfxSklGetSkeletonAttachmentOffset(arxSkeleton skl, afxUnit jntIdx, arxPose const pos, afxM4d const offset, afxM4d m, afxUnit const* sparseArtArray, afxUnit const* sparseArtArrayReverse)
     // AfxSklGetSkeletonAttachmentOffset(skl, jntIdx, atti, offset, m, sparseJntMap, sparseJntMapRev);
@@ -172,11 +171,9 @@ _ARX void ArxComputeAttachmentOffset(arxPose pose, arxSkeleton skl, afxUnit jntI
     AFX_ASSERT_OBJECTS(afxFcc_POSE, 1, &pose);
     AFX_ASSERT_RANGE(pose->artCnt, jntIdx, 1);
     AFX_ASSERT_OBJECTS(afxFcc_SKL, 1, &skl);
-    AFX_ASSERT(m);
 
-    afxM4d tmp;
-    ArxComputeAttachmentWorldMatrix(pose, skl, jntIdx, sparseJntMap, sparseJntMapRev, displace, tmp);
-    AfxM4dInvertAtm(m, tmp); // invert it
+    afxM4d tmp = ArxComputeAttachmentWorldMatrix(pose, skl, jntIdx, sparseJntMap, sparseJntMapRev, displace);
+    return AfxM4dInvertAtm(tmp, NIL); // invert it
 }
 
 _ARX void ArxRebuildRestPose(arxPose pose, arxSkeleton skl, afxUnit baseJntIdx, afxUnit jntCnt)
@@ -212,16 +209,15 @@ _ARX void ArxApplyPoseRootMotionVectors(arxPose pose, afxV3d const translation, 
     AFX_ASSERT_OBJECTS(afxFcc_POSE, 1, &pose);
 
     afxTransform* t = ArxGetPoseTransform(pose, 0);
-    AfxV3dAdd(t->pv, t->pv, translation);
+    t->pv = AfxV3dAdd(t->pv, translation);
 
     /*
         Rather than just applying the rotation directly to the root joint, the function seems to compute the angular velocity as a quaternion, 
         which is a more robust and efficient way to handle rotational motion, especially for interpolating rotations in animation systems.
     */
 
-    afxQuat rot;
-    AfxQuatFromAngularVelocity(rot, rotation);
-    AfxQuatMultiply(t->oq, rot, t->oq);
+    afxQuat rot = AfxQuatFromAngularVelocity(rotation);
+    t->oq = AfxQuatMultiply(rot, t->oq);
 }
 
 _ARX void ArxCommencePoseAccumulation(arxPose pose, afxUnit baseArtIdx, afxUnit artCnt, afxUnit const jntMap[])
@@ -288,8 +284,8 @@ _ARX void ArxConcludePoseAccumulation(arxPose pose, afxUnit baseArtIdx, afxUnit 
             if (pa->cnt != 1 || pa->weight != wc)
             {
                 afxReal s2 = 1.0 / pa->weight;
-                AfxV3dScale(pa->xform.pv, pa->xform.pv, s2);
-                AfxM3dScale(pa->xform.ssm, pa->xform.ssm, s2);
+                pa->xform.pv = AfxV3dScale(pa->xform.pv, s2);
+                pa->xform.ssm = AfxM3dScale(pa->xform.ssm, s2);
             }
 
             afxReal sq2, sq = AfxV4dSq(pa->xform.oq);
@@ -299,7 +295,7 @@ _ARX void ArxConcludePoseAccumulation(arxPose pose, afxUnit baseArtIdx, afxUnit 
             else
                 sq2 = (3.0 - sq) * (12.0 - (3.0 - sq) * (3.0 - sq) * sq) * 0.0625;
 
-            AfxV4dScale(pa->xform.oq, pa->xform.oq, sq2);
+            pa->xform.oq = AfxV4dScale(pa->xform.oq, sq2);
         }
     }
 }
@@ -340,9 +336,9 @@ _ARX void ArxAccumulateLocalTransform(arxPose pose, afxUnit artIdx, afxUnit sklJ
     if (pa->traversalId == pose->traversalId)
     {
         pa->xform.flags |= t->flags;
-        AfxV3dMads(pa->xform.pv, pa->xform.pv, t->pv, weight);
-        AfxV3dMads(pa->xform.oq, pa->xform.oq, t->oq, orientWeight);
-        AfxM3dMads(pa->xform.ssm, pa->xform.ssm, t->ssm, weight);
+        pa->xform.pv = AfxV3dMads(pa->xform.pv, t->pv, weight);
+        pa->xform.oq = AfxV4dMads(pa->xform.oq, t->oq, orientWeight);
+        pa->xform.ssm = AfxM3dMads(pa->xform.ssm, t->ssm, weight);
         pa->weight += weight;
         ++pa->cnt;
     }
@@ -352,10 +348,10 @@ _ARX void ArxAccumulateLocalTransform(arxPose pose, afxUnit artIdx, afxUnit sklJ
         else
         {
             pa->xform.flags = t->flags;
-            AfxV3dScale(pa->xform.pv, t->pv, weight);
-            AfxM3dScale(pa->xform.ssm, t->ssm, weight);
+            pa->xform.pv = AfxV3dScale(t->pv, weight);
+            pa->xform.ssm = AfxM3dScale(t->ssm, weight);
         }
-        AfxQuatScale(pa->xform.oq, t->oq, orientWeight);
+        pa->xform.oq = AfxQuatScale(t->oq, orientWeight);
         pa->weight = weight;
         pa->cnt = 1;
         pa->traversalId = pose->traversalId;
@@ -421,18 +417,18 @@ _ARX void ArxModulatePose(arxPose pose, afxUnit toBaseArtIdx, arxPose composite,
 
         if (td->xform.flags & afxTransformFlag_T)
         {
-            AfxV3dMix(td->xform.pv, td->xform.pv, ts->xform.pv, weight);
+            td->xform.pv = AfxV3dMix(td->xform.pv, ts->xform.pv, weight);
         }
 
         if (td->xform.flags & afxTransformFlag_R)
         {
-            AfxV4dMix(td->xform.oq, td->xform.oq, ts->xform.oq, weight);
-            AfxQuatNormalize(td->xform.oq, td->xform.oq);
+            td->xform.oq = AfxV4dMix(td->xform.oq, ts->xform.oq, weight);
+            td->xform.oq = AfxQuatNormalize(td->xform.oq, NIL);
         }
 
         if (td->xform.flags & afxTransformFlag_S)
         {
-            AfxM3dMix(td->xform.ssm, td->xform.ssm, ts->xform.ssm, weight);
+            td->xform.ssm = AfxM3dMix(td->xform.ssm, ts->xform.ssm, weight);
         }
     }
 }

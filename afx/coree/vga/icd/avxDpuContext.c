@@ -50,14 +50,14 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
     {
     case avxContextState_PENDING:
     {
-        AfxIncAtom32(&dctx->submCnt);
+        dctx->execExuMask |= AFX_BITMASK(dpu->exuIdx);
         dctx->state = avxContextState_INTERNAL_EXECUTING;
         break;
     }
     case avxContextState_INTERNAL_EXECUTING:
     {
-        AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_CONCURRENT));
-        AfxIncAtom32(&dctx->submCnt);
+        AFX_ASSERT(_AvxDctxIsConcurrent(dctx));
+        dctx->execExuMask |= AFX_BITMASK(dpu->exuIdx);
         break;
     }
     default:
@@ -96,34 +96,25 @@ _AVX afxError _AvxDpuRollContext(avxDpu* dpu, afxDrawContext dctx)
         cmdVmt->f[cmdHdr->hdr.id](dpu, cmdHdr);
     }
 
-    switch (dctx->state)
+    dctx->execExuMask &= ~AFX_BITMASK(dpu->exuIdx);
+
+    afxUnit submCnt = 0;
+    if (0 == (submCnt = AfxAtomicDec32(&dctx->submCnt)))
     {
-    case avxContextState_INTERNAL_EXECUTING:
-    {
-        if (0 == AfxDecAtom32(&dctx->submCnt))
+        if (!(_AvxDctxIsRecurrent(dctx)))
         {
-            if (!(dctx->cmdFlags & avxCmdFlag_RECURRENT))
-            {
-                dctx->state = avxContextState_INVALID;
-                //AvxPrepareDrawCommands(dctx, FALSE, NIL);
-            }
-            else
-            {
-                dctx->state = avxContextState_EXECUTABLE;
-            }
+            dctx->state = avxContextState_INVALID;
         }
         else
         {
-            AFX_ASSERT((dctx->cmdFlags & avxCmdFlag_CONCURRENT));
+            dctx->state = avxContextState_EXECUTABLE;
         }
-        break;
     }
-    default:
+    else
     {
-        AFX_ASSERT((dctx->state == avxContextState_INTERNAL_EXECUTING));
-        AfxThrowError();
-        return err;
-    }
+        AFX_ASSERT(_AvxDctxIsConcurrent(dctx));
+
+        dctx->state = avxContextState_PENDING;
     }
 
     return err;

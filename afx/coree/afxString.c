@@ -269,7 +269,7 @@ _AFXINL afxString AfxFindSubstrings(afxString const* s, afxUnit from, afxBool ci
     afxUnit slen = s->len;
 
     if (from >= slen)
-        return (afxString) { 0, 0, NIL };
+        return AFX_STRING_EMPTY;
 
     afxUnit bestPos = slen;
     afxUnit bestIdx = AFX_INVALID_INDEX;

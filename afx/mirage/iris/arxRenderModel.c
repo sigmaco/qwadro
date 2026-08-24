@@ -446,7 +446,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
             }
             cachedAttrOffset[i] = cacheStride[cacheIdx[i]];
             avxFormatDescription pfd;
-            AvxDescribeFormats(1, &fmt, &pfd);
+            AvxDescribeFormat(fmt, &pfd);
             cacheStride[cacheIdx[i]] += pfd.stride;//AfxVertexFormatGetSize(cachedAttrFmt[i]);
         }
 
@@ -517,7 +517,7 @@ _ARX afxError ArxBufferizeMesh(arxMesh msh, afxUnit morphIdx, arxVertexCache* vt
                         if (data)
                         {
                             avxFormatDescription pfd;
-                            AvxDescribeFormats(1, &fmt, &pfd);
+                            AvxDescribeFormat(fmt, &pfd);
                             afxSize srcStride = pfd.stride;// AfxVertexFormatGetSize(fmt);
                             AFX_ASSERT(srcStride);
                             AfxStream3(msh->vtxCnt, data, 0, srcStride, dst, cachedAttrOffset[j], cache->streams[srcIdx].stride);
@@ -960,7 +960,9 @@ _ARX afxError ArxCmdBindModel(arxRenderContext rctx, arxModel mdl)
 
 _ARX afxError ArxCmdDrawModel(arxRenderContext rctx, arxModel mdl, afxBool skl)
 {
-
+    afxError err = { 0 };
+    AFX_ASSERT_OBJECTS(afxFcc_RCTX, 1, &rctx);
+    return err;
 }
 
 _ARX afxError ArxCmdRenderModels(arxRenderContext rctx, afxUnit cnt, arxModel models[])

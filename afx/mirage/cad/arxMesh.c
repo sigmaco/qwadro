@@ -406,7 +406,7 @@ _ARXINL afxError ArxFormatVertexAttribute(arxMesh msh, afxUnit attrIdx, avxForma
     attr->fmt = fmt;
     attr->flags = flags;
     //AfxCopyString(&attr->usage.s, 0, usage, 0);
-    AfxResetBoxes(1, &attr->aabb, 0);
+    AfxResetBoxes(1, &attr->aabb, sizeof(attr->aabb));
     attr->aabbUpdReq = TRUE;
 
     // Fix for usage. But what about the storage? The usage should be specified in blueprint for allocation.
@@ -436,7 +436,7 @@ _ARXINL void* ArxAccessVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
     
     afxUnit32 attrBit = AFX_BITMASK(attrIdx);
@@ -489,7 +489,7 @@ _ARXINL afxError ArxInvertVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morph
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -511,7 +511,7 @@ _ARXINL afxError ArxInvertVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morph
     afxV3d* nrm = ArxAccessVertexData(msh, attrIdx, morphIdx, baseVtx);
 
     for (afxUnit i = 3; i < vtxCnt; i++)
-        AfxV3dScale(nrm[i], nrm[i], -1.f);
+        nrm[i] = AfxV3dScale(nrm[i], -1.f);
 
     msh->attrInfo[attrIdx].aabbUpdReq = TRUE;
     return err;
@@ -535,7 +535,7 @@ _ARXINL afxError ArxNormalizeVertexData(arxMesh msh, afxUnit attrIdx, afxUnit mo
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -590,7 +590,7 @@ _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit b
     }
 
     afxBox* morphSecAabbs = &msh->secAabb[morphIdx * msh->secCnt];
-    AfxResetBoxes(cnt, morphSecAabbs, 0);
+    AfxResetBoxes(cnt, morphSecAabbs, sizeof(morphSecAabbs[0]));
 
     void* data = ArxAccessVertexData(msh, posAttrIdx, morphIdx, mshm.baseVtx);
 
@@ -600,7 +600,7 @@ _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit b
 
     avxFormat attrFmt = msh->attrInfo[posAttrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &attrFmt, &pfd);
+    AvxDescribeFormat(attrFmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     if (attrFmt == avxFormat_RGB32f)
@@ -617,7 +617,7 @@ _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit b
             afxUnit idxCnt = mshs.triCnt * ARX_INDICES_PER_TRI;
 
             for (afxUnit i = 0; i < idxCnt; i++)
-                AfxEmboxVectors(&morphSecAabbs[secIdx], 1, &data3[i]);
+                morphSecAabbs[secIdx] = AfxEmboxVectors(morphSecAabbs[secIdx], 1, &data3[i]);
         }
     }
     else if (attrFmt == avxFormat_RGBA32f)
@@ -634,7 +634,7 @@ _ARXINL afxError ArxRecomputeMeshBounds(arxMesh msh, afxUnit morphIdx, afxUnit b
             afxUnit idxCnt = mshs.triCnt * ARX_INDICES_PER_TRI;
 
             for (afxUnit i = 0; i < idxCnt; i++)
-                AfxEmboxPoints(&morphSecAabbs[secIdx], 1, &data4[i]);
+                morphSecAabbs[secIdx] = AfxEmboxVectors(morphSecAabbs[secIdx], 1, &data4[i].v3);
         }
     }
     else AfxThrowError();
@@ -697,7 +697,7 @@ _ARXINL afxError ArxRecomputeMeshNormals(arxMesh msh, afxUnit morphIdx, afxUnit 
     afxV3d const* pos = ArxAccessVertexData(msh, posAttrIdx, morphIdx, mshm.baseVtx);
     afxV3d* nrm = ArxAccessVertexData(msh, nrmAttrIdx, morphIdx, mshm.baseVtx);
 
-    ArxUpdateVertexData(msh, nrmAttrIdx, morphIdx, mshm.baseVtx, msh->vtxCnt, AFX_V3D_ZERO, 0); // zero it
+    ArxUpdateVertexData(msh, nrmAttrIdx, morphIdx, mshm.baseVtx, msh->vtxCnt, &AFX_V3D_ZERO, 0); // zero it
 
     ArxComputeTriangleNormals(mshi.triCnt, indices, sizeof(indices[0]), pos, sizeof(pos[0]), nrm, sizeof(nrm[0]));
     
@@ -1089,7 +1089,7 @@ _ARX afxError _ArxMshCtorCb(arxMesh msh, void** args, afxUnit invokeNo)
         bias->tris = NIL;
     }
 
-    AfxResetBoxes(morphCnt * biasCnt, msh->biasObb, 0);
+    AfxResetBoxes(morphCnt * biasCnt, msh->biasObb, sizeof(msh->biasObb));
 
     msh->jointsForTriCnt = 0;
     msh->jointsForTriMap = NIL; // jointsForTriMap[triIdx] = num of joints influencing this triangle?
@@ -1156,7 +1156,7 @@ _ARX afxError _ArxMshCtorCb(arxMesh msh, void** args, afxUnit invokeNo)
     else if (morphCnt != (afxUnit)AfxCatalogStrings(_ArxScioGetMorphTagStringBase(scio), morphCnt, blueprint->morphTags, msh->morphTags))
         AfxThrowError();
 
-    AfxResetBoxes(morphCnt * secCnt, msh->secAabb, 0);
+    AfxResetBoxes(morphCnt * secCnt, msh->secAabb, sizeof(msh->secAabb));
 
     msh->vtxCache.buf = NIL;
     msh->ibo = NIL;
@@ -1215,14 +1215,13 @@ _ARX afxClassConfig const _ARX_MSH_CLASS_CONFIG =
 _ARXINL afxError ArxTransformMeshes(afxM3d const ltm, afxM3d const iltm, afxReal ltTol, afxV3d const atv, afxReal atTol, afxFlags flags, afxUnit cnt, arxMesh meshes[])
 {
     afxError err = { 0 };
-    AFX_ASSERT(ltm);
-    AFX_ASSERT(iltm);
-    AFX_ASSERT(atv);
     AFX_ASSERT(cnt);
     AFX_ASSERT(meshes);
     //AfxThrowError();
     (void)atTol;
     (void)ltTol;
+
+    afxV4d const atv4 = AfxV4dFromAtv3d(atv);
 
     for (afxUnit mshIdx = 0; mshIdx < cnt; mshIdx++)
     {
@@ -1303,7 +1302,7 @@ _ARXINL afxError ArxTransformMeshes(afxM3d const ltm, afxM3d const iltm, afxReal
 
                         if (!deltaFlag)
                             for (afxUnit k = 0; k < mshi.vtxCnt; k++)
-                                AfxV4dAdd(((afxV4d*)data)[k], ((afxV4d*)data)[k], atv);
+                                ((afxV4d*)data)[k] = AfxV4dAdd(((afxV4d*)data)[k], atv4);
                     }
                     else if (fmt == avxFormat_RGB32f)
                     {
@@ -1311,7 +1310,7 @@ _ARXINL afxError ArxTransformMeshes(afxM3d const ltm, afxM3d const iltm, afxReal
 
                         if (!deltaFlag)
                             for (afxUnit k = 0; k < mshi.vtxCnt; k++)
-                                AfxV3dAdd(((afxV3d*)data)[k], ((afxV3d*)data)[k], atv);
+                                ((afxV3d*)data)[k] = AfxV3dAdd(((afxV3d*)data)[k], atv);
                     }
 
                     normalized = FALSE;

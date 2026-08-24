@@ -586,7 +586,7 @@ AFX_DEFINE_UNION(_avxCmd)
     {
         _avxCmdHdr hdr;
 
-        afxV2d blendContants;
+        afxV4d blendContants;
     } SetBlendConstants;
     struct
     {
@@ -977,7 +977,9 @@ AFX_OBJECT(afxDrawContext)
     avxService         caps;
     afxMask             exuMask;
     afxAtom32           submCnt; // number of submissions
-    afxMask64           submQueMask; // one for each queue where this dctx was submitted into.
+    afxMask64           submExuMask;
+    afxMask64           submQueMask; // one for each queue where this dctx was submitted into.    
+    afxMask64           execExuMask;
 
     // Is short-lived? That is, does not recycle batches, etc.
     //afxBool             transient;
@@ -1092,5 +1094,23 @@ AVX avxContextState _AvxDctxGetStatus(afxDrawContext dctx);
 AVX afxClassConfig const _AVX_CLASS_CONFIG_DCTX;
 AVX _avxDctxDdi const _AVX_DDI_DCTX;
 
+
+AVXINL afxBool _AvxDctxIsRecurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+);
+
+AVXINL afxBool _AvxDctxIsIncurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+);
+
+AVXINL afxBool _AvxDctxIsConcurrent
+(
+    // The draw context to be tested.
+    afxDrawContext dctx
+);
 
 #endif//AVX_CONTEXT_DDK_H

@@ -813,7 +813,7 @@ _AFX afxError _AfxSetUpObjects(afxClass *cls, afxUnit cnt, afxObject objects[], 
         hdr->fcc = afxFcc_OBJ;
         hdr->cls = cls;
 
-        AfxStoreAtom32(&hdr->refCnt, 1);
+        AfxAtomicStore32(&hdr->refCnt, 1);
         //hdr->uniqueInc = ++cls->uniqueInc;
 
         hdr->tid = AfxGetTid();
@@ -1364,7 +1364,7 @@ _AFX afxError AfxReacquireObjects(afxHere const dbg, afxUnit cnt, afxObject obje
 
         afxObjectBase* hdr = GET_OBJ_HDR(obj);
         AFX_ASSERT(hdr->fcc == afxFcc_OBJ);
-        afxUnit32 prevRefCnt = (afxUnit32)AfxIncAtom32(&hdr->refCnt);
+        afxUnit32 prevRefCnt = (afxUnit32)AfxAtomicInc32(&hdr->refCnt);
 
         // We read first, test, and then revert if required. This way we avoid two atomic operations most of time.
 
@@ -1373,7 +1373,7 @@ _AFX afxError AfxReacquireObjects(afxHere const dbg, afxUnit cnt, afxObject obje
             AFX_ASSERT(AFX_U32_MAX > prevRefCnt);
             AfxThrowError();
             err = afxError_NOT_ALLOWED;
-            AfxDecAtom32(&hdr->refCnt);
+            AfxAtomicDec32(&hdr->refCnt);
         }
         else
         {
@@ -1406,7 +1406,7 @@ _AFX afxBool AfxDisposeObjects(afxHere const dbg, afxUnit cnt, afxObject objects
 
         AfxCatchError(err);
 
-        afxInt refCnt = AfxDecAtom32(&hdr->refCnt);
+        afxInt refCnt = AfxAtomicDec32(&hdr->refCnt);
 
         if (0 == refCnt)
         {

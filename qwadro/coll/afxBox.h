@@ -40,8 +40,8 @@
 
 #define AFX_AABB(   minX_, minY_, minZ_, \
                     maxX_, maxY_, maxZ_) \
-    (afxBox){   .min = { (minX_), (minY_), (minZ_), 1 }, \
-                .max = { (maxX_), (maxY_), (maxZ_), 1 } }
+    (afxBox){   .min = { { { (minX_), (minY_), (minZ_), 1 } } }, \
+                .max = { { { (maxX_), (maxY_), (maxZ_), 1 } } } }
 
 #define AFX_AABB_EMPTY AFX_AABB(0, 0, 0, 0, 0, 0)
 #define AFX_AABB_IDENTITY AFX_AABB_EMPTY
@@ -51,37 +51,39 @@
 #define AFX_AABB_VOID AFX_AABB(AFX_R32_MAX, AFX_R32_MAX, AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX, -AFX_R32_MAX)
 
 /// Automaticallly constructs an AABB from a list of vertex positions only.
-AFXINL void         AfxMakeAabb(afxBox* bb, afxUnit cnt, afxV3d const points[]);
+AFXINL afxBox       AfxMakeAabb(afxUnit cnt, afxV3d const points[]);
 
 /// Returns the half size and the centre point of this AABB and the distance to each side of the box.
-AFXINL afxReal      AfxGetAabbCentre(afxBox const* bb, afxV4d centre);
+AFXINL afxV4d      AfxGetAabbCentre(afxBox const bb, afxReal* halfSiz);
 
 // Calculate the bounding box extent.
 // Returns TRUE if AABB actually represents a volume.
-AFXINL afxBool      AfxGetAabbExtents(afxBox const* bb, afxV3d extent);
+AFXINL afxV3d      AfxGetAabbExtents(afxBox const bb, afxBool* isValid);
 
 // The vertices are defined as 8 unique corner points.
-AFXINL void         AfxGetAabbCorners(afxBox const* bb, afxV3d vertices[AFX_NUM_BOX_CORNERS]);
+AFXINL void         AfxGetAabbCorners(afxBox const bb, afxV3d vertices[AFX_NUM_BOX_CORNERS]);
 
-AFXINL void         AfxEmboxAabbs(afxBox* bb, afxUnit cnt, afxBox const boxes[]);
-AFXINL void         AfxEmboxPoints(afxBox* bb, afxUnit cnt, afxV4d const points[]);
-AFXINL void         AfxEmboxSpheres(afxBox* bb, afxUnit cnt, afxSphere const spheres[]);
-AFXINL void         AfxEmboxVectors(afxBox* bb, afxUnit cnt, afxV3d const vectors[]);
-AFXINL void         AfxEmboxTriangles(afxBox* bb, afxUnit triCnt, afxV3d const vertices[], afxUnit const indices[], afxUnit idxStride);
+AFXINL afxBox       AfxEmboxAabbs(afxBox bb, afxUnit cnt, afxBox const boxes[]);
+AFXINL afxBox       AfxEmboxPoints(afxBox bb, afxUnit cnt, afxV4d const points[]);
+AFXINL afxBox       AfxEmboxSpheres(afxBox bb, afxUnit cnt, afxSphere const spheres[]);
+AFXINL afxBox       AfxEmboxVectors(afxBox bb, afxUnit cnt, afxV3d const vectors[]);
+AFXINL afxBox       AfxEmboxTriangles(afxBox bb, afxUnit triCnt, afxV3d const vertices[], afxUnit const indices[], afxUnit idxStride);
 
 // TODO: contains or intersects?
 
-AFXINL afxBool      AfxIntersectAabbs(afxBox* bb, afxBox const a, afxBox const b);
+AFXINL afxBox       AfxGetIntersectedAabb(afxBox const bb, afxBox const other);
+AFXINL afxBool      AfxAabbIntersects(afxBox const bb, afxBox const other);
 
-AFXINL afxUnit      AfxDoesAabbInclude(afxBox const* bb, afxUnit cnt, afxBox const other[]);
-AFXINL afxUnit      AfxDoesAabbIncludeAtv3d(afxBox const* bb, afxUnit cnt, afxV3d const v[]);
+AFXINL afxUnit      AfxAabbIncludes(afxBox const bb, afxBox const other);
+AFXINL afxUnit      AfxAabbIncludesAny(afxBox const bb, afxUnit cnt, afxBox const other[]);
+AFXINL afxUnit      AfxAabbIncludesAtv3d(afxBox const bb, afxUnit cnt, afxV3d const point[]);
 AFXINL afxUnit      AfxDoesAabbIncludeSpheres(afxBox const* bb, afxUnit cnt, afxSphere const sph[]);
 
 //AFXINL afxResult    AfxAabbTestPlanes(afxBox const* aabb, afxUnit cnt, afxPlane const planes[]);
 
 /// Given an AABB in local space, transform to world space
-AFXINL void         AfxTransformAabb(afxBox const* bb, afxM4d const m, afxBox* to);
-AFXINL void         AfxTransformObbs(afxM3d const ltm, afxV4d const atv, afxUnit cnt, afxBox const in[], afxBox out[]);
+AFXINL afxBox       AfxTransformAabb(afxBox bb, afxM4d const m);
+AFXINL void         AfxTransformObbs(afxM3d const ltm, afxV3d const atv, afxUnit cnt, afxBox const in[], afxBox out[]);
 
 AFXINL void         AfxCopyBoxes(afxUnit cnt, afxBox const in[], afxUnit inStride, afxBox out[], afxUnit outStride);
 AFXINL void         AfxResetBoxes(afxUnit cnt, afxBox boxes[], afxUnit stride);

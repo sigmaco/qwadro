@@ -40,29 +40,29 @@
 // Multiply (row) vector by matrix ([0][0], [0][1], [0][2], [0][3])
 // With pre-multiplication, the dot product is with the vector and each column of the matrix (since the matrix is now on the right side of the multiplication operator).
 
-AFXINL void     AfxV2dPostMultiplyM2d(afxV2d v, afxM2d const m, afxV2d const in); // m * v
-AFXINL void     AfxV3dPostMultiplyM3d(afxV3d v, afxM3d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyM4d(afxV4d v, afxM4d const m, afxV4d const in); // m * v
+AFXINL afxV2d     AfxV2dPostMultiplyM2d(afxM2d const m, afxV2d const in); // m * v
+AFXINL afxV3d     AfxV3dPostMultiplyM3d(afxM3d const m, afxV3d const in); // m * v
+AFXINL afxV4d     AfxV4dPostMultiplyM4d(afxM4d const m, afxV4d const in); // m * v
 
-AFXINL void     AfxV3dPostMultiplyLtm4d(afxV3d v, afxM4d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyM3d(afxV4d v, afxM3d const m, afxV4d const in); // m * v
+AFXINL afxV3d     AfxV3dPostMultiplyLtm4d(afxM4d const m, afxV3d const in); // m * v
+AFXINL afxV4d     AfxV4dPostMultiplyM3d(afxM3d const m, afxV4d const in); // m * v
 
-AFXINL void     AfxV2dPostMultiplyAtm4d(afxV2d v, afxM4d const m, afxV2d const in); // m * v
-AFXINL void     AfxV3dPostMultiplyAtm4d(afxV3d v, afxM4d const m, afxV3d const in); // m * v
-AFXINL void     AfxV4dPostMultiplyAtm4d(afxV4d v, afxM4d const m, afxV4d const in); // m * v
+AFXINL afxV2d     AfxV2dPostMultiplyAtm4d(afxM4d const m, afxV2d const in); // m * v
+AFXINL afxV3d     AfxV3dPostMultiplyAtm4d(afxM4d const m, afxV3d const in); // m * v
+AFXINL afxV4d     AfxV4dPostMultiplyAtm4d(afxM4d const m, afxV4d const in); // m * v
 
-AFXINL void     TransposeVectorTransform4x3(afxV3d Dest, float D3, afxM4d const Transform);
+AFXINL afxV3d     TransposeVectorTransform4x3(afxV3d Dest, float D3, afxM4d const Transform);
 
-AFXINL void     AfxV2dPreMultiplyM2d(afxV2d v, afxV2d const in, afxM2d const m); // v * m
-AFXINL void     AfxV3dPreMultiplyM3d(afxV3d v, afxV3d const in, afxM3d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyM4d(afxV4d v, afxV4d const in, afxM4d const m); // v * m
+AFXINL afxV2d     AfxV2dPreMultiplyM2d(afxV2d const in, afxM2d const m); // v * m
+AFXINL afxV3d     AfxV3dPreMultiplyM3d(afxV3d const in, afxM3d const m); // v * m
+AFXINL afxV4d     AfxV4dPreMultiplyM4d(afxV4d const in, afxM4d const m); // v * m
 
-AFXINL void     AfxV3dPreMultiplyLtm4d(afxV3d v, afxV3d const in, afxM4d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyM3d(afxV4d v, afxV4d const in, afxM3d const m); // v * m
+AFXINL afxV3d     AfxV3dPreMultiplyLtm4d(afxV3d const in, afxM4d const m); // v * m
+AFXINL afxV4d     AfxV4dPreMultiplyM3d(afxV4d const in, afxM3d const m); // v * m
 
-AFXINL void     AfxV2dPreMultiplyAtm4d(afxV2d v, afxV2d const in, afxM4d const m); // v * m
-AFXINL void     AfxV3dPreMultiplyAtm4d(afxV3d v, afxV3d const in, afxM4d const m); // v * m
-AFXINL void     AfxV4dPreMultiplyAtm4d(afxV4d v, afxV4d const in, afxM4d const m); // v * m
+AFXINL afxV2d     AfxV2dPreMultiplyAtm4d(afxV2d const in, afxM4d const m); // v * m
+AFXINL afxV3d     AfxV3dPreMultiplyAtm4d(afxV3d const in, afxM4d const m); // v * m
+AFXINL afxV4d     AfxV4dPreMultiplyAtm4d(afxV4d const in, afxM4d const m); // v * m
 
 ////////////////////////////////////////////////////////////////////////////////
 // QUATERNION (aka QWATERNION)                                                //
@@ -76,7 +76,7 @@ AFXINL void     AfxV4dPreMultiplyAtm4d(afxV4d v, afxV4d const in, afxM4d const m
 /// b = Second quaternion.
 
 // q = a * b
-AFXINL void AfxQuatMultiply(afxQuat q, afxQuat const a, afxQuat const b);
+AFXINL afxQuat AfxQuatMultiply(afxQuat const a, afxQuat const b);
 
 ////////////////////////////////////////////////////////////////////////////////
 // MATRIX (aka QWATRIX)                                                       //
@@ -93,13 +93,13 @@ AFXINL void AfxQuatMultiply(afxQuat q, afxQuat const a, afxQuat const b);
     column 3 * [ row 0, 1, 2, 3 ]
 */
 
-AFXINL void     AfxM2dMultiply(afxM2d m, afxM2d const in, afxM2d const mul);
-AFXINL void     AfxM3dMultiply(afxM3d m, afxM3d const in, afxM3d const mul);
-AFXINL void     AfxM4dMultiply(afxM4d m, afxM4d const in, afxM4d const mul);
+AFXINL afxM2d     AfxM2dMultiply(afxM2d const in, afxM2d const mul);
+AFXINL afxM3d     AfxM3dMultiply(afxM3d const in, afxM3d const mul);
+AFXINL afxM4d     AfxM4dMultiply(afxM4d const in, afxM4d const mul);
 
-AFXINL void     AfxM3dMultiplyAtm(afxM3d m, afxM3d const in, afxM3d const mul); // 2x2 subset only
-AFXINL void     AfxM4dMultiplyLtm(afxM4d m, afxM4d const in, afxM4d const mul); // 3x3 subset only
-AFXINL void     AfxM4dMultiplyAtm(afxM4d m, afxM4d const in, afxM4d const mul); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
+AFXINL afxM3d     AfxM3dMultiplyAtm(afxM3d const in, afxM3d const mul); // 2x2 subset only
+AFXINL afxM4d     AfxM4dMultiplyLtm(afxM4d const in, afxM4d const mul); // 3x3 subset only
+AFXINL afxM4d     AfxM4dMultiplyAtm(afxM4d const in, afxM4d const mul); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
 
 /*
     The AfxM2dMultiplyTransposed(), AfxM3dMultiplyTransposed(), AfxM4dMultiplyTransposed(), 
@@ -112,15 +112,15 @@ AFXINL void     AfxM4dMultiplyAtm(afxM4d m, afxM4d const in, afxM4d const mul); 
     [ column 0, 1, 2, 3 ] * row 3
 */
 
-AFXINL void     AfxM2dMultiplyTransposed(afxM2d m, afxM2d const in, afxM2d const mul);
-AFXINL void     AfxM3dMultiplyTransposed(afxM3d m, afxM3d const in, afxM3d const mul);
-AFXINL void     AfxM4dMultiplyTransposed(afxM4d m, afxM4d const in, afxM4d const mul);
+AFXINL afxM2d     AfxM2dMultiplyTransposed(afxM2d const in, afxM2d const mul);
+AFXINL afxM3d     AfxM3dMultiplyTransposed(afxM3d const in, afxM3d const mul);
+AFXINL afxM4d     AfxM4dMultiplyTransposed(afxM4d const in, afxM4d const mul);
 
-AFXINL void     AfxM3dMultiplyAtmTransposed(afxM3d m, afxM3d const in, afxM3d const mul); // 2x2 subset only
-AFXINL void     AfxM4dMultiplyLtmTransposed(afxM4d m, afxM4d const in, afxM4d const mul); // 3x3 subset only of an affine transformation matrix
-AFXINL void     AfxM4dMultiplyAtmTransposed(afxM4d m, afxM4d const in, afxM4d const mul); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
+AFXINL afxM3d     AfxM3dMultiplyAtmTransposed(afxM3d const in, afxM3d const mul); // 2x2 subset only
+AFXINL afxM4d     AfxM4dMultiplyLtmTransposed(afxM4d const in, afxM4d const mul); // 3x3 subset only of an affine transformation matrix
+AFXINL afxM4d     AfxM4dMultiplyAtmTransposed(afxM4d const in, afxM4d const mul); // 4x3 subset only (aka RenderWare (RwMatrix) matrix)
 
-AFXINL void     TransposeMatrixMultiply3x3(afxM3d IntoMatrix, afxM3d const TransposedMatrix, afxM3d const ByMatrix);
+AFXINL afxM3d     TransposeMatrixMultiply3x3(afxM3d IntoMatrix, afxM3d const TransposedMatrix, afxM3d const ByMatrix);
 
 /*
     The AfxM2dPostMultiplyV2d(), AfxM3dPostMultiplyV3d(), AfxM4dPostMultiplyV4d(),

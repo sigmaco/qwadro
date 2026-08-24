@@ -212,17 +212,16 @@ _AVX afxError AvxRequestSurfaceMode(afxSurface dout, avxModeSetting const* mode)
 
     afxReal64 physAspectRatio = mode->wpOverHp;
     afxReal refreshRate = mode->refreshRate;
-    avxRange resolution = mode->resolution;
+    avxExtent resolution = mode->resolution;
     afxBool exclusive = mode->exclusive;
 
-    afxV3d whdNdc;
-    _AvxGetSurfaceExtentNormalized(dout, whdNdc);
+    afxV3d whdNdc = _AvxGetSurfaceExtentNormalized(dout);
     
     if (AvxDotRange(resolution, resolution))
     {
 
         AFX_ASSERT3(resolution.w, resolution.h, resolution.d);
-        dout->resolution = AvxMaxRange(AVX_RANGE(1, 1, 1), resolution);
+        dout->resolution = AvxGetMaxiExtent(AVX_EXTENT(1, 1, 1), resolution);
         dout->wrOverHr = (afxReal64)dout->resolution.w / (afxReal64)dout->resolution.h;
     }
 
@@ -295,16 +294,15 @@ _AVX afxReal64 AvxGetSurfaceArea(afxSurface dout, afxRect* area)
     return dout->wwOverHw;
 }
 
-_AVX void _AvxGetSurfaceExtentNormalized(afxSurface dout, afxV3d whd)
+_AVX afxV3d _AvxGetSurfaceExtentNormalized(afxSurface dout)
 // normalized (bethween 0 and 1 over the total available) porportions of exhibition area.
 {
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-    AFX_ASSERT(whd);
     afxRect whd2;
     AvxGetSurfaceArea(dout, &whd2);
-    AfxV3dSet(whd, AfxNdcf(whd2.w, dout->resolution.w), AfxNdcf(whd2.h, dout->resolution.h), (afxReal)1);
+    return AfxV3dMake(AfxNdcf(whd2.w, dout->resolution.w), AfxNdcf(whd2.h, dout->resolution.h), (afxReal)1);
 }
 
 _AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool fse)
@@ -326,7 +324,7 @@ _AVX afxError _AvxDoutSwAdjustCb(afxSurface dout, afxRect const* area, afxBool f
     dout->dstArea.w = dout->area.w + dwdiff;
     dout->dstArea.h = dout->area.h + dhdiff;
     dout->wwOverHw = (afxReal64)dout->area.w / (afxReal64)dout->area.h;
-    dout->ccfg.whd = AvxMaxRange(AVX_RANGE(1, 1, 1), AVX_RANGE(dout->area.w, dout->area.h, 1));
+    dout->ccfg.extent = AvxGetMaxiExtent(AVX_EXTENT(1, 1, 1), AVX_EXTENT(dout->area.w, dout->area.h, 1));
 
     return err;
 }
@@ -358,9 +356,8 @@ _AVX afxError AvxAdjustSurface(afxSurface dout, afxRect const* area)
 
     if (!err)
     {
-        afxV2d ndc;
         AvxGetSurfaceArea(dout, &rc);
-        AfxV2dNdc(ndc, AFX_V2D(rc.w, rc.h), AFX_V2D(dout->resolution.w, dout->resolution.h));
+        afxV2d ndc = AfxV2dNdc(AFX_V2D(rc.w, rc.h), AFX_V2D(dout->resolution.w, dout->resolution.h));
 #ifdef _AFX_DOUT_LOGS
         AfxReportMessage("Draw output %03u adjusted. %ux%u %ux%u %.3fx%.3f %f", AfxGetObjectId(dout), whd2.w, whd2.h, dout->resolution.w, dout->resolution.h, ndc[0], ndc[1], dout->wwOverHw);
 #endif
@@ -377,14 +374,14 @@ _AVX afxError _AvxAdjustSurfaceNormalized(afxSurface dout, afxV3d const whd)
     afxError err = { 0 };
     // @dout must be a valid afxSurface handle.
     AFX_ASSERT_OBJECTS(afxFcc_DOUT, 1, &dout);
-    AFX_ASSERT4(whd, whd[0], whd[1], whd[2]);
+    AFX_ASSERT3(whd.v[0], whd.v[1], whd.v[2]);
 
     afxRect const whd2 =
     {
         .x = dout->area.x,
         .y = dout->area.y,
-        .w = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[0]), dout->resolution.w),
-        .h = (afxUnit)AfxUnndcf(AFX_MAX(1, whd[1]), dout->resolution.h)
+        .w = (afxUnit)AfxUnndcf(AFX_MAX(1, whd.v[0]), dout->resolution.w),
+        .h = (afxUnit)AfxUnndcf(AFX_MAX(1, whd.v[1]), dout->resolution.h)
     };
     return AvxAdjustSurface(dout, &whd2);
 }
@@ -996,7 +993,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     dout->resizable = TRUE;
     dout->refreshRate = 1;
     //AFX_ASSERT(AFX_TEST_ALIGNMENT(&dout->resolution, 16));
-    dout->resolution = AVX_RANGE(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
+    dout->resolution = AVX_EXTENT(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
     dout->wrOverHr = dout->resolution.w / dout->resolution.h;
     dout->wpOverHp = AfxFindPhysicalAspectRatio(dout->resolution.w, dout->resolution.h);
     dout->presentAlpha = cfg->presentAlpha ? cfg->presentAlpha : def.presentAlpha; // consider transparency for window composing.
@@ -1008,11 +1005,11 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     dout->idd = NIL;
     
     // canvas
-    //dout->extent = AvxMaxRange(AVX_RANGE(1, 1, 1), cfg->extent);
+    //dout->extent = AvxGetMaxiExtent(AVX_EXTENT(1, 1, 1), cfg->extent);
     dout->colorSpc = cfg->colorSpc ? cfg->colorSpc : avxColorSpace_STANDARD; // sRGB is the default
     dout->ccfg = cfg->ccfg;
     AvxConfigureCanvas(dsys, &dout->ccfg);
-    dout->wwOverHw = dout->ccfg.whd.w / dout->ccfg.whd.h;
+    dout->wwOverHw = dout->ccfg.extent.w / dout->ccfg.extent.h;
 
     if (!dout->ccfg.rigCnt)
     {
@@ -1028,7 +1025,7 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     // swapchain
     dout->swapCnt = AFX_MAX(cfg->latency, def.latency); // 2 or 3; double or triple buffered for via-memory presentation.
 
-    dout->area = AFX_RECT(0, 0, dout->ccfg.whd.w, dout->ccfg.whd.h);
+    dout->area = AFX_RECT(0, 0, dout->ccfg.extent.w, dout->ccfg.extent.h);
     dout->dstArea = dout->area;
     dout->srcArea = dout->area;
     dout->persistBlit = FALSE;
@@ -1071,9 +1068,9 @@ _AVX afxError _AvxDoutSwCtorCb(afxSurface dout, void** args, afxUnit invokeNo)
     AFX_ASSERT(dout->resolution.w);
     AFX_ASSERT(dout->resolution.h);
     AFX_ASSERT(dout->resolution.d);
-    AFX_ASSERT_EXTENT(dout->resolution.w, dout->ccfg.whd.w);
-    AFX_ASSERT_EXTENT(dout->resolution.h, dout->ccfg.whd.h);
-    AFX_ASSERT_EXTENT(dout->resolution.d, dout->ccfg.whd.d);
+    AFX_ASSERT_EXTENT(dout->resolution.w, dout->ccfg.extent.w);
+    AFX_ASSERT_EXTENT(dout->resolution.h, dout->ccfg.extent.h);
+    AFX_ASSERT_EXTENT(dout->resolution.d, dout->ccfg.extent.d);
 
     AFX_ASSERT(dout->swapCnt);
     AFX_ASSERT(dout->ccfg.rigs[0].usage & avxRasterUsage_DRAW);
@@ -1145,7 +1142,7 @@ _AVX afxError _AvxDpySwConfigureDoutCb(afxDisplay dpy, afxSurfaceConfig* cfg)
         cfg->latency = 2;
 
     if (!(cfg->resolution.w * cfg->resolution.h * cfg->resolution.d))
-        cfg->resolution = AVX_RANGE(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
+        cfg->resolution = AVX_EXTENT(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
 
     if (!cfg->refreshRate)
         cfg->refreshRate = 1;
@@ -1155,7 +1152,7 @@ _AVX afxError _AvxDpySwConfigureDoutCb(afxDisplay dpy, afxSurfaceConfig* cfg)
     //cfg->presentAlpha = FALSE;
     //cfg->presentTransform = NIL;
     //cfg->doNotClip = FALSE;
-    //cfg->resolution = AVX_RANGE(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
+    //cfg->resolution = AVX_EXTENT(AFX_U32_MAX, AFX_U32_MAX, AFX_U32_MAX);
     //cfg->resizable = TRUE;
     //cfg->refreshRate = 1;
     //cfg->exclusive = FALSE;

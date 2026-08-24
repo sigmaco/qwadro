@@ -2994,8 +2994,8 @@ _ZGL void wglDetectDeviceLimitsSIGMA(glVmt const* gl, avxLimits* pLimits)
     limits.maxVpDimensions[1] = datai2[1];
     // the minimum and maximum viewport bounds range. The minimum range should be at least [-32768, 32767].
     gl->GetFloatv(GL_VIEWPORT_BOUNDS_RANGE, dataf2);
-    limits.vpBoundsRange[0] = dataf2[0];  // at least [-32768, 32767]
-    limits.vpBoundsRange[1] = dataf2[1];  // at least [-32768, 32767]
+    limits.vpBoundsRange.v[0] = dataf2[0];  // at least [-32768, 32767]
+    limits.vpBoundsRange.v[1] = dataf2[1];  // at least [-32768, 32767]
     // the number of bits of sub-pixel precision which the GL uses to interpret the floating point viewport bounds. The minimum value is 0.
     gl->GetIntegerv(GL_VIEWPORT_SUBPIXEL_BITS, &datai);
     limits.vpSubPixelBits = datai; // at least 0
@@ -3086,15 +3086,15 @@ _ZGL void wglDetectDeviceLimitsSIGMA(glVmt const* gl, avxLimits* pLimits)
 
     // the smallest and largest supported sizes for antialiased points. The smallest size must be at most 1, and the largest size must be at least 1.
     gl->GetFloatv(GL_POINT_SIZE_RANGE, dataf2);
-    limits.pointSizRange[0] = dataf2[0]; // at least 1
-    limits.pointSizRange[1] = dataf2[1]; // at least 1
+    limits.pointSizRange.v[0] = dataf2[0]; // at least 1
+    limits.pointSizRange.v[1] = dataf2[1]; // at least 1
     // the size difference between adjacent supported sizes for antialiased points.
     gl->GetFloatv(GL_POINT_SIZE_GRANULARITY, &dataf);
     limits.pointSizGranularity = dataf;
     // the range of widths supported for smooth (antialiased) lines.
     gl->GetFloatv(GL_LINE_WIDTH_RANGE, dataf2);
-    limits.lineWidthRange[0] = dataf2[0];
-    limits.lineWidthRange[1] = dataf2[1];
+    limits.lineWidthRange.v[0] = dataf2[0];
+    limits.lineWidthRange.v[1] = dataf2[1];
     // the level of quantization applied to smooth line width parameters.
     gl->GetFloatv(GL_LINE_WIDTH_GRANULARITY, &dataf);
     limits.lineWidthGranularity = dataf;

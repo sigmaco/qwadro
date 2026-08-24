@@ -204,6 +204,7 @@ _ZGL afxError DpuBindShadersEXT(zglDpu* dpu, avxShaderType stage, avxShader shd)
     GLuint glStage = AfxToGlShaderStageBit(stage);
 
     gl->UseProgramStages(dpu->activeProgPipGlHandle, glStage, shd->glProgHandle);
+    return err;
 }
 
 _ZGL afxError DpuBindPipeline(zglDpu* dpu, avxPipeline pip, avxVertexInput vin, afxFlags dynamics)
@@ -254,7 +255,7 @@ _ZGL afxError DpuBindPipeline(zglDpu* dpu, avxPipeline pip, avxVertexInput vin, 
         {
             AfxCopy(dpu->nextOuts, pip->m.outs, sizeof(pip->m.outs[0]) * pip->m.outCnt);
 
-            AvxCopyColor(dpu->nextBlendConstants, pip->m.blendConstants);
+            dpu->nextBlendConstants = pip->m.blendConstants;
             //dpu->nextBlendConstUpd = 1;
         }
 
@@ -266,7 +267,7 @@ _ZGL afxError DpuBindPipeline(zglDpu* dpu, avxPipeline pip, avxVertexInput vin, 
         }
 
         if ((dpu->nextDepthBoundsTestEnabled = pip->m.depthBoundsTestEnabled))
-            AfxV2dCopy(dpu->nextDepthBounds, pip->m.depthBounds);
+            dpu->nextDepthBounds = pip->m.depthBounds;
 
         if ((dpu->nextDepthTestEnabled = pip->m.depthTestEnabled))
         {

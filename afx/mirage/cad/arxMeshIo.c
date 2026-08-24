@@ -47,7 +47,7 @@ _ARX afxError ArxUpdateVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -82,7 +82,7 @@ _ARX afxError ArxUploadVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void* data;
@@ -118,7 +118,7 @@ _ARX afxError ArxDownloadVertexData(arxMesh msh, afxUnit attrIdx, afxUnit morphI
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void const* data;
@@ -152,7 +152,7 @@ _ARX afxError ArxExportMeshData(arxMesh msh, afxUnit attrIdx, afxUnit morphIdx, 
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     void const* data;
@@ -185,7 +185,7 @@ _ARX afxError ArxExportMeshDataDeindexed(arxMesh msh, afxUnit attrIdx, afxUnit m
 
     avxFormat fmt = msh->attrInfo[attrIdx].fmt;
     avxFormatDescription pfd;
-    AvxDescribeFormats(1, &fmt, &pfd);
+    AvxDescribeFormat(fmt, &pfd);
     afxUnit32 unitSiz = pfd.stride;// AfxVertexFormatGetSize(fmt);
 
     afxByte const* data;

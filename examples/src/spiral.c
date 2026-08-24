@@ -93,7 +93,7 @@ int main(int argc, char const* argv[])
     wcfg.dout.dsys = dsys;
     //wcfg.dout.bins[0].fmt = avxFormat_BGRA4un;
     wcfg.dout.latency = MAX_FRAMES_IN_FLIGHT;
-    AfxConfigureWindow(env, &wcfg, NIL, AFX_V3D(0.5, 0.5, 1));
+    AfxConfigureWindow(env, &wcfg, AFX_V2D_ZERO, AFX_V2D(0.5, 0.5));
     AfxAcquireWindow(env, &wcfg, &wnd);
     AFX_ASSERT_OBJECTS(afxFcc_WND, 1, &wnd);
 
@@ -268,9 +268,9 @@ int main(int argc, char const* argv[])
                     //ArxUseCamera(rctx, cam, &area.area);
 
                     arxViewConstants vc = { 0 };
-                    ArxComputeOrthographicMatrices(rctx, AFX_V2D(area.area.w, area.area.h), 0.001, 2.0, vc.p, vc.ip);
-                    AfxM4dCopy(vc.pv, vc.p);
-                    AfxM4dReset(vc.v);
+                    ArxComputeOrthographicMatrices(rctx, AFX_V2D(area.area.w, area.area.h), 0.001, 2.0, &vc.p, &vc.ip);
+                    vc.pv = vc.p;
+                    vc.v = AfxM4dIdentity();
 
                     ArxUpdateViewConstants(rctx, &vc);
 
@@ -288,8 +288,7 @@ int main(int argc, char const* argv[])
 
                     ArxSetWireframeConstants(rctx, 10, AVX_COLOR(0, 0.5, 0.5, 1), AVX_COLOR(1, 1, 1, 1));
 
-                    afxM4d ssm;
-                    AfxM4dScaling(ssm, AFX_V3D(2, 2, 1));
+                    afxM4d ssm = AfxM4dScaling(AFX_V3D(2, 2, 1));
                     ArxPushTransform(rctx, ssm);
 
 #if !0
